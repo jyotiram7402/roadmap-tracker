@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  background: #0f172a;
+  color: #e2e8f0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+* { box-sizing: border-box; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #1e293b; }
+::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+/* Smooth transitions */
+button, input, textarea, details { transition: all 0.15s ease; }
+
+/* Custom checkbox bigger touch target on mobile */
+@media (max-width: 640px) {
+  input[type="checkbox"] { width: 18px; height: 18px; }
+}
