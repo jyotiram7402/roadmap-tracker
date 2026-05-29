@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  background: #0f172a;
+  color: #e2e8f0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+* { box-sizing: border-box; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #1e293b; }
+::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+/* Smooth transitions */
+button, input, textarea, details { transition: all 0.15s ease; }
+
+/* Custom checkbox bigger touch target on mobile */
+@media (max-width: 640px) {
+  input[type="checkbox"] { width: 18px; height: 18px; }
+}
+
+/* ---------- Prism syntax tokens (custom dark theme) ---------- */
+.token.comment, .token.prolog, .token.doctype, .token.cdata {
+  color: #64748b; font-style: italic;
+}
+.token.punctuation { color: #94a3b8; }
+.token.namespace { opacity: .7; }
+.token.property, .token.tag, .token.boolean, .token.number, .token.constant, .token.symbol, .token.deleted {
+  color: #fb923c;
+}
+.token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted {
+  color: #86efac;
+}
+.token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string {
+  color: #67e8f9;
+}
+.token.atrule, .token.attr-value, .token.keyword {
+  color: #c4b5fd;
+}
+.token.function, .token.class-name {
+  color: #fde68a;
+}
+.token.regex, .token.important, .token.variable {
+  color: #fda4af;
+}
+.token.important, .token.bold { font-weight: bold; }
+.token.italic { font-style: italic; }
+.token.annotation { color: #f0abfc; }   /* Spring @annotations */
+
+/* ---------- Mermaid svg overrides ---------- */
+.mermaid-wrap svg { max-width: 100%; height: auto; }
+.mermaid-wrap .nodeLabel,
+.mermaid-wrap .edgeLabel { color: #e2e8f0 !important; }
+.mermaid-wrap .edgeLabel { background-color: #0f172a !important; padding: 1px 4px; }
+.mermaid-wrap .marker { fill: #64748b !important; stroke: #64748b !important; }
+
+/* ---------- Print styles ---------- */
+@media print {
+  body { background: white !important; color: black !important; }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  pre, code { color: black !important; background: #f1f5f9 !important; border: 1px solid #cbd5e1 !important; }
+  details { page-break-inside: avoid; }
+  details[open] > summary ~ * { display: block !important; }
+  details { display: block !important; }
+  summary { display: block !important; cursor: default !important; }
+}
+.print-only { display: none; }
+
+/* ---------- Flashcard flip ---------- */
+.card-flip { perspective: 1200px; }
+.card-flip-inner { transition: transform 0.5s; transform-style: preserve-3d; position: relative; }
+.card-flip.flipped .card-flip-inner { transform: rotateY(180deg); }
+.card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.card-back { transform: rotateY(180deg); position: absolute; inset: 0; }
