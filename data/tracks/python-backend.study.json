@@ -1,0 +1,2644 @@
+{
+  "pyb-1": [
+    {
+      "sectionTitle": "Stage 1 - Python Deep Dive Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is the difference between `is` and `==` in Python?",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "`==` compares values by calling the object's `__eq__` method, while `is` compares identity, i.e. whether two names point to the exact same object in memory (it compares `id()`). Two distinct objects can be equal with `==` but not identical with `is`."
+            },
+            {
+              "kind": "text",
+              "text": "A common gotcha is that small integers (-5 to 256) and some short strings are interned/cached, so `is` may accidentally return True. Never rely on this. The one place `is` is correct is comparing to singletons like `None`, `True`, and `False` - always write `if x is None`."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "a = [1, 2, 3]",
+                "b = [1, 2, 3]",
+                "a == b   # True  -> same value",
+                "a is b   # False -> different objects",
+                "",
+                "x = 256",
+                "y = 256",
+                "x is y   # True (cached), but DO NOT depend on this",
+                "",
+                "val = None",
+                "if val is None:   # correct way to check for None",
+                "    ..."
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Explain mutable vs immutable types and the mutable default argument pitfall.",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Immutable types (int, float, str, tuple, frozenset, bytes) cannot be changed after creation; any 'modification' creates a new object. Mutable types (list, dict, set, most custom objects) can be changed in place. This matters for hashing (only immutables are hashable by default, so only they can be dict keys) and for aliasing bugs."
+            },
+            {
+              "kind": "text",
+              "text": "The classic trap: default argument values are evaluated once at function definition time, not on each call. A mutable default is shared across all calls, so it accumulates state. The fix is to default to `None` and create a fresh object inside the function."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# BUG: the list is created once and reused",
+                "def add(item, bucket=[]):",
+                "    bucket.append(item)",
+                "    return bucket",
+                "",
+                "add(1)   # [1]",
+                "add(2)   # [1, 2]  <-- surprise!",
+                "",
+                "# FIX",
+                "def add(item, bucket=None):",
+                "    if bucket is None:",
+                "        bucket = []",
+                "    bucket.append(item)",
+                "    return bucket"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "How is data passed to functions in Python - by value or by reference?",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Python uses 'pass by object reference' (sometimes called pass-by-assignment). The function receives a reference to the same object the caller holds. If you mutate a mutable object inside the function, the caller sees the change. If you rebind the parameter to a new object, the caller is unaffected because you only changed the local name."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "def mutate(lst):",
+                "    lst.append(99)      # mutates the shared object",
+                "",
+                "def rebind(lst):",
+                "    lst = [0]           # rebinds local name only",
+                "",
+                "data = [1, 2]",
+                "mutate(data)            # data is now [1, 2, 99]",
+                "rebind(data)            # data is still [1, 2, 99]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What are dunder (magic) methods? Name the ones you implement most often.",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Dunder methods (double-underscore) hook into Python's data model so your objects work with built-in syntax and functions. Implementing them is how operator overloading, iteration, indexing, and string conversion work. `__repr__` should be unambiguous and ideally reconstruct the object (for developers); `__str__` is the human-friendly form. If you define `__eq__` you should also define `__hash__` (or set it to None) to keep equal objects hashing the same."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "class Money:",
+                "    def __init__(self, cents):",
+                "        self.cents = cents",
+                "    def __repr__(self):",
+                "        return f'Money({self.cents})'",
+                "    def __eq__(self, other):",
+                "        return isinstance(other, Money) and self.cents == other.cents",
+                "    def __hash__(self):",
+                "        return hash(self.cents)",
+                "    def __lt__(self, other):",
+                "        return self.cents < other.cents",
+                "    def __add__(self, other):",
+                "        return Money(self.cents + other.cents)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Explain *args and **kwargs, plus positional-only and keyword-only parameters.",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "`*args` collects extra positional arguments into a tuple; `**kwargs` collects extra keyword arguments into a dict. They let functions accept a variable number of arguments and are also used to forward arguments transparently. A bare `*` in the signature forces everything after it to be keyword-only, and `/` forces everything before it to be positional-only - both improve API clarity and stability."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "def f(pos_only, /, normal, *args, kw_only, **kwargs):",
+                "    ...",
+                "",
+                "# pos_only must be positional, kw_only must be passed by keyword",
+                "f(1, 2, 3, 4, kw_only=5, extra='x')",
+                "",
+                "# forwarding pattern",
+                "def wrapper(*args, **kwargs):",
+                "    return real_function(*args, **kwargs)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is a closure, and what is the late-binding gotcha?",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A closure is a nested function that captures and remembers variables from its enclosing scope even after that scope has returned. Python captures variables by reference, not by value, which leads to the 'late binding' surprise: a loop that creates closures all see the loop variable's final value. The fix is to bind the current value as a default argument."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# BUG: all functions return 2",
+                "funcs = [lambda: i for i in range(3)]",
+                "[f() for f in funcs]   # [2, 2, 2]",
+                "",
+                "# FIX: capture i now via default arg",
+                "funcs = [lambda i=i: i for i in range(3)]",
+                "[f() for f in funcs]   # [0, 1, 2]",
+                "",
+                "def counter():",
+                "    count = 0",
+                "    def inc():",
+                "        nonlocal count   # needed to rebind enclosing var",
+                "        count += 1",
+                "        return count",
+                "    return inc"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "How do decorators work? Show one with and without arguments.",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A decorator is a callable that takes a function and returns a (usually wrapped) function. `@decorator` is just syntactic sugar for `func = decorator(func)`. Always use `functools.wraps` on the wrapper so the decorated function keeps its `__name__`, docstring, and signature metadata. A decorator that takes arguments is a decorator factory: an outer function returns the actual decorator."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import functools, time",
+                "",
+                "def timed(func):",
+                "    @functools.wraps(func)",
+                "    def wrapper(*args, **kwargs):",
+                "        start = time.perf_counter()",
+                "        result = func(*args, **kwargs)",
+                "        print(f'{func.__name__} took {time.perf_counter()-start:.4f}s')",
+                "        return result",
+                "    return wrapper",
+                "",
+                "def retry(times):                 # decorator with arguments",
+                "    def decorator(func):",
+                "        @functools.wraps(func)",
+                "        def wrapper(*args, **kwargs):",
+                "            for attempt in range(times):",
+                "                try:",
+                "                    return func(*args, **kwargs)",
+                "                except Exception:",
+                "                    if attempt == times - 1:",
+                "                        raise",
+                "        return wrapper",
+                "    return decorator",
+                "",
+                "@retry(3)",
+                "@timed",
+                "def flaky():",
+                "    ..."
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is a generator and why is it memory efficient?",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A generator is a function that uses `yield`; calling it returns a generator object that produces values lazily, one at a time, only when iterated. Between yields it pauses and preserves its local state. Because it never builds the whole sequence in memory, it can represent huge or infinite streams in O(1) space, which is ideal for processing large files or data pipelines."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "def read_lines(path):",
+                "    with open(path) as f:",
+                "        for line in f:        # lazy: one line at a time",
+                "            yield line.rstrip()",
+                "",
+                "# infinite generator",
+                "def naturals():",
+                "    n = 0",
+                "    while True:",
+                "        yield n",
+                "        n += 1",
+                "",
+                "# generator expression (lazy, no list built)",
+                "total = sum(x * x for x in range(1_000_000))"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "What is the difference between a list comprehension and a generator expression?",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A list comprehension `[x for x in it]` eagerly builds and stores the entire list in memory. A generator expression `(x for x in it)` is lazy - it yields items on demand and holds only the current state. Use a generator expression when you only iterate once and want to save memory; use a list comprehension when you need indexing, len(), or multiple passes. Dict and set comprehensions also exist."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "squares_list = [x*x for x in range(5)]        # [0, 1, 4, 9, 16]",
+                "squares_gen  = (x*x for x in range(5))        # <generator object>",
+                "",
+                "names = {'a': 1, 'b': 2}",
+                "inv = {v: k for k, v in names.items()}        # dict comprehension",
+                "uniq = {len(w) for w in ['a', 'bb', 'cc']}    # set comprehension",
+                "",
+                "# memory: generator stays flat, list grows with n",
+                "any(is_prime(n) for n in range(10**9))        # stops early, no list"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What is a context manager and how do you write one?",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A context manager guarantees setup and cleanup around a block via the `with` statement. It implements `__enter__` (runs on entry, return value is bound to `as`) and `__exit__` (runs on exit even if an exception is raised, so it's where you release resources). `__exit__` receiving exception info lets it suppress or log errors. The `contextlib.contextmanager` decorator lets you write one as a generator: code before `yield` is setup, code after is teardown."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from contextlib import contextmanager",
+                "import time",
+                "",
+                "class Timer:",
+                "    def __enter__(self):",
+                "        self.start = time.perf_counter()",
+                "        return self",
+                "    def __exit__(self, exc_type, exc, tb):",
+                "        self.elapsed = time.perf_counter() - self.start",
+                "        return False     # don't suppress exceptions",
+                "",
+                "@contextmanager",
+                "def transaction(conn):",
+                "    tx = conn.begin()",
+                "    try:",
+                "        yield conn",
+                "        tx.commit()",
+                "    except Exception:",
+                "        tx.rollback()",
+                "        raise"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What is the GIL and what are its implications for concurrency?",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The Global Interpreter Lock is a mutex in CPython that allows only one thread to execute Python bytecode at a time. It exists to make reference-counting memory management thread-safe and to simplify the C API. The key implication: multiple threads cannot run CPU-bound Python code in parallel - they are serialized, so threading gives no speedup (and some overhead) for CPU work."
+            },
+            {
+              "kind": "text",
+              "text": "Threads DO help for I/O-bound work because the GIL is released during blocking I/O (and inside many C extensions like NumPy). For CPU-bound parallelism, use multiprocessing (separate processes, separate GILs) or push work into C. Note: this is a CPython implementation detail - Jython and PyPy differ, and recent CPython has experimental free-threaded (no-GIL) builds."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# CPU-bound -> threads do NOT parallelize (GIL), use processes",
+                "from concurrent.futures import ProcessPoolExecutor",
+                "with ProcessPoolExecutor() as ex:",
+                "    results = list(ex.map(cpu_heavy, items))",
+                "",
+                "# I/O-bound -> threads DO help (GIL released during I/O)",
+                "from concurrent.futures import ThreadPoolExecutor",
+                "with ThreadPoolExecutor(max_workers=20) as ex:",
+                "    results = list(ex.map(fetch_url, urls))"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "How does Python manage memory and garbage collection?",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "CPython's primary mechanism is reference counting: each object tracks how many references point to it, and it's freed immediately when the count hits zero. Reference counting alone cannot reclaim reference cycles (A references B and B references A), so CPython adds a generational cyclic garbage collector that periodically finds and frees unreachable cycles. Objects are grouped into three generations; younger generations are collected more often."
+            },
+            {
+              "kind": "text",
+              "text": "Practical points: you rarely manage memory manually; use context managers/`with` to release resources promptly. `weakref` lets you reference an object without keeping it alive (useful for caches). You can tune or disable the cyclic collector via the `gc` module, and `__del__` finalizers should be used cautiously because they can resurrect objects and complicate cycle collection."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "What are type hints, and are they enforced at runtime?",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Type hints (PEP 484) annotate variables, parameters, and return values. They are NOT enforced by the interpreter at runtime - Python stays dynamically typed and ignores them during execution (except being stored in `__annotations__`). Their value is tooling: static checkers like mypy or pyright catch bugs before runtime, and editors use them for autocomplete and refactoring. Frameworks like FastAPI and Pydantic do read hints at runtime to drive validation."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from typing import Optional",
+                "",
+                "def greet(name: str, times: int = 1) -> str:",
+                "    return (f'Hi {name} ' * times).strip()",
+                "",
+                "def find(uid: int) -> Optional[dict]:   # dict | None in 3.10+",
+                "    ...",
+                "",
+                "# modern 3.10+ syntax",
+                "def parse(x: int | str) -> list[str]:",
+                "    ..."
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "What are typing.Protocol and Generics used for?",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "`Protocol` enables structural (duck) typing for static checkers: any object with the required methods satisfies the protocol, without explicit inheritance. This captures Python's 'if it quacks like a duck' philosophy in a type-checkable way. Generics (`TypeVar`, `Generic`) let you write reusable, type-safe containers and functions whose types are parameterized, so a `Stack[int]` returns `int`, not `Any`."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from typing import Protocol, TypeVar, Generic",
+                "",
+                "class Closeable(Protocol):",
+                "    def close(self) -> None: ...",
+                "",
+                "def shutdown(resource: Closeable) -> None:",
+                "    resource.close()        # any object with close() type-checks",
+                "",
+                "T = TypeVar('T')",
+                "class Stack(Generic[T]):",
+                "    def __init__(self) -> None:",
+                "        self._items: list[T] = []",
+                "    def push(self, item: T) -> None:",
+                "        self._items.append(item)",
+                "    def pop(self) -> T:",
+                "        return self._items.pop()"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 15,
+          "qText": "What does functools.lru_cache do and when would you use it?",
+          "header": "Stage 1 - Python Deep Dive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "`@lru_cache` memoizes a function: it stores results keyed by the arguments (which must be hashable) and returns the cached value on repeat calls, evicting least-recently-used entries when `maxsize` is reached. It's great for pure, expensive, frequently-repeated computations. Caveats: it holds references to results (potential memory growth and stale data), it can't be used with unhashable args, and for instance methods it can keep `self` alive - `functools.cache` is the unbounded variant in 3.9+."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from functools import lru_cache",
+                "",
+                "@lru_cache(maxsize=128)",
+                "def fib(n: int) -> int:",
+                "    return n if n < 2 else fib(n-1) + fib(n-2)",
+                "",
+                "fib(100)             # fast: memoized",
+                "fib.cache_info()     # hits, misses, maxsize, currsize",
+                "fib.cache_clear()    # reset"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "pyb-2": [
+    {
+      "sectionTitle": "Stage 2 - OOP & Design Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is the difference between @classmethod, @staticmethod, and instance methods?",
+          "header": "Stage 2 - OOP & Design Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "An instance method receives `self` and can access/modify instance state. A `@classmethod` receives `cls` instead of `self`, so it operates on the class (and respects subclassing) - the classic use is an alternative constructor / factory. A `@staticmethod` receives neither; it's just a function namespaced under the class with no access to instance or class state, used for grouping related helpers."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "class User:",
+                "    def __init__(self, name):",
+                "        self.name = name",
+                "",
+                "    def greet(self):                 # instance method",
+                "        return f'Hi {self.name}'",
+                "",
+                "    @classmethod",
+                "    def from_row(cls, row):          # factory, subclass-aware",
+                "        return cls(row['name'])",
+                "",
+                "    @staticmethod",
+                "    def is_valid(name):              # plain helper",
+                "        return bool(name and name.strip())"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Explain Python's Method Resolution Order (MRO) and the diamond problem.",
+          "header": "Stage 2 - OOP & Design Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "With multiple inheritance, the MRO is the deterministic order in which Python searches base classes for an attribute or method. Python uses the C3 linearization algorithm, which guarantees a consistent order that respects each class's own ordering and never visits a class before its subclasses. The diamond problem (D inherits B and C, both inheriting A) is resolved by C3 so A is visited only once, after both B and C."
+            },
+            {
+              "kind": "text",
+              "text": "`super()` follows the MRO, not the literal parent, which is what makes cooperative multiple inheritance work - each class calls `super().__init__()` and the chain runs every class exactly once. You can inspect the order with `ClassName.__mro__` or `ClassName.mro()`."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "class A: pass",
+                "class B(A): pass",
+                "class C(A): pass",
+                "class D(B, C): pass",
+                "",
+                "D.__mro__",
+                "# (D, B, C, A, object)  -- A appears once, after B and C"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What is an abstract base class and why use one?",
+          "header": "Stage 2 - OOP & Design Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "An abstract base class (ABC) defines an interface that subclasses must implement. Using `abc.ABC` with `@abstractmethod`, Python prevents instantiation of the base or any subclass that hasn't overridden every abstract method, failing fast at object-creation time. ABCs document a contract and enable `isinstance` checks, though in many Python codebases duck typing or `Protocol` is preferred for looser coupling."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from abc import ABC, abstractmethod",
+                "",
+                "class PaymentGateway(ABC):",
+                "    @abstractmethod",
+                "    def charge(self, amount: int) -> bool: ...",
+                "",
+                "class Stripe(PaymentGateway):",
+                "    def charge(self, amount: int) -> bool:",
+                "        return True",
+                "",
+                "PaymentGateway()    # TypeError: can't instantiate abstract class",
+                "Stripe()            # OK"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What are dataclasses and when would you use them over a normal class?",
+          "header": "Stage 2 - OOP & Design Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "`@dataclass` auto-generates boilerplate - `__init__`, `__repr__`, `__eq__`, and optionally ordering and hashing - from class-level annotated fields. Use them for data-holding objects to avoid writing repetitive constructors. Use `field(default_factory=list)` for mutable defaults (never a bare mutable default), `frozen=True` for immutable/hashable instances, and `__post_init__` for validation or derived fields."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from dataclasses import dataclass, field",
+                "",
+                "@dataclass(frozen=True, order=True)",
+                "class Point:",
+                "    x: int",
+                "    y: int",
+                "    tags: list[str] = field(default_factory=list)",
+                "",
+                "    def __post_init__(self):",
+                "        if self.x < 0:",
+                "            raise ValueError('x must be >= 0')",
+                "",
+                "p = Point(1, 2)",
+                "p == Point(1, 2)    # True, auto __eq__"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "When should you favor composition over inheritance?",
+          "header": "Stage 2 - OOP & Design Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Favor composition (an object holds and delegates to other objects) when the relationship is 'has-a' rather than a strict 'is-a', when you'd otherwise create deep or fragile class hierarchies, or when behavior should be swappable at runtime. Inheritance tightly couples a subclass to its parent's implementation and risks the fragile base class problem. Composition keeps components decoupled, testable, and easy to recombine - and pairs naturally with dependency injection."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import json",
+                "",
+                "# Composition: inject behavior instead of subclassing",
+                "class JsonFormatter:",
+                "    def format(self, data): return json.dumps(data)",
+                "",
+                "class Report:",
+                "    def __init__(self, formatter):     # depends on an interface",
+                "        self.formatter = formatter",
+                "    def render(self, data):",
+                "        return self.formatter.format(data)",
+                "",
+                "report = Report(JsonFormatter())   # swap formatter freely"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "How do the SOLID principles apply in Python?",
+          "header": "Stage 2 - OOP & Design Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Single Responsibility: a class/module should have one reason to change. Open/Closed: extend behavior without modifying existing code - in Python often via injecting strategies or registering plugins. Liskov Substitution: subtypes must be usable wherever the base is expected without breaking expectations. Interface Segregation: prefer small focused interfaces (Python Protocols) over fat ones. Dependency Inversion: depend on abstractions (Protocol/ABC) and inject concrete implementations."
+            },
+            {
+              "kind": "text",
+              "text": "Python's dynamic nature means several of these are achieved with less ceremony than in Java/C# - duck typing and first-class functions often replace interface hierarchies. The spirit (loose coupling, testability, single responsibility) matters more than literal mechanics."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What does __slots__ do and what are its tradeoffs?",
+          "header": "Stage 2 - OOP & Design Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Normally each instance stores attributes in a per-instance `__dict__`, which is flexible but memory-heavy. Declaring `__slots__` tells Python to store the named attributes in a fixed, array-like layout and skip `__dict__`, which significantly reduces memory for many small objects and slightly speeds attribute access. Tradeoffs: you can't add attributes not listed in `__slots__`, and multiple inheritance and dynamic attributes become harder; subclasses need their own `__slots__` to keep the benefit."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "class PointDict:",
+                "    def __init__(self, x, y):",
+                "        self.x, self.y = x, y",
+                "",
+                "class PointSlots:",
+                "    __slots__ = ('x', 'y')   # no per-instance __dict__",
+                "    def __init__(self, x, y):",
+                "        self.x, self.y = x, y",
+                "",
+                "p = PointSlots(1, 2)",
+                "p.z = 3    # AttributeError: no slot 'z'"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "How do you implement a Singleton in Python, and is it idiomatic?",
+          "header": "Stage 2 - OOP & Design Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The most Pythonic 'singleton' is simply a module: a module is imported once and its top-level state is shared. If you need an object, common approaches are a function returning a cached instance (`functools.lru_cache`/`cache`), or overriding `__new__`. Heavyweight metaclass singletons are usually overkill in Python and complicate testing - many teams treat global mutable singletons as an anti-pattern and prefer dependency injection."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from functools import cache",
+                "",
+                "@cache",
+                "def get_config():        # one shared instance, lazily created",
+                "    return load_config_from_disk()",
+                "",
+                "# or via __new__",
+                "class Singleton:",
+                "    _instance = None",
+                "    def __new__(cls):",
+                "        if cls._instance is None:",
+                "            cls._instance = super().__new__(cls)",
+                "        return cls._instance"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How do you implement the Strategy pattern Pythonically?",
+          "header": "Stage 2 - OOP & Design Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Because functions are first-class objects, the Strategy pattern in Python rarely needs a class hierarchy - you just pass a function (or any callable) as the algorithm. This is lighter than the classic OOP version with one class per strategy. You can also keep strategies in a dict for a clean registry/dispatch table."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "def by_price(items): return sorted(items, key=lambda i: i.price)",
+                "def by_name(items):  return sorted(items, key=lambda i: i.name)",
+                "",
+                "STRATEGIES = {'price': by_price, 'name': by_name}",
+                "",
+                "def list_items(items, strategy='price'):",
+                "    return STRATEGIES[strategy](items)   # pick algorithm at runtime"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What is the difference between __str__ and __repr__?",
+          "header": "Stage 2 - OOP & Design Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "`__repr__` is for developers/debugging and should be unambiguous - ideally a string that could recreate the object, e.g. `User(id=5)`. It's what you see in the REPL, in containers, and in logs, and it's the fallback if `__str__` is missing. `__str__` is the user-facing, readable representation used by `str()` and `print()`. Best practice: always define `__repr__`; define `__str__` only when you want a distinct human-friendly form."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What is a property and why use it instead of a public attribute?",
+          "header": "Stage 2 - OOP & Design Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A `@property` exposes a method as if it were an attribute, so you can add validation, computation, or laziness without changing the public interface. This embodies 'uniform access' - callers don't care whether `obj.area` is stored or computed. In Python you typically start with a plain public attribute and only promote it to a property when you actually need logic, avoiding premature getters/setters."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "class Circle:",
+                "    def __init__(self, radius):",
+                "        self._radius = radius",
+                "    @property",
+                "    def radius(self):",
+                "        return self._radius",
+                "    @radius.setter",
+                "    def radius(self, value):",
+                "        if value < 0:",
+                "            raise ValueError('radius must be >= 0')",
+                "        self._radius = value",
+                "    @property",
+                "    def area(self):              # computed, read-only",
+                "        return 3.14159 * self._radius ** 2"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "When would you choose a dataclass, NamedTuple, dict, or Pydantic model?",
+          "header": "Stage 2 - OOP & Design Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use a plain dict for loose, ad-hoc, dynamic data. Use a NamedTuple for a lightweight, immutable, indexable record (tuple-compatible, very cheap). Use a dataclass for a mutable or frozen typed record where you want methods and clean equality without runtime validation. Use a Pydantic model at trust boundaries (API input, config, external data) because it parses, coerces, and validates data at runtime against the declared types - at the cost of more overhead than a dataclass."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "What are mixins and how are they used?",
+          "header": "Stage 2 - OOP & Design Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A mixin is a class that provides reusable behavior to be combined with others via multiple inheritance, but is not meant to be instantiated on its own. Mixins should be small and focused, relying on the host class for the attributes they use. They leverage the MRO and cooperative `super()`. Django (e.g. `LoginRequiredMixin`) and DRF use them heavily. Overusing mixins can obscure the MRO, so keep them few and clearly named."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import json",
+                "",
+                "class JsonMixin:",
+                "    def to_json(self):",
+                "        return json.dumps(self.__dict__)",
+                "",
+                "class TimestampMixin:",
+                "    created_at = None",
+                "",
+                "class Event(JsonMixin, TimestampMixin):",
+                "    def __init__(self, name):",
+                "        self.name = name"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "pyb-3": [
+    {
+      "sectionTitle": "Stage 3 - Async & Concurrency Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is asyncio and how does the event loop work?",
+          "header": "Stage 3 - Async & Concurrency Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "asyncio provides single-threaded, cooperative concurrency. A single event loop runs coroutines; each coroutine voluntarily yields control at an `await` on an I/O operation, letting the loop run other ready tasks while the first waits. There is no preemption and no parallelism - it's concurrency by interleaving. This is extremely efficient for I/O-bound workloads (thousands of network connections) because one thread juggles many waiting operations instead of blocking on each."
+            },
+            {
+              "kind": "text",
+              "text": "Crucial rule: never call a blocking function (a long CPU loop or a synchronous I/O call like time.sleep or a sync DB driver) inside a coroutine, because it freezes the entire loop and all other tasks. Offload blocking work with asyncio.to_thread or run_in_executor."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart TD",
+                "  A[Event Loop] --> B{Task ready?}",
+                "  B -- yes --> C[Run coroutine]",
+                "  C --> D{Hits await on I/O}",
+                "  D --> E[Suspend task, register callback]",
+                "  E --> A",
+                "  D -- I/O done --> F[Resume task]",
+                "  F --> A",
+                "  B -- no, all waiting --> G[Poll I/O selector]",
+                "  G --> A"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What is the difference between a coroutine and a Task?",
+          "header": "Stage 3 - Async & Concurrency Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Calling an `async def` function returns a coroutine object - it does not start running until awaited or scheduled. A Task wraps a coroutine and schedules it to run on the event loop concurrently, immediately. So `await coro()` runs it sequentially (you wait right there), while `asyncio.create_task(coro())` starts it in the background and you can await its result later, enabling overlap."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "async def fetch(url):",
+                "    ...",
+                "",
+                "# sequential: total time = sum of both",
+                "a = await fetch('x')",
+                "b = await fetch('y')",
+                "",
+                "# concurrent: total time ~ max of both",
+                "ta = asyncio.create_task(fetch('x'))",
+                "tb = asyncio.create_task(fetch('y'))",
+                "a, b = await ta, await tb"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "How do you run many coroutines concurrently with asyncio.gather?",
+          "header": "Stage 3 - Async & Concurrency Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "`asyncio.gather` schedules multiple awaitables concurrently and returns their results in order once all complete. By default, the first exception propagates and cancels the gather; pass `return_exceptions=True` to collect exceptions as results instead. In modern Python, `asyncio.TaskGroup` is the recommended structured-concurrency alternative because it cancels siblings cleanly on failure."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import asyncio",
+                "",
+                "async def main(urls):",
+                "    results = await asyncio.gather(",
+                "        *(fetch(u) for u in urls),",
+                "        return_exceptions=True,",
+                "    )",
+                "    return results",
+                "",
+                "# structured concurrency (3.11+)",
+                "async def main2(urls):",
+                "    async with asyncio.TaskGroup() as tg:",
+                "        tasks = [tg.create_task(fetch(u)) for u in urls]",
+                "    return [t.result() for t in tasks]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "When should you use threading vs multiprocessing vs asyncio?",
+          "header": "Stage 3 - Async & Concurrency Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "For I/O-bound work with libraries that support async, asyncio scales best (one thread, thousands of concurrent waits). For I/O-bound work with blocking libraries, threading is simplest because the GIL is released during I/O. For CPU-bound work, use multiprocessing (or a C/native extension), because the GIL prevents threads from running Python bytecode in parallel; separate processes each have their own interpreter and GIL."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# Decision guide",
+                "# I/O-bound + async libs ........ asyncio",
+                "# I/O-bound + blocking libs ...... threading / ThreadPoolExecutor",
+                "# CPU-bound ...................... multiprocessing / ProcessPoolExecutor",
+                "",
+                "from concurrent.futures import ProcessPoolExecutor",
+                "with ProcessPoolExecutor() as ex:   # true parallelism for CPU",
+                "    out = list(ex.map(crunch, data))"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "How do you call blocking code from an async function without freezing the loop?",
+          "header": "Stage 3 - Async & Concurrency Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Move the blocking call off the event-loop thread. `asyncio.to_thread(fn, *args)` runs it in the default thread pool and lets you await the result; `loop.run_in_executor(executor, fn, ...)` is the lower-level form and lets you target a process pool for CPU-bound work. This keeps the loop responsive while the slow call runs elsewhere."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import asyncio",
+                "",
+                "def blocking_io():",
+                "    return open('big.txt').read()    # sync, would block the loop",
+                "",
+                "async def handler():",
+                "    data = await asyncio.to_thread(blocking_io)",
+                "    return len(data)",
+                "",
+                "# CPU-bound -> use a process pool executor",
+                "loop = asyncio.get_running_loop()",
+                "result = await loop.run_in_executor(process_pool, cpu_heavy, arg)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What are the most common asyncio mistakes?",
+          "header": "Stage 3 - Async & Concurrency Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Top mistakes: (1) forgetting to `await` a coroutine, so it never runs and you get a 'coroutine was never awaited' warning; (2) calling blocking functions (time.sleep, requests, sync DB drivers) inside coroutines, freezing the whole loop; (3) creating tasks with create_task and never awaiting them, so exceptions are swallowed and they may be garbage-collected; (4) mixing sync and async naively. The fixes are asyncio.sleep, async-native libraries (httpx, asyncpg), and keeping references to tasks (or using TaskGroup)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import asyncio, time",
+                "",
+                "# WRONG: blocks the loop",
+                "async def bad():",
+                "    time.sleep(5)            # freezes everything",
+                "    requests.get(url)        # sync, blocks",
+                "",
+                "# RIGHT",
+                "async def good():",
+                "    await asyncio.sleep(5)",
+                "    async with httpx.AsyncClient() as c:",
+                "        await c.get(url)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "How do timeouts and cancellation work in asyncio?",
+          "header": "Stage 3 - Async & Concurrency Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Cancellation is cooperative: cancelling a task raises `asyncio.CancelledError` inside it at the next await point, which you can catch to clean up (then usually re-raise). `asyncio.wait_for(coro, timeout)` cancels the coroutine and raises `TimeoutError` if it overruns; in 3.11+ `asyncio.timeout()` is a cleaner context-manager form. Always clean up resources on cancellation, and avoid suppressing CancelledError silently."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import asyncio",
+                "",
+                "async def main():",
+                "    try:",
+                "        async with asyncio.timeout(2.0):   # 3.11+",
+                "            await slow_operation()",
+                "    except TimeoutError:",
+                "        print('timed out')",
+                "",
+                "# older style",
+                "result = await asyncio.wait_for(slow_operation(), timeout=2.0)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is a race condition and how do you prevent one?",
+          "header": "Stage 3 - Async & Concurrency Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A race condition occurs when the correctness of a program depends on the unpredictable interleaving of concurrent operations on shared mutable state - e.g. two threads doing read-modify-write on a counter and losing an update. Prevent it by protecting the critical section with a lock (mutex), using atomic operations, or eliminating shared mutable state (immutability, message passing via queues). In asyncio, even though it's single-threaded, awaits are yield points so you still need asyncio.Lock for invariants that span an await."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import asyncio",
+                "lock = asyncio.Lock()",
+                "balance = 0",
+                "",
+                "async def deposit(n):",
+                "    async with lock:           # only one coroutine in critical section",
+                "        global balance",
+                "        current = balance",
+                "        await asyncio.sleep(0) # yield point",
+                "        balance = current + n"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "What is a deadlock and how do you avoid it?",
+          "header": "Stage 3 - Async & Concurrency Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A deadlock is when two or more units of execution each hold a resource the other needs and wait forever. The classic cause is acquiring multiple locks in different orders. Avoid deadlocks by: acquiring locks in a consistent global order, using timeouts on lock acquisition, minimizing the scope of locks, and preferring higher-level constructs like queues that pass ownership rather than sharing. The four Coffman conditions (mutual exclusion, hold-and-wait, no preemption, circular wait) must all hold; breaking any one prevents deadlock."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "How does a producer/consumer pattern work with asyncio.Queue?",
+          "header": "Stage 3 - Async & Concurrency Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A queue decouples producers from consumers and provides backpressure. Producers `await queue.put(item)` (which blocks if the queue is full, bounding memory) and consumers `await queue.get()`. `queue.task_done()` and `queue.join()` let you wait until all items are processed. This is the idiomatic way to bound concurrency and avoid overwhelming downstream systems."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import asyncio",
+                "",
+                "async def producer(q):",
+                "    for i in range(10):",
+                "        await q.put(i)",
+                "",
+                "async def consumer(q):",
+                "    while True:",
+                "        item = await q.get()",
+                "        await process(item)",
+                "        q.task_done()",
+                "",
+                "async def main():",
+                "    q = asyncio.Queue(maxsize=5)   # backpressure",
+                "    workers = [asyncio.create_task(consumer(q)) for _ in range(3)]",
+                "    await producer(q)",
+                "    await q.join()",
+                "    for w in workers:",
+                "        w.cancel()"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "Why doesn't the GIL remove the need for locks in threaded code?",
+          "header": "Stage 3 - Async & Concurrency Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The GIL guarantees only that a single bytecode instruction runs atomically, but most operations span multiple bytecodes. A statement like `counter += 1` compiles to load, add, and store - the GIL can be released between them, so two threads can interleave and lose updates. Therefore you still need locks (or atomic-by-design structures like queue.Queue) to protect compound read-modify-write operations on shared state."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import threading",
+                "counter = 0",
+                "lock = threading.Lock()",
+                "",
+                "def worker():",
+                "    global counter",
+                "    for _ in range(100_000):",
+                "        with lock:          # needed: += is not atomic",
+                "            counter += 1"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What is the difference between concurrency and parallelism?",
+          "header": "Stage 3 - Async & Concurrency Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Concurrency is dealing with many tasks at once by interleaving their progress - they may not literally run at the same instant (asyncio on one thread is pure concurrency). Parallelism is actually executing multiple tasks simultaneously on multiple CPU cores (multiprocessing). In CPython, threads give concurrency for I/O but not parallelism for CPU because of the GIL; only multiprocessing (or native code) achieves true CPU parallelism."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "What is an async generator and async context manager?",
+          "header": "Stage 3 - Async & Concurrency Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "An async generator uses `async def` plus `yield` and is consumed with `async for`, allowing each step to await I/O - perfect for streaming paginated API results or DB cursors without loading everything. An async context manager implements `__aenter__`/`__aexit__` and is used with `async with`, for resources whose setup/teardown is itself asynchronous (opening an async DB connection or HTTP client)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "async def pages(client, url):",
+                "    while url:",
+                "        resp = await client.get(url)",
+                "        data = resp.json()",
+                "        for item in data['items']:",
+                "            yield item",
+                "        url = data.get('next')",
+                "",
+                "async def main():",
+                "    async with httpx.AsyncClient() as client:   # async with",
+                "        async for item in pages(client, START):  # async for",
+                "            process(item)"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "pyb-4": [
+    {
+      "sectionTitle": "Stage 4 - FastAPI Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is FastAPI built on and why is it fast?",
+          "header": "Stage 4 - FastAPI Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "FastAPI is built on Starlette (an ASGI framework providing routing, middleware, and the async request/response layer) and Pydantic (for data validation and serialization). It leans heavily on standard Python type hints: you annotate parameters and models, and FastAPI uses those hints to parse, validate, and document automatically. It's fast because it's async (ASGI on uvicorn) and because Pydantic v2's validation core is written in Rust. As a bonus it generates OpenAPI/Swagger docs for free."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from fastapi import FastAPI",
+                "from pydantic import BaseModel",
+                "",
+                "app = FastAPI()",
+                "",
+                "class Item(BaseModel):",
+                "    name: str",
+                "    price: float",
+                "",
+                "@app.post('/items')",
+                "async def create_item(item: Item) -> Item:",
+                "    return item    # validated in, serialized out, documented automatically"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "How does FastAPI distinguish path, query, and body parameters?",
+          "header": "Stage 4 - FastAPI Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "FastAPI infers parameter source from the function signature and the route. A name that appears in the path string (e.g. `/items/{item_id}`) is a path parameter. A simple-typed parameter not in the path (str, int, bool) defaults to a query parameter. A parameter typed as a Pydantic model is read from the request body as JSON. You can be explicit with `Path()`, `Query()`, and `Body()`, including validation constraints and defaults."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from fastapi import FastAPI, Query, Path",
+                "",
+                "@app.get('/items/{item_id}')",
+                "async def read_item(",
+                "    item_id: int = Path(gt=0),                 # path param",
+                "    q: str | None = Query(default=None, max_length=50),  # query param",
+                "    limit: int = 10,                           # query param (default)",
+                "):",
+                "    return {'item_id': item_id, 'q': q, 'limit': limit}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "How does Pydantic validation work in FastAPI?",
+          "header": "Stage 4 - FastAPI Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "You declare request and response shapes as Pydantic models with typed, optionally constrained fields. On each request FastAPI parses the JSON body into the model, coercing and validating types; invalid input automatically returns a 422 response with a detailed error body - you don't write manual checks. `response_model` validates and filters the output (e.g. stripping a password field). Custom rules go in validators."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from pydantic import BaseModel, EmailStr, field_validator",
+                "",
+                "class UserIn(BaseModel):",
+                "    email: EmailStr",
+                "    age: int",
+                "    password: str",
+                "    @field_validator('age')",
+                "    @classmethod",
+                "    def adult(cls, v):",
+                "        if v < 18:",
+                "            raise ValueError('must be 18+')",
+                "        return v",
+                "",
+                "class UserOut(BaseModel):    # no password field exposed",
+                "    email: EmailStr",
+                "    age: int",
+                "",
+                "@app.post('/users', response_model=UserOut)",
+                "async def create(user: UserIn):",
+                "    return user"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Explain dependency injection in FastAPI with Depends().",
+          "header": "Stage 4 - FastAPI Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "`Depends()` declares that a route (or another dependency) needs a value produced by a callable. FastAPI resolves the dependency tree per request, caches each dependency within a request, and injects the result. This is how you share DB sessions, authentication/current-user logic, pagination params, and config - keeping route handlers thin and testable (you can override dependencies in tests). Dependencies that `yield` provide setup-and-teardown, ideal for opening and closing a DB session."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from fastapi import Depends",
+                "",
+                "def get_db():",
+                "    db = SessionLocal()",
+                "    try:",
+                "        yield db          # provided to the route",
+                "    finally:",
+                "        db.close()        # teardown after response",
+                "",
+                "async def current_user(token: str = Depends(oauth2_scheme)):",
+                "    return decode_user(token)",
+                "",
+                "@app.get('/me')",
+                "async def me(user = Depends(current_user), db = Depends(get_db)):",
+                "    return user"
+              ]
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart TD",
+                "  R[Incoming Request] --> M[Middleware]",
+                "  M --> RT[Route match]",
+                "  RT --> D1[Resolve get_db]",
+                "  RT --> D2[Resolve current_user]",
+                "  D2 --> OA[oauth2_scheme extracts token]",
+                "  D1 --> H[Handler runs]",
+                "  D2 --> H",
+                "  H --> V[Validate response_model]",
+                "  V --> RESP[Response]",
+                "  RESP --> TD[get_db teardown via finally]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "When should a FastAPI endpoint be `async def` vs plain `def`?",
+          "header": "Stage 4 - FastAPI Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use `async def` when the handler awaits async I/O (async DB driver, httpx, async cache) - it runs directly on the event loop. Use plain `def` when the handler does blocking work (a synchronous DB driver or CPU work); FastAPI then runs it in a threadpool so it doesn't block the loop. The dangerous case is an `async def` handler that calls a blocking function without awaiting it off-thread - that stalls the entire event loop and kills throughput."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# GOOD async: awaits async I/O",
+                "@app.get('/a')",
+                "async def a():",
+                "    return await async_db.fetch_all(query)",
+                "",
+                "# GOOD sync: blocking driver runs in threadpool",
+                "@app.get('/b')",
+                "def b():",
+                "    return sync_db.query(...)",
+                "",
+                "# BAD: blocking call inside async def freezes the loop",
+                "@app.get('/c')",
+                "async def c():",
+                "    return sync_db.query(...)   # don't do this"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "How do you implement OAuth2 password flow with JWT in FastAPI?",
+          "header": "Stage 4 - FastAPI Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A login endpoint verifies username/password (against a hashed password), then issues a signed JWT containing claims (subject, expiry). The client sends it as a Bearer token. `OAuth2PasswordBearer` extracts the token, and a `current_user` dependency decodes and verifies the JWT signature and expiry, raising 401 on failure. Protect routes by depending on `current_user`. Never store plaintext passwords - hash with bcrypt/passlib."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from fastapi.security import OAuth2PasswordBearer",
+                "from jose import jwt, JWTError",
+                "from passlib.context import CryptContext",
+                "",
+                "pwd = CryptContext(schemes=['bcrypt'])",
+                "oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')",
+                "",
+                "def create_token(sub: str):",
+                "    payload = {'sub': sub, 'exp': now + timedelta(minutes=30)}",
+                "    return jwt.encode(payload, SECRET, algorithm='HS256')",
+                "",
+                "async def current_user(token: str = Depends(oauth2_scheme)):",
+                "    try:",
+                "        data = jwt.decode(token, SECRET, algorithms=['HS256'])",
+                "    except JWTError:",
+                "        raise HTTPException(401, 'invalid token')",
+                "    return data['sub']"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "How do you raise errors and return custom status codes?",
+          "header": "Stage 4 - FastAPI Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Raise `HTTPException(status_code, detail)` to return an error response with the right status and JSON body. You can set a route's default success status with the `status_code` parameter, and register exception handlers via `@app.exception_handler` to translate your domain exceptions into consistent responses. Validation errors (422) are handled automatically by Pydantic."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from fastapi import HTTPException, status",
+                "",
+                "@app.get('/items/{id}')",
+                "async def get_item(id: int):",
+                "    item = db.get(id)",
+                "    if item is None:",
+                "        raise HTTPException(",
+                "            status_code=status.HTTP_404_NOT_FOUND,",
+                "            detail='Item not found',",
+                "        )",
+                "    return item",
+                "",
+                "@app.post('/items', status_code=status.HTTP_201_CREATED)",
+                "async def create(...):",
+                "    ..."
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is middleware in FastAPI and what is it used for?",
+          "header": "Stage 4 - FastAPI Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Middleware is code that wraps every request/response, running before the route handler and after it produces a response. It's used for cross-cutting concerns: CORS, request logging, timing headers, request IDs, gzip compression, and global error handling. A middleware receives the request and a `call_next` function; it can inspect/modify the request, call the handler, then inspect/modify the response."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from fastapi.middleware.cors import CORSMiddleware",
+                "import time",
+                "",
+                "app.add_middleware(CORSMiddleware, allow_origins=['*'])",
+                "",
+                "@app.middleware('http')",
+                "async def add_timing(request, call_next):",
+                "    start = time.perf_counter()",
+                "    response = await call_next(request)",
+                "    response.headers['X-Process-Time'] = str(time.perf_counter()-start)",
+                "    return response"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "What are BackgroundTasks and when should you use a real task queue instead?",
+          "header": "Stage 4 - FastAPI Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "`BackgroundTasks` lets you schedule work to run after the response is sent (e.g. sending a confirmation email) without making the client wait. But it runs in the same process, so it shares resources and is lost if the worker crashes or restarts - there's no persistence, retries, or distribution. For anything heavy, long-running, retryable, or that must survive restarts, use a real task queue like Celery or RQ with a broker."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from fastapi import BackgroundTasks",
+                "",
+                "def send_email(to: str):",
+                "    ...   # quick, fire-and-forget",
+                "",
+                "@app.post('/signup')",
+                "async def signup(email: str, bg: BackgroundTasks):",
+                "    user = create_user(email)",
+                "    bg.add_task(send_email, email)   # runs after response",
+                "    return {'id': user.id}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "How do you manage application settings/config in FastAPI?",
+          "header": "Stage 4 - FastAPI Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use pydantic-settings `BaseSettings`, which reads configuration from environment variables (and optional .env files) with type validation and defaults. This follows 12-factor config and keeps secrets out of code. Wrap it in a cached dependency so the settings object is built once and injected where needed, which also makes it easy to override in tests."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from pydantic_settings import BaseSettings",
+                "from functools import lru_cache",
+                "",
+                "class Settings(BaseSettings):",
+                "    database_url: str",
+                "    secret_key: str",
+                "    debug: bool = False",
+                "    model_config = {'env_file': '.env'}",
+                "",
+                "@lru_cache",
+                "def get_settings() -> Settings:",
+                "    return Settings()",
+                "",
+                "@app.get('/info')",
+                "async def info(settings: Settings = Depends(get_settings)):",
+                "    return {'debug': settings.debug}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What is the difference between field_validator and model_validator in Pydantic v2?",
+          "header": "Stage 4 - FastAPI Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "`field_validator` validates or transforms a single field and can run before (`mode='before'`) or after type coercion. `model_validator` runs on the whole model, so it's where you express cross-field rules (e.g. password and confirm must match, end date after start date). Validators should raise ValueError on failure; Pydantic turns that into a structured 422 in FastAPI."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from pydantic import BaseModel, model_validator, field_validator",
+                "",
+                "class SignUp(BaseModel):",
+                "    password: str",
+                "    confirm: str",
+                "    @field_validator('password')",
+                "    @classmethod",
+                "    def strong(cls, v):",
+                "        if len(v) < 8:",
+                "            raise ValueError('too short')",
+                "        return v",
+                "    @model_validator(mode='after')",
+                "    def match(self):",
+                "        if self.password != self.confirm:",
+                "            raise ValueError('passwords do not match')",
+                "        return self"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "How does FastAPI generate API documentation?",
+          "header": "Stage 4 - FastAPI Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "FastAPI introspects your routes, type hints, and Pydantic models to build an OpenAPI (Swagger) schema automatically, served at `/openapi.json`. It renders interactive docs at `/docs` (Swagger UI) and `/redoc` (ReDoc) with no extra work. You enrich the docs with summaries, descriptions, tags, response models, and example values, and Pydantic field metadata flows straight into the schema. This is a big productivity and onboarding win."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "How do you structure a larger FastAPI project?",
+          "header": "Stage 4 - FastAPI Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Split routes into `APIRouter` modules grouped by domain (users, orders), each with a prefix and tags, and include them on the main app. Separate layers: routers (HTTP), schemas (Pydantic), models (ORM), services/repositories (business logic and data access), and core (config, security, db). Use dependencies for the DB session and current user, and a lifespan handler for startup/shutdown (connect pools, etc.). This keeps handlers thin and the codebase testable."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from fastapi import APIRouter",
+                "",
+                "router = APIRouter(prefix='/users', tags=['users'])",
+                "",
+                "@router.get('/{uid}')",
+                "async def get_user(uid: int, db = Depends(get_db)):",
+                "    return user_service.get(db, uid)",
+                "",
+                "# main.py",
+                "app.include_router(router)"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "pyb-5": [
+    {
+      "sectionTitle": "Stage 5 - Django & Flask Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is Django's request/response lifecycle (MVT)?",
+          "header": "Stage 5 - Django & Flask Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Django follows MVT (Model-View-Template). A request hits the WSGI/ASGI server, passes through the middleware stack (top-down), is matched by URL routing (urls.py) to a view, and the view executes business logic - querying Models via the ORM - and returns an HttpResponse, often by rendering a Template or serializing data. The response then travels back up through middleware. The View is the controller-equivalent; Templates handle presentation."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart TD",
+                "  R[Request] --> S[WSGI/ASGI server]",
+                "  S --> MW[Middleware in]",
+                "  MW --> U[URL resolver]",
+                "  U --> V[View]",
+                "  V --> M[(Model / ORM)]",
+                "  V --> T[Template / serializer]",
+                "  T --> MWO[Middleware out]",
+                "  MWO --> RESP[Response]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "How do Django migrations work?",
+          "header": "Stage 5 - Django & Flask Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Migrations are versioned, ordered Python files describing schema changes derived from your models. `makemigrations` inspects model changes and generates a migration; `migrate` applies pending migrations to the database and records them in the `django_migrations` table so each runs once. Migrations have dependencies forming a graph, support data migrations (RunPython) for backfills, and can be reversed. You commit migration files to version control so every environment converges to the same schema."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# models.py change -> generate -> apply",
+                "python manage.py makemigrations app_name",
+                "python manage.py migrate",
+                "",
+                "python manage.py showmigrations     # see applied/pending",
+                "python manage.py migrate app 0003   # migrate to a specific state"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What is the difference between select_related and prefetch_related?",
+          "header": "Stage 5 - Django & Flask Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Both fight the N+1 query problem by eager-loading related objects. `select_related` is for single-valued relationships (ForeignKey, OneToOne) and performs a SQL JOIN to fetch everything in one query. `prefetch_related` is for multi-valued relationships (reverse FK, ManyToMany); it runs a separate query per relation and joins in Python, because a JOIN would multiply rows. Choosing the right one avoids hundreds of small queries."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# N+1: one query for books, one per author access",
+                "for b in Book.objects.all():",
+                "    print(b.author.name)        # hidden query each iteration",
+                "",
+                "# fixed with a JOIN (FK)",
+                "Book.objects.select_related('author')",
+                "",
+                "# fixed with a second query (reverse FK / M2M)",
+                "Author.objects.prefetch_related('books')"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Why are Django QuerySets lazy and why does it matter?",
+          "header": "Stage 5 - Django & Flask Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A QuerySet does not hit the database when constructed; it only executes when evaluated - iterated, sliced with a step, converted to a list, len()'d, or bool()'d. Laziness lets you chain filters and build complex queries that compile into a single SQL statement, and it avoids fetching data you never use. The flip side: re-evaluating the same QuerySet causes repeated queries, so cache it in a list if you iterate multiple times, and be careful that evaluating inside a loop can trigger many queries."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "qs = Book.objects.filter(published=True)   # no query yet",
+                "qs = qs.filter(price__lt=20)               # still no query, chained",
+                "qs = qs.order_by('title')                  # still lazy",
+                "",
+                "for b in qs:        # NOW it executes, one SQL query",
+                "    ...",
+                "",
+                "books = list(qs)    # evaluate once, reuse without re-querying"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What are DRF serializers and what do they do?",
+          "header": "Stage 5 - Django & Flask Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Django REST Framework serializers convert between complex types (ORM model instances, querysets) and primitive Python/JSON, in both directions. On output they serialize model instances to JSON; on input they deserialize and validate incoming data before saving. `ModelSerializer` auto-generates fields from a model, like a Django ModelForm for APIs, and `.is_valid()`/`.save()` handle validation and persistence."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from rest_framework import serializers",
+                "",
+                "class BookSerializer(serializers.ModelSerializer):",
+                "    class Meta:",
+                "        model = Book",
+                "        fields = ['id', 'title', 'price']",
+                "",
+                "    def validate_price(self, value):",
+                "        if value < 0:",
+                "            raise serializers.ValidationError('price >= 0')",
+                "        return value",
+                "",
+                "ser = BookSerializer(data=request.data)",
+                "ser.is_valid(raise_exception=True)",
+                "ser.save()"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is the difference between function-based and class-based views in Django/DRF?",
+          "header": "Stage 5 - Django & Flask Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Function-based views (FBVs) are simple functions taking a request and returning a response - explicit and easy to read for one-off logic. Class-based views (CBVs) organize behavior by HTTP method (get/post) and enable reuse via mixins and inheritance; DRF's `APIView`, generic views, and `ViewSet` build on this to provide CRUD with minimal code, automatically wiring serializers, permissions, and routers. Use FBVs for simple/custom logic and CBVs/ViewSets for standard CRUD."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from rest_framework import viewsets",
+                "",
+                "class BookViewSet(viewsets.ModelViewSet):",
+                "    queryset = Book.objects.all()",
+                "    serializer_class = BookSerializer",
+                "    # list/retrieve/create/update/destroy all provided",
+                "",
+                "# urls.py",
+                "router.register('books', BookViewSet)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What is the Flask application factory pattern and why use it?",
+          "header": "Stage 5 - Django & Flask Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The app factory is a function that creates and configures the Flask app instead of a module-level global. This lets you create multiple app instances with different configs (crucial for testing), avoids import-time side effects and circular imports, and cleanly initializes extensions with `init_app`. It pairs with blueprints to assemble a modular application."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from flask import Flask",
+                "from .extensions import db",
+                "",
+                "def create_app(config=None):",
+                "    app = Flask(__name__)",
+                "    app.config.from_object(config or 'config.Default')",
+                "    db.init_app(app)",
+                "    from .users import users_bp",
+                "    app.register_blueprint(users_bp, url_prefix='/users')",
+                "    return app"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What are Flask blueprints?",
+          "header": "Stage 5 - Django & Flask Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A blueprint is a way to group related routes, templates, and static files into a reusable component that you register onto an app (optionally under a URL prefix). It's Flask's answer to modularizing a large application into features (auth, users, billing) without one giant file, and it keeps the app factory clean. Blueprints can be registered multiple times and on multiple apps."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from flask import Blueprint",
+                "",
+                "users_bp = Blueprint('users', __name__)",
+                "",
+                "@users_bp.route('/<int:uid>')",
+                "def get_user(uid):",
+                "    return {'id': uid}",
+                "",
+                "# registered in the factory:",
+                "# app.register_blueprint(users_bp, url_prefix='/users')"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "What are Flask's application and request contexts?",
+          "header": "Stage 5 - Django & Flask Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Flask uses context-local objects so things like `current_app`, `g`, and `request` are accessible without passing them around. The application context (`current_app`, `g`) is bound for the duration of handling, and the request context (`request`, `session`) is pushed per incoming request. `g` is a per-request scratchpad (e.g. to stash a DB connection). Outside a request (scripts, shell) you push contexts manually with `app.app_context()`. This design is why Flask globals are safe across concurrent requests."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "When would you choose Django vs Flask vs FastAPI?",
+          "header": "Stage 5 - Django & Flask Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Choose Django for full-featured, batteries-included apps (built-in ORM, admin, auth, migrations) - great for content-heavy products and fast CRUD with DRF. Choose Flask for small services or when you want a minimal, flexible micro-framework and to pick your own components. Choose FastAPI for modern async APIs that benefit from type-hint-driven validation, automatic OpenAPI docs, and high I/O concurrency. Django and Flask are traditionally sync/WSGI (Django now supports async), while FastAPI is async/ASGI-first."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What is Django middleware and how is it used?",
+          "header": "Stage 5 - Django & Flask Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Django middleware is a stack of components that process every request on the way in and every response on the way out, wrapping the view. Built-in middleware handles sessions, authentication, CSRF protection, and security headers. The order in `MIDDLEWARE` matters: request phase runs top-to-bottom, response phase bottom-to-top. You write custom middleware for cross-cutting concerns like request logging, timing, or attaching a tenant to the request."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import time",
+                "",
+                "class TimingMiddleware:",
+                "    def __init__(self, get_response):",
+                "        self.get_response = get_response",
+                "    def __call__(self, request):",
+                "        start = time.perf_counter()",
+                "        response = self.get_response(request)   # call the view",
+                "        response['X-Time'] = str(time.perf_counter()-start)",
+                "        return response"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "How do you handle authentication and permissions in DRF?",
+          "header": "Stage 5 - Django & Flask Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "DRF separates authentication (who you are) from permissions (what you can do). Authentication classes (SessionAuthentication, TokenAuthentication, JWT) identify the user and set `request.user`. Permission classes (IsAuthenticated, IsAdminUser, custom `BasePermission` subclasses) then authorize the request, optionally per-object. You can set defaults globally and override per view, and throttling classes add rate limiting on top."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from rest_framework.permissions import IsAuthenticated, BasePermission",
+                "",
+                "class IsOwner(BasePermission):",
+                "    def has_object_permission(self, request, view, obj):",
+                "        return obj.owner == request.user",
+                "",
+                "class BookViewSet(viewsets.ModelViewSet):",
+                "    permission_classes = [IsAuthenticated, IsOwner]",
+                "    ..."
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "What is the difference between WSGI and ASGI?",
+          "header": "Stage 5 - Django & Flask Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "WSGI (Web Server Gateway Interface) is the traditional synchronous Python web standard: one request is handled per worker at a time, blocking until done - used by classic Django and Flask with gunicorn. ASGI (Asynchronous Server Gateway Interface) is its async successor, supporting async views, long-lived connections, and WebSockets, and is the basis for FastAPI/Starlette and async Django, served by uvicorn. ASGI is a superset that can also run sync apps; choose ASGI when you need async I/O or realtime features."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "pyb-6": [
+    {
+      "sectionTitle": "Stage 6 - Databases & ORMs Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is the difference between SQLAlchemy Core and the ORM?",
+          "header": "Stage 6 - Databases & ORMs Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "SQLAlchemy Core is the SQL expression language: you work with Table objects and build composable SQL statements close to the metal, returning rows. The ORM layers object mapping on top - you define mapped classes and work with persistent objects, change tracking, identity map, and relationships. Use the ORM for typical application domain logic; drop to Core for bulk operations, complex analytical SQL, or when you want fine control and less overhead. They interoperate."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# Core",
+                "from sqlalchemy import select",
+                "stmt = select(users_table).where(users_table.c.active == True)",
+                "rows = conn.execute(stmt).all()",
+                "",
+                "# ORM",
+                "stmt = select(User).where(User.active == True)",
+                "users = session.scalars(stmt).all()   # mapped objects"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What is the SQLAlchemy Session and the unit-of-work pattern?",
+          "header": "Stage 6 - Databases & ORMs Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The Session is the ORM's workspace for a set of operations and implements the unit-of-work pattern: it tracks all new, changed, and deleted objects, then flushes them to the database as a coordinated set within a transaction when you commit. It also maintains an identity map so the same row maps to a single in-memory object per session. You typically scope a session to a single request/operation, commit on success, and roll back on error."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from sqlalchemy.orm import Session",
+                "",
+                "with Session(engine) as session:",
+                "    user = User(name='Ada')",
+                "    session.add(user)            # pending (tracked)",
+                "    user.name = 'Ada L.'         # change tracked automatically",
+                "    session.commit()            # flush + transaction commit",
+                "# session closed; objects expire"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What is the difference between flush and commit?",
+          "header": "Stage 6 - Databases & ORMs Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Flush sends the pending SQL (INSERT/UPDATE/DELETE) to the database so it's visible within the current transaction and you can read back generated values like autoincrement IDs - but it does not end the transaction. Commit flushes (if needed) and then commits the transaction, making changes durable and visible to other connections. SQLAlchemy autoflushes before queries by default, so you rarely flush manually except to get an ID mid-transaction."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What is the N+1 query problem and how do you fix it in SQLAlchemy?",
+          "header": "Stage 6 - Databases & ORMs Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "N+1 happens when you run one query to fetch N parent rows, then a separate query per parent to load a relationship - N+1 round trips that destroy performance. The fix is eager loading: `selectinload` runs one extra query using an IN clause (great for collections and avoids row multiplication), while `joinedload` uses a JOIN (good for many-to-one/one-to-one). Diagnose by logging SQL (echo=True) and watching for repeated queries."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from sqlalchemy import select",
+                "from sqlalchemy.orm import selectinload, joinedload",
+                "",
+                "# N+1: lazy loads orders per user",
+                "for u in session.scalars(select(User)):",
+                "    print(u.orders)              # query each loop",
+                "",
+                "# fixed: one IN-query for all orders",
+                "stmt = select(User).options(selectinload(User.orders))",
+                "",
+                "# many-to-one via JOIN",
+                "stmt = select(Order).options(joinedload(Order.user))"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "How do you define relationships in SQLAlchemy?",
+          "header": "Stage 6 - Databases & ORMs Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "You declare a ForeignKey column and a `relationship()` that maps the navigation between mapped classes. Use `back_populates` (or `backref`) so both sides stay in sync. For many-to-many you use a secondary association table (or an explicit association object when the link carries extra data). Cascade rules control how operations propagate to related objects (e.g. delete-orphan)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from sqlalchemy import ForeignKey",
+                "from sqlalchemy.orm import relationship, mapped_column, Mapped",
+                "",
+                "class User(Base):",
+                "    __tablename__ = 'users'",
+                "    id: Mapped[int] = mapped_column(primary_key=True)",
+                "    orders: Mapped[list['Order']] = relationship(back_populates='user')",
+                "",
+                "class Order(Base):",
+                "    __tablename__ = 'orders'",
+                "    id: Mapped[int] = mapped_column(primary_key=True)",
+                "    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))",
+                "    user: Mapped['User'] = relationship(back_populates='orders')"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is connection pooling and why does it matter?",
+          "header": "Stage 6 - Databases & ORMs Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Opening a database connection is expensive (TCP + auth handshakes). A connection pool keeps a set of established connections and lends them to requests, returning them to the pool instead of closing - drastically reducing latency and load under concurrency. SQLAlchemy's Engine manages a pool; key knobs are `pool_size` (kept-open connections), `max_overflow` (extra temporary connections), `pool_timeout`, `pool_recycle` (to drop stale connections), and `pool_pre_ping` (to detect dead connections before use)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from sqlalchemy import create_engine",
+                "",
+                "engine = create_engine(",
+                "    'postgresql+psycopg://user:pw@host/db',",
+                "    pool_size=10,",
+                "    max_overflow=20,",
+                "    pool_pre_ping=True,    # avoid stale/dead connections",
+                "    pool_recycle=1800,",
+                ")"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What are transactions and ACID, and how do isolation levels matter?",
+          "header": "Stage 6 - Databases & ORMs Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A transaction is a unit of work that is all-or-nothing. ACID stands for Atomicity (all or none), Consistency (constraints upheld), Isolation (concurrent transactions don't corrupt each other), and Durability (committed data survives crashes). Isolation levels (Read Uncommitted, Read Committed, Repeatable Read, Serializable) trade consistency against concurrency, controlling anomalies like dirty reads, non-repeatable reads, and phantom reads. Higher isolation reduces anomalies but increases locking/aborts."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# all-or-nothing: rollback on failure",
+                "try:",
+                "    with session.begin():           # transaction block",
+                "        debit(session, a, 100)",
+                "        credit(session, b, 100)",
+                "    # auto-commit on success",
+                "except Exception:",
+                "    # auto-rollback already happened",
+                "    raise"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is Alembic and how do you use it?",
+          "header": "Stage 6 - Databases & ORMs Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Alembic is SQLAlchemy's migration tool. It tracks schema versions as revision scripts with upgrade/downgrade functions and an `alembic_version` table in the DB. `alembic revision --autogenerate` diffs your models against the current DB to draft a migration (always review it - autogenerate misses some changes like column renames). `alembic upgrade head` applies migrations; `downgrade` reverts. Commit revisions to version control so all environments share the same schema history."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "alembic revision --autogenerate -m 'add orders table'",
+                "alembic upgrade head        # apply all pending",
+                "alembic downgrade -1        # revert last",
+                "alembic current             # show current revision"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "What is lazy loading vs eager loading?",
+          "header": "Stage 6 - Databases & ORMs Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Lazy loading defers fetching a related object until you access the attribute, issuing a query at that moment - convenient but the root cause of N+1 and of errors when the session is already closed (DetachedInstanceError). Eager loading fetches the relationship up front (via selectinload/joinedload or a loader strategy on the relationship). The rule of thumb: lazy when you may not need the relation, eager when you know you'll iterate over it for many parents."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "How do async DB drivers work with SQLAlchemy?",
+          "header": "Stage 6 - Databases & ORMs Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "SQLAlchemy 1.4+/2.0 offers an async API using `create_async_engine` and `AsyncSession` over async drivers like asyncpg (Postgres) or aiomysql. You `await` execution and commits, which lets an async framework like FastAPI handle many DB-bound requests concurrently on one event loop. Lazy loading is restricted in async (you generally must eager-load with selectinload), and you must use the async driver dialect (e.g. postgresql+asyncpg)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from sqlalchemy import select",
+                "from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession",
+                "from sqlalchemy.orm import selectinload",
+                "",
+                "engine = create_async_engine('postgresql+asyncpg://u:pw@h/db')",
+                "",
+                "async with AsyncSession(engine) as session:",
+                "    result = await session.execute(",
+                "        select(User).options(selectinload(User.orders))",
+                "    )",
+                "    users = result.scalars().all()",
+                "    await session.commit()"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "How do you prevent SQL injection in Python?",
+          "header": "Stage 6 - Databases & ORMs Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Never build SQL by string-concatenating user input. Use parameterized queries / bound parameters so the driver sends data separately from the query, and the database treats input strictly as values. ORMs and the DB-API do this for you when you pass parameters properly. With SQLAlchemy, use the expression language or `text()` with bound params, not f-strings."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from sqlalchemy import text",
+                "",
+                "# WRONG: vulnerable to injection",
+                "cur.execute(\"SELECT * FROM users WHERE name = '\" + name + \"'\")",
+                "",
+                "# RIGHT: parameterized (DB-API)",
+                "cur.execute('SELECT * FROM users WHERE name = %s', (name,))",
+                "",
+                "# RIGHT: SQLAlchemy text() with bound param",
+                "session.execute(text('SELECT * FROM users WHERE name = :n'), {'n': name})"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What database indexing concerns should a backend developer know?",
+          "header": "Stage 6 - Databases & ORMs Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Indexes speed reads on the columns you filter, join, or sort by (typically B-tree), but they slow writes and consume storage, so index deliberately. Composite indexes follow a leftmost-prefix rule, so column order matters. Use EXPLAIN/EXPLAIN ANALYZE to confirm an index is used and to spot full table scans. Index foreign keys and high-selectivity columns; avoid indexing low-cardinality columns alone. Covering indexes can satisfy a query without touching the table."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "What is the identity map in SQLAlchemy?",
+          "header": "Stage 6 - Databases & ORMs Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Within a single Session, the identity map ensures that each database row (by primary key) is represented by exactly one Python object. If you query the same row twice in a session, you get the same object back, not two copies - which keeps changes consistent and avoids conflicting in-memory states. It's a key part of the ORM's correctness; objects expire after commit so subsequent access refetches current data."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "pyb-7": [
+    {
+      "sectionTitle": "Stage 7 - APIs, Caching & Tasks Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What are the principles of good REST API design?",
+          "header": "Stage 7 - APIs, Caching & Tasks Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Model resources as nouns with clear URIs (/users/123/orders), use HTTP verbs for actions (GET read, POST create, PUT/PATCH update, DELETE remove), and return meaningful status codes (200/201/204, 400/401/403/404, 409, 422, 500). Make GET safe and idempotent, support filtering/sorting/pagination via query params, version your API, and return consistent error bodies. Statelessness (no server-side session per request) enables horizontal scaling."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "GET    /api/v1/users            # list (paginated)",
+                "POST   /api/v1/users            # create -> 201",
+                "GET    /api/v1/users/123        # read   -> 200 / 404",
+                "PATCH  /api/v1/users/123        # partial update",
+                "DELETE /api/v1/users/123        # delete -> 204",
+                "GET    /api/v1/users/123/orders # nested resource"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What is the difference between offset and cursor (keyset) pagination?",
+          "header": "Stage 7 - APIs, Caching & Tasks Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Offset pagination (LIMIT/OFFSET) is simple and supports random page access, but it gets slow on deep pages (the DB still scans and discards skipped rows) and can show duplicates/skips if rows are inserted between requests. Cursor/keyset pagination uses a stable sort key from the last seen row (WHERE id > last_id ORDER BY id LIMIT n), giving consistent results and good performance at scale, at the cost of no arbitrary page jumps. Prefer cursor pagination for large or frequently changing datasets."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "-- offset (slow on deep pages)",
+                "SELECT * FROM items ORDER BY id LIMIT 20 OFFSET 10000;",
+                "",
+                "-- keyset / cursor (stable, fast)",
+                "SELECT * FROM items WHERE id > :last_id ORDER BY id LIMIT 20;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "How do you use Redis for caching, and what is the cache-aside pattern?",
+          "header": "Stage 7 - APIs, Caching & Tasks Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Cache-aside (lazy loading): on a read, check Redis first; on a miss, fetch from the database, store it in Redis with a TTL, and return it. On writes, update the DB and invalidate (or update) the cache entry. Redis is an in-memory store, so reads are sub-millisecond and it offloads the database. Always set a TTL to bound staleness and memory, and choose an eviction policy (e.g. allkeys-lru)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import json, redis",
+                "r = redis.Redis()",
+                "",
+                "def get_user(uid):",
+                "    key = f'user:{uid}'",
+                "    cached = r.get(key)",
+                "    if cached:",
+                "        return json.loads(cached)         # cache hit",
+                "    user = db_fetch_user(uid)             # miss -> DB",
+                "    r.set(key, json.dumps(user), ex=300)  # store with 5-min TTL",
+                "    return user"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What is cache invalidation and the thundering-herd problem?",
+          "header": "Stage 7 - APIs, Caching & Tasks Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Cache invalidation is keeping cached data from going stale - via TTL expiry, explicit deletion on writes, or versioned keys. The thundering herd (or cache stampede) happens when a hot key expires and many concurrent requests all miss simultaneously and hammer the database at once. Mitigations: a short lock/mutex so only one request recomputes while others wait, early/probabilistic recomputation before expiry, slightly randomized TTLs (jitter) to avoid synchronized expiry, and serving stale-while-revalidate."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "How do rate limiting algorithms like token bucket and sliding window work?",
+          "header": "Stage 7 - APIs, Caching & Tasks Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Rate limiting caps how many requests a client may make in a window. Fixed window counts requests per discrete interval (simple but allows bursts at boundaries). Sliding window smooths this by considering a rolling time range. Token bucket refills tokens at a steady rate up to a capacity; each request spends a token, allowing controlled bursts while bounding the average rate. In Python services these are typically implemented in Redis (atomic counters or Lua scripts) so limits are shared across instances, returning HTTP 429 when exceeded."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import time",
+                "",
+                "# fixed-window counter in Redis",
+                "key = f'rl:{user_id}:{int(time.time() // 60)}'  # per-minute bucket",
+                "count = r.incr(key)",
+                "if count == 1:",
+                "    r.expire(key, 60)",
+                "if count > LIMIT:",
+                "    raise HTTPException(429, 'rate limit exceeded')"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is Celery and how does a task flow through it?",
+          "header": "Stage 7 - APIs, Caching & Tasks Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Celery is a distributed task queue for running work asynchronously outside the request/response cycle. A producer (your web app) calls `task.delay()`, which serializes the task and pushes a message onto a broker (Redis or RabbitMQ). Worker processes consume messages and execute the task; the result is optionally stored in a result backend. This decouples slow work (emails, image processing, reports) from request latency, and workers scale independently."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from celery import Celery",
+                "",
+                "app = Celery('tasks', broker='redis://localhost:6379/0',",
+                "             backend='redis://localhost:6379/1')",
+                "",
+                "@app.task(bind=True, max_retries=3)",
+                "def send_report(self, user_id):",
+                "    try:",
+                "        build_and_email_report(user_id)",
+                "    except TransientError as exc:",
+                "        raise self.retry(exc=exc, countdown=10)",
+                "",
+                "# producer",
+                "send_report.delay(user_id)"
+              ]
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart LR",
+                "  P[Web app producer] -->|task.delay| B[/Broker Redis or RabbitMQ/]",
+                "  B --> W1[Worker 1]",
+                "  B --> W2[Worker 2]",
+                "  W1 --> R[(Result backend)]",
+                "  W2 --> R",
+                "  P -.poll result.-> R"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "Why should Celery tasks be idempotent, and how do you handle retries?",
+          "header": "Stage 7 - APIs, Caching & Tasks Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Brokers typically guarantee at-least-once delivery, so a task can run more than once (worker crash after doing work but before acking, or an explicit retry). Designing tasks to be idempotent - safe to run multiple times with the same effect - prevents duplicate side effects like double-charging a card or sending two emails. Achieve idempotency with a unique key/dedup table, upserts, or checking state before acting. Configure retries with backoff for transient failures and a max retry count, and consider a dead-letter queue for permanent failures."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is idempotency in APIs and how do idempotency keys work?",
+          "header": "Stage 7 - APIs, Caching & Tasks Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "An idempotent operation produces the same result whether called once or many times. GET, PUT, and DELETE are idempotent by definition; POST is not, which is risky when a client retries after a timeout and might create duplicates. An idempotency key (a client-generated unique ID sent in a header) lets the server detect a retry: it stores the key with the result of the first request and returns that stored result for repeats instead of performing the action again. This makes payment and order-creation endpoints safe to retry."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from fastapi import Header",
+                "",
+                "@app.post('/payments')",
+                "async def pay(req: PaymentIn, idempotency_key: str = Header(...)):",
+                "    existing = await store.get(idempotency_key)",
+                "    if existing:",
+                "        return existing            # return prior result, no double charge",
+                "    result = await charge(req)",
+                "    await store.set(idempotency_key, result, ttl=86400)",
+                "    return result"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How does API versioning work and what strategies exist?",
+          "header": "Stage 7 - APIs, Caching & Tasks Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Versioning lets you evolve an API without breaking existing clients. Common strategies: URL path versioning (/v1/users) - simplest and most visible; header/media-type versioning (Accept: application/vnd.api.v2+json) - cleaner URLs but harder to test; and query-param versioning (?version=2). Most teams pick URL versioning for clarity. Aim to only bump versions on breaking changes, keep older versions running during a deprecation window, and prefer additive, backward-compatible changes when possible."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "When should you use WebSockets instead of regular HTTP request/response?",
+          "header": "Stage 7 - APIs, Caching & Tasks Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use WebSockets for low-latency, bidirectional, real-time communication over a single persistent connection - chat, live notifications, collaborative editing, live dashboards, multiplayer. Plain HTTP is request/response and stateless, which is fine for normal CRUD but inefficient for pushing frequent server-initiated updates (polling wastes resources). For server-to-client-only streams, Server-Sent Events (SSE) is a simpler alternative. WebSockets require ASGI (FastAPI/Starlette support them natively) and need attention to scaling, connection state, and auth."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from fastapi import WebSocket",
+                "",
+                "@app.websocket('/ws')",
+                "async def ws(websocket: WebSocket):",
+                "    await websocket.accept()",
+                "    while True:",
+                "        msg = await websocket.receive_text()",
+                "        await websocket.send_text(f'echo: {msg}')"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What HTTP caching mechanisms exist (ETag, Cache-Control)?",
+          "header": "Stage 7 - APIs, Caching & Tasks Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "HTTP caching reduces redundant transfers. `Cache-Control` directives (max-age, no-store, private/public) tell clients and proxies how long to cache. Validation caching uses an `ETag` (a content fingerprint) or `Last-Modified`: the client sends `If-None-Match`/`If-Modified-Since`, and the server replies 304 Not Modified with no body if unchanged, saving bandwidth. This complements server-side caching (Redis) - one reduces compute, the other reduces transfer."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What are scheduled/periodic tasks and how do you run them with Celery?",
+          "header": "Stage 7 - APIs, Caching & Tasks Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Periodic tasks run on a schedule (cleanup jobs, nightly reports, syncs). Celery Beat is the scheduler that enqueues tasks at defined intervals or crontab times; the workers then execute them as normal. Define schedules in `beat_schedule` (or via crontab). Run exactly one Beat process to avoid duplicate scheduling, and keep tasks idempotent in case of overlap."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from celery.schedules import crontab",
+                "",
+                "app.conf.beat_schedule = {",
+                "    'nightly-cleanup': {",
+                "        'task': 'tasks.cleanup',",
+                "        'schedule': crontab(hour=2, minute=0),   # 02:00 daily",
+                "    },",
+                "    'every-5-min-sync': {",
+                "        'task': 'tasks.sync',",
+                "        'schedule': 300.0,",
+                "    },",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "How do you choose between a background task and a task queue?",
+          "header": "Stage 7 - APIs, Caching & Tasks Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use an in-process background task (FastAPI BackgroundTasks, a thread) for quick, best-effort, fire-and-forget work where losing it on a crash is acceptable - sending a single email, writing an audit log. Use a real task queue (Celery/RQ with a broker) when work is heavy or slow, must be retried, must survive process restarts, needs to be distributed across machines, must be scheduled, or needs monitoring and rate control. The deciding factors are durability, retries, scale, and observability."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "pyb-8": [
+    {
+      "sectionTitle": "Stage 8 - Testing & Deployment Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What are pytest fixtures and how does fixture scope work?",
+          "header": "Stage 8 - Testing & Deployment Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Fixtures provide reusable setup (and teardown via yield) injected into tests by naming them as arguments - dependency injection for tests. Scope controls how often a fixture is created: function (default, per test), class, module, session. Shared fixtures live in `conftest.py` so they're auto-discovered without imports. Fixtures can depend on other fixtures, building a clean setup graph (e.g. a db fixture used by a client fixture)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import pytest",
+                "",
+                "@pytest.fixture(scope='session')",
+                "def db_engine():",
+                "    engine = create_engine(TEST_URL)",
+                "    Base.metadata.create_all(engine)",
+                "    yield engine                 # provided to tests",
+                "    Base.metadata.drop_all(engine)   # teardown",
+                "",
+                "@pytest.fixture",
+                "def session(db_engine):          # depends on db_engine",
+                "    with Session(db_engine) as s:",
+                "        yield s",
+                "        s.rollback()"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "How does pytest parametrize work and why use it?",
+          "header": "Stage 8 - Testing & Deployment Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "`@pytest.mark.parametrize` runs the same test function once per set of inputs, turning many near-duplicate tests into one table-driven test. Each case is reported separately, so you see exactly which input failed. It's ideal for testing edge cases and equivalence classes (valid/invalid inputs, boundary values) without copy-pasting."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import pytest",
+                "",
+                "@pytest.mark.parametrize('value, expected', [",
+                "    (2, True),",
+                "    (3, True),",
+                "    (4, False),",
+                "    (1, False),",
+                "])",
+                "def test_is_prime(value, expected):",
+                "    assert is_prime(value) == expected"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "How do you mock dependencies in tests, and what should you patch?",
+          "header": "Stage 8 - Testing & Deployment Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Mocking replaces a real dependency (an external API, time, randomness) with a controllable fake so tests are fast, deterministic, and isolated. Use `unittest.mock.patch` (or pytest's monkeypatch). The key rule: patch where the name is looked up, not where it's defined - patch the reference used by the module under test. Mock at boundaries (network, filesystem, clock), and assert on calls when behavior matters."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from unittest.mock import patch",
+                "",
+                "# patch where it's USED: 'myapp.service.requests', not 'requests'",
+                "def test_fetch():",
+                "    with patch('myapp.service.requests.get') as mock_get:",
+                "        mock_get.return_value.json.return_value = {'ok': True}",
+                "        result = myapp.service.fetch()",
+                "        assert result == {'ok': True}",
+                "        mock_get.assert_called_once()"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "How do you test a FastAPI application?",
+          "header": "Stage 8 - Testing & Deployment Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use Starlette's `TestClient` (or httpx AsyncClient for async) to make in-process requests to the app without running a server. Override dependencies with `app.dependency_overrides` to inject a test database or fake auth, which is exactly why DI matters. Use a transactional or throwaway test DB so tests don't pollute real data, and assert on status codes and JSON bodies."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from fastapi.testclient import TestClient",
+                "from myapp.main import app",
+                "from myapp.deps import get_db",
+                "",
+                "app.dependency_overrides[get_db] = get_test_db   # inject test DB",
+                "client = TestClient(app)",
+                "",
+                "def test_create_user():",
+                "    resp = client.post('/users', json={'email': 'a@b.com', 'age': 30})",
+                "    assert resp.status_code == 201",
+                "    assert resp.json()['email'] == 'a@b.com'"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What is test coverage and is 100% coverage the goal?",
+          "header": "Stage 8 - Testing & Deployment Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Coverage (via coverage.py / pytest-cov) measures which lines/branches execute during tests. It's useful to find untested code, but it's a weak quality metric: 100% coverage can still miss bugs because executing a line isn't the same as asserting correct behavior or covering all input combinations. Aim for meaningful tests of behavior, edge cases, and critical paths; chase high coverage on important logic rather than a vanity number everywhere."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "pytest --cov=myapp --cov-report=term-missing",
+                "pytest --cov=myapp --cov-fail-under=85   # gate in CI"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is the difference between WSGI/ASGI servers like gunicorn and uvicorn?",
+          "header": "Stage 8 - Testing & Deployment Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "uvicorn is an ASGI server that runs async apps (FastAPI/Starlette) and supports WebSockets. gunicorn is a mature WSGI process manager that forks multiple worker processes (good for sync apps like classic Django/Flask) and provides robust process supervision. The common production setup for FastAPI is gunicorn as the process manager running uvicorn worker classes, combining gunicorn's worker management with ASGI support."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# dev (ASGI)",
+                "uvicorn app.main:app --reload",
+                "",
+                "# prod: gunicorn manages uvicorn workers",
+                "gunicorn app.main:app \\",
+                "  -k uvicorn.workers.UvicornWorker \\",
+                "  -w 4 --bind 0.0.0.0:8000"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "How many workers should you run, and how do workers relate to the GIL?",
+          "header": "Stage 8 - Testing & Deployment Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Because the GIL limits a single Python process to one thread executing bytecode at a time, you scale CPU across cores by running multiple worker processes. A common starting point is roughly (2 x CPU cores) + 1 for sync/WSGI workers, then tune by load testing. For async (uvicorn) workers, each worker can handle many concurrent I/O-bound requests on its event loop, so you typically run one worker per core. Match the model to the workload and measure rather than guessing."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "How do you Dockerize a Python application well?",
+          "header": "Stage 8 - Testing & Deployment Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Start from a slim base image, copy and install dependencies before copying source so Docker layer caching reuses the install layer when only code changes, run as a non-root user, and use a multi-stage build to keep the final image small (build deps in one stage, runtime artifacts in the next). Pin versions, set a proper CMD, and avoid baking secrets into the image - pass config via environment variables at runtime."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "FROM python:3.12-slim",
+                "WORKDIR /app",
+                "ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1",
+                "",
+                "# deps first for layer caching",
+                "COPY requirements.txt .",
+                "RUN pip install --no-cache-dir -r requirements.txt",
+                "",
+                "COPY . .",
+                "RUN useradd -m appuser && chown -R appuser /app",
+                "USER appuser",
+                "",
+                "CMD [\"gunicorn\", \"app.main:app\", \"-k\", \"uvicorn.workers.UvicornWorker\", \"-b\", \"0.0.0.0:8000\"]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How do you manage configuration and secrets (12-factor)?",
+          "header": "Stage 8 - Testing & Deployment Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Follow the 12-factor principle: store config in the environment, not in code, so the same build runs in any environment by changing env vars. Read them via pydantic-settings or os.environ, never commit secrets, and use a secrets manager (Vault, AWS Secrets Manager, Kubernetes secrets) in production. Provide a `.env.example` documenting required variables, and fail fast at startup if required config is missing (validated settings model)."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "How should logging be done in a production Python backend?",
+          "header": "Stage 8 - Testing & Deployment Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use the standard `logging` module (or structlog) configured centrally, not print statements. Emit structured logs (JSON) so they're machine-parseable in log aggregators, include a correlation/request ID to trace a request across services, use appropriate levels (DEBUG/INFO/WARNING/ERROR), and never log secrets or PII. Write to stdout/stderr in containers and let the platform collect them (12-factor), rather than managing log files in the app."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import logging",
+                "logger = logging.getLogger(__name__)",
+                "",
+                "logger.info('user created', extra={'user_id': uid, 'request_id': rid})",
+                "try:",
+                "    risky()",
+                "except Exception:",
+                "    logger.exception('operation failed')   # logs traceback"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What are health checks and the three pillars of observability?",
+          "header": "Stage 8 - Testing & Deployment Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Health/readiness endpoints let orchestrators decide if an instance can serve traffic: a liveness probe says the process is alive (restart if not), a readiness probe says it can handle requests (e.g. DB reachable) before adding it to the load balancer. Observability rests on three pillars: logs (discrete events), metrics (aggregated numbers like latency/throughput/error rate, often Prometheus), and traces (a request's path across services, e.g. OpenTelemetry). Together they answer what broke, how often, and where."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from sqlalchemy import text",
+                "",
+                "@app.get('/healthz')      # liveness",
+                "async def healthz():",
+                "    return {'status': 'ok'}",
+                "",
+                "@app.get('/readyz')       # readiness",
+                "async def readyz(db = Depends(get_db)):",
+                "    await db.execute(text('SELECT 1'))",
+                "    return {'status': 'ready'}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What does a typical CI/CD pipeline for a Python service look like?",
+          "header": "Stage 8 - Testing & Deployment Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "CI runs on every push/PR: install dependencies, lint and format-check (ruff/black), type-check (mypy), run the test suite with coverage, and build the Docker image. CD then deploys passing builds - often to staging automatically and to production on approval or tag - using strategies like rolling, blue-green, or canary to avoid downtime. Run migrations as a controlled step, gate merges on green checks, and keep the pipeline fast so it's used."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# GitHub Actions (simplified)",
+                "steps:",
+                "  - run: pip install -r requirements.txt -r requirements-dev.txt",
+                "  - run: ruff check .",
+                "  - run: mypy app",
+                "  - run: pytest --cov=app --cov-fail-under=85",
+                "  - run: docker build -t myapp:$GITHUB_SHA ."
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "What is graceful shutdown and why does it matter for zero-downtime deploys?",
+          "header": "Stage 8 - Testing & Deployment Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Graceful shutdown means that when the process receives a termination signal (SIGTERM), it stops accepting new requests, finishes in-flight requests, closes DB connections and pools, and then exits - instead of dropping live requests. This is essential for zero-downtime/rolling deploys: the orchestrator removes the instance from the load balancer, the app drains, and a new version comes up without users seeing errors. ASGI servers support lifespan startup/shutdown hooks, and you should keep the drain timeout within the platform's grace period."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

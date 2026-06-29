@@ -1,21 +1,35 @@
 # My Roadmap Tracker
 
-A personal Java Full-Stack + AI roadmap tracker. Sign in, tick off topics as you complete them, add notes, and add your own custom items. All data is saved permanently — log in from any device and your progress follows you.
+A personal multi-track career roadmap + interview-prep tracker. Pick a career track, tick off topics, study 1,100+ interview Q&A with code and diagrams, drill flashcards, and bookmark questions for revision. All data is saved permanently — log in from any device and your progress follows you.
 
 **Tech:** Next.js 15 + Supabase (auth + Postgres). Free hosting on Vercel.
 
+## Career tracks (switch from the header)
+| Track | Stages | Interview Q&A |
+|---|---|---|
+| ☕ Java Full-Stack | 12 | 641 |
+| 🟢 MERN Stack (Mongo · Express · React · Node) | 8 | 95 |
+| 🤖 Generative AI Engineer | 10 | 124 |
+| 🚀 Forward Deployed Engineer | 7 | 80 |
+| 🛢️ Data Engineer | 8 | 112 |
+| 🐍 Python Backend Developer | 8 | 106 |
+
+**~1,158 interview Q&A total**, with syntax-highlighted code and clean Mermaid diagrams.
+
 **Features:**
-- 12 stages, 70+ sections, 400+ checklist items (the full v3 roadmap)
-- Email/password authentication (per-user data)
-- Real-time progress saving (no save button — auto-saves on every change)
-- Per-item notes (📝 button next to each item)
-- Stage-level notes (questions, links, observations)
-- Add your own custom checklist items per section
-- Delete custom items
-- Live search across all topics
-- Overall + per-stage progress bars
-- Mobile-responsive
-- Dark theme
+- 6 career tracks; each track's data lazy-loads as its own chunk (fast initial load)
+- Checklist progress + "I can answer this" Q&A mastery tracking (two progress bars)
+- Bookmark/star any Q&A → cross-track revision list (`/bookmarks`)
+- Flashcard / quiz mode with keyboard shortcuts (`/flashcards`)
+- 🔥 Daily learning streak
+- Per-item & stage notes, custom items
+- Live search across topics, Q&A, and code; filter chips (unanswered / bookmarked / with-code)
+- Export any stage to Markdown or print to PDF
+- Floating stage jump menu
+- Email/password auth (per-user data, auto-saved)
+- Mobile-responsive, dark theme
+
+> **Existing Java progress is preserved** — every track uses globally-unique stage IDs, so no database migration was needed when tracks were added.
 
 ---
 
@@ -105,7 +119,11 @@ You'll use way less than 1% of any of these.
 
 ## What if you want to change the roadmap data?
 
-Edit `data/roadmap.js` — that's a single file with all stages/sections/items. Commit and push; Vercel auto-redeploys.
+- **Java track checklist:** `data/roadmap.js`. **Java Q&A:** `data/study-material.json`.
+- **Other tracks:** `data/tracks/<track>.roadmap.js` (checklist) and `data/tracks/<track>.study.json` (Q&A).
+- **Add a whole new track:** add an entry to `data/tracks.js` (`TRACKS` + a `case` in `loadTrackData`) and create its two data files. See `data/tracks/_SCHEMA.md` for the exact JSON shape.
+
+Commit and push; Vercel auto-redeploys. No Supabase changes are needed to add tracks (stage IDs are globally unique).
 
 ## Troubleshooting
 

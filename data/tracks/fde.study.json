@@ -1,0 +1,1756 @@
+{
+  "fde-1": [
+    {
+      "sectionTitle": "Stage 1 - Coding Fundamentals (Python + SQL)",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Given a CSV of customer orders, count total revenue per customer using only the standard library. Walk through your code.",
+          "header": "Stage 1 - Coding Fundamentals (Python + SQL)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I read the file with csv.DictReader so I can address columns by name, accumulate revenue in a dict keyed by customer id, and coerce/clean the amount defensively because customer data is messy. I never assume the file is well-formed."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import csv",
+                "from collections import defaultdict",
+                "",
+                "def revenue_by_customer(path):",
+                "    totals = defaultdict(float)",
+                "    with open(path, newline=\"\", encoding=\"utf-8-sig\") as f:",
+                "        for row in csv.DictReader(f):",
+                "            cid = (row.get(\"customer_id\") or \"\").strip()",
+                "            raw = (row.get(\"amount\") or \"0\").replace(\"$\", \"\").replace(\",\", \"\")",
+                "            try:",
+                "                amount = float(raw)",
+                "            except ValueError:",
+                "                continue  # skip/route bad rows instead of crashing",
+                "            if cid:",
+                "                totals[cid] += amount",
+                "    return dict(totals)"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I mention utf-8-sig to strip a BOM (common in exported files), and I'd note that in a real pipeline I'd log the skipped rows rather than silently drop them, since data quality is the FDE's problem too."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What is the difference between a list comprehension and a generator expression, and when does it matter for an FDE?",
+          "header": "Stage 1 - Coding Fundamentals (Python + SQL)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A list comprehension [x for x in it] materializes the whole list in memory; a generator (x for x in it) is lazy and yields one item at a time. For FDE work the distinction is practical: when I stream a multi-gigabyte customer export or page through an API, a generator keeps memory flat, whereas a list could OOM the customer's modest VM."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# Bad on a 5 GB file - loads everything",
+                "rows = [parse(line) for line in open(path)]",
+                "",
+                "# Good - constant memory, processes as it reads",
+                "def parsed(path):",
+                "    with open(path) as f:",
+                "        for line in f:",
+                "            yield parse(line)"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Rule of thumb: if I only iterate once and don't need len() or indexing, prefer the generator."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "How do you parse and reshape nested JSON from an API into a flat table for analysis?",
+          "header": "Stage 1 - Coding Fundamentals (Python + SQL)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I load it, navigate to the records array, and flatten the fields I care about, using .get() with defaults so a missing key doesn't crash the run. For deeply nested or variable shapes I reach for pandas.json_normalize, which handles record paths and meta fields cleanly."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import json, pandas as pd",
+                "",
+                "doc = json.loads(payload)",
+                "df = pd.json_normalize(",
+                "    doc[\"results\"],",
+                "    record_path=[\"line_items\"],",
+                "    meta=[\"order_id\", [\"customer\", \"email\"]],",
+                "    errors=\"ignore\",",
+                ")",
+                "df.to_csv(\"flat.csv\", index=False)"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "The meta path [\"customer\", \"email\"] pulls a nested field up to each row. I always sanity-check the row count against the source before handing anything to a customer."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Write SQL to find each customer's most recent order. Explain your approach.",
+          "header": "Stage 1 - Coding Fundamentals (Python + SQL)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "This is a classic top-N-per-group. I use ROW_NUMBER() partitioned by customer, ordered by order date descending, then keep rank 1. It's more robust than a correlated subquery and handles ties deterministically if I add a tiebreaker."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "WITH ranked AS (",
+                "  SELECT",
+                "    o.*,",
+                "    ROW_NUMBER() OVER (",
+                "      PARTITION BY customer_id",
+                "      ORDER BY order_date DESC, order_id DESC",
+                "    ) AS rn",
+                "  FROM orders o",
+                ")",
+                "SELECT *",
+                "FROM ranked",
+                "WHERE rn = 1;"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "If I needed all orders tied for the latest date, I'd switch ROW_NUMBER to RANK."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Explain INNER vs LEFT JOIN with a concrete customer-data example.",
+          "header": "Stage 1 - Coding Fundamentals (Python + SQL)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "INNER JOIN returns only rows that match in both tables; LEFT JOIN returns all rows from the left table and NULLs where the right has no match. In the field this is the difference between silently dropping data and surfacing it."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "-- Find customers with NO orders (a common data-quality check)",
+                "SELECT c.customer_id, c.name",
+                "FROM customers c",
+                "LEFT JOIN orders o ON o.customer_id = c.customer_id",
+                "WHERE o.order_id IS NULL;"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I call this out because a junior mistake is using INNER JOIN during ingestion and then wondering why 5% of the customer's accounts vanished - they had no matching row in the other table."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "How would you deduplicate rows in SQL while keeping the latest version of each record?",
+          "header": "Stage 1 - Coding Fundamentals (Python + SQL)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I rank rows within each natural key by an updated_at (or ingestion) timestamp and keep the newest. This is exactly how I'd build an idempotent upsert from a messy customer feed that re-sends records."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "WITH dedup AS (",
+                "  SELECT *,",
+                "    ROW_NUMBER() OVER (",
+                "      PARTITION BY natural_key",
+                "      ORDER BY updated_at DESC",
+                "    ) AS rn",
+                "  FROM staging",
+                ")",
+                "SELECT * FROM dedup WHERE rn = 1;"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "If there's no reliable timestamp I'd fall back to a deterministic tiebreaker and flag it as a data-quality risk to the customer."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "Show a pandas snippet to join two messy datasets and compute a per-group aggregate.",
+          "header": "Stage 1 - Coding Fundamentals (Python + SQL)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I normalize the join keys first (strip, lowercase, fix types), do a left merge with an indicator so I can see unmatched rows, then groupby and aggregate. The indicator is the trick that catches join-key mismatches early."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import pandas as pd",
+                "",
+                "orders[\"cust\"] = orders[\"cust\"].str.strip().str.lower()",
+                "cust[\"cust\"] = cust[\"cust\"].str.strip().str.lower()",
+                "",
+                "m = orders.merge(cust, on=\"cust\", how=\"left\", indicator=True)",
+                "print(m[\"_merge\"].value_counts())  # spot left_only rows",
+                "",
+                "rev = (m.groupby(\"region\")[\"amount\"]",
+                "         .agg([\"sum\", \"mean\", \"count\"])",
+                "         .reset_index())"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I'd investigate any left_only rows before trusting the totals - unmatched keys almost always mean dirty source data."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "Reverse the words in a string, and discuss complexity. (Coding-screen warmup.)",
+          "header": "Stage 1 - Coding Fundamentals (Python + SQL)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I clarify the definition of a word and whitespace handling first, then split on whitespace, reverse the list, and rejoin. It's O(n) time and O(n) space; truly in-place on a char array would be O(1) extra space by reversing the whole string then each word."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "def reverse_words(s: str) -> str:",
+                "    return \" \".join(reversed(s.split()))",
+                "",
+                "assert reverse_words(\"  hello   world \") == \"world hello\""
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I narrate the edge cases out loud - leading/trailing/multiple spaces - because in an FDE screen they care as much about how I reason and handle messy input as about the answer."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "Find the first non-repeating character in a string. Explain your data structure choice.",
+          "header": "Stage 1 - Coding Fundamentals (Python + SQL)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I count characters in one pass, then scan the original string in order and return the first with count 1. Using a dict that preserves insertion order (Python 3.7+) or Counter gives O(n) time and O(k) space where k is the alphabet size."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from collections import Counter",
+                "",
+                "def first_unique(s: str):",
+                "    counts = Counter(s)",
+                "    for ch in s:",
+                "        if counts[ch] == 1:",
+                "            return ch",
+                "    return None"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I mention that a brute-force nested loop is O(n^2); the hash map is the standard improvement interviewers want me to reach for."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "How do you write a small, robust CLI script that an FDE could hand to a customer?",
+          "header": "Stage 1 - Coding Fundamentals (Python + SQL)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I use argparse for inputs, validate them, give a non-zero exit code on failure, print actionable errors, and keep secrets out of args (read from env or a file). The goal is that a customer admin can run it without me on the call."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import argparse, sys",
+                "",
+                "def main():",
+                "    p = argparse.ArgumentParser(description=\"Export orders to CSV\")",
+                "    p.add_argument(\"--since\", required=True, help=\"YYYY-MM-DD\")",
+                "    p.add_argument(\"--out\", default=\"orders.csv\")",
+                "    args = p.parse_args()",
+                "    try:",
+                "        run(args.since, args.out)",
+                "    except Exception as e:",
+                "        print(f\"ERROR: {e}\", file=sys.stderr)",
+                "        sys.exit(1)",
+                "",
+                "if __name__ == \"__main__\":",
+                "    main()"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Clear --help text and a sensible default for --out reduce the support burden once I leave the site."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "Explain Big-O and give the complexity of a dict lookup, a list membership test, and sorting.",
+          "header": "Stage 1 - Coding Fundamentals (Python + SQL)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Big-O describes how runtime or memory grows with input size, ignoring constants. A dict/set lookup is average O(1) because it's hashed; x in a_list is O(n) because it scans; sorting is O(n log n). The common FDE win is replacing a repeated list scan inside a loop with a set, turning O(n*m) into O(n+m)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# Slow: O(n*m)",
+                "matches = [r for r in rows if r.id in id_list]",
+                "",
+                "# Fast: O(n+m)",
+                "id_set = set(id_list)",
+                "matches = [r for r in rows if r.id in id_set]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "How do you handle dates and timezones when wrangling customer data across regions?",
+          "header": "Stage 1 - Coding Fundamentals (Python + SQL)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I parse to timezone-aware datetimes, store and compute in UTC, and only convert to local time for display. Naive datetimes are the root of most date bugs in multi-region customer data. I'm explicit about the source timezone rather than assuming the server's."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from datetime import datetime, timezone",
+                "from zoneinfo import ZoneInfo",
+                "",
+                "local = datetime.fromisoformat(\"2026-06-29T09:30:00\")",
+                "local = local.replace(tzinfo=ZoneInfo(\"America/New_York\"))",
+                "utc = local.astimezone(timezone.utc)  # store this"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I also watch for ambiguous formats (DD/MM vs MM/DD) in customer exports and confirm the convention rather than guessing."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "fde-2": [
+    {
+      "sectionTitle": "Stage 2 - APIs & Integrations",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Walk me through consuming a paginated REST API and pulling every record reliably.",
+          "header": "Stage 2 - APIs & Integrations",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I detect the pagination style (cursor, offset, or Link header), loop until there's no next page, and yield records as a generator so memory stays flat. I add timeouts and handle the empty-page / last-page terminator explicitly so I don't loop forever."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import httpx",
+                "",
+                "def fetch_all(url, headers):",
+                "    cursor = None",
+                "    with httpx.Client(timeout=30) as c:",
+                "        while True:",
+                "            params = {\"limit\": 100}",
+                "            if cursor:",
+                "                params[\"cursor\"] = cursor",
+                "            r = c.get(url, headers=headers, params=params)",
+                "            r.raise_for_status()",
+                "            body = r.json()",
+                "            yield from body[\"data\"]",
+                "            cursor = body.get(\"next_cursor\")",
+                "            if not cursor:",
+                "                break"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Cursor pagination is safer than offset because rows inserted mid-extraction won't cause skips or duplicates."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Compare OAuth 2.0 client-credentials and authorization-code flows. Which fits an FDE backend integration?",
+          "header": "Stage 2 - APIs & Integrations",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Authorization-code flow is for apps acting on behalf of a human user - the user logs in and consents, and you exchange a code for tokens. Client-credentials flow is machine-to-machine: the service authenticates as itself with a client id/secret, no user present. For a backend integration syncing customer data, client-credentials is almost always the right one."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "POST /oauth/token",
+                "Content-Type: application/x-www-form-urlencoded",
+                "",
+                "grant_type=client_credentials",
+                "&client_id=...",
+                "&client_secret=...",
+                "&scope=orders:read"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I cache the access token until just before expiry and refresh proactively, so I'm not re-authing on every request or getting surprised by a 401 mid-sync."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "How do you implement retries with exponential backoff and jitter, and why jitter?",
+          "header": "Stage 2 - APIs & Integrations",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I retry only on transient errors (timeouts, 429, 5xx), back off exponentially, cap the delay, and add random jitter so many clients don't retry in lockstep and create a thundering herd. I also respect a Retry-After header when present."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import random, time",
+                "",
+                "def get_with_retry(client, url, retries=5):",
+                "    for attempt in range(retries):",
+                "        r = client.get(url, timeout=30)",
+                "        if r.status_code < 500 and r.status_code != 429:",
+                "            return r",
+                "        wait = r.headers.get(\"Retry-After\")",
+                "        delay = float(wait) if wait else min(2 ** attempt, 30)",
+                "        time.sleep(delay + random.uniform(0, 1))  # jitter",
+                "    r.raise_for_status()",
+                "    return r"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Without jitter, a fleet of retrying clients synchronizes and hammers the API at the same instants, prolonging the outage."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What is idempotency and how do you make a 'create order' call safe to retry?",
+          "header": "Stage 2 - APIs & Integrations",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Idempotent means making the same call N times has the same effect as once. A POST that creates a resource isn't naturally idempotent, so a retry after a timeout could double-charge. The fix is an idempotency key: the client sends a unique key per logical operation, and the server dedupes on it."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "POST /v1/orders",
+                "Idempotency-Key: 7f3c-order-2026-06-29-abc",
+                "Content-Type: application/json",
+                "",
+                "{ \"customer\": \"c_42\", \"amount\": 199.0 }"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "On the consuming side, if I don't control the server, I make my own writes idempotent via upserts on a natural key so reprocessing the same event doesn't duplicate data."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Webhooks vs polling - when do you choose each, and how do you secure a webhook?",
+          "header": "Stage 2 - APIs & Integrations",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Webhooks push events in near-real-time and are efficient, but require a reachable endpoint and you must handle missed/duplicate deliveries. Polling is simpler and works behind firewalls but adds latency and wasted calls. At customers with locked-down networks I often poll; where low latency matters and ingress is allowed, I use webhooks with a reconciliation poll as a safety net."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import hmac, hashlib",
+                "",
+                "def verify(payload: bytes, signature: str, secret: bytes) -> bool:",
+                "    expected = hmac.new(secret, payload, hashlib.sha256).hexdigest()",
+                "    return hmac.compare_digest(expected, signature)"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I verify the HMAC signature with a constant-time compare, check a timestamp to block replays, and treat the handler as at-least-once - so it must be idempotent."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "How do you handle rate limits when doing a large initial backfill from a customer's API?",
+          "header": "Stage 2 - APIs & Integrations",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I read the rate-limit headers (limit/remaining/reset), throttle proactively to stay under the budget rather than reactively hitting 429s, and parallelize within the allowance. I checkpoint progress so a backfill can resume instead of restarting."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# Proactive throttle: stay below the per-second budget",
+                "import time",
+                "RATE = 8  # requests/sec allowed",
+                "interval = 1 / RATE",
+                "for url in urls:",
+                "    start = time.monotonic()",
+                "    process(fetch(url))",
+                "    checkpoint(url)  # resumable",
+                "    elapsed = time.monotonic() - start",
+                "    if elapsed < interval:",
+                "        time.sleep(interval - elapsed)"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I also tell the customer's API owner the backfill window so nobody is surprised by the load."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "Draw the data flow for an integration that syncs a customer's CRM into our platform.",
+          "header": "Stage 2 - APIs & Integrations",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I separate extraction, a durable queue, transformation, and load so each stage can fail and retry independently. The queue decouples the customer API's rate limits from our processing speed and gives me a place to dead-letter bad events."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart LR",
+                "  CRM[Customer CRM API] --> EX[Extractor]",
+                "  EX --> Q[/Event Queue/]",
+                "  Q --> TR[Transform + Validate]",
+                "  TR --> DLQ[/Dead-letter Queue/]",
+                "  TR --> LD[Loader / Upsert]",
+                "  LD --> DB[(Platform DB)]",
+                "  DLQ --> AL[Alert + Replay]"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Upsert on a stable natural key at the load step makes the whole pipeline safe to replay from the queue or DLQ."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "A customer's API returns 200 OK but the body says 'error'. How do you handle inconsistent APIs?",
+          "header": "Stage 2 - APIs & Integrations",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Real-world APIs lie, so I don't trust the status code alone - I validate the body shape and any status field, and I make my client defensive. I write a thin adapter that normalizes each quirky API into a consistent internal result so the rest of the pipeline stays clean."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "r = client.post(url, json=payload, timeout=30)",
+                "r.raise_for_status()",
+                "body = r.json()",
+                "if body.get(\"status\") != \"ok\":",
+                "    raise IntegrationError(body.get(\"message\", \"unknown error\"))"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I document the quirk and, when I have the relationship, raise it with the API owner - but I never let my pipeline depend on them fixing it."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How do you manage secrets and credentials when integrating at a customer site?",
+          "header": "Stage 2 - APIs & Integrations",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Secrets never go in code, repos, logs, or chat. I read them from environment variables or a secrets manager (Vault, AWS/GCP Secrets Manager, K8s Secrets), scope tokens to least privilege, and prefer short-lived credentials with rotation. At on-prem customers I use their approved vault rather than introducing my own."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import os",
+                "api_key = os.environ[\"CRM_API_KEY\"]  # injected by the secrets manager",
+                "# never: api_key = \"sk_live_abc123\"  <-- gets leaked in git/logs"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I also make sure my logging redacts tokens, because an Authorization header dumped into a debug log is a real incident."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "Design a resilient nightly ETL job that pulls from a flaky 3rd-party API. What makes it robust?",
+          "header": "Stage 2 - APIs & Integrations",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Robustness comes from: timeouts on every call, retries with backoff, checkpointing for resumability, idempotent loads, incremental extraction using a high-water mark, and alerting on failure with enough context to act. I also make it re-runnable safely so an on-call engineer can just kick it again."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# Incremental extraction using a stored high-water mark",
+                "last = read_watermark()           # e.g. last updated_at",
+                "records = fetch_since(last)        # pull only new/changed",
+                "for batch in chunked(records, 500):",
+                "    upsert(batch)                  # idempotent load",
+                "advance_watermark(max_updated_at(records))"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "The high-water mark plus idempotent upsert means a partial failure costs me a re-run, not a data corruption."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What HTTP status codes do you treat as retryable vs fatal, and why?",
+          "header": "Stage 2 - APIs & Integrations",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Retryable: 408 (timeout), 429 (rate limited - honor Retry-After), and 500/502/503/504 (transient server errors). Fatal / do-not-retry: 400 (bad request), 401/403 (auth - fix credentials, don't hammer), 404 (gone), 422 (validation). Retrying a 400 just wastes calls and can trip abuse protections."
+            },
+            {
+              "kind": "text",
+              "text": "The key principle: retry things that might succeed if you try again, and surface things that won't - a 401 means stop and fix the token, not loop."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "How would you debug a webhook that the customer says they're sending but you're not receiving?",
+          "header": "Stage 2 - APIs & Integrations",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I work the path end to end: confirm the customer's configured URL and that our endpoint is publicly reachable, check ingress (firewall, load balancer, TLS cert validity), look at access logs for the request even if it 4xx/5xx'd, and verify signature/auth isn't silently rejecting it. I ask the customer for the delivery logs and a sample payload and timestamp."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# Reproduce their call to isolate where it dies",
+                "curl -i -X POST https://hook.example.com/crm \\",
+                "  -H 'Content-Type: application/json' \\",
+                "  -H 'X-Signature: <their-sig>' \\",
+                "  -d @sample_event.json"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Most often it's a firewall/allowlist on their side, an expired TLS cert, or our signature check rejecting a payload encoding mismatch - I bisect to which by reproducing the exact request."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "fde-3": [
+    {
+      "sectionTitle": "Stage 3 - Data & Pipelines",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Two customer systems use different IDs for the same entity. How do you reconcile them?",
+          "header": "Stage 3 - Data & Pipelines",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "First I look for a deterministic key shared by both (email, tax id, external ref). If none exists I build a crosswalk/mapping table, and for the remainder I do fuzzy matching on normalized attributes (name, address) with a confidence score, routing low-confidence matches to human review. I never silently auto-merge ambiguous records in customer data."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "-- A mapping/crosswalk table is the durable artifact",
+                "CREATE TABLE entity_xref (",
+                "  canonical_id  TEXT,",
+                "  system_a_id   TEXT,",
+                "  system_b_id   TEXT,",
+                "  match_method  TEXT,   -- exact | fuzzy | manual",
+                "  confidence    NUMERIC",
+                ");"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "The crosswalk becomes the source of truth for the integration and is auditable, which matters when the customer questions a merge."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Explain star schema and when you'd use it for a customer analytics deployment.",
+          "header": "Stage 3 - Data & Pipelines",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A star schema has a central fact table (events/measures like orders) surrounded by dimension tables (customer, product, date) joined by keys. It's denormalized for read performance and is intuitive for BI tools. I use it when the customer's main need is analytics/reporting over large event volumes rather than transactional writes."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart TD",
+                "  D1[dim_customer] --> F[fact_orders]",
+                "  D2[dim_product] --> F",
+                "  D3[dim_date] --> F",
+                "  D4[dim_store] --> F"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "The trade-off vs a normalized model is some redundancy, but it makes the customer's dashboards fast and easy to reason about."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What data quality checks do you build into an ingestion pipeline?",
+          "header": "Stage 3 - Data & Pipelines",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I check completeness (row counts vs source, not-null on required fields), validity (ranges, enums, formats), uniqueness (primary/natural keys), referential integrity (no orphan foreign keys), and freshness (data is recent enough). Failing checks should fail the run loudly or quarantine bad rows - never silently load garbage."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "-- Example assertions run after load",
+                "SELECT COUNT(*) AS nulls FROM stg_orders WHERE customer_id IS NULL;  -- expect 0",
+                "SELECT COUNT(*) AS dupes FROM (",
+                "  SELECT order_id FROM stg_orders GROUP BY order_id HAVING COUNT(*) > 1",
+                ") d;  -- expect 0",
+                "SELECT MAX(loaded_at) FROM stg_orders;  -- freshness check"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I surface these as a small report the customer can see, which builds trust that the numbers are right."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Batch vs streaming ingestion - how do you choose for a customer?",
+          "header": "Stage 3 - Data & Pipelines",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I choose based on the customer's latency requirement and operational maturity, not on what's trendy. Batch is simpler, cheaper, and easier to debug and backfill - great for daily/hourly reporting. Streaming is for when minutes or seconds of latency genuinely change the business outcome (fraud, monitoring), and it costs more in complexity and ops."
+            },
+            {
+              "kind": "text",
+              "text": "A common pragmatic answer is micro-batch: run frequently enough to feel near-real-time while keeping batch's simplicity. I'd push back on streaming if the real requirement is 'fresh enough by morning'."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Write a SQL query for daily active users with a 7-day rolling average.",
+          "header": "Stage 3 - Data & Pipelines",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I aggregate distinct users per day, then use a window function with a frame of the preceding 6 rows plus the current row to compute the trailing 7-day average. CTEs keep it readable."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "WITH daily AS (",
+                "  SELECT event_date, COUNT(DISTINCT user_id) AS dau",
+                "  FROM events",
+                "  GROUP BY event_date",
+                ")",
+                "SELECT",
+                "  event_date,",
+                "  dau,",
+                "  AVG(dau) OVER (",
+                "    ORDER BY event_date",
+                "    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW",
+                "  ) AS dau_7d_avg",
+                "FROM daily",
+                "ORDER BY event_date;"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I'd note the rolling average is only accurate once there are 7 days of history; earlier rows average fewer days."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "How would you make a pipeline idempotent so re-running it doesn't duplicate data?",
+          "header": "Stage 3 - Data & Pipelines",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Idempotency means a re-run produces the same end state. The two main techniques are upserts (MERGE on a natural key) and delete-insert by partition (replace a day's data wholesale). I avoid blind INSERTs of a re-extracted batch, which double-load on retry."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "MERGE INTO orders t",
+                "USING staging s ON t.order_id = s.order_id",
+                "WHEN MATCHED THEN UPDATE SET amount = s.amount, updated_at = s.updated_at",
+                "WHEN NOT MATCHED THEN INSERT (order_id, amount, updated_at)",
+                "  VALUES (s.order_id, s.amount, s.updated_at);"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Idempotency is what lets on-call safely re-run a failed job at 2am without fear."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "Explain partitioning and why Parquet is preferred over CSV in a warehouse/lake.",
+          "header": "Stage 3 - Data & Pipelines",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Partitioning physically splits data by a column (often date) so queries can prune and read only relevant partitions, drastically cutting scan cost. Parquet is columnar and compressed, so reading three columns out of fifty touches far less data than CSV's row-oriented full scan; it also stores schema and types, avoiding CSV's parsing ambiguity."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "-- Partition pruning: only scans 2026-06-29",
+                "SELECT SUM(amount)",
+                "FROM orders",
+                "WHERE event_date = DATE '2026-06-29';"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "For a cost-sensitive customer on a pay-per-scan warehouse, this is the single biggest lever on their bill."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "When would you reach for Spark, and what are shuffles and lazy evaluation?",
+          "header": "Stage 3 - Data & Pipelines",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I reach for Spark when the data is too big for a single machine or one SQL engine and I need distributed processing. Lazy evaluation means transformations build a plan and nothing runs until an action (count, write); this lets Spark optimize the whole DAG. A shuffle is when data moves across the network to regroup by key (joins, groupBy) - it's the expensive part, so I minimize wide transformations and watch for skew."
+            },
+            {
+              "kind": "text",
+              "text": "Honestly, for most FDE deployments a warehouse plus SQL beats standing up Spark; I'd only introduce Spark when scale truly demands it, because it adds real operational weight at a customer site."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "A customer file occasionally arrives with shifted columns or a changed header. How do you defend against schema drift?",
+          "header": "Stage 3 - Data & Pipelines",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I validate the schema on arrival - assert expected column names, count, and types before loading - and fail or quarantine on mismatch rather than loading misaligned data. I read columns by name not position, version the expected schema, and alert with a clear diff so I can adapt or push back to the customer's source team."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "EXPECTED = [\"order_id\", \"customer_id\", \"amount\", \"order_date\"]",
+                "header = next(csv.reader(open(path)))",
+                "missing = set(EXPECTED) - set(header)",
+                "if missing:",
+                "    raise SchemaError(f\"missing columns: {missing}; got {header}\")"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Catching drift at the door prevents silent corruption that surfaces weeks later as 'the numbers look wrong'."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "How do you design a pipeline that supports backfills without breaking incremental loads?",
+          "header": "Stage 3 - Data & Pipelines",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I parameterize the run by date range and make the load idempotent per partition, so re-running any window simply replaces that window's data. Incremental runs use a high-water mark; a backfill is just the same job invoked over historical windows. The key is that a unit of work is a partition, and loading a partition is a deterministic replace."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# Same code path for incremental and backfill",
+                "for day in date_range(start, end):",
+                "    data = extract(day)",
+                "    delete_partition(day)   # idempotent",
+                "    load_partition(day, data)"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "This avoids the classic trap where backfilling double-counts because the job only knew how to append."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "How do you validate that an ingested dataset matches the customer's source-of-truth numbers?",
+          "header": "Stage 3 - Data & Pipelines",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I reconcile with control totals: row counts, sums of key measures, and distinct counts of important keys, compared between source and target for the same window. I present a reconciliation report and investigate any variance beyond a tolerance before declaring the load good. Customers trust the platform only after the numbers tie out to their existing reports."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "-- Reconciliation: target should match source export",
+                "SELECT 'target' src, COUNT(*) n, SUM(amount) total FROM orders WHERE d='2026-06-29'",
+                "UNION ALL",
+                "SELECT 'source', COUNT(*),  SUM(amount)        FROM stg_source_export;"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "fde-4": [
+    {
+      "sectionTitle": "Stage 4 - Systems & Debugging in the Field",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "A customer reports the app is 'slow' but gives no detail. How do you triage performance in the field?",
+          "header": "Stage 4 - Systems & Debugging in the Field",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I quantify it first: which operation, how slow, when it started, who's affected, and is it consistent or spiky. Then I work the stack from symptom to cause - check metrics (latency percentiles, error rate, CPU/mem/IO), look at recent changes, and isolate the slow layer (network, app, DB) before optimizing anything. I measure before I touch, so I'm not guessing."
+            },
+            {
+              "kind": "text",
+              "text": "Common culprits I check early: a missing DB index, an N+1 query pattern, a chatty network round-trip, or resource exhaustion. I focus on the p95/p99, not the average, because that's what users feel."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Walk through your method for reproducing a customer bug you can't see directly.",
+          "header": "Stage 4 - Systems & Debugging in the Field",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I gather the exact inputs, timestamps, environment, and steps, then try to reproduce in an environment as close to theirs as possible. If I can't reproduce, I add targeted logging/tracing around the suspect path and ask the customer to retrigger, or get a sanitized sample of the data that fails. Reproduction is the goal because a bug I can reproduce is a bug I can fix."
+            },
+            {
+              "kind": "text",
+              "text": "I narrow the variable space methodically - same data, same config, same version - changing one thing at a time so I learn which factor matters."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "How do you read logs effectively, and what makes logs useful during an incident?",
+          "header": "Stage 4 - Systems & Debugging in the Field",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I start at the error and the timestamp the customer reported, then follow a correlation/request id across services to reconstruct the request's journey. Useful logs are structured (key=value or JSON), include a correlation id, log at the right level, and never dump secrets or PII. I filter aggressively rather than reading top to bottom."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# Pull one request's full path across services by correlation id",
+                "grep 'cid=7f3c9a' app.log | sort -k1",
+                "",
+                "# Structured logging makes this reliable",
+                "log.info('order.created', cid=cid, customer=cust, latency_ms=dt)"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "If logs aren't structured, my first improvement to a deployment is often adding correlation ids - it pays for itself the first incident."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Explain distributed tracing and the three pillars of observability.",
+          "header": "Stage 4 - Systems & Debugging in the Field",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The three pillars are logs (discrete events), metrics (aggregated numeric time series like latency and error rate), and traces (the path of a single request across services). Distributed tracing propagates a trace id through every hop and records spans with timing, so I can see exactly which service or call in a request added the latency."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart LR",
+                "  GW[API Gateway span] --> SVC[Order Service span]",
+                "  SVC --> DB[(DB query span)]",
+                "  SVC --> EXT[3rd-party API span]"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "In a microservice deployment, a trace turns 'it's slow somewhere' into 'the 3rd-party call is taking 4 seconds' in one view."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "A service can't reach the customer's database. How do you debug the networking?",
+          "header": "Stage 4 - Systems & Debugging in the Field",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I work bottom-up: is the host resolvable (DNS), reachable (route), is the port open (firewall/security group), does TLS handshake succeed, and finally does auth/credentials work. Each layer rules out a class of causes. At customers, the answer is very often a firewall rule, security group, or proxy that the network team has to open."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "nslookup db.customer.internal      # DNS resolves?",
+                "nc -vz db.customer.internal 5432   # port reachable?",
+                "openssl s_client -connect db.customer.internal:5432  # TLS ok?"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I document exactly which check failed so the customer's network team gets an actionable request, not 'it doesn't work'."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "Explain the layers of a Docker image and how you'd debug a container that won't start.",
+          "header": "Stage 4 - Systems & Debugging in the Field",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A Docker image is built in layers, each cached from a Dockerfile instruction, so ordering matters for build speed (put rarely-changing steps first). For a crash-looping container I check the logs, the exit code, run it interactively to see the failure, and verify config/env and mounted volumes. Most field failures are a missing env var, a bad config path, or a permissions issue on a mounted volume."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "docker logs <id>                 # why did it exit?",
+                "docker run -it --entrypoint sh <image>   # poke inside",
+                "docker inspect <id> | jq '.[0].State'    # exit code, OOMKilled?"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "OOMKilled in the state is a common gotcha at customers with tight memory limits - the fix is a limit bump or a memory leak hunt, not a code change."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "Give the Kubernetes basics an FDE needs to deploy and debug at a customer.",
+          "header": "Stage 4 - Systems & Debugging in the Field",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A Pod is the smallest unit (one or more containers); a Deployment manages replica Pods and rollouts; a Service gives stable networking/load-balancing; ConfigMaps and Secrets inject config and credentials. For debugging I check pod status, events, and logs, and exec into a pod to inspect. CrashLoopBackOff, ImagePullBackOff, and Pending (unschedulable) are the statuses I see most."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "kubectl get pods",
+                "kubectl describe pod <pod>     # events: why Pending/failing?",
+                "kubectl logs <pod> --previous  # logs from the crashed instance",
+                "kubectl exec -it <pod> -- sh"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "describe's events section usually tells me the root cause directly - image pull auth, resource limits, or a failing readiness probe."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "How do you deploy into an air-gapped or heavily restricted customer environment?",
+          "header": "Stage 4 - Systems & Debugging in the Field",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I assume no internet access: I bundle everything - pre-pull container images into their internal registry, vendor dependencies, and provide an offline install. I document required ports, certs, and host names so their team can pre-approve them. I plan for their change-control process and provide a rollback path, because I may not get a second window."
+            },
+            {
+              "kind": "text",
+              "text": "I also test the install on a clean machine that mirrors their constraints before going on site, so the first time it runs offline isn't in front of the customer."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "Describe your root-cause-analysis approach for an intermittent failure.",
+          "header": "Stage 4 - Systems & Debugging in the Field",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I treat it as a hypothesis-driven search: form hypotheses from the symptoms, then gather evidence to confirm or eliminate each, changing one variable at a time. For intermittent issues I look for correlation with time, load, a specific node, or a specific input. I resist the urge to 'just restart it' until I understand why, because intermittent bugs come back."
+            },
+            {
+              "kind": "text",
+              "text": "Classic intermittent causes I rule in/out: race conditions, resource exhaustion under load, a flaky downstream dependency, retries masking a real error, and clock/timezone issues. The 'five whys' keeps me from stopping at the symptom."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "How do you decide whether a problem is in your software, the customer's data, or their infrastructure?",
+          "header": "Stage 4 - Systems & Debugging in the Field",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I isolate by substitution: run our software against known-good sample data on our infra (rules out their data and infra), then against their data on our infra (tests their data), then on their infra (tests their environment). Whichever swap reproduces the failure points to the layer. This keeps the conversation factual rather than 'your code is broken' vs 'your data is bad'."
+            },
+            {
+              "kind": "text",
+              "text": "Framing it as a shared investigation rather than blame keeps the customer relationship healthy while we find the truth."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "Latency vs throughput - explain the difference and a time the distinction matters.",
+          "header": "Stage 4 - Systems & Debugging in the Field",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Latency is how long one request takes; throughput is how many requests you handle per unit time. They're related but distinct - you can raise throughput with batching/parallelism while individual latency stays the same or even worsens. A customer complaining about a slow dashboard cares about latency; one running a big nightly load cares about throughput."
+            },
+            {
+              "kind": "text",
+              "text": "I once batched API writes to fix a throughput/rate-limit problem, which raised per-record latency but let the whole backfill finish in time - the right trade-off because the SLA was on total completion, not per-record."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "fde-5": [
+    {
+      "sectionTitle": "Stage 5 - Solution Architecture",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Take-home style: a retailer wants to unify online + in-store sales data for daily reporting. Design the deployment.",
+          "header": "Stage 5 - Solution Architecture",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I start with requirements: data sources (e-commerce API, POS exports), volume, freshness (daily is fine, so batch), who consumes it (analysts via BI), and constraints (cloud vs on-prem, PII, budget). Then I propose a layered architecture - ingestion, a staging area, a warehouse with a star schema, and a BI layer - and I scope an MVP that delivers one valuable report end-to-end before expanding."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart LR",
+                "  ECOM[E-commerce API] --> ING[Ingestion / ETL]",
+                "  POS[POS CSV exports] --> ING",
+                "  ING --> LK[(Staging / Lake)]",
+                "  LK --> WH[(Warehouse - star schema)]",
+                "  WH --> BI[BI / Dashboards]",
+                "  ING --> DQ[Data Quality + Recon]"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "I'd validate the design against their scale and team maturity, call out the trade-offs explicitly, and sequence delivery so they see value in week one, not month six."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "How do you gather real requirements when the customer only gives you a vague ask?",
+          "header": "Stage 5 - Solution Architecture",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I dig past the stated solution to the underlying problem by asking what decision or workflow the output supports, who uses it, how often, and what 'good' looks like. I probe constraints early: data sources, volumes, latency, security/compliance, existing systems, and budget. I write assumptions down and play them back so misunderstandings surface before I build."
+            },
+            {
+              "kind": "text",
+              "text": "A useful move is asking 'what would make this a success in 90 days' - it converts a vague ask into a concrete, scoped target and reveals the real priorities."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "On-prem vs cloud vs hybrid - how do you decide for a specific customer?",
+          "header": "Stage 5 - Solution Architecture",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I decide on constraints, not preference. On-prem when data residency, regulatory, or air-gap requirements forbid cloud, or when they have heavy existing on-prem investment. Cloud when they want elasticity, lower ops burden, and managed services. Hybrid when sensitive data must stay on-prem but compute or analytics can burst to cloud. I weigh their security posture, team skills, cost model, and latency to data sources."
+            },
+            {
+              "kind": "text",
+              "text": "I make the trade-off explicit: cloud trades control for speed and managed ops; on-prem trades agility for sovereignty and fixed cost. The right answer is the customer's context, and I can defend either."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "How do you scope an MVP for a customer deployment under a tight timeline?",
+          "header": "Stage 5 - Solution Architecture",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I find the thinnest slice that delivers real value end-to-end - one data source, one transformation, one report - and ship that, deferring breadth. I cut scope on features, not on quality or correctness. I sequence so each increment is usable and de-risks the riskiest unknown first (often a flaky integration or unclear data)."
+            },
+            {
+              "kind": "text",
+              "text": "I'm explicit with the customer about what's in and out of the MVP and why, so 'MVP' doesn't quietly become 'everything but rushed'. Tackling the highest-risk integration first means I learn the hard truths while there's still time to react."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What security and compliance concerns do you address when designing a customer deployment?",
+          "header": "Stage 5 - Solution Architecture",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I cover data classification and PII handling, encryption in transit (TLS) and at rest, least-privilege access and secrets management, network isolation, and audit logging. I map to the customer's compliance regime - SOC 2, HIPAA for health, GDPR for EU personal data, PCI for cards - and design data residency accordingly. I involve their security team early because they can block a go-live."
+            },
+            {
+              "kind": "text",
+              "text": "Concretely: scope service accounts narrowly, keep secrets in their vault, minimize data collected and retained, and make sure logs don't leak PII. Security designed in up front is far cheaper than retrofitting it after a review fails."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "Walk through a make-vs-buy / build-vs-platform decision in a deployment.",
+          "header": "Stage 5 - Solution Architecture",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I default to reusing the platform's existing capabilities and managed services, and only build custom when there's a real gap that materially affects the customer outcome. Building custom adds maintenance the customer (or we) own forever. I weigh time-to-value, total cost of ownership, and how unique the requirement truly is - most 'special' requirements are 80% standard."
+            },
+            {
+              "kind": "text",
+              "text": "I document the decision and its trade-offs, because the next FDE who inherits this account needs to know why the bespoke piece exists."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "How do you design for the customer's scale and reliability needs without over-engineering?",
+          "header": "Stage 5 - Solution Architecture",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I size to the actual numbers - current volume, growth, peak vs average, and the real SLA - rather than imagined web-scale. I add reliability where failure actually hurts (idempotency, retries, monitoring, a rollback path) and keep the rest simple. Over-engineering a deployment that processes a few million rows a day as if it were billions just slows delivery and raises ops cost."
+            },
+            {
+              "kind": "text",
+              "text": "My rule: design for one order of magnitude of headroom, make it observable, and revisit when the customer actually approaches the next tier."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "How do you handle a customer demanding heavy customization that diverges from the product?",
+          "header": "Stage 5 - Solution Architecture",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I separate genuine needs from preferences, look for a configuration-based way to meet the need within the product, and reserve true customization for high-value, well-justified cases. I'm honest about the long-term cost of divergence - every fork is harder to support and upgrade. When a customization signals a real product gap, I feed it back to product as a candidate for the roadmap."
+            },
+            {
+              "kind": "text",
+              "text": "Framing matters: I align on the business outcome, then show the cheapest path that gets there, which is usually configuration plus a thin integration rather than a fork."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "Sketch a reference architecture for ingesting, processing, storing, and serving customer data.",
+          "header": "Stage 5 - Solution Architecture",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A clean separation of concerns: ingestion brings data in (batch + events), a processing layer validates and transforms, storage holds raw and curated layers, and a serving layer exposes it to apps/BI. Decoupling stages with a queue or staging area means each can scale, fail, and be re-run independently - which is exactly what survives contact with a messy customer."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart TD",
+                "  SRC[Customer + 3rd-party sources] --> ING[Ingestion]",
+                "  ING --> RAW[(Raw / Bronze)]",
+                "  RAW --> PROC[Validate + Transform]",
+                "  PROC --> CUR[(Curated / Gold)]",
+                "  CUR --> API[Serving API]",
+                "  CUR --> BI[BI / Dashboards]",
+                "  PROC --> MON[Monitoring + Data Quality]"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Keeping a raw layer means I can reprocess when transform logic changes without re-pulling from the customer - a lifesaver during a deployment."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "How do you surface and manage risks and unknowns in a deployment plan?",
+          "header": "Stage 5 - Solution Architecture",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I keep an explicit risk list with likelihood, impact, and a mitigation or a spike to reduce uncertainty, and I tackle the highest-risk items first. Common deployment risks: data quality worse than promised, integration access delays, network/firewall approvals, and unclear ownership on the customer side. I make these visible to the customer so timelines reflect reality, not optimism."
+            },
+            {
+              "kind": "text",
+              "text": "A short de-risking spike early - e.g. proving I can actually pull their data through their firewall - often saves the project from a late, painful surprise."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "Defend a design decision the interviewer pushes back on. How do you respond to challenge?",
+          "header": "Stage 5 - Solution Architecture",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I restate the trade-off I made and the requirement that drove it, then genuinely engage with their point - if they surface a constraint I missed, I adapt, because being right matters more than being stubborn. If my reasoning still holds, I explain it calmly with the evidence. Good architecture is defensible on trade-offs, not dogma."
+            },
+            {
+              "kind": "text",
+              "text": "I treat pushback as new information, not an attack. Showing I can change my mind when the facts change is exactly the judgment an FDE needs in front of a skeptical customer architect."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "fde-6": [
+    {
+      "sectionTitle": "Stage 6 - Communication & Stakeholder Management",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "How do you translate a business goal into technical scope, and the result back to the business?",
+          "header": "Stage 6 - Communication & Stakeholder Management",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Going down, I ask what decision or outcome the business wants and decompose it into data, integrations, and components, naming the assumptions. Going back up, I report in their terms - impact, timeline, risk - not in jargon. The skill is being bilingual: precise with engineers, outcome-focused with executives, and never making a non-technical stakeholder feel lost."
+            },
+            {
+              "kind": "text",
+              "text": "For example, 'reduce churn' becomes 'a daily pipeline scoring at-risk accounts surfaced in their CRM' for engineering, and 'you'll see flagged at-risk customers in your existing tool by end of month' for the sponsor."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "A customer expects a feature in two weeks that will realistically take six. How do you manage that?",
+          "header": "Stage 6 - Communication & Stakeholder Management",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I address the gap immediately and honestly - never let an unrealistic expectation ride. I explain the drivers of the estimate, then offer options: a reduced scope that fits two weeks, the full scope in six, or a phased delivery where they get value early. I anchor on their underlying need so we can find what actually solves their problem soonest."
+            },
+            {
+              "kind": "text",
+              "text": "Setting expectations early and offering choices turns a 'you're late' conflict into a collaborative prioritization. Surprising a customer with a slip at the deadline is the one outcome I refuse to allow."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "How do you run an effective demo for a mixed technical and non-technical audience?",
+          "header": "Stage 6 - Communication & Stakeholder Management",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I open with the business outcome so non-technical folks see the 'why', show a clean happy-path flow with their data, and keep technical depth in reserve for when an engineer asks. I rehearse, prepare for failure (a backup recording or stable demo data), and end with clear next steps. The demo is a communication tool, not a code review."
+            },
+            {
+              "kind": "text",
+              "text": "I tailor the narrative to who's in the room - for executives, time-to-value and risk; for their engineers, how it integrates and what they'll own. Reading the room and adjusting live is half the job."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "How do you operate and make progress when the problem is ambiguous and under-specified?",
+          "header": "Stage 6 - Communication & Stakeholder Management",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I make ambiguity concrete: write down what I know, what I'm assuming, and the open questions, then take a reasonable first step and validate it quickly with the customer rather than waiting for perfect clarity. Small, fast feedback loops beat analysis paralysis. I'm comfortable being wrong early and correcting, because a tangible prototype elicits real requirements better than a meeting."
+            },
+            {
+              "kind": "text",
+              "text": "FDE work is mostly ambiguous by nature; my job is to reduce uncertainty through action while keeping the customer aligned on direction."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Describe a prioritization framework you use when everything feels urgent at a customer.",
+          "header": "Stage 6 - Communication & Stakeholder Management",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I use impact vs effort to find quick wins, and for bigger lists RICE (reach, impact, confidence, effort). I separate truly time-critical work (a production incident, a contractual milestone) from loud-but-not-urgent requests, and I make the prioritization transparent to the customer so trade-offs are a shared decision, not a black box."
+            },
+            {
+              "kind": "text",
+              "text": "When the customer disagrees with my ordering, I bring it back to their stated business goals - that usually resolves it, because the goals, not the volume of requests, set the priority."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "How do you communicate during a production incident at a customer?",
+          "header": "Stage 6 - Communication & Stakeholder Management",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I acknowledge fast, give a clear status (what's affected, what we're doing, what we know and don't), and commit to a next-update time and then hit it. I keep the customer-facing message calm and factual and avoid speculation or blame. Internally I escalate and pull in help in parallel, so the customer sees one coordinated front."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "Status (10:05): Order sync is delayed for ~30% of accounts.",
+                "Impact: New orders appear with a lag; no data loss.",
+                "Action: Engineering is reprocessing the backlog now.",
+                "Next update: 10:35 or sooner if resolved."
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Regular, predictable updates - even 'no change yet' - preserve trust far better than going silent while heads-down fixing."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "How do you say 'no' or re-scope without damaging the customer relationship?",
+          "header": "Stage 6 - Communication & Stakeholder Management",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I never say a flat 'no' - I say 'here's what that would cost and trade off, and here's an alternative that gets you the outcome'. I anchor on their goal, show the implications honestly, and let them make an informed trade. People accept a constraint they understand; they resent a refusal they don't. Protecting them from a bad decision is part of the job."
+            },
+            {
+              "kind": "text",
+              "text": "Framing it as guarding their timeline and budget, rather than gatekeeping, keeps me a trusted advisor rather than an obstacle."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "How do you keep a non-technical customer confident while escalating a hard problem internally?",
+          "header": "Stage 6 - Communication & Stakeholder Management",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I own the relationship as the single point of contact: I shield them from internal churn, give them a clear and honest picture, and translate any internal uncertainty into a concrete plan and timeline for them. Internally I'm escalating hard; externally they see calm competence and steady updates. I never throw my own team under the bus to the customer."
+            },
+            {
+              "kind": "text",
+              "text": "The customer should feel that someone capable owns their problem end to end, regardless of how many internal teams are involved behind the scenes."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How do you gather and act on feedback from non-technical end users?",
+          "header": "Stage 6 - Communication & Stakeholder Management",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I watch them actually use the tool rather than only asking, because users describe workarounds as if they're normal. I ask about their workflow and pain, not about features, and I close the loop by showing them changes I made from their input, which builds adoption. Observed behavior beats stated preference for finding what's really broken."
+            },
+            {
+              "kind": "text",
+              "text": "Acting visibly on feedback also turns end users into champions, which matters because adoption - not just delivery - is what makes a deployment a success."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "Write a status update for a multi-week deployment that's slightly behind. What goes in it?",
+          "header": "Stage 6 - Communication & Stakeholder Management",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A good update is short and honest: progress since last time, current status against the plan, any risks or blockers with owners, and clear next steps and dates. I lead with outcomes, flag the slip proactively with a recovery plan, and make any asks of the customer explicit. No surprises, no burying the lede."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "Subject: Deployment update - Week 3",
+                "Done: CRM integration live in staging; data reconciliation passing.",
+                "Status: ~1 week behind on the reporting layer (firewall approval delay).",
+                "Plan: Reports in staging by Fri; need your network team to open 443 to host X.",
+                "Next update: Monday."
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Naming the blocker and the specific ask turns a status update into a tool that actually unblocks the work."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "How do you build trust as the customer's technical point of contact?",
+          "header": "Stage 6 - Communication & Stakeholder Management",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Trust comes from doing what I said I'd do, being honest about what I don't know, and being responsive. I deliver small wins early, communicate proactively (especially bad news), and show I understand their business, not just the tech. Competence plus reliability plus candor compounds over a deployment into real credibility."
+            },
+            {
+              "kind": "text",
+              "text": "The fastest trust-killer is overpromising; the fastest builder is admitting a mistake quickly and fixing it. I aim to be the person they call first when something's wrong."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "fde-7": [
+    {
+      "sectionTitle": "Stage 7 - Behavioral & Case Studies",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Tell me about a deployment that went wrong. (Use STAR.)",
+          "header": "Stage 7 - Behavioral & Case Studies",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "Framework: STAR (Situation, Task, Action, Result)"
+            },
+            {
+              "kind": "text",
+              "text": "Situation: A go-live where the customer's 'clean' data turned out to be full of duplicates and inconsistent IDs, and the pipeline failed reconciliation the night before launch. Task: I owned getting the deployment correct without slipping the launch the executives had announced."
+            },
+            {
+              "kind": "text",
+              "text": "Action: I triaged to isolate it as a data issue (not our code) by running our software against known-good sample data, built a dedup plus crosswalk step with confidence scoring, routed ambiguous matches to a customer reviewer, and gave the sponsor an honest update with a phased plan. Result: We launched on time with a clearly scoped subset that reconciled, the rest followed a week later, and the recon report became a standing trust-builder."
+            },
+            {
+              "kind": "text",
+              "text": "Lesson I state explicitly: I now de-risk data quality with an early spike on real customer data rather than trusting 'it's clean' - that's the takeaway interviewers want."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Tell me about a time you dealt with an unhappy or frustrated customer.",
+          "header": "Stage 7 - Behavioral & Case Studies",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Situation: A customer was angry that a feature they expected wasn't in the release and felt misled. Task: De-escalate, understand the real gap, and rebuild trust. Action: I listened fully without getting defensive, acknowledged the miss, separated the genuine need from the frustration, and came back within a day with a concrete plan and dates. I over-communicated through delivery."
+            },
+            {
+              "kind": "text",
+              "text": "Result: We delivered the need in a phased way, and the relationship ended stronger than before because they saw I owned it. The lesson: anger is usually about a broken expectation - fix the expectation gap and follow through, and most unhappy customers become advocates."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "Describe a time you took ownership of a problem outside your formal responsibility.",
+          "header": "Stage 7 - Behavioral & Case Studies",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Situation: A customer's integration kept failing due to a flaky upstream system that 'wasn't ours'. Task: It was blocking the customer's value, so I made it my problem regardless of ownership lines. Action: I instrumented the failures, proved the pattern, built defensive retries and a reconciliation safety net on our side, and worked with the upstream team to get a real fix queued."
+            },
+            {
+              "kind": "text",
+              "text": "Result: Failures dropped to near zero and the customer stopped feeling the pain immediately. I emphasize the ownership mindset: FDEs are judged on the customer outcome, not on whose component technically broke. I'd rather over-own than let a customer suffer in a gap between teams."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Tell me about a time you faced an ambiguous problem with no clear spec.",
+          "header": "Stage 7 - Behavioral & Case Studies",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Situation: A customer asked us to 'help them use their data better' with no defined deliverable. Task: Turn a vague ask into something valuable and concrete. Action: I interviewed stakeholders to find the highest-pain decision they made blindly, wrote down assumptions, and built a small prototype dashboard against real data in a week to test the direction rather than waiting for a perfect spec."
+            },
+            {
+              "kind": "text",
+              "text": "Result: The prototype clarified what they actually needed, we iterated to a real deployment, and I'd defined a scope from nothing. Lesson: in ambiguity, a tangible first step elicits requirements far faster than more meetings - make progress, then steer."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Tell me about a time you had to prioritize under pressure with competing demands.",
+          "header": "Stage 7 - Behavioral & Case Studies",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Situation: A production incident at one customer collided with a contractual go-live milestone at another, same day. Task: Allocate limited time to minimize total harm. Action: I triaged by impact and reversibility - the incident risked active data loss so it came first, I pulled in a teammate to keep the go-live moving, set explicit expectations with both customers, and time-boxed my attention."
+            },
+            {
+              "kind": "text",
+              "text": "Result: The incident was contained and the go-live slipped by hours, not days, with the customer informed in advance. Lesson: under pressure, make the trade-off explicit and communicate it - a calmly managed slip beats two half-handled crises."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "Tell me about a time you disagreed with product or engineering and how you resolved it.",
+          "header": "Stage 7 - Behavioral & Case Studies",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Situation: Product wanted the customer to adopt the standard workflow; I believed a specific gap genuinely blocked the customer. Task: Advocate for the customer without just demanding a custom build. Action: I brought data - the concrete customer impact and frequency - proposed the cheapest option (a configuration plus thin integration), and framed the gap as a likely pattern across other accounts to inform the roadmap."
+            },
+            {
+              "kind": "text",
+              "text": "Result: We shipped the lightweight solution and product added the capability to the roadmap after seeing the evidence. Lesson: disagree with data and a proposed path forward, assume good intent, and aim for the option that serves both the customer and the product's long-term health."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "Tell me about a time you had to learn a new domain or technology quickly for a customer.",
+          "header": "Stage 7 - Behavioral & Case Studies",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Situation: A deployment in an unfamiliar regulated domain with compliance constraints I didn't know. Task: Get competent fast enough to design responsibly. Action: I read the customer's own docs and prior reports, found internal experts and asked focused questions, built a small proof to test my understanding, and validated my assumptions with the customer's domain experts rather than guessing."
+            },
+            {
+              "kind": "text",
+              "text": "Result: I designed a compliant solution and earned credibility by speaking their language. Lesson: I don't need to be the deepest expert; I need to learn fast, know what I don't know, and pull in the right expertise - which is the FDE's core operating mode."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "Tell me about a time you had to push back on a customer's request.",
+          "header": "Stage 7 - Behavioral & Case Studies",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Situation: A customer insisted on a heavy customization that would fork them off the upgrade path. Task: Protect them from a long-term cost while respecting their authority. Action: I aligned on the underlying outcome, showed a configuration-based alternative that met 90% of the need at a fraction of the maintenance cost, and was transparent about the support burden of the fork. I gave them the decision with clear trade-offs."
+            },
+            {
+              "kind": "text",
+              "text": "Result: They chose the lighter path once they saw the long-term cost, and we delivered faster. Lesson: pushing back is a service when it's framed around the customer's own interests and backed by honest trade-offs - not gatekeeping."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "Case study: walk me through scoping a customer project end-to-end.",
+          "header": "Stage 7 - Behavioral & Case Studies",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "Framework: Clarify -> Constraints -> Architecture -> MVP -> Risks -> Plan"
+            },
+            {
+              "kind": "text",
+              "text": "I'd start by clarifying the business outcome and who consumes it, then map constraints (data sources, volumes, latency, security/compliance, cloud vs on-prem, budget). Next I sketch a layered architecture (ingestion, processing, storage, serving) and identify integration points. Then I scope an MVP that delivers one valuable slice end-to-end and de-risks the hardest unknown first."
+            },
+            {
+              "kind": "text",
+              "text": "I'd surface risks explicitly - data quality, integration access, network approvals, customer-side ownership - with mitigations, and lay out a phased plan with milestones the customer can see value at. Throughout, I state assumptions and play them back. I also ask the interviewer questions to mirror how I'd interrogate a real customer rather than assuming."
+            },
+            {
+              "kind": "text",
+              "text": "Closing: I summarize the trade-offs I chose and why, and propose concrete next steps - exactly how I'd leave a real scoping conversation with a customer."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What questions do you ask the interviewer in a case study, and why does it matter?",
+          "header": "Stage 7 - Behavioral & Case Studies",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I ask the same things I'd ask a customer: what's the business goal, who are the users, what data exists and how clean is it, what are the volume and latency needs, what are the security/compliance constraints, and what's the timeline and budget. Asking these shows I scope before I build and that I don't make hidden assumptions - the core FDE instinct interviewers are testing."
+            },
+            {
+              "kind": "text",
+              "text": "It also turns a monologue into a dialogue, which is exactly the collaborative posture a customer wants. I narrate why each question matters so the interviewer sees my reasoning, not just my conclusions."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "How do you close a case-study or solution-design interview strongly?",
+          "header": "Stage 7 - Behavioral & Case Studies",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I summarize the problem as I understood it, the key trade-offs I made and why, the MVP I'd ship first, and the top risks with mitigations. Then I propose concrete next steps and invite the harder follow-ups I deliberately deferred. A strong close shows judgment about what matters most and leaves the interviewer with a clear, confident picture."
+            },
+            {
+              "kind": "text",
+              "text": "I also acknowledge any assumptions that, if wrong, would change the design - signaling that I know where the real uncertainty lives, which is exactly the senior judgment an FDE loop is looking for."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "Why do you want to be a Forward Deployed Engineer specifically?",
+          "header": "Stage 7 - Behavioral & Case Studies",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "I'm energized by the combination the role uniquely offers: real engineering, but anchored to a concrete customer outcome I can see land. I like owning a problem end to end across messy data, integrations, deployment, and the human side, and I'm comfortable in ambiguity and direct customer contact. The feedback loop - ship something and watch it change how a customer works - is what I find motivating."
+            },
+            {
+              "kind": "text",
+              "text": "I'd tie this to a specific story where I bridged the technical and business sides and the customer impact was the reward. I'd avoid generic answers and show I understand the role is part engineer, part consultant, part owner - and that's exactly the mix I want."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

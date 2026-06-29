@@ -1,0 +1,2164 @@
+{
+  "genai-1": [
+    {
+      "sectionTitle": "Stage 1 - Python for AI - Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is the difference between a list, a tuple, and a set in Python?",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A list is an ordered, mutable collection that allows duplicates and is written with [ ]. A tuple is an ordered but immutable collection written with ( ); because it is hashable it can be used as a dictionary key. A set is an unordered, mutable collection of unique, hashable elements written with { } and is optimized for fast membership tests and de-duplication."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "nums = [1, 2, 2, 3]        # list - mutable, allows dups",
+                "point = (10, 20)           # tuple - immutable, hashable",
+                "unique = set(nums)         # {1, 2, 3} - dedup, O(1) lookup",
+                "print(2 in unique)         # True - average O(1)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Explain mutable vs immutable types and why it matters.",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Immutable objects cannot be changed after creation (int, float, str, tuple, frozenset, bool); any 'modification' creates a new object. Mutable objects can be changed in place (list, dict, set). It matters for two reasons: immutable objects can be hashed and used as dict keys / set members, and mutable default arguments are a classic bug because the same object is shared across calls."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "def add(item, bucket=[]):   # BUG: default list is created once",
+                "    bucket.append(item)",
+                "    return bucket",
+                "add(1); add(2)              # -> [1, 2], not [2]",
+                "",
+                "def add_safe(item, bucket=None):",
+                "    bucket = [] if bucket is None else bucket",
+                "    bucket.append(item)",
+                "    return bucket"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What is a list comprehension and when would you use a generator instead?",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A list comprehension builds a full list in memory in one expression. A generator expression uses the same syntax with parentheses but yields items lazily, one at a time, so it uses constant memory and is ideal for large or streaming data that you only iterate once."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "squares = [x*x for x in range(5)]          # list: [0,1,4,9,16]",
+                "evens = [x for x in range(20) if x % 2 == 0]",
+                "gen = (x*x for x in range(10**9))          # lazy, no memory blow-up",
+                "first = next(gen)                          # 0"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "How do map, filter, and lambda work together?",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A lambda is an anonymous one-expression function. map(fn, iterable) applies fn to every element and filter(fn, iterable) keeps elements where fn returns True; both return lazy iterators in Python 3, so wrap them in list() to materialize. In practice a comprehension is usually more readable, but map/filter are handy for passing existing functions."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "nums = [1, 2, 3, 4, 5]",
+                "doubled = list(map(lambda x: x * 2, nums))   # [2,4,6,8,10]",
+                "odds = list(filter(lambda x: x % 2, nums))   # [1,3,5]",
+                "from functools import reduce",
+                "total = reduce(lambda a, b: a + b, nums)     # 15"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Explain *args and **kwargs.",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "*args collects extra positional arguments into a tuple and **kwargs collects extra keyword arguments into a dict. They let a function accept a variable number of arguments and are commonly used to forward arguments to a wrapped function (e.g. in decorators)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "def report(label, *args, **kwargs):",
+                "    print(label, args, kwargs)",
+                "",
+                "report('x', 1, 2, mode='fast')",
+                "# x (1, 2) {'mode': 'fast'}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is the difference between a class attribute and an instance attribute?",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A class attribute is defined directly in the class body and is shared by all instances. An instance attribute is set on self (usually in __init__) and is unique per object. Reading an attribute checks the instance first, then the class; assigning through an instance always creates/overrides an instance attribute and never the class one."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "class Model:",
+                "    family = 'transformer'      # class attribute (shared)",
+                "    def __init__(self, name):",
+                "        self.name = name        # instance attribute (per object)",
+                "",
+                "a, b = Model('gpt'), Model('bert')",
+                "print(a.family, b.family)       # transformer transformer"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "How does inheritance and super() work in Python?",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Inheritance lets a subclass reuse and extend a parent class. super() returns a proxy to the next class in the Method Resolution Order (MRO), letting you call the parent's implementation (commonly __init__) without hard-coding its name, which keeps multiple inheritance working correctly."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "class Tokenizer:",
+                "    def __init__(self, vocab):",
+                "        self.vocab = vocab",
+                "",
+                "class BPETokenizer(Tokenizer):",
+                "    def __init__(self, vocab, merges):",
+                "        super().__init__(vocab)   # run parent init",
+                "        self.merges = merges"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What are dunder methods? Give common examples.",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Dunder (double-underscore) or 'magic' methods let your objects integrate with Python's built-in operators and functions. __init__ constructs, __str__ gives a user-friendly string, __repr__ gives an unambiguous developer string, __len__ supports len(), and __eq__ supports ==. They are how operator overloading works."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "class Vec:",
+                "    def __init__(self, x, y): self.x, self.y = x, y",
+                "    def __repr__(self): return f'Vec({self.x}, {self.y})'",
+                "    def __add__(self, o): return Vec(self.x+o.x, self.y+o.y)",
+                "",
+                "print(Vec(1, 2) + Vec(3, 4))   # Vec(4, 6)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How do you handle exceptions, and what is finally for?",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Wrap risky code in try, catch specific exceptions in except (most specific first), use else for code that should run only if no exception occurred, and finally for cleanup that must always run (closing files/connections). Catch specific exceptions rather than a bare except so you do not swallow real bugs."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "try:",
+                "    data = json.loads(raw)",
+                "except json.JSONDecodeError as e:",
+                "    log.error('bad json: %s', e)",
+                "    data = {}",
+                "finally:",
+                "    file.close()   # always runs"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "Why use a context manager (the with statement)?",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A context manager guarantees setup and teardown via __enter__ and __exit__, so resources like files, locks, or DB connections are released even if an exception is raised. with open(...) closes the file automatically, which is cleaner and safer than a manual try/finally."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "with open('corpus.txt', 'r', encoding='utf-8') as f:",
+                "    text = f.read()",
+                "# file is closed automatically here, even on error"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "Why do AI/ML projects use virtual environments (venv/conda)?",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A virtual environment isolates a project's dependencies so different projects can pin different versions (e.g. torch 2.1 vs 2.3) without conflicts, and so installs do not pollute the system Python. venv is built into Python and pip-based; conda also manages non-Python binaries (CUDA, MKL) which is convenient for GPU/ML stacks."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "python -m venv .venv",
+                "source .venv/bin/activate      # Windows: .venv\\Scripts\\activate",
+                "pip install -r requirements.txt",
+                "# conda alternative:",
+                "conda create -n genai python=3.11 -y"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What is the difference between deepcopy and a shallow copy?",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A shallow copy (copy.copy or list slicing) creates a new outer container but the inner objects are still shared references, so mutating a nested object affects both copies. copy.deepcopy recursively copies everything, giving fully independent objects at the cost of more time and memory."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import copy",
+                "a = [[1, 2], [3, 4]]",
+                "shallow = a[:]               # outer copy, inner lists shared",
+                "deep = copy.deepcopy(a)      # fully independent",
+                "shallow[0][0] = 99           # also changes a[0][0]",
+                "deep[0][0] = 7               # does not affect a"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "How do you read and write JSON in Python?",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use the json module: json.load/json.dump work with file objects, while json.loads/json.dumps work with strings. This is the everyday format for API payloads and config in GenAI apps. Use ensure_ascii=False to keep unicode readable and indent for pretty output."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import json",
+                "with open('cfg.json', 'r', encoding='utf-8') as f:",
+                "    cfg = json.load(f)",
+                "with open('out.json', 'w', encoding='utf-8') as f:",
+                "    json.dump(cfg, f, indent=2, ensure_ascii=False)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "What is a decorator and where is it used in ML code?",
+          "header": "Stage 1 - Python for AI - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A decorator is a function that takes a function and returns a new function, used to wrap behavior such as timing, caching, retries, or registering tools. In GenAI frameworks you frequently see decorators like @tool in LangChain or @app.post in FastAPI serving endpoints."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import functools, time",
+                "def timeit(fn):",
+                "    @functools.wraps(fn)",
+                "    def wrap(*a, **k):",
+                "        s = time.time(); r = fn(*a, **k)",
+                "        print(f'{fn.__name__} took {time.time()-s:.2f}s')",
+                "        return r",
+                "    return wrap"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "genai-2": [
+    {
+      "sectionTitle": "Stage 2 - NLP Foundations - Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is tokenization and why is it the first step in NLP?",
+          "header": "Stage 2 - NLP Foundations - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Tokenization splits raw text into smaller units (tokens) such as words or sentences so the rest of the pipeline can operate on discrete pieces. It matters because every downstream step (counting, tagging, embedding) assumes a unit boundary, and naive splitting on whitespace fails on punctuation, contractions, and abbreviations."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import nltk",
+                "from nltk.tokenize import word_tokenize, sent_tokenize",
+                "text = \"Dr. Lee isn't here. Call him!\"",
+                "print(sent_tokenize(text))   # ['Dr. Lee isn't here.', 'Call him!']",
+                "print(word_tokenize(text))   # ['Dr.', 'Lee', 'is', \"n't\", ...]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What is the difference between stemming and lemmatization?",
+          "header": "Stage 2 - NLP Foundations - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Stemming chops word endings using crude rules to reach a root form (e.g. 'studies' -> 'studi'), so it is fast but can produce non-words. Lemmatization uses a dictionary and part-of-speech to return a valid base word called the lemma (e.g. 'studies' -> 'study', 'better' -> 'good'), so it is more accurate but slower. Use stemming for quick search indexing and lemmatization when correctness matters."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from nltk.stem import PorterStemmer, WordNetLemmatizer",
+                "ps, wl = PorterStemmer(), WordNetLemmatizer()",
+                "print(ps.stem('studies'))                 # studi",
+                "print(wl.lemmatize('studies'))            # study",
+                "print(wl.lemmatize('better', pos='a'))    # good"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What are stopwords and should you always remove them?",
+          "header": "Stage 2 - NLP Foundations - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Stopwords are very common words (the, is, and, of) that carry little topical meaning, so removing them reduces noise and dimensionality for count-based models like BoW/TF-IDF. But you should NOT blindly remove them for tasks where they matter: sentiment ('not good'), negation, or anything fed to a Transformer/LLM, which relies on full context."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from nltk.corpus import stopwords",
+                "sw = set(stopwords.words('english'))",
+                "tokens = ['this', 'movie', 'is', 'not', 'good']",
+                "clean = [w for w in tokens if w not in sw]",
+                "# ['movie', 'good'] -- note 'not' was dropped, flipping meaning!"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What is POS tagging?",
+          "header": "Stage 2 - NLP Foundations - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Part-of-speech tagging assigns each token a grammatical category (noun, verb, adjective, etc.) using a tagger trained on annotated corpora. It is used as a feature for NER, chunking, and lemmatization (the lemmatizer needs the POS to disambiguate), and for rule-based information extraction."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import nltk",
+                "tokens = nltk.word_tokenize('The model trains quickly')",
+                "print(nltk.pos_tag(tokens))",
+                "# [('The','DT'),('model','NN'),('trains','VBZ'),('quickly','RB')]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What is Named Entity Recognition (NER)?",
+          "header": "Stage 2 - NLP Foundations - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "NER identifies and classifies real-world entities in text into types such as PERSON, ORGANIZATION, LOCATION, DATE, and MONEY. It powers information extraction, search, redaction of PII, and grounding for RAG. In NLTK it runs on POS-tagged tokens and returns a tree of chunks."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import nltk",
+                "s = 'Apple opened an office in London in 2023'",
+                "tags = nltk.pos_tag(nltk.word_tokenize(s))",
+                "tree = nltk.ne_chunk(tags)",
+                "# (GPE London), (ORGANIZATION Apple), ..."
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is the difference between chunking and chinking?",
+          "header": "Stage 2 - NLP Foundations - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Chunking groups POS-tagged tokens into meaningful phrases (like noun phrases) using grammar patterns, producing a shallow parse. Chinking is the opposite: it removes a sequence of tokens from an existing chunk. Together they let you carve out exactly the phrase spans you want with regex-style grammar rules."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "grammar = 'NP: {<DT>?<JJ>*<NN>}'   # optional det, adjs, noun",
+                "cp = nltk.RegexpParser(grammar)",
+                "tags = nltk.pos_tag(nltk.word_tokenize('the big model'))",
+                "print(cp.parse(tags))              # (NP the/DT big/JJ model/NN)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "Why do we lowercase and normalize text, and when is it risky?",
+          "header": "Stage 2 - NLP Foundations - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Normalization (lowercasing, removing punctuation, expanding contractions, fixing unicode) collapses surface variants so 'Apple' and 'apple' map to the same token, shrinking the vocabulary for count-based models. The risk is losing signal: lowercasing destroys the proper-noun cue 'Apple' (company) vs 'apple' (fruit), which hurts NER and case-sensitive tasks."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "Walk through a typical NLTK preprocessing pipeline.",
+          "header": "Stage 2 - NLP Foundations - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A classic pipeline is: lowercase and clean -> tokenize -> remove stopwords and punctuation -> POS tag -> lemmatize. The output is a list of normalized base tokens ready for vectorization (BoW/TF-IDF). Keep the pipeline configurable because the right steps depend on the model: Transformers want raw text, count models want aggressive normalization."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import nltk, string",
+                "from nltk.corpus import stopwords",
+                "from nltk.stem import WordNetLemmatizer",
+                "wl, sw = WordNetLemmatizer(), set(stopwords.words('english'))",
+                "def clean(text):",
+                "    toks = nltk.word_tokenize(text.lower())",
+                "    toks = [w for w in toks if w not in sw and w not in string.punctuation]",
+                "    return [wl.lemmatize(w) for w in toks]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "What is the difference between word tokenization and sentence tokenization?",
+          "header": "Stage 2 - NLP Foundations - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Sentence tokenization splits a document into sentences (handling abbreviations and punctuation like 'Dr.' or 'U.S.A.'), while word tokenization splits a sentence into words and symbols. You usually sentence-split first when a task is sentence-level (summarization, sentence embeddings) and word-split within each sentence."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What are n-grams in the context of tokenization?",
+          "header": "Stage 2 - NLP Foundations - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "An n-gram is a contiguous sequence of n tokens. Unigrams are single words, bigrams are pairs ('machine learning'), and trigrams are triples. They capture short-range local context and word order that a pure bag of single words loses, at the cost of a much larger, sparser feature space."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from nltk import ngrams",
+                "toks = 'natural language processing'.split()",
+                "print(list(ngrams(toks, 2)))",
+                "# [('natural','language'), ('language','processing')]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What is the difference between rule-based and statistical/ML NLP?",
+          "header": "Stage 2 - NLP Foundations - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Rule-based NLP uses hand-written patterns and grammars (regex, dictionaries); it is transparent and needs no training data but is brittle and hard to scale. Statistical/ML NLP learns patterns from labeled corpora and generalizes better, which is why modern systems are learned. Many pipelines blend both: ML for the heavy lifting and rules for high-precision edge cases."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "How does NLTK handle the vocabulary / out-of-vocabulary problem?",
+          "header": "Stage 2 - NLP Foundations - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Classic word-level NLP builds a fixed vocabulary from the training corpus; any token not seen during training is out-of-vocabulary (OOV) and typically mapped to an <UNK> token, losing information. Subword tokenization (BPE, WordPiece) used by modern Transformers largely solves OOV by splitting unknown words into known subword pieces, so almost nothing is truly unseen."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "genai-3": [
+    {
+      "sectionTitle": "Stage 3 - Text Representation - Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is one-hot encoding for words and what are its problems?",
+          "header": "Stage 3 - Text Representation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "One-hot encoding represents each word as a vector the size of the vocabulary with a single 1 at the word's index and 0 elsewhere. Problems: vectors are huge and sparse, every pair of words is equidistant so there is no notion of similarity (king and queen are as different as king and banana), and it cannot handle unseen words."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# vocab = [cat, dog, fish] (size 3)",
+                "# cat  -> [1, 0, 0]",
+                "# dog  -> [0, 1, 0]",
+                "# fish -> [0, 0, 1]   no similarity captured"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What is the Bag of Words (BoW) model?",
+          "header": "Stage 3 - Text Representation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Bag of Words represents a document as a vector of word counts (or presence) over the vocabulary, ignoring word order. It is simple and effective for many classification tasks but produces sparse high-dimensional vectors, loses order/context, and treats semantically similar words as unrelated."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from sklearn.feature_extraction.text import CountVectorizer",
+                "docs = ['the cat sat', 'the dog sat']",
+                "cv = CountVectorizer()",
+                "X = cv.fit_transform(docs)",
+                "print(cv.get_feature_names_out())  # ['cat','dog','sat','the']",
+                "print(X.toarray())                 # [[1,0,1,1],[0,1,1,1]]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What is TF-IDF and how is it computed?",
+          "header": "Stage 3 - Text Representation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "TF-IDF weights a word by how frequent it is in a document (TF) times how rare it is across the corpus (IDF), so common words like 'the' get low weight and distinctive words get high weight. TF = count of term in doc / terms in doc; IDF = log(N / number of docs containing the term), often with smoothing. The product highlights words that characterize a document."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# tf-idf(t, d) = tf(t, d) * log(N / df(t))",
+                "from sklearn.feature_extraction.text import TfidfVectorizer",
+                "tv = TfidfVectorizer()",
+                "X = tv.fit_transform(['the cat sat', 'the dog ran far'])",
+                "# 'the' gets ~0 weight (in all docs); 'far' gets high weight"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What are n-grams and why use them over single words?",
+          "header": "Stage 3 - Text Representation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "N-grams are sequences of n consecutive tokens used as features so that local word order and short phrases are preserved. Bigrams capture 'not good' or 'machine learning' which unigrams would split and misread. The trade-off is an exploding, sparser feature space, so you usually cap at bigrams/trigrams and prune rare ones."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "TfidfVectorizer(ngram_range=(1, 2))   # unigrams + bigrams"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Why are dense word embeddings better than sparse count vectors?",
+          "header": "Stage 3 - Text Representation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Embeddings map each word to a low-dimensional dense vector (e.g. 100-300 dims) learned so that semantically similar words land near each other. Unlike one-hot/BoW they capture meaning and analogy (king - man + woman ~ queen), are compact, and generalize, which dramatically helps downstream models. The cost is they need training data and lose interpretability of individual dimensions."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is Word2Vec and what are its two architectures?",
+          "header": "Stage 3 - Text Representation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Word2Vec is a shallow neural model that learns word embeddings from the distributional hypothesis: words in similar contexts have similar meanings. It has two architectures: CBOW predicts the center word from the surrounding context, while Skip-Gram predicts the surrounding context words from the center word."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart LR",
+                "  subgraph CBOW",
+                "    C1[context w-2] --> SUM[sum/avg] ",
+                "    C2[context w-1] --> SUM",
+                "    C3[context w+1] --> SUM",
+                "    SUM --> CT[predict center]",
+                "  end",
+                "  subgraph SkipGram",
+                "    CEN[center word] --> P1[predict w-1]",
+                "    CEN --> P2[predict w+1]",
+                "    CEN --> P3[predict w+2]",
+                "  end"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "When would you choose CBOW vs Skip-Gram?",
+          "header": "Stage 3 - Text Representation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "CBOW is faster to train and works well on frequent words and larger datasets because it averages context. Skip-Gram is slower but gives better representations for rare words and small corpora because each context word becomes a separate training signal. As a rule of thumb: large corpus and speed -> CBOW; rare-word quality -> Skip-Gram."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is negative sampling in Word2Vec?",
+          "header": "Stage 3 - Text Representation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Computing the full softmax over the whole vocabulary for every training step is expensive. Negative sampling reframes training as binary classification: for each true (word, context) pair, sample a few random 'negative' words and train the model to score the true pair high and the negatives low. This makes training scale to huge vocabularies cheaply."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "What is Average Word2Vec and why use it?",
+          "header": "Stage 3 - Text Representation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Word2Vec gives a vector per word, but many tasks need a single vector per sentence or document. Average Word2Vec simply averages the embeddings of all words in the text to get one fixed-size vector. It is a quick, strong baseline for sentence representation, though it ignores word order and can be improved by TF-IDF weighting or sentence encoders."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import numpy as np",
+                "def avg_w2v(tokens, model):",
+                "    vecs = [model.wv[w] for w in tokens if w in model.wv]",
+                "    return np.mean(vecs, axis=0) if vecs else np.zeros(model.vector_size)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "Compare the pros and cons of One-Hot, BoW, TF-IDF, and Word2Vec.",
+          "header": "Stage 3 - Text Representation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "Summary"
+            },
+            {
+              "kind": "text",
+              "text": "One-Hot: trivial but huge, sparse, no similarity. BoW: simple counts, good baseline, but sparse and ignores order/semantics. TF-IDF: down-weights common words and is a strong classic baseline, but still sparse and context-free. Word2Vec: dense, captures semantic similarity and analogies, but needs training, ignores word order, and gives one vector per word regardless of sense."
+            },
+            {
+              "kind": "text",
+              "text": "The general progression is sparse-count -> weighted-count -> dense-embedding -> contextual embeddings (BERT/Transformers), each capturing more meaning."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "How do you measure similarity between two embedding vectors?",
+          "header": "Stage 3 - Text Representation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The standard measure is cosine similarity, the cosine of the angle between the vectors, which equals their dot product divided by the product of their magnitudes. It ranges from -1 to 1, ignores vector length and focuses on direction, which is why it is preferred over raw Euclidean distance for embeddings."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import numpy as np",
+                "def cosine(a, b):",
+                "    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))",
+                "# 1 = identical direction, 0 = orthogonal, -1 = opposite"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What limitation do static embeddings like Word2Vec have that contextual embeddings solve?",
+          "header": "Stage 3 - Text Representation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Word2Vec and GloVe are static: each word has exactly one vector regardless of context, so the two senses of 'bank' (river vs money) collapse into one blurred vector. Contextual embeddings from Transformers (BERT, etc.) produce a different vector for each occurrence based on surrounding words, resolving polysemy and greatly improving downstream accuracy."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "genai-4": [
+    {
+      "sectionTitle": "Stage 4 - Deep Learning for NLP - Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Why use an RNN instead of a plain feed-forward ANN for text?",
+          "header": "Stage 4 - Deep Learning for NLP - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A feed-forward ANN takes a fixed-size input and treats features independently, so it cannot model variable-length sequences or word order. An RNN processes tokens one at a time and carries a hidden state forward, so it shares parameters across time steps and remembers earlier context, which is essential for language where meaning depends on order."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Describe the RNN forward pass.",
+          "header": "Stage 4 - Deep Learning for NLP - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "At each time step t the RNN combines the current input x_t with the previous hidden state h_(t-1) through shared weight matrices and a nonlinearity to produce a new hidden state, which both feeds the output and passes to the next step. The same weights are reused at every step, which is what makes it a 'recurrent' network."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# h_t = tanh(W_xh @ x_t + W_hh @ h_{t-1} + b_h)",
+                "# y_t = W_hy @ h_t + b_y",
+                "h = zeros(hidden_size)",
+                "for x_t in sequence:",
+                "    h = tanh(W_xh @ x_t + W_hh @ h + b_h)",
+                "    y = W_hy @ h + b_y"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What is Backpropagation Through Time (BPTT)?",
+          "header": "Stage 4 - Deep Learning for NLP - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "BPTT is how RNNs are trained: the network is conceptually unrolled across all time steps into a deep feed-forward graph that shares weights, and standard backpropagation computes gradients across every step. Because the same weights appear at each step, their gradients are summed over time. For long sequences this is expensive and prone to vanishing/exploding gradients, so truncated BPTT limits how many steps you backprop through."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What is the vanishing gradient problem in RNNs?",
+          "header": "Stage 4 - Deep Learning for NLP - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "During BPTT, gradients are multiplied repeatedly by the recurrent weight matrix and the derivative of the activation across many steps. If these factors are less than one the gradient shrinks exponentially toward zero (vanishing), so the network cannot learn long-range dependencies; if greater than one it blows up (exploding). Exploding gradients are handled with gradient clipping; vanishing gradients motivated LSTM and GRU."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Explain the three gates of an LSTM.",
+          "header": "Stage 4 - Deep Learning for NLP - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "An LSTM adds a separate cell state (long-term memory) controlled by three sigmoid gates. The forget gate decides what fraction of the old cell state to keep; the input gate decides what new candidate information to write; the output gate decides what part of the cell state to expose as the hidden state. By using additive updates to the cell state, gradients flow more easily, fixing vanishing gradients."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# f_t = sigma(W_f [h_{t-1}, x_t] + b_f)   forget gate",
+                "# i_t = sigma(W_i [h_{t-1}, x_t] + b_i)   input gate",
+                "# C~  = tanh (W_c [h_{t-1}, x_t] + b_c)   candidate",
+                "# C_t = f_t * C_{t-1} + i_t * C~          cell update",
+                "# o_t = sigma(W_o [h_{t-1}, x_t] + b_o)   output gate",
+                "# h_t = o_t * tanh(C_t)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is the difference between the cell state and the hidden state in an LSTM?",
+          "header": "Stage 4 - Deep Learning for NLP - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The cell state C_t is the long-term memory conveyor belt that runs through the whole sequence with only minor linear interactions, letting information persist over many steps. The hidden state h_t is the short-term, filtered output produced from the cell state via the output gate and is what the next layer / time step actually sees. Separating the two is what lets LSTMs preserve long-range information."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "How does a GRU differ from an LSTM?",
+          "header": "Stage 4 - Deep Learning for NLP - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A GRU simplifies the LSTM into two gates: an update gate (which merges the LSTM's forget and input gates) and a reset gate, and it has no separate cell state, the hidden state carries everything. This means fewer parameters, faster training, and comparable accuracy; LSTMs may have a slight edge on very long or complex sequences."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# z_t = sigma(W_z [h_{t-1}, x_t])         update gate",
+                "# r_t = sigma(W_r [h_{t-1}, x_t])         reset gate",
+                "# h~  = tanh(W [r_t * h_{t-1}, x_t])",
+                "# h_t = (1 - z_t) * h_{t-1} + z_t * h~"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is a Bidirectional RNN and when is it useful?",
+          "header": "Stage 4 - Deep Learning for NLP - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A bidirectional RNN runs two RNNs over the sequence, one forward and one backward, and concatenates their hidden states so each position has context from both the left and the right. It improves tasks like NER, POS tagging, and classification where the whole sentence is available. It cannot be used for streaming/generation where future tokens are not yet known."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from tensorflow.keras.layers import Bidirectional, LSTM",
+                "Bidirectional(LSTM(64, return_sequences=True))"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "What does the Keras Embedding layer do?",
+          "header": "Stage 4 - Deep Learning for NLP - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The Embedding layer is a trainable lookup table that maps integer token IDs to dense vectors. input_dim is the vocabulary size, output_dim is the embedding dimension, and input_length is the sequence length. It replaces one-hot inputs with learnable dense representations and is the first layer of most Keras NLP models."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from tensorflow.keras.layers import Embedding",
+                "Embedding(input_dim=10000, output_dim=128, input_length=200)",
+                "# maps each of up to 10k token IDs to a 128-dim vector"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "How do you use pre-trained embeddings (like GloVe) in Keras?",
+          "header": "Stage 4 - Deep Learning for NLP - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Build an embedding matrix from the pre-trained vectors aligned to your tokenizer's word index, pass it as the Embedding layer's initial weights, and optionally set trainable=False to freeze them (useful with little data) or True to fine-tune. This injects external semantic knowledge instead of learning embeddings from scratch."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "Embedding(vocab_size, 100,",
+                "          weights=[embedding_matrix],",
+                "          input_length=maxlen,",
+                "          trainable=False)   # freeze pre-trained vectors"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "Why do we pad sequences, and what is masking?",
+          "header": "Stage 4 - Deep Learning for NLP - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Neural nets need fixed-size batched tensors, but sentences have different lengths, so we pad (or truncate) them to a common length with a special pad token (usually 0). Masking tells the model which positions are padding so they are ignored in loss and attention, preventing the pad tokens from corrupting the learned representation."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from tensorflow.keras.preprocessing.sequence import pad_sequences",
+                "X = pad_sequences(sequences, maxlen=200, padding='post')",
+                "Embedding(vocab, 128, mask_zero=True)   # ignore index 0"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What problems remain with LSTMs that Transformers solved?",
+          "header": "Stage 4 - Deep Learning for NLP - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "LSTMs process tokens sequentially, so training cannot be parallelized across the time dimension and very long-range dependencies are still hard because information must pass through every intermediate step. Transformers replace recurrence with self-attention, letting every token attend to every other token directly and in parallel, which scales far better and captures long-range context, at the cost of quadratic attention compute in sequence length."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "genai-5": [
+    {
+      "sectionTitle": "Stage 5 - Transformers & Attention - Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What problem does the attention mechanism solve in seq2seq models?",
+          "header": "Stage 5 - Transformers & Attention - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Classic encoder-decoder seq2seq compresses the entire input into one fixed-size context vector, which becomes a bottleneck for long sentences. Attention lets the decoder look back at all encoder hidden states and form a weighted combination tailored to each output step, so the model can focus on the most relevant input words and handle long sequences far better."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Explain self-attention with the scaled dot-product formula.",
+          "header": "Stage 5 - Transformers & Attention - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Self-attention lets each token in a sequence attend to every other token. Each token is projected into a Query, Key, and Value vector. The attention scores are the dot products of Queries with Keys, scaled by the square root of the key dimension, passed through softmax to get weights, then used to take a weighted sum of the Values."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# Attention(Q, K, V) = softmax(Q @ K^T / sqrt(d_k)) @ V",
+                "import numpy as np",
+                "def attention(Q, K, V):",
+                "    d_k = K.shape[-1]",
+                "    scores = Q @ K.T / np.sqrt(d_k)",
+                "    weights = softmax(scores, axis=-1)",
+                "    return weights @ V"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "Why divide by sqrt(d_k) in scaled dot-product attention?",
+          "header": "Stage 5 - Transformers & Attention - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "As the key dimension d_k grows, the dot products grow large in magnitude, pushing the softmax into regions where it is saturated and gradients are tiny. Dividing by sqrt(d_k) keeps the variance of the scores around 1, so the softmax stays in a sensitive range and training is stable. Without the scaling, attention with large dimensions learns poorly."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What is multi-head attention and why is it used?",
+          "header": "Stage 5 - Transformers & Attention - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Multi-head attention runs several attention operations in parallel, each with its own learned Q/K/V projections into a lower-dimensional subspace, then concatenates and linearly projects the results. Different heads can specialize, one attending to syntax, another to coreference, etc., so the model captures multiple types of relationships at once that a single head would average away."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# split d_model into h heads of size d_k = d_model / h",
+                "# head_i = Attention(Q W_q_i, K W_k_i, V W_v_i)",
+                "# MultiHead = Concat(head_1..head_h) W_o"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Why are positional encodings needed, and how does sinusoidal encoding work?",
+          "header": "Stage 5 - Transformers & Attention - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Self-attention is permutation-invariant, it has no inherent notion of token order, so we must inject position information. The original Transformer adds fixed sinusoidal vectors (sines and cosines of different frequencies) to the input embeddings; different positions get unique patterns and the model can learn relative offsets because sinusoids of different frequencies encode position smoothly. Modern models often use learned or rotary (RoPE) positional encodings instead."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# PE(pos, 2i)   = sin(pos / 10000^(2i/d_model))",
+                "# PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "Draw the Transformer encoder-decoder architecture.",
+          "header": "Stage 5 - Transformers & Attention - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The encoder is a stack of identical layers (multi-head self-attention + feed-forward, each with residual + layer norm) that produces contextual representations of the input. The decoder is a stack with masked self-attention, cross-attention over the encoder output, and feed-forward, ending in a linear + softmax that produces output token probabilities."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart TD",
+                "  IN[Input embeddings + pos] --> ENC",
+                "  subgraph ENC[Encoder xN]",
+                "    SA[Multi-Head Self-Attention] --> AN1[Add and Norm]",
+                "    AN1 --> FF1[Feed Forward] --> AN2[Add and Norm]",
+                "  end",
+                "  OUT[Output embeddings + pos] --> DEC",
+                "  subgraph DEC[Decoder xN]",
+                "    MSA[Masked Self-Attention] --> AN3[Add and Norm]",
+                "    AN3 --> CA[Cross-Attention] --> AN4[Add and Norm]",
+                "    AN4 --> FF2[Feed Forward] --> AN5[Add and Norm]",
+                "  end",
+                "  AN2 --> CA",
+                "  AN5 --> LIN[Linear] --> SM[Softmax] --> PROB[Token probs]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What is masked (causal) self-attention in the decoder?",
+          "header": "Stage 5 - Transformers & Attention - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "During generation a token must not see future tokens, otherwise the model would cheat at training time. Masked self-attention sets the attention scores for future positions to negative infinity before the softmax, so their weights become zero and each position attends only to itself and earlier positions. This causal mask is what makes autoregressive generation valid."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is cross-attention in the decoder?",
+          "header": "Stage 5 - Transformers & Attention - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Cross-attention (encoder-decoder attention) is where the decoder attends to the encoder's output: the Queries come from the decoder's current state while the Keys and Values come from the encoder representations. This is how the decoder conditions its output on the input sequence, e.g. aligning a translation to the source sentence."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "What role do residual connections and layer normalization play?",
+          "header": "Stage 5 - Transformers & Attention - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Each sub-layer's output is added to its input (a residual/skip connection) and then layer-normalized. Residuals give gradients a direct path, enabling very deep stacks without vanishing gradients. Layer normalization stabilizes and speeds up training by normalizing across the feature dimension per token. The pattern is LayerNorm(x + Sublayer(x)) (post-norm) or x + Sublayer(LayerNorm(x)) (pre-norm)."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What is the position-wise feed-forward network?",
+          "header": "Stage 5 - Transformers & Attention - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "After attention, each position is passed independently through the same two-layer fully connected network with a nonlinearity (originally ReLU, now often GELU), typically expanding to about 4x the model dimension and back. It adds per-token nonlinear processing capacity. While attention mixes information across positions, the feed-forward layer transforms each position on its own."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# FFN(x) = max(0, x @ W1 + b1) @ W2 + b2",
+                "# d_model -> d_ff (e.g. 512 -> 2048) -> d_model"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What does the final linear + softmax layer do?",
+          "header": "Stage 5 - Transformers & Attention - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The decoder's top hidden vector is mapped by a linear layer to a logit per vocabulary token (often tying these weights to the embedding matrix), and softmax converts the logits to a probability distribution over the vocabulary. The next token is then chosen from this distribution by greedy, top-k, top-p, or temperature sampling."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "Compare encoder-only, decoder-only, and encoder-decoder Transformers.",
+          "header": "Stage 5 - Transformers & Attention - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Encoder-only models (BERT) use bidirectional attention and are best for understanding tasks like classification and embeddings. Decoder-only models (GPT, LLaMA) use causal attention and excel at text generation; most modern LLMs are decoder-only. Encoder-decoder models (T5, original Transformer) are natural for sequence-to-sequence tasks like translation and summarization where input and output are distinct."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "What is the computational complexity of self-attention?",
+          "header": "Stage 5 - Transformers & Attention - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Self-attention is O(n^2 * d) in time and O(n^2) in memory for sequence length n, because every token attends to every other token. This quadratic cost is the main reason long-context models are expensive and motivates efficient-attention variants (FlashAttention for IO efficiency, sparse/linear attention, sliding windows) and techniques like KV caching during generation."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "genai-6": [
+    {
+      "sectionTitle": "Stage 6 - LLM Fundamentals - Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is the difference between AI, ML, DL, and Generative AI?",
+          "header": "Stage 6 - LLM Fundamentals - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "AI is the broad goal of machines performing tasks that need human-like intelligence. ML is a subset where systems learn patterns from data instead of being explicitly programmed. DL is a subset of ML using deep neural networks for representation learning. Generative AI is a subset of DL focused on creating new content (text, images, code) and is largely powered by large Transformer models."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart TD",
+                "  AI[Artificial Intelligence] --> ML[Machine Learning]",
+                "  ML --> DL[Deep Learning]",
+                "  DL --> GEN[Generative AI / LLMs]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "How is an LLM trained? Explain pretraining, SFT, and RLHF.",
+          "header": "Stage 6 - LLM Fundamentals - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Pretraining: the model learns language by predicting the next token on a massive unlabeled corpus (self-supervised), giving broad knowledge. Supervised fine-tuning (SFT): it is further trained on curated instruction-response pairs so it follows instructions. RLHF (Reinforcement Learning from Human Feedback): humans rank outputs, a reward model is trained on those preferences, and the LLM is optimized (e.g. PPO or DPO) to produce responses humans prefer, aligning it to be helpful and harmless."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart LR",
+                "  A[Pretraining] --> B[Supervised Fine-Tuning]",
+                "  B --> C[Reward Model from human prefs]",
+                "  C --> D[RLHF policy optimization]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What is a token, and how does it relate to context window and parameters?",
+          "header": "Stage 6 - LLM Fundamentals - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A token is the unit an LLM reads and generates, roughly a word piece (about 0.75 words in English) produced by a subword tokenizer like BPE. The context window is the maximum number of tokens (prompt + output) the model can attend to at once. Parameters are the learned weights (billions of them) that store the model's knowledge; more parameters generally means more capability and cost. Pricing and limits are measured in tokens."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What do temperature, top-p, and top-k control?",
+          "header": "Stage 6 - LLM Fundamentals - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "They control sampling randomness during generation. Temperature scales the logits before softmax: low (near 0) makes output deterministic and focused, high makes it more random/creative. Top-k restricts sampling to the k highest-probability tokens. Top-p (nucleus) samples from the smallest set of tokens whose cumulative probability exceeds p, adapting the candidate set to the distribution. You typically tune temperature and one of top-k/top-p."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "client.chat.completions.create(",
+                "    model='...', messages=msgs,",
+                "    temperature=0.2,   # low = factual / deterministic",
+                "    top_p=0.9          # nucleus sampling",
+                ")"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What is greedy decoding vs sampling?",
+          "header": "Stage 6 - LLM Fundamentals - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Greedy decoding always picks the single highest-probability next token, which is fast and reproducible but can be repetitive and locally myopic. Sampling (with temperature/top-p/top-k) draws from the probability distribution, producing more diverse and natural text. Beam search keeps several candidate sequences to optimize overall likelihood and is common in translation/summarization but rarely used for open-ended chat."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What are hallucinations, why do they happen, and how do you mitigate them?",
+          "header": "Stage 6 - LLM Fundamentals - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A hallucination is when an LLM produces fluent but factually wrong or fabricated content. They happen because the model is a probabilistic next-token predictor optimized for plausibility, not truth, and it has no built-in source of ground truth; gaps or staleness in training data make it worse. Mitigations include retrieval-augmented generation (grounding on real documents), lower temperature, asking for citations, tool use for facts, constrained/structured output, and human review for high-stakes use."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What are embeddings and how are they used for semantic search?",
+          "header": "Stage 6 - LLM Fundamentals - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "An embedding is a dense vector that captures the meaning of a piece of text, produced by an embedding model. Texts with similar meaning have nearby vectors, so to search semantically you embed the query and the documents, store the document vectors in a vector database, and retrieve the documents whose vectors are most similar (usually by cosine similarity). This is the retrieval backbone of RAG."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# query and docs -> vectors -> cosine similarity -> top-k",
+                "from openai import OpenAI",
+                "v = OpenAI().embeddings.create(",
+                "    model='text-embedding-3-small', input='hello world')"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "Briefly trace the evolution of language models.",
+          "header": "Stage 6 - LLM Fundamentals - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "It progressed from statistical n-gram models, to neural language models and word embeddings (Word2Vec/GloVe), to RNN/LSTM seq2seq with attention, to the 2017 Transformer which removed recurrence. Then came pretraining at scale: BERT (encoder, understanding) and GPT (decoder, generation), followed by ever-larger instruction-tuned, RLHF-aligned chat models. The throughline is scaling self-supervised Transformers on more data and parameters."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "What is the difference between zero-shot, one-shot, and few-shot prompting?",
+          "header": "Stage 6 - LLM Fundamentals - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Zero-shot gives the model only the instruction with no examples. One-shot includes a single example of the desired input-output, and few-shot includes several. Examples demonstrate the format and task via in-context learning, usually improving accuracy and consistency, at the cost of using more of the context window."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What is the difference between prompt engineering, RAG, and fine-tuning?",
+          "header": "Stage 6 - LLM Fundamentals - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Prompt engineering changes only the instructions/examples and is cheapest and fastest. RAG injects external, up-to-date knowledge into the prompt at run time, ideal when answers must be grounded in your own documents. Fine-tuning updates the model's weights to teach style, format, or domain behavior; it is the most expensive and is best for consistent behavior rather than injecting fresh facts. They are often combined."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What is a system prompt and why does it matter?",
+          "header": "Stage 6 - LLM Fundamentals - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A system prompt is a high-priority instruction set at the start of the conversation that defines the model's role, tone, constraints, and rules, separate from the user's turns. It steers behavior consistently across the conversation, is the place to set guardrails and output format, and is generally given more weight than ordinary user messages."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What is a context window limit and what happens when you exceed it?",
+          "header": "Stage 6 - LLM Fundamentals - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The context window is the hard cap on tokens (input plus output) the model can process in one request. If you exceed it the request errors or older tokens are truncated, losing information. Strategies to cope include summarizing or trimming chat history, chunking documents with retrieval (RAG) instead of stuffing everything in, and choosing a model with a larger context window when truly needed."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "genai-7": [
+    {
+      "sectionTitle": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is LangChain and what are its core components?",
+          "header": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "LangChain is a framework for building LLM applications by composing reusable components. The main building blocks are: models (LLMs/chat/embeddings), prompts (templates), document loaders, text splitters, vector stores and retrievers, chains (compositions of steps), memory, and agents/tools. It standardizes interfaces so you can swap providers and wire components into pipelines."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What is a document loader and a text splitter?",
+          "header": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A document loader reads a source (PDF, web page, CSV, JSON, Notion, etc.) into LangChain Document objects with page_content and metadata. A text splitter then breaks long documents into smaller chunks that fit the embedding/LLM context, usually with overlap so context is not cut mid-thought. They are the first two steps of any RAG ingestion pipeline."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from langchain_community.document_loaders import PyPDFLoader",
+                "from langchain_text_splitters import RecursiveCharacterTextSplitter",
+                "docs = PyPDFLoader('paper.pdf').load()",
+                "splitter = RecursiveCharacterTextSplitter(",
+                "    chunk_size=1000, chunk_overlap=200)",
+                "chunks = splitter.split_documents(docs)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "Compare the RecursiveCharacterTextSplitter with character/HTML/JSON splitters.",
+          "header": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "RecursiveCharacterTextSplitter tries a prioritized list of separators (paragraphs, then lines, then words) so it keeps semantically related text together; it is the recommended default. The plain CharacterTextSplitter splits on a single separator and is cruder. HTML and JSON (and Markdown) splitters are structure-aware: they split along the document's natural hierarchy (headers, elements, keys) and can carry that structure into chunk metadata."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What are embeddings in LangChain and which providers can you use?",
+          "header": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Embedding models turn text into vectors for similarity search. LangChain wraps many providers behind a common interface: OpenAIEmbeddings, OllamaEmbeddings (local), and HuggingFaceEmbeddings (local/open models), among others. You pick based on cost, privacy, and quality; local models like Ollama avoid sending data to a third party."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from langchain_openai import OpenAIEmbeddings",
+                "from langchain_community.embeddings import OllamaEmbeddings",
+                "emb = OpenAIEmbeddings(model='text-embedding-3-small')",
+                "# local alternative:",
+                "emb_local = OllamaEmbeddings(model='nomic-embed-text')"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What is a vector store and how do FAISS and ChromaDB differ?",
+          "header": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A vector store indexes embeddings for fast nearest-neighbor search. FAISS is an in-memory, high-performance library from Meta, great for prototyping and large in-process indexes but not a managed database. ChromaDB is a lightweight, persistent, developer-friendly vector database with metadata filtering and collections. Both plug into LangChain the same way; choose FAISS for raw speed/in-memory, Chroma for persistence and ease."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from langchain_community.vectorstores import FAISS",
+                "vs = FAISS.from_documents(chunks, emb)",
+                "retriever = vs.as_retriever(search_kwargs={'k': 4})"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is a retriever?",
+          "header": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A retriever is an abstraction whose job is to return the most relevant Documents for a query. The most common is a vector-store retriever doing similarity search, but there are others: MultiQuery, contextual-compression, parent-document, and ensemble retrievers. Decoupling retrieval behind this interface lets you swap or combine strategies without changing the rest of the chain."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What is LCEL and why is it preferred?",
+          "header": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "LCEL (LangChain Expression Language) composes components into chains using the pipe operator, where each piece is a Runnable. It gives streaming, async, batching, and parallelism for free, plus a consistent invoke/stream/batch API, and is far more transparent than the older opaque Chain classes. It is the modern, recommended way to build LangChain pipelines."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from langchain_core.output_parsers import StrOutputParser",
+                "chain = prompt | llm | StrOutputParser()",
+                "chain.invoke({'question': 'What is RAG?'})"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What are prompt templates and few-shot prompt templates?",
+          "header": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A PromptTemplate (or ChatPromptTemplate) is a reusable string/message template with named variables filled at run time, keeping prompts consistent and parameterized. A FewShotPromptTemplate inserts a set of example input-output pairs before the user query to demonstrate the desired behavior, optionally selecting the most relevant examples dynamically."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from langchain_core.prompts import ChatPromptTemplate",
+                "prompt = ChatPromptTemplate.from_messages([",
+                "    ('system', 'You are a helpful assistant.'),",
+                "    ('human', 'Answer using only: {context}\\n\\nQ: {question}')",
+                "])"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How does memory / chat history work in LangChain?",
+          "header": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "LLMs are stateless, so memory stores past turns and feeds them back into the prompt to maintain a coherent conversation. LangChain provides message-history abstractions (e.g. RunnableWithMessageHistory and ChatMessageHistory) keyed by a session id, and strategies like buffer (keep all), windowed (keep last k), or summary memory (compress old turns) to stay within the context window."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from langchain_core.runnables.history import RunnableWithMessageHistory",
+                "chat = RunnableWithMessageHistory(",
+                "    chain, get_session_history,",
+                "    input_messages_key='input',",
+                "    history_messages_key='history')"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What is an output parser and why use a structured one?",
+          "header": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "An output parser converts the LLM's raw text into a usable form. StrOutputParser just extracts the string, while structured parsers (PydanticOutputParser, JsonOutputParser, or .with_structured_output) coerce the response into a validated schema. Structured output makes the LLM safe to call from code because you get typed, predictable fields instead of free text."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What is LangSmith?",
+          "header": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "LangSmith is LangChain's observability and evaluation platform. It traces every step of a chain or agent (prompts, tokens, latency, tool calls), which is essential for debugging and cost tracking, and supports datasets, evaluators, and prompt experiments. You enable it with environment variables and it captures runs automatically."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "export LANGCHAIN_TRACING_V2=true",
+                "export LANGCHAIN_API_KEY=ls-...",
+                "export LANGCHAIN_PROJECT=my-rag-app"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What is the Groq API and why is it popular for GenAI apps?",
+          "header": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Groq serves open models (LLaMA, Mixtral, etc.) on its LPU hardware with very high token throughput and low latency, accessed through an OpenAI-compatible API. LangChain integrates it via ChatGroq. It is popular when you need fast, cheap inference on open-weight models, e.g. for agents that make many sequential LLM calls."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from langchain_groq import ChatGroq",
+                "llm = ChatGroq(model='llama-3.1-70b-versatile', temperature=0)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "What is LangServe?",
+          "header": "Stage 7 - LangChain Ecosystem - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "LangServe deploys any LangChain Runnable as a production REST API built on FastAPI, automatically exposing invoke, batch, and stream endpoints plus a playground and schema. It turns a chain into a hosted service with minimal code, which is convenient for putting RAG or agent pipelines behind an HTTP endpoint."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from langserve import add_routes",
+                "from fastapi import FastAPI",
+                "app = FastAPI()",
+                "add_routes(app, chain, path='/rag')"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "genai-8": [
+    {
+      "sectionTitle": "Stage 8 - Retrieval-Augmented Generation - Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is RAG and why use it instead of fine-tuning?",
+          "header": "Stage 8 - Retrieval-Augmented Generation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "RAG (Retrieval-Augmented Generation) retrieves relevant documents from an external knowledge base and injects them into the prompt so the LLM answers grounded in that context. You prefer it over fine-tuning when knowledge changes frequently, must be auditable/cited, or is private, because RAG updates by changing the data, not retraining. Fine-tuning is better for teaching style/format/behavior; the two are complementary."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Walk through the full RAG pipeline.",
+          "header": "Stage 8 - Retrieval-Augmented Generation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Offline (indexing): load documents, split into chunks, embed each chunk, and store the vectors in a vector database. Online (query): embed the user question, retrieve the top-k most similar chunks, augment the prompt with those chunks plus the question, and have the LLM generate an answer grounded in the retrieved context, optionally with citations."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart LR",
+                "  D[Documents] --> CH[Chunk]",
+                "  CH --> EM[Embed]",
+                "  EM --> VS[(Vector DB)]",
+                "  Q[User query] --> QE[Embed query]",
+                "  QE --> R[Retrieve top-k]",
+                "  VS --> R",
+                "  R --> AUG[Augment prompt]",
+                "  Q --> AUG",
+                "  AUG --> LLM[LLM]",
+                "  LLM --> A[Grounded answer]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What are chunking strategies and why does chunk size and overlap matter?",
+          "header": "Stage 8 - Retrieval-Augmented Generation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Chunking splits documents so each piece fits the embedding model and contains a coherent idea. Too-large chunks dilute the embedding and waste context; too-small chunks lose surrounding meaning. Overlap (e.g. 10-20%) carries context across boundaries so a sentence split between chunks is not lost. Strategies include fixed-size, recursive by separator, semantic (split on meaning shifts), and structure-aware (by headers/sections)."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What is conversational RAG and how do you handle chat history?",
+          "header": "Stage 8 - Retrieval-Augmented Generation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Conversational RAG adds multi-turn memory to RAG. The challenge is follow-up questions like 'and what about its cost?' that depend on prior turns. The standard fix is a history-aware retriever: first use the LLM to rewrite the follow-up into a standalone question using the chat history, then retrieve with that reformulated query, then answer using the retrieved context plus the conversation."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from langchain.chains import create_history_aware_retriever",
+                "# 1) condense question with history -> standalone query",
+                "# 2) retrieve with standalone query",
+                "# 3) answer with context + history"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What is hybrid search?",
+          "header": "Stage 8 - Retrieval-Augmented Generation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Hybrid search combines dense vector (semantic) retrieval with sparse keyword retrieval like BM25. Vector search catches paraphrases and meaning, while keyword search nails exact terms, rare tokens, codes, and names that embeddings sometimes miss. Running both and merging the results gives more robust recall than either alone, especially for queries with specific identifiers."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is Reciprocal Rank Fusion (RRF)?",
+          "header": "Stage 8 - Retrieval-Augmented Generation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "RRF merges several ranked result lists (e.g. from vector and BM25 retrievers) into one ranking using only positions, not raw scores, which avoids the problem of incomparable score scales. Each document's fused score is the sum over lists of 1/(k + rank), with a constant k (often 60). Documents ranked highly by multiple retrievers float to the top."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# RRF(d) = sum over lists of  1 / (k + rank_i(d)),  k ~ 60"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What is re-ranking and why add it after retrieval?",
+          "header": "Stage 8 - Retrieval-Augmented Generation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Initial retrieval optimizes for recall and speed using bi-encoder embeddings, which can return loosely relevant chunks. A re-ranker is a cross-encoder that jointly reads the query and each candidate chunk to score true relevance much more accurately, then you keep the top few. It is a two-stage 'retrieve many, then re-rank to a precise few' design that improves answer quality at modest extra cost."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# stage 1: vector retrieve top 50 (fast bi-encoder)",
+                "# stage 2: cross-encoder re-rank -> keep top 5 (accurate)",
+                "from langchain.retrievers import ContextualCompressionRetriever",
+                "from langchain_cohere import CohereRerank"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "How do you evaluate a RAG system?",
+          "header": "Stage 8 - Retrieval-Augmented Generation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Evaluate both retrieval and generation. Retrieval metrics: context precision/recall, hit rate, MRR. Generation metrics: faithfulness (is the answer grounded in the retrieved context, i.e. no hallucination), answer relevancy, and correctness vs ground truth. Frameworks like RAGAS use an LLM-as-judge to score these on a test set, and LangSmith helps run and track the evaluations."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "What is the difference between faithfulness and answer relevancy?",
+          "header": "Stage 8 - Retrieval-Augmented Generation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Faithfulness measures whether the generated answer is supported by the retrieved context, it catches hallucinations regardless of whether the answer is what the user wanted. Answer relevancy measures whether the answer actually addresses the user's question. An answer can be faithful to context but irrelevant, or relevant but unfaithful, so you track both."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What is Graph RAG and when does it beat vector RAG?",
+          "header": "Stage 8 - Retrieval-Augmented Generation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Graph RAG retrieves from a knowledge graph of entities and their relationships (often in Neo4j) instead of, or in addition to, flat text chunks. It shines on multi-hop questions and global/relationship reasoning ('which suppliers connect to companies affected by X?') where the answer requires traversing connections that scattered text chunks cannot capture. Plain vector RAG is simpler and better for straightforward semantic lookup."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "How are knowledge graphs built and queried for Graph RAG?",
+          "header": "Stage 8 - Retrieval-Augmented Generation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "You extract entities and relationships from documents (often using an LLM to produce triples like subject-relation-object), load them as nodes and edges into a graph database such as Neo4j, then query with a graph language like Cypher. At query time you can translate a natural-language question into Cypher, or combine graph traversal with vector search for hybrid graph+semantic retrieval."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "// Cypher: companies affected by a supplier",
+                "MATCH (s:Supplier {name:$x})-[:SUPPLIES]->(c:Company)",
+                "RETURN c.name"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What are common reasons a RAG system gives bad answers, and how do you debug them?",
+          "header": "Stage 8 - Retrieval-Augmented Generation - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Common failure modes: poor chunking (context split or too coarse), wrong embedding model or wrong k, retrieval missing the relevant chunk (low recall), irrelevant chunks crowding the prompt (low precision), or a good context that the LLM still ignores. Debug by inspecting the retrieved chunks first (tracing in LangSmith), since most RAG failures are retrieval failures; then tune chunking, add hybrid search and re-ranking, and tighten the prompt to force grounding."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "genai-9": [
+    {
+      "sectionTitle": "Stage 9 - AI Agents and Tools - Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is an AI agent and how does it differ from a chain?",
+          "header": "Stage 9 - AI Agents and Tools - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A chain executes a fixed, predetermined sequence of steps. An agent uses an LLM as a reasoning engine to decide dynamically which actions (tools) to take, in what order, and when to stop, based on intermediate results. In short, a chain is hard-coded control flow while an agent has the LLM choose the control flow at run time, giving flexibility at the cost of less predictability."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What is function calling / tool use?",
+          "header": "Stage 9 - AI Agents and Tools - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Function calling lets an LLM request that a developer-defined function be run by emitting a structured JSON object matching the function's schema (name and arguments) instead of plain text. Your code executes the function and returns the result to the model, which continues reasoning. This is how LLMs reach beyond their training to call calculators, search, databases, and APIs reliably."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from langchain_core.tools import tool",
+                "@tool",
+                "def get_weather(city: str) -> str:",
+                "    '''Get current weather for a city.'''",
+                "    return weather_api(city)",
+                "llm_with_tools = llm.bind_tools([get_weather])"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "Explain the ReAct loop.",
+          "header": "Stage 9 - AI Agents and Tools - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "ReAct (Reason + Act) interleaves chain-of-thought reasoning with tool actions. The agent produces a Thought (reasoning), an Action (tool + input), receives an Observation (tool result), and repeats this Thought-Action-Observation loop until it has enough information to give a Final Answer. Reasoning guides which tool to call, and observations ground the reasoning in real data."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart TD",
+                "  Q[User query] --> TH[Thought: reason]",
+                "  TH --> AC[Action: call tool]",
+                "  AC --> OB[Observation: tool result]",
+                "  OB --> DEC{Enough info?}",
+                "  DEC -- No --> TH",
+                "  DEC -- Yes --> FA[Final Answer]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What is an AgentExecutor in LangChain?",
+          "header": "Stage 9 - AI Agents and Tools - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The AgentExecutor is the runtime that drives the agent loop: it calls the LLM to decide an action, executes the chosen tool, feeds the observation back, and repeats until the agent returns a final answer or hits limits. It also handles max-iteration caps, timeouts, error handling, and intermediate-step logging, so you do not implement the loop yourself."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from langchain.agents import create_tool_calling_agent, AgentExecutor",
+                "agent = create_tool_calling_agent(llm, tools, prompt)",
+                "executor = AgentExecutor(agent=agent, tools=tools,",
+                "                         max_iterations=6, verbose=True)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What is LangGraph and how does it differ from LangChain agents?",
+          "header": "Stage 9 - AI Agents and Tools - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "LangGraph models an agent as an explicit stateful graph: nodes are functions/LLM calls, edges (including conditional edges) define transitions, and a shared state object is passed and updated across nodes. Unlike the more opaque AgentExecutor loop, it supports cycles, branching, human-in-the-loop, persistence/checkpoints, and fine-grained control, which makes complex and multi-agent workflows far more reliable and debuggable."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from langgraph.graph import StateGraph, END",
+                "g = StateGraph(State)",
+                "g.add_node('agent', call_model)",
+                "g.add_node('tools', run_tools)",
+                "g.add_conditional_edges('agent', should_continue,",
+                "                        {'continue': 'tools', 'end': END})",
+                "g.add_edge('tools', 'agent')"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is a multi-agent system and when is it useful?",
+          "header": "Stage 9 - AI Agents and Tools - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A multi-agent system splits a task across several specialized agents that collaborate, often coordinated by a supervisor/orchestrator agent that routes work (e.g. a researcher, a coder, and a writer). It helps when a task is too broad for one prompt/toolset, lets each agent have a focused role and tools, and improves modularity, at the cost of more LLM calls, latency, and coordination complexity."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart TD",
+                "  S[Supervisor] --> R[Researcher agent]",
+                "  S --> C[Coder agent]",
+                "  S --> W[Writer agent]",
+                "  R --> S",
+                "  C --> S",
+                "  W --> S"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "How do you get structured output with Pydantic or TypedDict?",
+          "header": "Stage 9 - AI Agents and Tools - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "You define the desired schema as a Pydantic model or TypedDict and bind it to the LLM with .with_structured_output, which uses function calling or JSON mode under the hood to force the response to match the schema and parse it into a typed object. This makes outputs reliable to consume in code (no brittle string parsing) and is the backbone of agent tool arguments and extraction tasks."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from pydantic import BaseModel, Field",
+                "class Person(BaseModel):",
+                "    name: str",
+                "    age: int = Field(description='age in years')",
+                "structured = llm.with_structured_output(Person)",
+                "structured.invoke('John is 30')   # Person(name='John', age=30)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is MCP (Model Context Protocol)?",
+          "header": "Stage 9 - AI Agents and Tools - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "MCP is an open standard (introduced by Anthropic) that defines a common protocol for connecting LLM applications to external tools, data sources, and prompts via MCP servers. Instead of writing bespoke integrations for every tool, an MCP client (the host app/agent) can discover and call any compliant MCP server, making tools reusable and portable across different agents and models, like a USB-C port for AI tooling."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How would you build a search-engine / web-browsing agent?",
+          "header": "Stage 9 - AI Agents and Tools - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Give the agent a search tool (e.g. Tavily, SerpAPI, or DuckDuckGo) plus optionally a page-fetch/scrape tool, then let it ReAct: reason about what to search, call the search tool, read the snippets/results, decide whether to search again or fetch a page, and synthesize a cited answer. This grounds the LLM in current information beyond its training cutoff."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from langchain_community.tools.tavily_search import TavilySearchResults",
+                "search = TavilySearchResults(max_results=3)",
+                "agent = create_tool_calling_agent(llm, [search], prompt)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What are the main risks of agents and how do you add guardrails?",
+          "header": "Stage 9 - AI Agents and Tools - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Agents can loop forever, call tools with bad/dangerous arguments, leak data, be hijacked by prompt injection from retrieved content, and rack up cost. Guardrails include max-iteration and timeout limits, human-in-the-loop approval for sensitive actions, tool input validation and least-privilege/sandboxed tools, input/output content filtering, and full tracing (LangSmith) plus budget caps to detect and stop runaway behavior."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What is the difference between tools and toolkits in LangChain?",
+          "header": "Stage 9 - AI Agents and Tools - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A tool is a single callable capability with a name, description, and input schema that the LLM can invoke. A toolkit is a curated collection of related tools bundled together for a domain or service (e.g. a SQL toolkit with list-tables, get-schema, and run-query tools, or a Gmail toolkit). Toolkits save you from wiring each tool individually for common integrations."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "How does an agent decide when to stop?",
+          "header": "Stage 9 - AI Agents and Tools - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The agent stops when the LLM, instead of requesting another tool call, returns a final answer (in ReAct, a 'Final Answer'); the executor detects no further action is requested and returns. Safety stopping conditions also apply: a max-iterations cap, a time/token budget, or an error threshold, which prevent infinite loops when the model keeps calling tools without converging."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "genai-10": [
+    {
+      "sectionTitle": "Stage 10 - Fine-tuning and Deployment - Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is quantization and why is it used?",
+          "header": "Stage 10 - Fine-tuning and Deployment - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Quantization reduces the numerical precision of model weights (and sometimes activations), e.g. from 16-bit floats to 8-bit or 4-bit integers, shrinking memory footprint and increasing inference speed. This lets large models run on smaller/cheaper GPUs with usually minor accuracy loss. Common formats include INT8 and 4-bit NF4 (NormalFloat4), which is tuned for the normal distribution of neural-net weights."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What is LoRA and how does it work?",
+          "header": "Stage 10 - Fine-tuning and Deployment - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "LoRA (Low-Rank Adaptation) is a parameter-efficient fine-tuning method that freezes the original model weights and injects small trainable low-rank matrices A and B into layers, so the weight update is approximated as delta_W = B*A with rank r much smaller than the dimensions. You train only these tiny adapters (often <1% of parameters), which slashes memory and storage, lets you swap adapters per task, and avoids catastrophic forgetting of the base model."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# frozen W0 ; learn delta_W = B @ A,  A:(r,d)  B:(d,r),  r << d",
+                "# output = W0 @ x + (B @ A) @ x * (alpha / r)",
+                "from peft import LoraConfig",
+                "cfg = LoraConfig(r=8, lora_alpha=16, target_modules=['q_proj','v_proj'],",
+                "                 lora_dropout=0.05, task_type='CAUSAL_LM')"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What is QLoRA and how does it differ from LoRA?",
+          "header": "Stage 10 - Fine-tuning and Deployment - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "QLoRA combines LoRA with aggressive quantization: the frozen base model is loaded in 4-bit NF4 precision while the LoRA adapters are trained in higher precision, with gradients backpropagated through the quantized weights. It adds double quantization and paged optimizers to save more memory. The result is that you can fine-tune very large models (e.g. 65B) on a single consumer GPU with minimal quality loss compared to full fine-tuning."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from transformers import BitsAndBytesConfig",
+                "bnb = BitsAndBytesConfig(",
+                "    load_in_4bit=True,",
+                "    bnb_4bit_quant_type='nf4',",
+                "    bnb_4bit_compute_dtype='bfloat16',",
+                "    bnb_4bit_use_double_quant=True)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Walk through fine-tuning an LLM on custom data with PEFT.",
+          "header": "Stage 10 - Fine-tuning and Deployment - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Prepare a dataset of instruction/response (or chat) pairs in a consistent prompt format, load the base model (often 4-bit for QLoRA), attach a LoRA config with PEFT, and train with a Trainer/SFTTrainer for a few epochs at a low learning rate. Then save just the adapter, evaluate, and at inference either keep adapters separate or merge them into the base weights for deployment."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from peft import get_peft_model",
+                "model = get_peft_model(base_model, lora_config)",
+                "model.print_trainable_parameters()   # e.g. 0.2% trainable",
+                "trainer.train()",
+                "model.save_pretrained('./adapter')   # tiny adapter only"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What is AWS Bedrock?",
+          "header": "Stage 10 - Fine-tuning and Deployment - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Amazon Bedrock is a fully managed service that provides access to foundation models from multiple providers (Anthropic Claude, Meta Llama, Amazon Titan, etc.) through a single API, with no infrastructure to manage. It adds enterprise features like fine-tuning, knowledge bases for managed RAG, agents, and guardrails, and keeps data within your AWS account, which is attractive for regulated environments."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is a SageMaker endpoint and when would you use one over Bedrock?",
+          "header": "Stage 10 - Fine-tuning and Deployment - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A SageMaker endpoint is a managed, auto-scaling HTTPS endpoint hosting a model you deploy yourself (including custom or open-weight fine-tuned models). You choose SageMaker when you need full control over the model, custom containers, or to host your own fine-tuned weights; you choose Bedrock when you want managed access to popular foundation models without owning the deployment. SageMaker supports real-time, serverless, and async/batch inference modes."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What are HuggingFace Spaces and Streamlit used for in GenAI?",
+          "header": "Stage 10 - Fine-tuning and Deployment - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Streamlit is a Python framework for quickly building interactive web UIs (chat interfaces, dashboards) for ML/LLM apps with just Python, no front-end code. HuggingFace Spaces is a free/managed hosting platform where you can deploy a Streamlit or Gradio app (or a model demo) with a git push. Together they are the fastest path to share a working GenAI prototype or demo publicly."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import streamlit as st",
+                "q = st.chat_input('Ask a question')",
+                "if q:",
+                "    answer = rag_chain.invoke(q)",
+                "    st.chat_message('assistant').write(answer)"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "Describe a GenAI project lifecycle on AWS.",
+          "header": "Stage 10 - Fine-tuning and Deployment - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A typical lifecycle: scope the use case and define eval metrics; choose model and approach (prompting vs RAG vs fine-tuning) using Bedrock or SageMaker; build the data/RAG pipeline (S3 for storage, embeddings, a vector store like OpenSearch); develop and evaluate; deploy behind an API (Bedrock/SageMaker endpoint + API Gateway/Lambda); then monitor cost, latency, quality, and safety in production with CloudWatch, iterating on prompts/data."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart LR",
+                "  SC[Scope and metrics] --> CH[Choose model/approach]",
+                "  CH --> DP[Data and RAG pipeline]",
+                "  DP --> EV[Develop and evaluate]",
+                "  EV --> DE[Deploy endpoint + API]",
+                "  DE --> MO[Monitor cost/quality/safety]",
+                "  MO --> EV"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How do you control cost in a production GenAI system?",
+          "header": "Stage 10 - Fine-tuning and Deployment - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Cost is driven by tokens and model size. Levers: pick the smallest model that meets quality and route easy queries to cheaper models; cache responses and embeddings (semantic caching) to avoid repeat calls; trim prompts and history and use retrieval instead of stuffing context; batch requests; cap max output tokens; and use prompt caching where supported. Always monitor token usage and set budget alerts."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What are guardrails and content filtering in LLM apps?",
+          "header": "Stage 10 - Fine-tuning and Deployment - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Guardrails are controls that constrain inputs and outputs for safety, compliance, and brand. They include input filters (block prompt injection, jailbreaks, PII), output filters (toxicity, PII redaction, topic restrictions), grounding/citation checks to reduce hallucination, and schema validation for structured output. Implementations range from Bedrock Guardrails and NeMo Guardrails to a moderation-model pass on inputs and outputs."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "Why and how do you merge LoRA adapters for deployment?",
+          "header": "Stage 10 - Fine-tuning and Deployment - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "During training adapters are kept separate from the frozen base, but at inference time keeping them separate adds a small compute overhead and complexity. Merging folds delta_W = B*A back into the base weights (model.merge_and_unload in PEFT), producing a single standard model with no runtime adapter overhead, which is convenient for serving. The trade-off is you lose the ability to hot-swap different adapters, so multi-task setups may keep them unmerged."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "merged = peft_model.merge_and_unload()",
+                "merged.save_pretrained('./merged-model')"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What metrics do you monitor for a deployed LLM service?",
+          "header": "Stage 10 - Fine-tuning and Deployment - Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Operational: latency (including time-to-first-token for streaming), throughput, error rate, and availability. Cost: input/output tokens per request and total spend. Quality/safety: hallucination/faithfulness scores on sampled traffic, user feedback (thumbs up/down), guardrail trigger rates, and drift in inputs. Tracing tools (LangSmith) plus cloud monitoring (CloudWatch) capture these so you can alert and iterate."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

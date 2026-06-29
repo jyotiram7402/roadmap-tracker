@@ -1524,6 +1524,445 @@
           ]
         }
       ]
+    },
+    {
+      "sectionTitle": "DSA Patterns - When to use which",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Two Pointers - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "When you iterate an array/string with two indices - typically from opposite ends, or one slow and one fast - to compare or combine elements without nested loops. Brings many O(n^2) brute forces down to O(n)."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "The input is sorted (or you can sort it), and the task mentions a pair/triplet that meets a condition, comparing elements from both ends, or in-place rearrangement."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Two Sum II (sorted): move left/right pointers inward based on whether sum is too small or too big. Valid Palindrome: pointers from both ends skipping non-alphanumerics. 3Sum: sort, fix one element, two-pointer the rest. Container With Most Water: widest first, move the shorter wall inward. Remove Duplicates from Sorted Array: slow write-pointer, fast read-pointer."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Sliding Window - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "For contiguous subarray/substring problems where you maintain a window and slide it, expanding the right edge and shrinking the left, instead of recomputing every window from scratch."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "Words like 'contiguous', 'substring', 'subarray', 'maximum sum', 'minimum length', 'longest/shortest window', or a fixed window size K."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Longest Substring Without Repeating Characters: grow right, shrink left when a duplicate enters, track max. Minimum Size Subarray Sum: grow until sum >= target, then shrink to minimize length. Maximum Average Subarray I (fixed K): slide a window of size K updating the running sum. Longest Repeating Character Replacement: window valid while (len - maxFreq) <= k. Permutation in String / Find All Anagrams: fixed-size window with a frequency match."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "Merge Intervals - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "When the input is a set of intervals (start, end) and you must merge overlaps, insert, count removals, or find intersections."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "Input is pairs of start/end points (time ranges, meetings, schedules) and the task says merge, overlap, insert, or intersect."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Merge Intervals: sort by start, then merge while current.start <= lastMerged.end. Insert Interval: walk intervals adding non-overlapping ones, merge the overlapping band, then add the rest. Non-overlapping Intervals: sort by end, greedily keep the interval that ends earliest, count removals. Meeting Rooms II: min-heap of end times (or sweep line) to count concurrent meetings. Interval List Intersections: two-pointer over both sorted lists taking max(start), min(end)."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Sorting - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "When arranging elements in order first makes the real problem trivial - enabling two-pointer scans, greedy choices, or grouping. Often the unlock step rather than the answer itself."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "The problem becomes easy 'if only the data were sorted', mentions order/ranking, or needs grouping of equal/adjacent values."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Sort Colors: Dutch National Flag three-way partition in one pass (O(n), no real sort). Largest Number: sort with a custom comparator comparing a+b vs b+a as strings. Merge Sorted Array: merge from the end using the spare buffer. Meeting Rooms: sort by start to detect any overlap. Wiggle Sort II: sort then interleave halves from the back."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Prefix Sums - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "When you must answer many range-sum/range-count queries or find subarrays with a target sum. Precompute cumulative sums so any range sum is prefix[r] - prefix[l-1] in O(1)."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "Mentions of subarray sums, cumulative sums, running totals, or repeated range queries; or 'count subarrays whose sum equals K'."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Subarray Sum Equals K: hash map of prefix-sum frequencies; for each prefix check if (prefix - k) was seen. Range Sum Query - Immutable: precompute prefix array, query in O(1). Range Sum Query - Mutable: Binary Indexed Tree / segment tree for O(log n) updates. Subarray Sums Divisible by K: count prefix sums by remainder mod K. Product of Array Except Self: prefix and suffix products instead of sums."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "Hashmaps / Frequency counting - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "When you need O(1) lookup by key, to count frequencies, group items, or check existence - usually turning an O(n^2) search into O(n) with extra space."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "Words like count, frequency, group, 'has it been seen', complement, or matching pairs."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Two Sum: store value->index, look up the complement in one pass. Contains Duplicate: add to a HashSet, duplicate if already present. Group Anagrams: key by sorted characters (or a 26-length count signature). Valid Anagram: compare character-count maps. First Unique Character: frequency map then scan for the first count==1."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "Binary Search - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "On a sorted array to find a target/boundary in O(log n), OR 'binary search on the answer' - when the answer space is monotonic (a candidate value either works or it doesn't, monotonically)."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "Array is sorted, or you must find a min/max value satisfying a monotonic feasibility condition ('minimize the maximum', 'maximize the minimum', capacity/allocation problems)."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Search Insert Position / classic Binary Search: standard mid comparison. Find First and Last Position: two boundary searches (leftmost and rightmost). Find Minimum in Rotated Sorted Array: compare mid with the right end to pick the half. Koko Eating Bananas / Capacity to Ship Packages within D Days: binary search the answer with a feasibility check. Split Array Largest Sum: binary search on the largest allowed subarray sum."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "Backtracking - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "To explore all candidate solutions by making a choice, recursing, then undoing it (backtrack) when a branch dead-ends. Used for permutations, combinations, subsets, and constraint puzzles."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "'Find all/every' permutations, combinations, subsets, or arrangements; or constraint-satisfaction like Sudoku, N-Queens, word search in a grid."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Subsets / Permutations: build partial results, recurse, remove last choice. Combination Sum: recurse allowing reuse, prune when remaining target < 0. Generate Parentheses: add '(' while open<n, add ')' while close<open. N-Queens: place a queen per row, check column/diagonals, backtrack on conflict. Word Search: DFS from each cell marking visited, restore on return."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "Dynamic Programming - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "When a problem has overlapping subproblems and optimal substructure - the optimal answer is built from optimal answers of smaller subproblems. Cache results (memoization, top-down) or fill a table (tabulation, bottom-up) to avoid recomputation."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "'Number of ways', 'min/max cost/length', 'can you reach/partition', or a recursion whose subcalls repeat. If brute-force recursion recomputes the same state, it is DP."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Climbing Stairs / Fibonacci: dp[n]=dp[n-1]+dp[n-2]. House Robber: dp[i]=max(dp[i-1], dp[i-2]+nums[i]). Coin Change: dp[a]=min over coins of dp[a-coin]+1. Longest Common Subsequence / Edit Distance: 2D table over the two strings. 0/1 Knapsack / Partition Equal Subset Sum: boolean/value DP over capacity."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "Greedy - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "When a locally optimal choice at each step provably leads to a global optimum, so no backtracking or full DP table is needed. Often paired with sorting."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "You can argue an exchange/sorting argument that the best immediate pick never hurts the final answer; intervals, scheduling, or 'maximum/minimum number of ...'."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Non-overlapping Intervals: sort by end, always keep the earliest-finishing interval. Jump Game: track the farthest reachable index. Gas Station: if total gas >= total cost, the unique start is right after the lowest running tank. Task Scheduler: schedule the most frequent task first using a max-heap. Partition Labels: extend each partition to the last occurrence of every char inside it."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "Fast & Slow Pointers (Floyd's) - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "On linked lists (or implicit cyclic sequences) to find the middle, detect a cycle, or locate the cycle entry using two pointers moving at different speeds - O(1) extra space."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "Linked list with a need to find the midpoint, detect a loop, or find a duplicate that forms a cycle; 'without extra space'."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Linked List Cycle: slow moves 1, fast moves 2; they meet iff a cycle exists. Middle of the Linked List: slow is at the middle when fast reaches the end. Linked List Cycle II: after meeting, move one pointer to head and advance both by 1; they meet at the cycle start. Happy Number: apply Floyd's to the digit-square sequence. Find the Duplicate Number: treat values as next-pointers and detect the cycle entry."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "Stacks (incl. Monotonic Stack) - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "When you need LIFO processing - matching pairs, evaluating expressions, or a monotonic stack to find the nearest greater/smaller element."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "Balanced brackets, nested structures, expression evaluation, undo, or 'next/previous greater/smaller element', 'days until warmer'."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Valid Parentheses: push openers, pop and match on closers. Min Stack: auxiliary stack (or pairs) tracking the current minimum. Daily Temperatures / Next Greater Element: monotonic decreasing stack of indices, resolve when a bigger value arrives. Largest Rectangle in Histogram: monotonic increasing stack of bar indices. Evaluate Reverse Polish Notation: push operands, pop two on each operator."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "Trees (Traversal, BST, recursion) - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "When data is hierarchical. DFS (pre/in/post-order, usually recursive) for path and structure questions; BFS (level-order with a queue) for level/shortest-depth questions; in-order on a BST yields sorted order."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "Mentions of tree, node, root, leaf, ancestor, subtree, depth, level, or binary search tree."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Maximum Depth / Invert Binary Tree: simple recursion combining children. Validate BST: recurse carrying allowed (min,max) range. Lowest Common Ancestor: recurse; the node where the two targets split is the LCA. Level Order Traversal: BFS queue processing level by level. Binary Tree Maximum Path Sum: post-order returning best downward path while updating a global max."
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "Graphs (BFS/DFS, topological sort, shortest path) - when to use it, the clue, and key problems.",
+          "header": "DSA Patterns - When to use which",
+          "blocks": [
+            {
+              "kind": "subheader",
+              "text": "When to use"
+            },
+            {
+              "kind": "text",
+              "text": "When entities have relationships/edges: connectivity (DFS/BFS or Union-Find), shortest path (BFS for unweighted, Dijkstra for weighted), ordering with dependencies (topological sort), cycle detection, or bipartite checks."
+            },
+            {
+              "kind": "subheader",
+              "text": "The clue"
+            },
+            {
+              "kind": "text",
+              "text": "Grids, networks, dependencies/prerequisites, 'connected components', 'shortest path', 'can finish all courses', 'is it bipartite'."
+            },
+            {
+              "kind": "subheader",
+              "text": "Representative problems"
+            },
+            {
+              "kind": "text",
+              "text": "Number of Islands: DFS/BFS flood-fill over a grid counting components. Course Schedule (I/II): topological sort via Kahn's BFS on in-degrees (also detects cycles). Network Delay Time / Cheapest Flights within K Stops: Dijkstra or Bellman-Ford on weighted edges. Word Ladder: BFS over word-transformation graph for shortest chain. Is Graph Bipartite: 2-color the graph with BFS/DFS, fail on a same-color edge."
+            }
+          ]
+        }
+      ]
     }
   ],
   "stage-5": [
@@ -4241,7 +4680,7 @@
           ]
         },
         {
-          "qNum": 1,
+          "qNum": 31,
           "qText": "What is MongoDB and how is it different from a SQL database?",
           "header": "Stage 7 - MongoDB: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4252,7 +4691,7 @@
           ]
         },
         {
-          "qNum": 2,
+          "qNum": 32,
           "qText": "CRUD operations in MongoDB.",
           "header": "Stage 7 - MongoDB: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4280,7 +4719,7 @@
           ]
         },
         {
-          "qNum": 3,
+          "qNum": 33,
           "qText": "Explain the aggregation pipeline. Give a complex example.",
           "header": "Stage 7 - MongoDB: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4323,7 +4762,7 @@
           ]
         },
         {
-          "qNum": 4,
+          "qNum": 34,
           "qText": "Embedding vs Referencing - when to use which?",
           "header": "Stage 7 - MongoDB: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4384,7 +4823,7 @@
           ]
         },
         {
-          "qNum": 5,
+          "qNum": 35,
           "qText": "Explain MongoDB indexes - types and creation.",
           "header": "Stage 7 - MongoDB: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4423,7 +4862,7 @@
           ]
         },
         {
-          "qNum": 6,
+          "qNum": 36,
           "qText": "Sharding in MongoDB - how does it work?",
           "header": "Stage 7 - MongoDB: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4434,7 +4873,7 @@
           ]
         },
         {
-          "qNum": 7,
+          "qNum": 37,
           "qText": "Replica set in MongoDB - how does failover work?",
           "header": "Stage 7 - MongoDB: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4445,7 +4884,7 @@
           ]
         },
         {
-          "qNum": 8,
+          "qNum": 38,
           "qText": "Common aggregation operators.",
           "header": "Stage 7 - MongoDB: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4470,7 +4909,7 @@
           ]
         },
         {
-          "qNum": 9,
+          "qNum": 39,
           "qText": "What is a capped collection?",
           "header": "Stage 7 - MongoDB: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4481,7 +4920,7 @@
           ]
         },
         {
-          "qNum": 10,
+          "qNum": 40,
           "qText": "Multi-document transactions in MongoDB?",
           "header": "Stage 7 - MongoDB: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4509,7 +4948,7 @@
           ]
         },
         {
-          "qNum": 11,
+          "qNum": 41,
           "qText": "Connect MongoDB from Spring Boot - basic example.",
           "header": "Stage 7 - MongoDB: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4555,7 +4994,7 @@
           ]
         },
         {
-          "qNum": 12,
+          "qNum": 42,
           "qText": "How to handle large files in MongoDB?",
           "header": "Stage 7 - MongoDB: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4566,7 +5005,7 @@
           ]
         },
         {
-          "qNum": 1,
+          "qNum": 43,
           "qText": "Connect Redis from Spring Boot - full example.",
           "header": "Stage 7 - Redis: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4620,7 +5059,7 @@
           ]
         },
         {
-          "qNum": 2,
+          "qNum": 44,
           "qText": "Using Spring Cache abstraction with Redis.",
           "header": "Stage 7 - Redis: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4668,7 +5107,7 @@
           ]
         },
         {
-          "qNum": 3,
+          "qNum": 45,
           "qText": "Implement a distributed rate limiter using Redis.",
           "header": "Stage 7 - Redis: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4708,7 +5147,7 @@
           ]
         },
         {
-          "qNum": 4,
+          "qNum": 46,
           "qText": "Implement a distributed lock using Redis.",
           "header": "Stage 7 - Redis: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4750,7 +5189,7 @@
           ]
         },
         {
-          "qNum": 5,
+          "qNum": 47,
           "qText": "Difference between Redis data structures - when to use which?",
           "header": "Stage 7 - Redis: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4792,7 +5231,7 @@
           ]
         },
         {
-          "qNum": 6,
+          "qNum": 48,
           "qText": "Redis persistence - RDB vs AOF?",
           "header": "Stage 7 - Redis: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4811,7 +5250,7 @@
           ]
         },
         {
-          "qNum": 7,
+          "qNum": 49,
           "qText": "Eviction policies in Redis.",
           "header": "Stage 7 - Redis: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4822,7 +5261,7 @@
           ]
         },
         {
-          "qNum": 8,
+          "qNum": 50,
           "qText": "Implement session storage with Redis.",
           "header": "Stage 7 - Redis: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4859,7 +5298,7 @@
           ]
         },
         {
-          "qNum": 9,
+          "qNum": 51,
           "qText": "Pub/Sub in Redis - example.",
           "header": "Stage 7 - Redis: Extra interview Q&A (with commands)",
           "blocks": [
@@ -4904,7 +5343,7 @@
           ]
         },
         {
-          "qNum": 10,
+          "qNum": 52,
           "qText": "Cache-aside pattern in code.",
           "header": "Stage 7 - Redis: Extra interview Q&A (with commands)",
           "blocks": [
@@ -6125,6 +6564,602 @@
             {
               "kind": "text",
               "text": "Stage 8 projects: (1) Task manager backend with JWT auth, MySQL, full validation, global error handling, pagination. (2) E-commerce backend with cart, orders, products. (3) Real-time notifications with Kafka. (4) Microservices: user-service + order-service + product-service + gateway + eureka."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sectionTitle": "SQL - Extra interview Q&A + queries",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Explain Normalization (1NF, 2NF, 3NF).",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Normalization organizes columns and tables to reduce redundancy and avoid update/insert/delete anomalies by progressively enforcing normal forms."
+            },
+            {
+              "kind": "text",
+              "text": "1NF: every column holds atomic (indivisible) values and each row is unique - no repeating groups or multi-valued cells."
+            },
+            {
+              "kind": "text",
+              "text": "2NF: it is in 1NF and every non-key column depends on the WHOLE composite primary key, not just part of it (removes partial dependencies)."
+            },
+            {
+              "kind": "text",
+              "text": "3NF: it is in 2NF and no non-key column depends on another non-key column (removes transitive dependencies). A rule of thumb: every non-key attribute depends on 'the key, the whole key, and nothing but the key'."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What are CTEs (Common Table Expressions) and how do they differ from subqueries?",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A CTE is a named temporary result set defined with WITH that exists only for the duration of one statement. It improves readability, can be referenced multiple times in the same query, and supports recursion (WITH RECURSIVE) for hierarchies."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "WITH dept_avg AS (",
+                "    SELECT department_id, AVG(salary) AS avg_sal",
+                "    FROM employees GROUP BY department_id",
+                ")",
+                "SELECT e.name, e.salary",
+                "FROM employees e JOIN dept_avg d ON e.department_id = d.department_id",
+                "WHERE e.salary > d.avg_sal;"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Versus a subquery: a CTE is named and reusable within the statement and reads top-down; an inline subquery is anonymous and often nested/harder to read."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What are Views? Explain the different types of views.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A view is a stored named query that behaves like a virtual table - it stores the SELECT, not the data. Uses: simplify complex joins, present a stable interface, and restrict column/row access for security."
+            },
+            {
+              "kind": "text",
+              "text": "Types: a simple (updatable) view based on one table with no aggregation can be inserted/updated through. A complex view (joins, GROUP BY, DISTINCT, functions) is generally read-only. A materialized view physically stores the result and must be refreshed - faster reads, stale-until-refreshed (supported in Oracle/Postgres; MySQL emulates it)."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Difference between a Unique Key and a Foreign Key?",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A UNIQUE key enforces that all values in a column (or column set) are distinct within that table - an integrity constraint on one table. A FOREIGN key enforces referential integrity: its values must exist in the referenced (parent) table's primary or unique key, linking two tables."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Can a Unique Key have NULL values? Can a Foreign Key have NULLs?",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A UNIQUE key can hold NULLs. In most databases multiple NULLs are allowed because NULL is not considered equal to NULL (MySQL/Postgres allow many NULLs; SQL Server's classic unique index allows only one NULL)."
+            },
+            {
+              "kind": "text",
+              "text": "A FOREIGN key can be NULL - that simply means 'no relationship yet' (an optional reference). If it is non-NULL it must match an existing parent key."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "Can a table have multiple Unique Keys or Foreign Keys?",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Yes to both. A table can declare many UNIQUE constraints (e.g., email and username each unique) but only one PRIMARY KEY. It can also have many FOREIGN keys, each referencing a different parent table (e.g., orders referencing both customers and products)."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "Does a Unique Key automatically create an index? Does a Foreign Key?",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A UNIQUE constraint automatically creates a unique index - that index is how the database enforces uniqueness efficiently."
+            },
+            {
+              "kind": "text",
+              "text": "A FOREIGN key does NOT always create an index automatically. MySQL/InnoDB does create one on the child column; SQL Server and Postgres do NOT - you should manually index FK columns because they are heavily used in joins and ON DELETE checks."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "Can a Foreign Key reference a Unique Key instead of a Primary Key?",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Yes. A foreign key can reference any column (or set) that is guaranteed unique - a PRIMARY KEY or a UNIQUE constraint. The requirement is that the referenced column(s) uniquely identify a row so the relationship is unambiguous."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "Difference between WHERE and HAVING.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "WHERE filters individual rows BEFORE grouping and cannot use aggregate functions. HAVING filters groups AFTER GROUP BY and is where aggregate conditions go."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT department_id, COUNT(*) AS cnt",
+                "FROM employees",
+                "WHERE status = 'ACTIVE'        -- per-row filter, before grouping",
+                "GROUP BY department_id",
+                "HAVING COUNT(*) > 5;           -- per-group filter, after grouping"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "Difference between Subquery and Correlated Subquery.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A plain subquery is independent - it runs once and its result is used by the outer query. A correlated subquery references a column from the outer query, so it conceptually re-executes for every outer row, which can be slow."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "-- Correlated: inner query depends on outer alias e1",
+                "SELECT e1.name FROM employees e1",
+                "WHERE e1.salary > (SELECT AVG(e2.salary) FROM employees e2",
+                "                   WHERE e2.department_id = e1.department_id);"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "Difference between JOIN and Subquery - when to prefer which?",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A JOIN combines columns from multiple tables into one result set and is usually the optimizer's preferred, fastest option for returning data from several tables. A subquery nests one query inside another and is clearer for existence checks (EXISTS/IN) or returning a single computed scalar. Prefer JOINs when you need columns from both tables; prefer subqueries/EXISTS for filtering by presence/absence. Modern optimizers often rewrite one into the other."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "Difference between IS NULL and = NULL.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "NULL means 'unknown', and any comparison with NULL using = or != yields UNKNOWN (not true), so x = NULL never matches anything. You must use the IS NULL / IS NOT NULL operators to test for nullness."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "WHERE manager_id IS NULL      -- correct",
+                "WHERE manager_id = NULL       -- WRONG: returns no rows"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "Difference between UNION and UNION ALL.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "UNION combines result sets and removes duplicate rows, which requires a sort/hash de-duplication step (extra cost). UNION ALL concatenates everything including duplicates and is faster. Use UNION ALL when you know rows are already distinct or duplicates are acceptable."
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "Difference between Temp Tables and CTEs.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A CTE is logical, in-statement, and exists only for that single query; it is not materialized (usually) and has no indexes/statistics. A temporary table (#temp in SQL Server, CREATE TEMPORARY TABLE in MySQL) is physically stored for the session, can be indexed, can hold statistics, and can be referenced by multiple statements. Use a CTE for readability and single-use; use a temp table when reused across statements or when indexing a large intermediate result helps performance."
+            }
+          ]
+        },
+        {
+          "qNum": 15,
+          "qText": "Explain ROW_NUMBER(), RANK(), and DENSE_RANK().",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "All are window ranking functions over an ORDER BY (and optional PARTITION BY). They differ in how they handle ties:"
+            },
+            {
+              "kind": "text",
+              "text": "ROW_NUMBER() gives a unique sequential number with no ties (1,2,3,4). RANK() gives the same rank to ties but then skips numbers (1,2,2,4). DENSE_RANK() gives the same rank to ties without gaps (1,2,2,3)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT name, salary,",
+                "  ROW_NUMBER() OVER (ORDER BY salary DESC) AS rn,",
+                "  RANK()       OVER (ORDER BY salary DESC) AS rnk,",
+                "  DENSE_RANK() OVER (ORDER BY salary DESC) AS drnk",
+                "FROM employees;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 16,
+          "qText": "Explain Self Join with an example.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A self join joins a table to itself using table aliases, typically to relate rows within the same table - e.g., employees to their managers (both stored in the employees table)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT e.name AS employee, m.name AS manager",
+                "FROM employees e",
+                "LEFT JOIN employees m ON e.manager_id = m.employee_id;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 17,
+          "qText": "Explain PARTITION BY in window functions.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "PARTITION BY divides rows into groups for a window function so the function restarts per group, WITHOUT collapsing rows the way GROUP BY does. Each row keeps its detail but gets a per-partition computed value."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT name, department_id, salary,",
+                "  AVG(salary) OVER (PARTITION BY department_id) AS dept_avg,",
+                "  RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) AS dept_rank",
+                "FROM employees;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 18,
+          "qText": "What is the best practice to delete duplicate rows?",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Identify duplicates with a window function (ROW_NUMBER partitioned by the duplicate-defining columns) and delete every row whose row number is greater than 1, keeping one."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "WITH cte AS (",
+                "  SELECT id,",
+                "    ROW_NUMBER() OVER (PARTITION BY email ORDER BY id) AS rn",
+                "  FROM customers",
+                ")",
+                "DELETE FROM customers WHERE id IN (SELECT id FROM cte WHERE rn > 1);"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 19,
+          "qText": "Explain CROSS JOIN.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A CROSS JOIN returns the Cartesian product - every row of the first table paired with every row of the second (m x n rows), with no join condition. Useful for generating combinations (e.g., all size/color pairs) but accidental cross joins (a missing ON clause) are a common cause of runaway result sets."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT s.size, c.color",
+                "FROM sizes s CROSS JOIN colors c;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 20,
+          "qText": "How do you improve slow queries?",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Start with EXPLAIN / EXPLAIN ANALYZE to see the plan and spot full table scans, filesorts, or temp tables. Then: add or fix indexes on columns used in WHERE/JOIN/ORDER BY (and consider composite/covering indexes obeying the leftmost-prefix rule); avoid SELECT * and functions on indexed columns (which prevent index use); reduce row scans with selective predicates; rewrite correlated subqueries as joins; ensure statistics are up to date; paginate large result sets; and partition or denormalize only when justified."
+            }
+          ]
+        },
+        {
+          "qNum": 21,
+          "qText": "What are Aggregate Functions, and how do NULLs affect them?",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Aggregate functions compute a single value over a set of rows: COUNT, SUM, AVG, MIN, MAX. They are typically used with GROUP BY. Importantly, they ignore NULLs - except COUNT(*) which counts all rows including those with NULLs, whereas COUNT(column) counts only non-NULL values. AVG also divides by the count of non-NULL values."
+            }
+          ]
+        },
+        {
+          "qNum": 22,
+          "qText": "Explain ACID properties and how a relational DB implements them.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Atomicity: a transaction is all-or-nothing (implemented via undo/rollback logs). Consistency: each transaction moves the DB from one valid state to another, honoring constraints. Isolation: concurrent transactions don't corrupt each other (via locks or MVCC, tuned by isolation levels). Durability: once committed, changes survive crashes (via write-ahead/redo logs flushed to disk)."
+            }
+          ]
+        },
+        {
+          "qNum": 23,
+          "qText": "How do you prevent duplicate transactions?",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use an idempotency key: the client sends a unique request ID, stored with a UNIQUE constraint, so a retry of the same logical operation is rejected or returns the prior result instead of inserting again. Combine with database-level UNIQUE constraints on business keys, optimistic locking (a version column) to detect concurrent updates, and wrapping the work in a single transaction so partial duplicates can't commit."
+            }
+          ]
+        },
+        {
+          "qNum": 24,
+          "qText": "Write an SQL query to fetch the Top N records (e.g., top 5 highest-paid employees).",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "code",
+              "lines": [
+                "-- MySQL / Postgres",
+                "SELECT * FROM employees ORDER BY salary DESC LIMIT 5;",
+                "",
+                "-- SQL Server",
+                "SELECT TOP 5 * FROM employees ORDER BY salary DESC;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 25,
+          "qText": "Write an SQL query to fetch records from row 5 to 10.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use LIMIT with an OFFSET (skip the first 4, take the next 6) - rows 5 through 10 inclusive."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "-- MySQL / Postgres",
+                "SELECT * FROM employees ORDER BY id LIMIT 6 OFFSET 4;",
+                "",
+                "-- SQL Server (2012+)",
+                "SELECT * FROM employees ORDER BY id",
+                "OFFSET 4 ROWS FETCH NEXT 6 ROWS ONLY;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 26,
+          "qText": "Write an SQL query to fetch the 2nd highest salary.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "code",
+              "lines": [
+                "-- Using a subquery (portable)",
+                "SELECT MAX(salary) AS second_highest",
+                "FROM employees",
+                "WHERE salary < (SELECT MAX(salary) FROM employees);",
+                "",
+                "-- Using a window function",
+                "SELECT salary FROM (",
+                "  SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk",
+                "  FROM employees",
+                ") t WHERE rnk = 2;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 27,
+          "qText": "Write an SQL query to fetch the 5th highest salary.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Generalize with DENSE_RANK (handles duplicate salaries as one rank), or use LIMIT/OFFSET over distinct salaries."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "-- Window function (recommended)",
+                "SELECT DISTINCT salary FROM (",
+                "  SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk",
+                "  FROM employees",
+                ") t WHERE rnk = 5;",
+                "",
+                "-- MySQL with LIMIT/OFFSET over distinct salaries",
+                "SELECT DISTINCT salary FROM employees",
+                "ORDER BY salary DESC LIMIT 1 OFFSET 4;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 28,
+          "qText": "Write an SQL query to display each employee's manager name from an Employees table.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A self join on manager_id -> employee_id. LEFT JOIN keeps employees with no manager (e.g., the CEO)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT e.name AS employee, m.name AS manager",
+                "FROM employees e",
+                "LEFT JOIN employees m ON e.manager_id = m.employee_id;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 29,
+          "qText": "Write an SQL query to fetch employees whose salary is greater than the average salary.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT name, salary",
+                "FROM employees",
+                "WHERE salary > (SELECT AVG(salary) FROM employees);"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 30,
+          "qText": "Write an SQL query to delete duplicate customer records keeping only the latest.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Rank duplicates (same email, say) newest-first with ROW_NUMBER and delete all but rank 1."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "WITH ranked AS (",
+                "  SELECT id,",
+                "    ROW_NUMBER() OVER (PARTITION BY email ORDER BY created_at DESC) AS rn",
+                "  FROM customers",
+                ")",
+                "DELETE FROM customers",
+                "WHERE id IN (SELECT id FROM ranked WHERE rn > 1);"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 31,
+          "qText": "Write an SQL query to get customers who haven't made any transactions in the last 6 months.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use NOT EXISTS (or a LEFT JOIN ... IS NULL) against transactions in the recent window."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT c.customer_id, c.name",
+                "FROM customers c",
+                "WHERE NOT EXISTS (",
+                "  SELECT 1 FROM transactions t",
+                "  WHERE t.customer_id = c.customer_id",
+                "    AND t.txn_date >= DATE_SUB(CURRENT_DATE, INTERVAL 6 MONTH)",
+                ");"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 32,
+          "qText": "Write an SQL query to find customers who made transactions greater than the average transaction amount.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT DISTINCT c.customer_id, c.name",
+                "FROM customers c",
+                "JOIN transactions t ON t.customer_id = c.customer_id",
+                "WHERE t.amount > (SELECT AVG(amount) FROM transactions);"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 33,
+          "qText": "Write an SQL query to find total deposits per branch, showing only branches with total > 1,000,000.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Aggregate per branch and filter the groups with HAVING."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT branch_id, SUM(amount) AS total_deposits",
+                "FROM deposits",
+                "GROUP BY branch_id",
+                "HAVING SUM(amount) > 1000000",
+                "ORDER BY total_deposits DESC;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 34,
+          "qText": "Write an SQL query to compute a running total of transaction amounts per customer ordered by date.",
+          "header": "SQL - Extra interview Q&A + queries",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use SUM as a window function with ORDER BY to get a cumulative running total without collapsing rows."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT customer_id, txn_date, amount,",
+                "  SUM(amount) OVER (PARTITION BY customer_id ORDER BY txn_date",
+                "                    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total",
+                "FROM transactions;"
+              ]
             }
           ]
         }
@@ -7895,6 +8930,1244 @@
           ]
         }
       ]
+    },
+    {
+      "sectionTitle": "Spring Boot - Comprehensive Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is Spring Boot?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Spring Boot is an opinionated framework on top of the Spring ecosystem that lets you build stand-alone, production-grade Spring applications with minimal configuration. It provides auto-configuration, starter dependencies, an embedded server (Tomcat/Jetty/Undertow), and production features (Actuator) so you can 'just run' a main method without deploying a WAR to an external server."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What are the advantages of using Spring Boot?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Auto-configuration removes most boilerplate XML/Java config; starter POMs simplify dependency management; an embedded server makes apps self-contained JARs; opinionated defaults follow convention over configuration; Actuator gives health/metrics out of the box; and it integrates seamlessly with Spring Data, Security, Cloud, etc. The net effect is faster setup and less configuration to maintain."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "Explain Inversion of Control (IoC) in Spring Boot.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "IoC means the framework, not your code, controls object creation and wiring. Instead of objects instantiating their own dependencies with 'new', you declare them and the Spring IoC container (ApplicationContext) creates, configures, and injects them. This inverts the traditional flow of control and decouples classes from their concrete collaborators."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What is Dependency Injection and how is it achieved in Spring Boot?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "DI is the mechanism that implements IoC: the container supplies a bean's dependencies rather than the bean creating them. Spring supports constructor injection (preferred - immutable, testable, fails fast on missing deps), setter injection (optional dependencies), and field injection via @Autowired (concise but hard to test and hides dependencies)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@Service",
+                "public class OrderService {",
+                "    private final PaymentClient payment;",
+                "    public OrderService(PaymentClient payment) { // constructor injection",
+                "        this.payment = payment;",
+                "    }",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What is the difference between Spring and Spring Boot?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Spring is the core framework (IoC container, MVC, AOP) but requires substantial manual configuration and an external server. Spring Boot builds on Spring and adds auto-configuration, starter dependencies, an embedded server, and Actuator to eliminate boilerplate. In short, Spring gives the building blocks; Spring Boot wires sensible defaults so you start coding business logic immediately."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is the purpose of the @Autowired annotation?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@Autowired tells Spring to inject a matching bean from the container by type (then by qualifier/name if there are several). It can go on a constructor, setter, or field. Since Spring 4.3 a single constructor needs no explicit @Autowired. If no bean is found it fails unless you set required=false or use Optional."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What are the different ways @Autowired can be used?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Three injection points: constructor injection (recommended), setter injection, and field injection. To disambiguate multiple candidates, combine it with @Qualifier(\"beanName\") or mark one bean @Primary. You can also autowire a collection (List/Map) of all beans of a type, or use required=false / Optional<T> for optional dependencies."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "Explain 'convention over configuration' in Spring Boot.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Spring Boot assumes sensible defaults so you only configure what deviates from them. For example, a class annotated @Entity is mapped to a same-named table, a JPA repository interface is auto-implemented, an embedded H2 is auto-configured if on the classpath, and the app starts on port 8080. You override conventions only when needed, which dramatically reduces configuration."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "Explain auto-configuration in Spring Boot.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Auto-configuration inspects the classpath, existing beans, and properties, then conditionally creates beans you would otherwise define yourself. It is driven by @EnableAutoConfiguration (included in @SpringBootApplication) which loads candidate configuration classes (listed in META-INF/spring/...AutoConfiguration.imports) gated by @Conditional annotations like @ConditionalOnClass and @ConditionalOnMissingBean. Example: include spring-boot-starter-data-jpa and a DataSource bean is configured automatically."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What is the role of the @SpringBootApplication annotation?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@SpringBootApplication is a convenience meta-annotation combining three: @Configuration (declare beans), @EnableAutoConfiguration (turn on auto-config), and @ComponentScan (scan the current package and sub-packages for components). It is placed on the main class so the whole application bootstraps from one annotation."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What is the purpose of @EnableAutoConfiguration?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@EnableAutoConfiguration switches on Spring Boot's auto-configuration machinery - it tells Boot to guess and configure beans based on the classpath and your properties. It is normally inherited through @SpringBootApplication, so you rarely use it directly. You can exclude specific auto-configs with exclude = {...}."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "How does Spring Boot handle dependency management (starters and parent)?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Spring Boot uses the spring-boot-dependencies BOM (often via spring-boot-starter-parent) to pin compatible versions of all managed libraries, so you add starters without specifying versions. A 'starter' like spring-boot-starter-web is a curated set of transitive dependencies for a capability (web brings Spring MVC, Jackson, embedded Tomcat), avoiding version conflicts."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "Explain the concept of a starter dependency.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A starter is an aggregate dependency that pulls in everything needed for a feature with consistent versions. spring-boot-starter-web (REST/MVC + Tomcat + Jackson), -data-jpa (Hibernate + JPA), -security, -test (JUnit, Mockito, AssertJ). You can also create custom starters (yourname-spring-boot-starter) to package reusable auto-config for your teams."
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "Explain the Spring Boot Starter Parent.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "spring-boot-starter-parent is a special parent POM that provides dependency management (the BOM), sensible plugin configuration (compiler version, resource filtering, the Spring Boot Maven plugin for building executable jars), and default properties. Inheriting from it means you omit versions for managed dependencies and get a consistent build setup."
+            }
+          ]
+        },
+        {
+          "qNum": 15,
+          "qText": "Explain externalized configuration and the role of application.properties / application.yml.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Externalized configuration lets you keep settings outside code so the same artifact runs in different environments. Spring Boot reads from many sources in a defined precedence order: command-line args, OS env vars, application-{profile}.properties/yml, then application.properties/yml, etc. The application.properties or application.yml file is the primary place to set ports, datasource URLs, logging levels, and custom properties bound via @Value or @ConfigurationProperties."
+            }
+          ]
+        },
+        {
+          "qNum": 16,
+          "qText": "How can you override the default properties in Spring Boot?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "By a property-source precedence chain. Highest wins: command-line arguments (--server.port=9000), then SPRING_APPLICATION_JSON, then OS environment variables / system properties, then profile-specific files (application-prod.yml), then the base application.properties, then defaults. So a deployment can override packaged defaults via env vars without rebuilding."
+            }
+          ]
+        },
+        {
+          "qNum": 17,
+          "qText": "What are the differences between application.properties and application.yml?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Both configure the same properties; they differ in syntax. .properties uses flat key=value lines; .yml uses indented hierarchical structure that is more readable for nested config and supports lists naturally and multiple documents (--- separators) for per-profile blocks. If both exist, .properties takes precedence for conflicting keys. YAML is whitespace-sensitive, which can cause subtle errors."
+            }
+          ]
+        },
+        {
+          "qNum": 18,
+          "qText": "Explain profiles in Spring Boot and the @Profile annotation.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Profiles let you define environment-specific beans and configuration (dev, test, prod). @Profile(\"dev\") on a bean/configuration class registers it only when that profile is active, so you can swap implementations (e.g., an in-memory vs. real datasource) per environment. Profile-specific property files (application-dev.yml) load when the profile is active."
+            }
+          ]
+        },
+        {
+          "qNum": 19,
+          "qText": "How can you activate or set a default profile in Spring Boot?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Activate with spring.profiles.active (in properties, an env var SPRING_PROFILES_ACTIVE, or --spring.profiles.active=prod on the command line). Set a fallback with spring.profiles.default, which applies only when no profile is explicitly active. Multiple profiles can be comma-separated."
+            }
+          ]
+        },
+        {
+          "qNum": 20,
+          "qText": "What is the purpose of @RestController, and how does it differ from @Controller?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@RestController = @Controller + @ResponseBody: every handler method's return value is serialized directly into the HTTP response body (typically JSON), suited to REST APIs. Plain @Controller is for MVC where methods return view names resolved to templates (Thymeleaf/JSP); to return data from a @Controller method you must add @ResponseBody to it."
+            }
+          ]
+        },
+        {
+          "qNum": 21,
+          "qText": "What is the purpose of the @RequestMapping annotation and the HTTP-specific shortcuts?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@RequestMapping maps HTTP requests to handler methods by path, method, params, headers, and content type. @GetMapping, @PostMapping, @PutMapping, @DeleteMapping, @PatchMapping are specialized shortcuts for @RequestMapping(method = ...), making controllers more readable and intention-revealing."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@RestController",
+                "@RequestMapping(\"/api/users\")",
+                "class UserController {",
+                "  @GetMapping(\"/{id}\")  User get(@PathVariable Long id) { ... }",
+                "  @PostMapping          User create(@RequestBody User u) { ... }",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 22,
+          "qText": "What is the difference between @RequestParam, @PathVariable, @RequestBody, and @RequestHeader?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@RequestParam binds query-string or form parameters (?page=2). @PathVariable binds a templated segment of the URL path (/users/{id}). @RequestBody deserializes the HTTP request body (JSON) into an object via Jackson. @RequestHeader binds a specific HTTP header value (e.g., Authorization). @ResponseBody (implied by @RestController) serializes the return value into the response body."
+            }
+          ]
+        },
+        {
+          "qNum": 23,
+          "qText": "Explain the difference between @Component, @Service, and @Repository.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "All three are stereotype annotations that register a class as a Spring bean via component scanning; they differ in semantics. @Component is the generic stereotype. @Service marks business-logic/service-layer beans (no extra behavior, just clarity). @Repository marks data-access beans and adds value: it enables persistence exception translation, converting vendor-specific exceptions into Spring's DataAccessException hierarchy."
+            }
+          ]
+        },
+        {
+          "qNum": 24,
+          "qText": "What is the purpose of the @Bean annotation?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@Bean is used on a method inside an @Configuration class to declare that the method's return value is a Spring-managed bean. It is the programmatic alternative to component scanning, useful when you need to configure third-party objects you cannot annotate, or build a bean with custom logic."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@Configuration",
+                "class AppConfig {",
+                "  @Bean public RestClient restClient() { return RestClient.create(); }",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 25,
+          "qText": "Explain Bean scopes in Spring Boot.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "singleton (default): one shared instance per container. prototype: a new instance on every injection/getBean. For web apps: request (one per HTTP request), session (one per HTTP session), application (per ServletContext), and websocket. Choose prototype/request for stateful beans; default singleton for stateless services."
+            }
+          ]
+        },
+        {
+          "qNum": 26,
+          "qText": "What is the use of @Primary?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "When multiple beans of the same type exist, @Primary marks one as the default candidate for autowiring, so injection succeeds without a @Qualifier. If you still need a specific non-primary bean, use @Qualifier to override the primary choice at the injection point."
+            }
+          ]
+        },
+        {
+          "qNum": 27,
+          "qText": "What is the purpose of the @Value annotation?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@Value injects a single externalized property (or SpEL expression) into a field/parameter. It supports defaults and SpEL."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@Value(\"${app.timeout:30}\") private int timeout;   // default 30 if missing",
+                "@Value(\"#{systemProperties['user.home']}\") private String home;"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "For groups of related properties, prefer type-safe @ConfigurationProperties over many @Value fields."
+            }
+          ]
+        },
+        {
+          "qNum": 28,
+          "qText": "What is the purpose of @Validated and how do you enable and handle server-side validation?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Bean Validation (JSR-380, Hibernate Validator) checks constraints like @NotNull, @Size, @Email on model fields. Enable it on a controller method by annotating the parameter with @Valid (or the class with @Validated for method-level/group validation). On failure Spring throws MethodArgumentNotValidException, which you handle in a @RestControllerAdvice to return a 400 with field errors."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@PostMapping(\"/users\")",
+                "User create(@Valid @RequestBody UserDto dto) { ... }",
+                "// In @RestControllerAdvice:",
+                "@ExceptionHandler(MethodArgumentNotValidException.class)",
+                "ResponseEntity<?> handle(MethodArgumentNotValidException ex) { ... 400 ... }"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 29,
+          "qText": "How can you handle exceptions in a Spring Boot application (global handling)?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Locally with @ExceptionHandler methods inside a controller; globally with @ControllerAdvice / @RestControllerAdvice classes containing @ExceptionHandler methods that apply across all controllers. This centralizes error mapping into consistent JSON error responses. You can also implement ErrorController to customize the default /error."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@RestControllerAdvice",
+                "class GlobalHandler {",
+                "  @ExceptionHandler(EntityNotFoundException.class)",
+                "  ResponseEntity<ApiError> notFound(EntityNotFoundException e) {",
+                "    return ResponseEntity.status(404).body(new ApiError(e.getMessage()));",
+                "  }",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 30,
+          "qText": "What is the difference between @ControllerAdvice and @RestControllerAdvice?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@ControllerAdvice provides cross-cutting handling (exception handlers, @InitBinder, @ModelAttribute) for all controllers. @RestControllerAdvice = @ControllerAdvice + @ResponseBody, so its @ExceptionHandler methods serialize the returned object directly to the response body (JSON) - the right choice for REST APIs."
+            }
+          ]
+        },
+        {
+          "qNum": 31,
+          "qText": "What is the purpose of @ExceptionHandler?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@ExceptionHandler marks a method that handles a specific exception type (or list of types) thrown by controller handler methods. Placed in a controller it is local; placed in a @ControllerAdvice it is global. The method can return a ResponseEntity, view, or body and set the appropriate HTTP status."
+            }
+          ]
+        },
+        {
+          "qNum": 32,
+          "qText": "What is the purpose of @Transactional and how does transaction management work?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@Transactional declares a method/class transactional: Spring's AOP proxy begins a transaction before the method, commits on normal return, and rolls back on a RuntimeException/Error (by default checked exceptions do NOT roll back unless rollbackFor is set). Key attributes: propagation (REQUIRED default, REQUIRES_NEW, etc.), isolation, readOnly, timeout, and rollbackFor. Because it is proxy-based, self-invocation (a method calling another @Transactional method in the same bean) bypasses the proxy and the annotation has no effect."
+            }
+          ]
+        },
+        {
+          "qNum": 33,
+          "qText": "Explain transaction propagation types.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "REQUIRED (default): join an existing transaction or start one. REQUIRES_NEW: suspend any current transaction and start a brand-new independent one. NESTED: a savepoint within the current transaction. SUPPORTS: run in a transaction if one exists, else non-transactional. NOT_SUPPORTED: suspend any existing transaction. MANDATORY: must run inside an existing transaction or throw. NEVER: throw if a transaction exists."
+            }
+          ]
+        },
+        {
+          "qNum": 34,
+          "qText": "Explain the role of Spring Security in Spring Boot applications.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Spring Security is the framework for authentication (who you are) and authorization (what you may do). In Boot it auto-configures a filter chain securing all endpoints by default. You customize it with a SecurityFilterChain bean: define which paths are public, require roles/authorities, plug in authentication (form login, HTTP Basic, JWT, OAuth2), and configure CSRF, CORS, session policy, and password encoding (BCrypt)."
+            }
+          ]
+        },
+        {
+          "qNum": 35,
+          "qText": "How do you secure REST APIs using Spring Security and JWT?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Make the API stateless (SessionCreationPolicy.STATELESS, CSRF disabled). On login, validate credentials and issue a signed JWT containing the subject and roles. On each request a custom OncePerRequestFilter extracts the Bearer token, validates the signature/expiry, builds an Authentication, and sets it in the SecurityContext. Method or path rules then enforce authorization."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "http.csrf(c -> c.disable())",
+                "    .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))",
+                "    .authorizeHttpRequests(a -> a",
+                "        .requestMatchers(\"/auth/**\").permitAll()",
+                "        .anyRequest().authenticated())",
+                "    .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 36,
+          "qText": "How does Spring Boot handle security vulnerabilities like XSS and CSRF?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "CSRF: Spring Security enables CSRF protection by default for browser/session apps using a synchronizer token; for stateless token-based REST APIs you typically disable it because there is no session cookie to abuse. XSS: mitigated by output encoding in templates (Thymeleaf auto-escapes), validating/sanitizing input, and setting security headers (Content-Security-Policy, X-Content-Type-Options) which Spring Security can add. Always escape user-controlled data and never trust client input."
+            }
+          ]
+        },
+        {
+          "qNum": 37,
+          "qText": "How do you enable CORS, and what does @CrossOrigin do?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "CORS controls which browser origins may call your API. @CrossOrigin on a controller/method allows specific origins for those endpoints. To enable it globally, implement WebMvcConfigurer.addCorsMappings or configure a CorsConfigurationSource bean (preferred when using Spring Security so CORS is applied in the filter chain)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@Bean CorsConfigurationSource cors() {",
+                "  CorsConfiguration c = new CorsConfiguration();",
+                "  c.setAllowedOrigins(List.of(\"https://app.example.com\"));",
+                "  c.setAllowedMethods(List.of(\"GET\",\"POST\",\"PUT\",\"DELETE\"));",
+                "  var src = new UrlBasedCorsConfigurationSource();",
+                "  src.registerCorsConfiguration(\"/**\", c); return src;",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 38,
+          "qText": "How can you enable logging and request logging in a Spring Boot application?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Boot uses SLF4J with Logback by default. Set levels in properties (logging.level.com.myapp=DEBUG), configure file output (logging.file.name), or drop in a logback-spring.xml for full control. For request logging, register a CommonsRequestLoggingFilter bean (logs URL, params, payload) or use a custom OncePerRequestFilter / Actuator httptrace for tracing requests."
+            }
+          ]
+        },
+        {
+          "qNum": 39,
+          "qText": "How can you enable Swagger / OpenAPI documentation?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Add springdoc-openapi-starter-webmvc-ui. It scans your controllers and generates an OpenAPI spec at /v3/api-docs and an interactive Swagger UI at /swagger-ui.html automatically. Annotate with @Operation, @Schema, @Tag to enrich the docs. (The older springfox library is largely deprecated for modern Boot versions.)"
+            }
+          ]
+        },
+        {
+          "qNum": 40,
+          "qText": "How does Spring Boot support testing of applications?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "spring-boot-starter-test bundles JUnit 5, Mockito, AssertJ, Hamcrest, JSONassert, and Spring Test. @SpringBootTest loads the full context for integration tests; slice annotations test layers in isolation: @WebMvcTest (controllers + MockMvc), @DataJpaTest (repositories with an embedded DB), @JsonTest, @RestClientTest. Use @MockBean to replace collaborators and Testcontainers for real dependencies in integration tests."
+            }
+          ]
+        },
+        {
+          "qNum": 41,
+          "qText": "What are Actuators in Spring Boot and what is the role of Spring Boot Actuator?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Actuator exposes production-ready operational endpoints to monitor and manage a running app: /actuator/health, /info, /metrics, /env, /loggers, /threaddump, /prometheus, etc. Add spring-boot-starter-actuator. By default only /health is exposed over HTTP; expose more with management.endpoints.web.exposure.include and secure them, since they reveal sensitive internals."
+            }
+          ]
+        },
+        {
+          "qNum": 42,
+          "qText": "Explain Actuator endpoints and health indicators.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Endpoints are discrete management features (health, metrics, env). A HealthIndicator contributes to the aggregated /health status; Boot ships indicators for DB, disk, Redis, etc., and you can add custom ones by implementing HealthIndicator and returning Health.up()/down(). The overall status is the worst of all indicators. management.endpoint.health.show-details controls how much detail is shown."
+            }
+          ]
+        },
+        {
+          "qNum": 43,
+          "qText": "What is the purpose of the @Async annotation, and how do you enable async processing?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@Async runs a method on a separate thread (from a configured TaskExecutor) so the caller returns immediately; the method can return void or a CompletableFuture/Future. Enable it with @EnableAsync on a configuration class. Like @Transactional it is proxy-based, so it works only on public methods called from another bean, not via self-invocation. Define a custom ThreadPoolTaskExecutor to control pool size."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@EnableAsync @Configuration class AsyncCfg {}",
+                "@Async public CompletableFuture<Report> generate() { ... }"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 44,
+          "qText": "How can you schedule tasks (@Scheduled and @EnableScheduling)?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@EnableScheduling activates scheduling; @Scheduled on a no-arg method runs it on a schedule via fixedRate (start-to-start interval), fixedDelay (gap after completion), or cron (cron expression). By default a single-threaded scheduler runs all tasks, so configure a ThreadPoolTaskScheduler if jobs overlap. For multi-instance deployments add a distributed lock (e.g., ShedLock) so only one node runs each job."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@Scheduled(cron = \"0 0 2 * * *\")   // 2 AM daily",
+                "public void nightlyCleanup() { ... }"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 45,
+          "qText": "How can you configure a thread pool and connection pooling in Spring Boot?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Thread pool: define a ThreadPoolTaskExecutor bean (core size, max size, queue capacity) for @Async/scheduling. Connection pool: Boot uses HikariCP by default; tune it via spring.datasource.hikari.* properties (maximum-pool-size, minimum-idle, connection-timeout, idle-timeout, max-lifetime). Size the pool based on DB capacity and concurrency, not arbitrarily large."
+            }
+          ]
+        },
+        {
+          "qNum": 46,
+          "qText": "How does Spring Boot handle database connections and pooling?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "On startup Boot auto-configures a DataSource from spring.datasource.* properties and wraps it in a connection pool - HikariCP by default (fast, lightweight), with Tomcat JDBC and DBCP2 as alternatives. Connections are borrowed per request and returned to the pool, avoiding the cost of opening a new connection each time. You can supply a custom DataSource bean to override it."
+            }
+          ]
+        },
+        {
+          "qNum": 47,
+          "qText": "How can you configure a custom data source / multiple data sources?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Define a DataSource @Bean yourself (often with @ConfigurationProperties(\"app.datasource\")) to override auto-config. For multiple data sources, declare each DataSource, EntityManagerFactory, and TransactionManager as beans, mark one @Primary, and point each JPA repository package at the right factory using @EnableJpaRepositories(entityManagerFactoryRef=..., transactionManagerRef=...)."
+            }
+          ]
+        },
+        {
+          "qNum": 48,
+          "qText": "How does Spring Boot support database migrations?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use Flyway or Liquibase. With Flyway, place versioned SQL scripts (V1__init.sql, V2__add_col.sql) in db/migration; on startup Boot runs pending migrations and records them in a schema_version table, guaranteeing consistent, ordered schema evolution across environments. Liquibase does the same with XML/YAML/SQL changelogs. This is far safer than hibernate ddl-auto=update in production."
+            }
+          ]
+        },
+        {
+          "qNum": 49,
+          "qText": "What is the purpose of @Cacheable and how do you configure caching?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "@Cacheable caches a method's result keyed by its arguments, so subsequent calls with the same arguments skip execution and return the cached value. Related: @CachePut (always run, update cache), @CacheEvict (remove entries). Enable with @EnableCaching and provide a cache manager (simple ConcurrentMap by default, or Redis/Caffeine/EhCache for real use)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@EnableCaching @Configuration class CacheCfg {}",
+                "@Cacheable(\"products\") Product find(Long id) { ... }",
+                "@CacheEvict(value=\"products\", key=\"#p.id\") void update(Product p) { ... }"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 50,
+          "qText": "How can you enable GZIP compression and create custom error pages?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Enable response compression with server.compression.enabled=true (optionally set min-response-size and mime-types). Custom error pages: for MVC apps add error/404.html, error/500.html templates under templates/error, or implement ErrorController; for REST APIs use @RestControllerAdvice to return structured JSON error bodies instead of HTML pages."
+            }
+          ]
+        },
+        {
+          "qNum": 51,
+          "qText": "How can you handle file uploads and downloads in Spring Boot?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Upload: accept MultipartFile in a @PostMapping(consumes = MULTIPART_FORM_DATA). Configure limits with spring.servlet.multipart.max-file-size / max-request-size. Download: return a ResponseEntity<Resource> (or write to the OutputStream) with Content-Disposition: attachment and the correct Content-Type."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@PostMapping(value=\"/upload\", consumes=MULTIPART_FORM_DATA_VALUE)",
+                "String upload(@RequestParam MultipartFile file) throws IOException {",
+                "  file.transferTo(Path.of(\"/data/\"+file.getOriginalFilename())); return \"ok\";",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 52,
+          "qText": "What is the use of CommandLineRunner (and ApplicationRunner)?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Both are functional beans whose run method executes once after the application context is fully started - useful for startup tasks like seeding data, warming caches, or printing config. CommandLineRunner receives raw String[] args; ApplicationRunner receives a parsed ApplicationArguments. Order multiple runners with @Order."
+            }
+          ]
+        },
+        {
+          "qNum": 53,
+          "qText": "What are the various ways to create a Spring Boot application?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use Spring Initializr (start.spring.io) to generate a project; the Spring Boot CLI; an IDE wizard (IntelliJ/STS); or manually add spring-boot-starter-parent and starters to a Maven/Gradle build. All produce a class annotated @SpringBootApplication whose main method calls SpringApplication.run."
+            }
+          ]
+        },
+        {
+          "qNum": 54,
+          "qText": "What is Spring Boot CLI and Spring Boot DevTools?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Spring Boot CLI is a command-line tool to quickly prototype/run Spring apps from Groovy scripts. DevTools (spring-boot-devtools) speeds up development with automatic restart on classpath changes, LiveReload for the browser, sensible dev-time property defaults, and disabling of template caching. It is automatically excluded from production jars."
+            }
+          ]
+        },
+        {
+          "qNum": 55,
+          "qText": "Explain lazy initialization in Spring Boot.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "By default singletons are created eagerly at startup. Lazy initialization (spring.main.lazy-initialization=true globally, or @Lazy on a bean/injection point) defers bean creation until first use, which speeds startup and saves memory for rarely used beans. The trade-off: configuration errors surface at first request instead of at startup, and the first request is slower."
+            }
+          ]
+        },
+        {
+          "qNum": 56,
+          "qText": "Explain conditional bean registration / creation.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Conditional annotations register a bean only when conditions hold, which underpins auto-configuration. @ConditionalOnClass / @ConditionalOnMissingClass (classpath presence), @ConditionalOnBean / @ConditionalOnMissingBean (other beans), @ConditionalOnProperty (a property value), @ConditionalOnWebApplication, @Profile. You can write custom conditions by implementing Condition."
+            }
+          ]
+        },
+        {
+          "qNum": 57,
+          "qText": "Explain cross-cutting concerns and AOP in Spring Boot.",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Cross-cutting concerns (logging, security, transactions, caching, metrics) span many components. Spring AOP factors them into aspects applied via proxies, so business code stays clean. You define an @Aspect with advice (@Before, @After, @Around) bound to pointcuts (method-execution expressions). @Transactional, @Cacheable, and @Async are all built on this proxy/AOP mechanism."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@Aspect @Component class LoggingAspect {",
+                "  @Around(\"execution(* com.app.service..*(..))\")",
+                "  Object log(ProceedingJoinPoint pjp) throws Throwable { ... return pjp.proceed(); }",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 58,
+          "qText": "How does Spring Boot support internationalization (i18n) and localization?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Provide messages_xx.properties resource bundles (messages_en.properties, messages_fr.properties). Configure a MessageSource and a LocaleResolver (e.g., AcceptHeaderLocaleResolver or SessionLocaleResolver) plus a LocaleChangeInterceptor to switch via a ?lang= param. Look up text with messageSource.getMessage(code, args, locale) or #{...} in templates."
+            }
+          ]
+        },
+        {
+          "qNum": 59,
+          "qText": "How does Spring Boot support WebSocket applications?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Add spring-boot-starter-websocket, enable @EnableWebSocketMessageBroker, and register STOMP endpoints with a message broker (in-memory simple broker or a relay to RabbitMQ/ActiveMQ). Controllers use @MessageMapping to receive and @SendTo to broadcast. Clients connect via SockJS/STOMP for real-time bidirectional messaging (chat, notifications, live dashboards)."
+            }
+          ]
+        },
+        {
+          "qNum": 60,
+          "qText": "How does Spring Boot support reactive programming, and what is the difference between Mono and Flux?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Spring WebFlux is the non-blocking, reactive web stack built on Project Reactor and runs on Netty by default. It uses a small event-loop thread pool to handle many concurrent connections without one-thread-per-request blocking - ideal for high-concurrency, IO-bound services."
+            },
+            {
+              "kind": "text",
+              "text": "Mono<T> is a reactive publisher emitting 0 or 1 element (a single async result, like one entity). Flux<T> emits 0..N elements (a stream, like a list or server-sent events). Both are lazy and only execute on subscription."
+            }
+          ]
+        },
+        {
+          "qNum": 61,
+          "qText": "How can you enable HTTPS in Spring Boot?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Provide a keystore and configure SSL in properties: server.ssl.key-store, server.ssl.key-store-password, server.ssl.key-store-type, and set server.port to 443 (or 8443). To also serve/redirect HTTP, add a second connector. In production, TLS is often terminated at a load balancer/ingress instead, and the app runs plain HTTP behind it."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "server.port=8443",
+                "server.ssl.key-store=classpath:keystore.p12",
+                "server.ssl.key-store-type=PKCS12",
+                "server.ssl.key-store-password=changeit"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 62,
+          "qText": "How does Spring Boot support message queuing and asynchronous logging?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Message queuing: starters integrate brokers - spring-boot-starter-amqp (RabbitMQ with RabbitTemplate and @RabbitListener), spring-kafka (KafkaTemplate and @KafkaListener), and JMS (JmsTemplate, @JmsListener) - enabling decoupled, asynchronous communication. Asynchronous logging: configure Logback's AsyncAppender (or Log4j2 async loggers) so log writes happen on a separate thread, reducing logging latency on request threads under high load."
+            }
+          ]
+        },
+        {
+          "qNum": 63,
+          "qText": "What are the limitations of Spring Boot?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "It can feel like a black box - auto-configuration magic is hard to trace when something goes wrong. Fat jars are large and startup/memory can be heavy for tiny services (mitigated by GraalVM native images). The opinionated defaults may conflict with non-standard needs, requiring overrides. There is a learning curve to understand what is auto-configured, and unused transitive dependencies can bloat the classpath if starters aren't trimmed."
+            }
+          ]
+        },
+        {
+          "qNum": 64,
+          "qText": "How does Spring Boot support handling of JSON data?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "spring-boot-starter-web includes Jackson, which Boot auto-configures as the default JSON (de)serializer. @RequestBody deserializes incoming JSON into objects; return values from @RestController are serialized to JSON. Customize via application properties (spring.jackson.*), a Jackson2ObjectMapperBuilderCustomizer, or annotations like @JsonProperty, @JsonIgnore, @JsonFormat, and register modules (e.g., JavaTimeModule for java.time)."
+            }
+          ]
+        },
+        {
+          "qNum": 65,
+          "qText": "What is Spring Data JPA and how does it integrate with Spring Boot?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Spring Data JPA is an abstraction over JPA/Hibernate that eliminates boilerplate DAO code. You declare a repository interface extending JpaRepository<Entity, Id> and get CRUD, paging, and sorting for free; derived query methods (findByEmailAndStatus) are implemented from the method name; complex queries use @Query (JPQL or native). Boot auto-configures the EntityManagerFactory, DataSource, and transaction manager, so you just define entities and repositories."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "interface UserRepo extends JpaRepository<User, Long> {",
+                "  Optional<User> findByEmail(String email);",
+                "  @Query(\"select u from User u where u.active = true\") List<User> findActive();",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 66,
+          "qText": "What is the purpose of @RepositoryRestResource?",
+          "header": "Spring Boot - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Provided by Spring Data REST, @RepositoryRestResource exposes a Spring Data repository directly as hypermedia (HAL) REST endpoints without writing controllers - it auto-generates GET/POST/PUT/DELETE for the entity. You can customize the path and rel, or hide a repository with exported=false. It is great for quick CRUD APIs but offers less control than hand-written controllers."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sectionTitle": "Microservices - Comprehensive Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Monolithic vs Microservices - what's the difference?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A monolith is one deployable unit where all modules share a process, codebase, and database - simple to build and deploy initially but hard to scale selectively and risky to change at scale. Microservices split the system into small, independently deployable services, each owning its data and a single business capability, communicating over the network."
+            },
+            {
+              "kind": "text",
+              "text": "Trade-off: monoliths win on simplicity, local calls, and single-transaction consistency; microservices win on independent scaling/deployment, team autonomy, and tech diversity, at the cost of distributed-system complexity (network failures, eventual consistency, observability)."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What are Microservices and what are their key benefits?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Microservices is an architectural style where an application is a suite of small, autonomous services modeled around business capabilities, each independently deployable and owning its data."
+            },
+            {
+              "kind": "text",
+              "text": "Benefits: independent deployment (ship one service without redeploying everything), independent scaling (scale only the hot service), fault isolation (one failing service needn't take down the system), technology heterogeneity (right tool per service), and team autonomy (small teams own services end-to-end)."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What are the main challenges and drawbacks of implementing microservices?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Distributed-system complexity: network latency and partial failures, no easy cross-service ACID transactions (need Saga/eventual consistency), harder debugging and tracing across services, data duplication and consistency management, operational overhead (service discovery, config, CI/CD, monitoring per service), and testing complexity (integration/contract tests). They add real cost, so they pay off mainly at scale or with many teams - a premature split hurts."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "How do microservices communicate with each other?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Two broad styles. Synchronous request/response over HTTP/REST or gRPC (the caller waits for a reply) - simple but creates temporal coupling. Asynchronous messaging via a broker (Kafka, RabbitMQ) where services publish/consume events without waiting - looser coupling and better resilience. Many systems mix both: REST for queries, events for state changes."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What is the difference between synchronous and asynchronous communication in microservices?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Synchronous: the caller sends a request and blocks until the callee responds (REST, gRPC). It is simple and gives immediate results but couples services in time - if the callee is slow or down, the caller is affected, and failures cascade."
+            },
+            {
+              "kind": "text",
+              "text": "Asynchronous: the sender publishes a message/event to a broker and continues without waiting; consumers process it later. It decouples services, smooths load spikes, and improves resilience, but adds eventual consistency and requires handling out-of-order/duplicate messages."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "How do you handle asynchronous communication between microservices?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Introduce a message broker (Kafka, RabbitMQ, SQS). Producers publish events to topics/queues; consumers subscribe and process independently. Use durable, acknowledged delivery; design consumers to be idempotent (because at-least-once delivery means duplicates); use a dead-letter queue for poison messages; and apply the Transactional Outbox pattern so a state change and its event are published atomically (write the event to an outbox table in the same DB transaction, then relay it)."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "How do you handle failures and implement resilience in microservices?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Combine several patterns: timeouts (never wait forever), retries with exponential backoff and jitter (for transient errors, on idempotent calls), circuit breakers (stop calling a failing dependency), bulkheads (isolate resource pools so one slow dependency can't exhaust all threads), fallbacks/graceful degradation (serve cached or default data), rate limiting, and health checks with auto-restart. Resilience4j (or the older Hystrix) implements most of these in Spring Boot."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "Explain the Circuit Breaker pattern.",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A circuit breaker wraps calls to a remote dependency and tracks failures. CLOSED: calls flow normally; failures are counted. When the failure rate crosses a threshold it trips to OPEN: calls fail fast (or hit a fallback) without hammering the struggling service, giving it time to recover. After a wait it moves to HALF-OPEN and lets a few trial calls through; if they succeed it closes again, otherwise it reopens. This prevents cascading failures and resource exhaustion."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart LR",
+                "  CLOSED -- failures exceed threshold --> OPEN",
+                "  OPEN -- after wait --> HALFOPEN[HALF-OPEN]",
+                "  HALFOPEN -- trial ok --> CLOSED",
+                "  HALFOPEN -- trial fails --> OPEN"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How can Hystrix be used to implement fault tolerance in microservices?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Netflix Hystrix (now in maintenance mode) wraps each remote call in a HystrixCommand that adds a timeout, runs it in an isolated thread pool (bulkhead), trips a circuit breaker on failures, and invokes a fallback method when the call fails or the circuit is open. In Spring Cloud Netflix you annotate methods with @HystrixCommand(fallbackMethod=...) and view metrics via the Hystrix Dashboard. New projects should use Resilience4j instead, as Hystrix is no longer actively developed."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "How can Resilience4j be used to implement fault tolerance in microservices?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Resilience4j is a lightweight, functional fault-tolerance library (the recommended Hystrix replacement) offering composable modules: CircuitBreaker, Retry, RateLimiter, Bulkhead, TimeLimiter, and Cache. In Spring Boot you add the starter and apply annotations with configured fallbacks, tuning thresholds in application.yml."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@CircuitBreaker(name = \"inventory\", fallbackMethod = \"fallback\")",
+                "@Retry(name = \"inventory\")",
+                "public Stock getStock(String sku) { return client.getStock(sku); }",
+                "",
+                "public Stock fallback(String sku, Throwable t) { return Stock.unknown(sku); }"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What is Service Discovery in microservices?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Because service instances come and go (autoscaling, restarts, dynamic IPs/ports), clients can't hardcode addresses. Service discovery maintains a registry of available instances. Services register on startup (and send heartbeats); callers look up healthy instances by logical name. Tools: Netflix Eureka, Consul, etcd, or platform-native (Kubernetes DNS/Services)."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What is the difference between client-side and server-side discovery?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Client-side discovery: the client queries the registry, gets the list of instances, and chooses one itself (load balancing in the client, e.g., Eureka + Spring Cloud LoadBalancer/Ribbon). It is efficient but couples clients to the registry."
+            },
+            {
+              "kind": "text",
+              "text": "Server-side discovery: the client calls a single endpoint (a load balancer or API gateway) which consults the registry and routes the request. The client stays simple and unaware of instances (e.g., Kubernetes Service, AWS ALB), at the cost of an extra network hop."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "How do you ensure data consistency in a microservices environment?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "With per-service databases you give up cross-service ACID transactions and embrace eventual consistency. Use the Saga pattern to coordinate multi-service business transactions via local transactions plus compensating actions. Use the Transactional Outbox + Change Data Capture to publish events reliably with state changes, idempotent consumers to tolerate duplicates, and CQRS/event sourcing where read models are rebuilt from events. Strong consistency within a service boundary; eventual across boundaries."
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "Explain the SAGA pattern in microservices.",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A Saga implements a business transaction spanning multiple services as a sequence of local transactions; if one step fails, previously completed steps are undone with compensating transactions (semantic rollback), since you can't roll back across services atomically."
+            },
+            {
+              "kind": "text",
+              "text": "Two coordination styles. Choreography: each service publishes events that trigger the next step - no central coordinator, but logic is spread out and hard to trace. Orchestration: a central orchestrator tells each service what to do and handles compensation - clearer control flow at the cost of a coordinator. Example: Order -> reserve payment -> reserve inventory; if inventory fails, compensate by refunding payment and cancelling the order."
+            }
+          ]
+        },
+        {
+          "qNum": 15,
+          "qText": "What is an API Gateway pattern and why is it important?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "An API Gateway is a single entry point in front of the microservices. It routes requests to the right service and handles cross-cutting concerns in one place: authentication/authorization, TLS termination, rate limiting, request/response transformation, aggregation of multiple service calls, caching, and logging/metrics. It shields clients from the internal topology and lets services change without breaking clients. Spring Cloud Gateway is a common implementation."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart LR",
+                "  Client --> GW[API Gateway]",
+                "  GW --> Orders[Order Svc]",
+                "  GW --> Users[User Svc]",
+                "  GW --> Pay[Payment Svc]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 16,
+          "qText": "What are common microservices design patterns?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Decomposition: by business capability/subdomain (DDD). Data: Database-per-Service, Saga, CQRS, Event Sourcing, Transactional Outbox. Communication: API Gateway, Backends-for-Frontends (BFF), Service Discovery, Aggregator. Reliability: Circuit Breaker, Retry, Bulkhead, Timeout. Cross-cutting: Externalized/Centralized Configuration, Sidecar/Service Mesh, Distributed Tracing, Log Aggregation. Deployment: Strangler Fig (incrementally replace a monolith), Blue-Green/Canary releases."
+            }
+          ]
+        },
+        {
+          "qNum": 17,
+          "qText": "How do you monitor and debug microservices in production?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use the three pillars of observability. Logs: structured, centralized (ELK/EFK or Loki) with a correlation/trace ID per request. Metrics: per-service counters/latencies/error rates via Micrometer to Prometheus, visualized in Grafana, with alerting. Distributed tracing: propagate a trace ID across services (OpenTelemetry/Zipkin/Jaeger) to follow a request end-to-end and find the slow hop. Add health checks (Actuator), dashboards, and SLO-based alerts."
+            }
+          ]
+        },
+        {
+          "qNum": 18,
+          "qText": "Why is centralized configuration important in microservices, and how do you set up Spring Cloud Config Server?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "With many services and environments, scattering config in each deployable is error-prone. Centralized configuration stores all properties in one place (often a Git repo) so config is versioned, auditable, consistent, and changeable without rebuilding services - and can be refreshed at runtime."
+            },
+            {
+              "kind": "text",
+              "text": "Spring Cloud Config Server: a service annotated @EnableConfigServer that serves properties from a backend (Git/Vault/filesystem). Each microservice is a Config Client that fetches its config at startup (by application name + active profile) and can refresh via /actuator/refresh or Spring Cloud Bus."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@SpringBootApplication @EnableConfigServer",
+                "public class ConfigServerApp { public static void main(String[] a){ SpringApplication.run(ConfigServerApp.class,a);} }",
+                "# application.yml",
+                "spring.cloud.config.server.git.uri: https://github.com/org/config-repo"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 19,
+          "qText": "What are the benefits of using JPA in microservices, and how do you initialize data for testing/development?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "JPA/Spring Data JPA gives each service a clean, productive persistence layer with minimal boilerplate (repository interfaces, derived queries), database-vendor portability, and integrated transaction management - fitting the database-per-service model where each service owns its schema."
+            },
+            {
+              "kind": "text",
+              "text": "Initialize data with a data.sql / schema.sql script on the classpath (run automatically for embedded DBs), a Flyway/Liquibase migration with seed inserts, or a CommandLineRunner that saves entities via the repository on startup - handy for dev/test seeding."
+            }
+          ]
+        },
+        {
+          "qNum": 20,
+          "qText": "What are the best practices for microservices communication?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Prefer asynchronous events for state changes to reduce coupling; use synchronous REST/gRPC for queries. Keep contracts stable and versioned; use consumer-driven contract tests. Make operations idempotent and design for retries/timeouts/circuit breakers. Avoid chatty fine-grained calls (aggregate at a gateway/BFF). Never share databases across services. Pass a correlation ID for tracing, and apply backpressure/rate limiting."
+            }
+          ]
+        },
+        {
+          "qNum": 21,
+          "qText": "How can you implement client-side load balancing with Eureka (and Ribbon)?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Services register with Eureka; a client fetches the instance list for a logical service name and a client-side load balancer picks an instance per call. Ribbon was the original Netflix client-side LB; in current Spring Cloud it is replaced by Spring Cloud LoadBalancer. With a @LoadBalanced RestTemplate or WebClient (or Feign), you call http://service-name/... and the balancer resolves and distributes the request across healthy instances."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@Bean @LoadBalanced RestTemplate restTemplate() { return new RestTemplate(); }",
+                "// then: restTemplate.getForObject(\"http://currency-exchange/exchange/USD/INR\", ...);"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 22,
+          "qText": "What is the role of Feign in inter-service communication, and how do services like Currency Conversion call Currency Exchange?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "OpenFeign is a declarative REST client: you define a Java interface annotated with the remote endpoints and Feign generates the HTTP calls, integrating with service discovery and client-side load balancing so you call by service name, not URL. It removes boilerplate RestTemplate/WebClient code."
+            },
+            {
+              "kind": "text",
+              "text": "Example: the Currency Conversion service declares a @FeignClient(name=\"currency-exchange\") interface; calling its method transparently resolves a Currency Exchange instance via Eureka, load-balances, and returns the deserialized response - so conversion = exchange-rate x quantity."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "@FeignClient(name = \"currency-exchange\")",
+                "interface ExchangeProxy {",
+                "  @GetMapping(\"/exchange/{from}/to/{to}\")",
+                "  ExchangeRate getRate(@PathVariable String from, @PathVariable String to);",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 23,
+          "qText": "How does Spring Boot simplify the creation of microservices?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Boot provides embedded servers (each service is a runnable jar), auto-configuration, Actuator for health/metrics, and easy REST/messaging support. Combined with Spring Cloud it adds the distributed-systems toolkit: Config Server (centralized config), Eureka/Consul (discovery), Spring Cloud Gateway (gateway), LoadBalancer, OpenFeign (declarative clients), Resilience4j (fault tolerance), and Sleuth/Micrometer Tracing (distributed tracing) - so teams assemble production-ready microservices quickly."
+            }
+          ]
+        },
+        {
+          "qNum": 24,
+          "qText": "What are the future trends in microservices development?",
+          "header": "Microservices - Comprehensive Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Service meshes (Istio, Linkerd) moving resilience/security/observability into a sidecar so it's language-agnostic; serverless/FaaS and scale-to-zero; Kubernetes as the default platform with GitOps deployment; event-driven and streaming architectures (Kafka) as the backbone; WebAssembly and GraalVM native images for fast, tiny startup; and increasing use of platform engineering and standardized templates to tame operational complexity."
+            }
+          ]
+        }
+      ]
     }
   ],
   "stage-10": [
@@ -9585,7 +11858,7 @@
           ]
         },
         {
-          "qNum": 1,
+          "qNum": 21,
           "qText": "Explain SOLID principles with examples.",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9612,7 +11885,7 @@
           ]
         },
         {
-          "qNum": 2,
+          "qNum": 22,
           "qText": "Difference between Abstract Class and Interface (system design lens)?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9623,7 +11896,7 @@
           ]
         },
         {
-          "qNum": 3,
+          "qNum": 23,
           "qText": "Explain CAP theorem.",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9650,7 +11923,7 @@
           ]
         },
         {
-          "qNum": 4,
+          "qNum": 24,
           "qText": "How would you design a URL shortener like bit.ly?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9685,7 +11958,7 @@
           ]
         },
         {
-          "qNum": 5,
+          "qNum": 25,
           "qText": "How would you design a rate limiter?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9708,7 +11981,7 @@
           ]
         },
         {
-          "qNum": 6,
+          "qNum": 26,
           "qText": "How would you design a chat application like WhatsApp?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9743,7 +12016,7 @@
           ]
         },
         {
-          "qNum": 7,
+          "qNum": 27,
           "qText": "Explain consistent hashing.",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9770,7 +12043,7 @@
           ]
         },
         {
-          "qNum": 8,
+          "qNum": 28,
           "qText": "How would you design an LRU cache?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9793,7 +12066,7 @@
           ]
         },
         {
-          "qNum": 9,
+          "qNum": 29,
           "qText": "What is event-driven architecture? Pros and cons?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9812,7 +12085,7 @@
           ]
         },
         {
-          "qNum": 10,
+          "qNum": 30,
           "qText": "Sharding strategies?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9835,7 +12108,7 @@
           ]
         },
         {
-          "qNum": 11,
+          "qNum": 31,
           "qText": "How would you design a notification system?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9870,7 +12143,7 @@
           ]
         },
         {
-          "qNum": 12,
+          "qNum": 32,
           "qText": "Microservices: pros and cons?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9889,7 +12162,7 @@
           ]
         },
         {
-          "qNum": 13,
+          "qNum": 33,
           "qText": "What is CQRS and when to use it?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9912,7 +12185,7 @@
           ]
         },
         {
-          "qNum": 14,
+          "qNum": 34,
           "qText": "What is event sourcing?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9923,7 +12196,7 @@
           ]
         },
         {
-          "qNum": 15,
+          "qNum": 35,
           "qText": "What is a circuit breaker pattern?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9934,7 +12207,7 @@
           ]
         },
         {
-          "qNum": 16,
+          "qNum": 36,
           "qText": "Distributed transactions - how to handle?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9961,7 +12234,7 @@
           ]
         },
         {
-          "qNum": 17,
+          "qNum": 37,
           "qText": "How to handle 10K concurrent users on a server?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9972,7 +12245,7 @@
           ]
         },
         {
-          "qNum": 18,
+          "qNum": 38,
           "qText": "Eventual vs strong consistency. Real examples.",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -9991,7 +12264,7 @@
           ]
         },
         {
-          "qNum": 19,
+          "qNum": 39,
           "qText": "How does Kafka achieve high throughput?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -10002,7 +12275,7 @@
           ]
         },
         {
-          "qNum": 20,
+          "qNum": 40,
           "qText": "What is the bulkhead pattern?",
           "header": "Stage 11 - System Design Interview Q&A",
           "blocks": [
@@ -10089,7 +12362,7 @@
           ]
         },
         {
-          "qNum": 7,
+          "qNum": 4,
           "qText": "Explain consistent hashing.",
           "header": "Stage 11 - Core Concepts",
           "blocks": [
@@ -10116,7 +12389,7 @@
           ]
         },
         {
-          "qNum": 9,
+          "qNum": 5,
           "qText": "What is event-driven architecture? Pros and cons?",
           "header": "Stage 11 - Core Concepts",
           "blocks": [
@@ -10135,7 +12408,7 @@
           ]
         },
         {
-          "qNum": 10,
+          "qNum": 6,
           "qText": "Sharding strategies?",
           "header": "Stage 11 - Core Concepts",
           "blocks": [
@@ -10158,7 +12431,7 @@
           ]
         },
         {
-          "qNum": 12,
+          "qNum": 7,
           "qText": "Microservices: pros and cons?",
           "header": "Stage 11 - Core Concepts",
           "blocks": [
@@ -10177,7 +12450,7 @@
           ]
         },
         {
-          "qNum": 13,
+          "qNum": 8,
           "qText": "What is CQRS and when to use it?",
           "header": "Stage 11 - Core Concepts",
           "blocks": [
@@ -10200,7 +12473,7 @@
           ]
         },
         {
-          "qNum": 14,
+          "qNum": 9,
           "qText": "What is event sourcing?",
           "header": "Stage 11 - Core Concepts",
           "blocks": [
@@ -10215,7 +12488,7 @@
           ]
         },
         {
-          "qNum": 15,
+          "qNum": 10,
           "qText": "What is a circuit breaker pattern?",
           "header": "Stage 11 - Core Concepts",
           "blocks": [
@@ -10230,7 +12503,7 @@
           ]
         },
         {
-          "qNum": 16,
+          "qNum": 11,
           "qText": "Distributed transactions - how to handle?",
           "header": "Stage 11 - Core Concepts",
           "blocks": [
@@ -10257,7 +12530,7 @@
           ]
         },
         {
-          "qNum": 17,
+          "qNum": 12,
           "qText": "How to handle 10K concurrent users on a server?",
           "header": "Stage 11 - Core Concepts",
           "blocks": [
@@ -10268,7 +12541,7 @@
           ]
         },
         {
-          "qNum": 18,
+          "qNum": 13,
           "qText": "Eventual vs strong consistency. Real examples.",
           "header": "Stage 11 - Core Concepts",
           "blocks": [
@@ -10287,7 +12560,7 @@
           ]
         },
         {
-          "qNum": 19,
+          "qNum": 14,
           "qText": "How does Kafka achieve high throughput?",
           "header": "Stage 11 - Core Concepts",
           "blocks": [
@@ -10298,7 +12571,7 @@
           ]
         },
         {
-          "qNum": 20,
+          "qNum": 15,
           "qText": "What is the bulkhead pattern?",
           "header": "Stage 11 - Core Concepts",
           "blocks": [
@@ -11302,6 +13575,683 @@
           ]
         }
       ]
+    },
+    {
+      "sectionTitle": "SOLID & Design Patterns",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is the Single Responsibility Principle (SRP)?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A class should have one and only one reason to change - it should do one job. Mixing responsibilities (e.g., a class that computes payroll AND formats reports AND saves to DB) means a change in one concern can break others and makes testing/reuse hard. Split such a class so each piece has a single cohesive responsibility."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "// Violates SRP: persistence + formatting in one class",
+                "class Invoice { void calculate(){} void saveToDb(){} void printPdf(){} }",
+                "// SRP-compliant: separate responsibilities",
+                "class Invoice { void calculate(){} }",
+                "class InvoiceRepository { void save(Invoice i){} }",
+                "class InvoicePrinter { void printPdf(Invoice i){} }"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What is the Open/Closed Principle (OCP)?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Software entities should be open for extension but closed for modification - you add new behavior by adding new code, not by editing existing, tested code. Achieve it with abstraction and polymorphism: depend on an interface and add new implementations instead of growing if/else or switch chains."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "interface Discount { double apply(double amount); }",
+                "class FestiveDiscount implements Discount { public double apply(double a){ return a*0.9; } }",
+                "// Add a new discount by adding a class, not editing the calculator:",
+                "class PriceCalculator { double price(double a, Discount d){ return d.apply(a); } }"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What is the Liskov Substitution Principle (LSP)?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Subtypes must be substitutable for their base type without breaking correctness - a subclass should honor the contract of its parent (not strengthen preconditions or weaken postconditions). The classic violation is Square extends Rectangle: setting width/height independently breaks Rectangle's expectations. If a subclass throws 'unsupported' or changes behavior callers rely on, it violates LSP; prefer composition or a different hierarchy."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "// LSP violation: Ostrich is a Bird but can't fly",
+                "class Bird { void fly(){} }",
+                "class Ostrich extends Bird { void fly(){ throw new UnsupportedOperationException(); } }",
+                "// Fix: separate the capability",
+                "interface Bird {} interface FlyingBird extends Bird { void fly(); }"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What is the Interface Segregation Principle (ISP)?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Clients should not be forced to depend on methods they do not use. Prefer many small, role-specific interfaces over one fat interface, so implementers aren't forced to implement irrelevant methods (often with empty/throwing bodies)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "// Fat interface forces unused methods",
+                "interface Worker { void work(); void eat(); }",
+                "// Segregated",
+                "interface Workable { void work(); }",
+                "interface Eatable { void eat(); }",
+                "class Robot implements Workable { public void work(){} } // no eat()"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What is the Dependency Inversion Principle (DIP)?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "High-level modules should not depend on low-level modules; both should depend on abstractions. And abstractions should not depend on details - details depend on abstractions. Depend on interfaces and inject implementations (this is exactly what Spring's DI enables), so you can swap a MySQL repository for a Mongo one without touching the service."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "class OrderService {",
+                "  private final PaymentGateway gateway;          // abstraction",
+                "  OrderService(PaymentGateway g){ this.gateway = g; } // injected detail",
+                "}",
+                "interface PaymentGateway { void charge(double amt); }",
+                "class StripeGateway implements PaymentGateway { public void charge(double a){} }"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "Singleton pattern - what is it and what is the best implementation in Java?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Singleton ensures a class has exactly one instance with a global access point (used for caches, config, connection pools). Best practices: lazy + thread-safe via the holder idiom (lazy, no synchronization cost), or an enum (concise, serialization- and reflection-safe). Use double-checked locking with volatile if you need lazy init in a class you can't make an enum."
+            },
+            {
+              "kind": "subheader",
+              "text": "Initialization-on-demand holder (recommended)"
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "public class Config {",
+                "  private Config() {}",
+                "  private static class Holder { static final Config INSTANCE = new Config(); }",
+                "  public static Config getInstance() { return Holder.INSTANCE; }",
+                "}"
+              ]
+            },
+            {
+              "kind": "subheader",
+              "text": "Enum singleton (simplest, safest)"
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "public enum Config { INSTANCE; public void load(){} }"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "Builder pattern - what is it and when do you use it?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Builder constructs a complex object step by step, avoiding telescoping constructors and making object creation readable, especially with many optional fields. It also enables immutable objects (the built object's fields are final). Used widely (StringBuilder, java.time builders, Lombok @Builder)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "public class User {",
+                "  private final String name; private final int age; private final String email;",
+                "  private User(Builder b){ name=b.name; age=b.age; email=b.email; }",
+                "  public static class Builder {",
+                "    private String name; private int age; private String email;",
+                "    public Builder name(String n){ this.name=n; return this; }",
+                "    public Builder age(int a){ this.age=a; return this; }",
+                "    public Builder email(String e){ this.email=e; return this; }",
+                "    public User build(){ return new User(this); }",
+                "  }",
+                "}",
+                "User u = new User.Builder().name(\"Asha\").age(30).build();"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "Prototype pattern - what is it and when do you use it?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Prototype creates new objects by cloning an existing instance (the prototype) instead of constructing from scratch - useful when object creation is expensive (heavy initialization, DB/network calls) or when you need many objects pre-configured similarly. In Java it is typically implemented via clone()/copy constructors; beware shallow vs deep copy of mutable fields."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "class Document implements Cloneable {",
+                "  List<String> sections = new ArrayList<>();",
+                "  public Document clone(){",
+                "    Document d = new Document();",
+                "    d.sections = new ArrayList<>(this.sections); // deep copy mutable field",
+                "    return d;",
+                "  }",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "Factory Method pattern - what is it and when do you use it?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Factory Method defines an interface for creating an object but lets subclasses/factory decide which concrete class to instantiate, so client code depends on an abstraction, not concrete types. Use it when the exact type to create is determined at runtime (e.g., by a config or input) and to centralize creation logic (supports OCP)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "interface Notification { void send(String msg); }",
+                "class EmailNotification implements Notification { public void send(String m){} }",
+                "class SmsNotification implements Notification { public void send(String m){} }",
+                "class NotificationFactory {",
+                "  static Notification create(String type){",
+                "    return switch(type){ case \"EMAIL\" -> new EmailNotification();",
+                "                          case \"SMS\" -> new SmsNotification();",
+                "                          default -> throw new IllegalArgumentException(type); };",
+                "  }",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "Abstract Factory pattern - what is it and how does it differ from Factory Method?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Abstract Factory provides an interface to create families of related objects without specifying their concrete classes. Where Factory Method creates one product via inheritance, Abstract Factory groups several factory methods to produce a consistent set of products (e.g., a UI toolkit factory producing matching Button + Checkbox for Windows vs Mac)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "interface GUIFactory { Button createButton(); Checkbox createCheckbox(); }",
+                "class WinFactory implements GUIFactory {",
+                "  public Button createButton(){ return new WinButton(); }",
+                "  public Checkbox createCheckbox(){ return new WinCheckbox(); }",
+                "}",
+                "// Mac variant produces MacButton + MacCheckbox - a consistent family."
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "Adapter pattern - what is it and when do you use it?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Adapter converts the interface of an existing class into another interface clients expect, letting otherwise incompatible classes work together (a wrapper/translator). Use it to integrate a legacy or third-party API without changing it - the adapter implements the target interface and delegates to the adaptee."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "interface PaymentProcessor { void pay(int cents); }            // what our app expects",
+                "class LegacyGateway { void makePayment(double dollars){} }      // incompatible third party",
+                "class LegacyAdapter implements PaymentProcessor {",
+                "  private final LegacyGateway legacy = new LegacyGateway();",
+                "  public void pay(int cents){ legacy.makePayment(cents / 100.0); } // translate",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "Facade pattern - what is it and when do you use it?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Facade provides a single simplified interface over a complex subsystem of many classes, hiding its internals so clients use one easy entry point. Use it to reduce coupling and present a clean API (e.g., an OrderFacade that internally coordinates inventory, payment, and shipping services)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "class OrderFacade {",
+                "  private final Inventory inv; private final Payment pay; private final Shipping ship;",
+                "  public void placeOrder(Cart c){",
+                "    inv.reserve(c); pay.charge(c.total()); ship.schedule(c); // one simple call",
+                "  }",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "Flyweight pattern - what is it and when do you use it?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Flyweight minimizes memory by sharing common immutable state across many objects instead of storing it per object. It splits state into intrinsic (shared, stored in the flyweight) and extrinsic (context-specific, passed in by the client). Classic uses: characters in a text editor, particles in a game, or Java's Integer cache for values -128..127 (Integer.valueOf returns shared instances)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "// Integer flyweight cache in action",
+                "Integer a = Integer.valueOf(100), b = Integer.valueOf(100);",
+                "System.out.println(a == b); // true - same cached flyweight instance"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "Observer pattern - what is it and when do you use it?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Observer defines a one-to-many dependency so that when one object (the subject) changes state, all its registered observers are notified automatically. Use it for event/notification systems, pub-sub, and UI data binding - it decouples the source of an event from its consumers. (Java's listener model and reactive streams are built on this idea.)"
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "interface Observer { void update(String event); }",
+                "class Subject {",
+                "  private final List<Observer> observers = new ArrayList<>();",
+                "  void subscribe(Observer o){ observers.add(o); }",
+                "  void notifyAll(String e){ observers.forEach(o -> o.update(e)); }",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 15,
+          "qText": "Strategy pattern - what is it and when do you use it?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Strategy defines a family of interchangeable algorithms behind a common interface and lets the algorithm be selected at runtime, replacing conditional logic with polymorphism (supports OCP). Use it when you have multiple ways to do something - sorting orders, pricing rules, payment methods - and want to swap them without changing the client."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "interface PaymentStrategy { void pay(double amount); }",
+                "class CardPayment implements PaymentStrategy { public void pay(double a){} }",
+                "class UpiPayment  implements PaymentStrategy { public void pay(double a){} }",
+                "class Checkout {",
+                "  private PaymentStrategy strategy;",
+                "  void setStrategy(PaymentStrategy s){ this.strategy = s; }",
+                "  void checkout(double amt){ strategy.pay(amt); } // behavior chosen at runtime",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 16,
+          "qText": "What is the difference between Strategy and Factory patterns?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "They solve different problems. Factory is creational - it decides WHICH object to create and returns it. Strategy is behavioral - it encapsulates interchangeable algorithms and lets you swap the BEHAVIOR an object uses at runtime. They often combine: a factory creates the right Strategy implementation, then the client executes it."
+            }
+          ]
+        },
+        {
+          "qNum": 17,
+          "qText": "What is the difference between Adapter and Facade patterns?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Both are structural wrappers but with different intent. An Adapter changes an existing interface into a different one the client expects (translation between incompatible interfaces, usually one class). A Facade introduces a new simplified interface over a whole complex subsystem (simplification, usually many classes). Adapter makes things compatible; Facade makes things simpler."
+            }
+          ]
+        },
+        {
+          "qNum": 18,
+          "qText": "What are the three categories of design patterns?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Creational - object creation mechanisms: Singleton, Factory Method, Abstract Factory, Builder, Prototype. Structural - composing classes/objects into larger structures: Adapter, Facade, Decorator, Proxy, Composite, Bridge, Flyweight. Behavioral - communication and responsibility between objects: Observer, Strategy, Command, Template Method, State, Iterator, Chain of Responsibility, Mediator."
+            }
+          ]
+        },
+        {
+          "qNum": 19,
+          "qText": "What is the Decorator pattern (commonly asked alongside the structural set)?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Decorator attaches additional responsibilities to an object dynamically by wrapping it in decorator objects that share the same interface - a flexible alternative to subclassing for extending behavior. Java I/O is the textbook example: new BufferedReader(new InputStreamReader(inputStream)) layers buffering over decoding over raw bytes."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "Reader r = new BufferedReader(new InputStreamReader(System.in)); // layered decorators"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 20,
+          "qText": "When should you prefer an abstract class over an interface, and vice versa?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Prefer an abstract class when you want to share common state (fields) and partially implemented behavior among closely related types, or need non-public members and constructors. Prefer an interface when you only need a contract, want multiple inheritance of type (a class can implement many interfaces), or are defining a capability that unrelated classes can adopt. Since Java 8 interfaces can have default methods, narrowing the gap, but they still cannot hold instance state."
+            }
+          ]
+        },
+        {
+          "qNum": 21,
+          "qText": "What is the difference between a static class/method and a Singleton?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A static utility (all static methods, often a final class with a private constructor) has no instance and no state lifecycle - you can't implement interfaces, inject it, or control lazy initialization. A Singleton is a single instance object: it can implement interfaces, be passed as a dependency (testable/mockable), hold state, and be lazily created. Prefer a Singleton (ideally injected) when you need polymorphism, state, or testability; use static methods only for pure, stateless helpers."
+            }
+          ]
+        },
+        {
+          "qNum": 22,
+          "qText": "Why does Java not support multiple inheritance of classes, and how is the diamond problem handled?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Allowing a class to extend two classes with conflicting members creates the diamond problem - ambiguity over which inherited implementation/state to use. Java avoids it by permitting only single class inheritance, but multiple interface inheritance. With Java 8 default methods a diamond can still arise across interfaces; Java forces the implementing class to override the conflicting method and resolve it explicitly via InterfaceName.super.method()."
+            }
+          ]
+        },
+        {
+          "qNum": 23,
+          "qText": "What is the difference between composition and inheritance, and which should you prefer?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Inheritance models an 'is-a' relationship and reuses a base class's implementation, but it tightly couples subclass to superclass and can break encapsulation (fragile base class). Composition models a 'has-a' relationship by holding other objects and delegating, giving looser coupling and runtime flexibility (you can swap the composed part). The guideline 'favor composition over inheritance' applies because composition is more flexible and avoids deep, brittle hierarchies; use inheritance only for genuine, stable is-a relationships that satisfy LSP."
+            }
+          ]
+        },
+        {
+          "qNum": 24,
+          "qText": "What is the Template Method pattern (commonly asked behavioral pattern)?",
+          "header": "SOLID & Design Patterns",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Template Method defines the skeleton of an algorithm in a base class method, deferring certain steps to subclasses via abstract/overridable methods, so the overall structure stays fixed while specific steps vary. It enforces a sequence while allowing customization (e.g., a base DataProcessor.run() that calls read(), process(), write() - subclasses implement the steps). Spring's JdbcTemplate and many framework 'template' classes use this pattern."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sectionTitle": "Machine Coding (LLD)",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Design Tic Tac Toe (low-level design).",
+          "header": "Machine Coding (LLD)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Model the core entities and keep responsibilities separated (SRP). Key classes: Player (symbol X/O), Board (NxN grid of Symbol/cells), Move (row, col, player), and Game (orchestrates turns, validates moves, checks win/draw). The Board exposes placeMove and a hasWinner/isFull check; the Game loop alternates players and ends on a win or a full board (draw)."
+            },
+            {
+              "kind": "subheader",
+              "text": "Core skeleton"
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "enum Symbol { X, O, EMPTY }",
+                "",
+                "class Board {",
+                "  private final int n; private final Symbol[][] grid;",
+                "  Board(int n){ this.n = n; grid = new Symbol[n][n];",
+                "    for (Symbol[] row : grid) Arrays.fill(row, Symbol.EMPTY); }",
+                "",
+                "  boolean place(int r, int c, Symbol s){",
+                "    if (r<0||c<0||r>=n||c>=n||grid[r][c]!=Symbol.EMPTY) return false;",
+                "    grid[r][c] = s; return true;",
+                "  }",
+                "",
+                "  boolean wins(int r, int c, Symbol s){",
+                "    boolean row=true,col=true,diag=true,anti=true;",
+                "    for (int i=0;i<n;i++){",
+                "      if (grid[r][i]!=s) row=false;",
+                "      if (grid[i][c]!=s) col=false;",
+                "      if (grid[i][i]!=s) diag=false;",
+                "      if (grid[i][n-1-i]!=s) anti=false;",
+                "    }",
+                "    return row||col||(r==c&&diag)||(r+c==n-1&&anti);",
+                "  }",
+                "  boolean isFull(){ /* any EMPTY left? */ return false; }",
+                "}"
+              ]
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "class Game {",
+                "  private final Board board; private final Player[] players; private int turn = 0;",
+                "  Game(int n, Player p1, Player p2){ board=new Board(n); players=new Player[]{p1,p2}; }",
+                "",
+                "  String play(int r, int c){",
+                "    Player cur = players[turn % 2];",
+                "    if (!board.place(r, c, cur.symbol())) return \"INVALID_MOVE\";",
+                "    if (board.wins(r, c, cur.symbol())) return cur.name() + \" WINS\";",
+                "    if (board.isFull()) return \"DRAW\";",
+                "    turn++; return \"NEXT:\" + players[turn % 2].name();",
+                "  }",
+                "}"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Extensions interviewers probe: variable board size N, configurable win condition, an undo feature (keep a move stack), and a Strategy for a computer player (random vs minimax). The win check above is O(n) per move rather than scanning the whole board."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Design a Notification System (low-level design).",
+          "header": "Machine Coding (LLD)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Goal: send notifications across multiple channels (Email, SMS, Push) with a clean, extensible design. Apply Strategy (one class per channel behind a common interface), Factory (pick the channel implementation), and optionally Observer (subscribers react to events) and Decorator (add retry/logging). This keeps it OCP-compliant - new channels are new classes, not edits."
+            },
+            {
+              "kind": "subheader",
+              "text": "Channel strategy + factory"
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "interface NotificationChannel { void send(Notification n); }",
+                "",
+                "class EmailChannel implements NotificationChannel {",
+                "  public void send(Notification n){ /* SMTP send */ }",
+                "}",
+                "class SmsChannel implements NotificationChannel {",
+                "  public void send(Notification n){ /* SMS gateway */ }",
+                "}",
+                "class PushChannel implements NotificationChannel {",
+                "  public void send(Notification n){ /* push service */ }",
+                "}",
+                "",
+                "class ChannelFactory {",
+                "  static NotificationChannel get(Channel type){",
+                "    return switch(type){",
+                "      case EMAIL -> new EmailChannel();",
+                "      case SMS   -> new SmsChannel();",
+                "      case PUSH  -> new PushChannel();",
+                "    };",
+                "  }",
+                "}"
+              ]
+            },
+            {
+              "kind": "subheader",
+              "text": "Service + model"
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "enum Channel { EMAIL, SMS, PUSH }",
+                "record Notification(String to, String content, Channel channel) {}",
+                "",
+                "class NotificationService {",
+                "  void notify(Notification n){",
+                "    NotificationChannel ch = ChannelFactory.get(n.channel());",
+                "    ch.send(n);   // could be wrapped with retry/circuit-breaker decorators",
+                "  }",
+                "  void notifyAll(List<Notification> batch){ batch.forEach(this::notify); }",
+                "}"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Production extensions: a message queue for async/decoupled delivery and retries, a template engine for content, user preferences (which channels a user opted into), rate limiting, idempotency keys to avoid duplicate sends, and a dead-letter queue for permanent failures."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "How do you approach a machine-coding / LLD round in general?",
+          "header": "Machine Coding (LLD)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "1) Clarify requirements and scope (in vs out of scope) and list core entities/use cases before coding. 2) Identify nouns -> classes, verbs -> methods; sketch relationships. 3) Apply SOLID and the right patterns (Strategy for interchangeable behavior, Factory for creation, Observer for events) without over-engineering. 4) Code incrementally with clean naming, encapsulation (private fields, no public setters where invariants matter), and meaningful enums. 5) Handle edge cases and invalid input. 6) Make it extensible (OCP) and mention concurrency/thread-safety and testability. Communicate trade-offs aloud throughout."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Design a Parking Lot (a very common LLD follow-up).",
+          "header": "Machine Coding (LLD)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Entities: ParkingLot (has levels), ParkingFloor (has spots), ParkingSpot (size: SMALL/MEDIUM/LARGE, occupied flag), Vehicle (Car/Bike/Truck), Ticket (entry time, spot), and a FeeStrategy for pricing. Apply Strategy for fee calculation and a spot-allocation strategy (nearest/first-fit), and keep allocation thread-safe since many gates assign spots concurrently."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "enum SpotType { SMALL, MEDIUM, LARGE }",
+                "abstract class Vehicle { abstract SpotType requiredSpot(); }",
+                "class Car extends Vehicle { SpotType requiredSpot(){ return SpotType.MEDIUM; } }",
+                "",
+                "class ParkingSpot { SpotType type; boolean occupied; }",
+                "",
+                "interface FeeStrategy { double fee(Ticket t, Instant exit); }",
+                "class HourlyFee implements FeeStrategy {",
+                "  public double fee(Ticket t, Instant exit){",
+                "    long hours = Math.max(1, Duration.between(t.entry, exit).toHours());",
+                "    return hours * t.spot.type.ordinal() * 10;",
+                "  }",
+                "}",
+                "",
+                "class ParkingLot {",
+                "  synchronized Ticket park(Vehicle v){ /* find free spot of required size, mark occupied */ return null; }",
+                "  synchronized double unpark(Ticket t){ /* free spot, compute fee */ return 0; }",
+                "}"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Discuss: concurrency (synchronize allocation or use atomic counters per spot type), full-lot handling, multiple entry/exit gates, and pluggable pricing (hourly, flat, day-pass) via the strategy."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Design an in-memory LRU Cache (frequent LLD coding task).",
+          "header": "Machine Coding (LLD)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Requirements: O(1) get and put with a fixed capacity, evicting the least-recently-used entry on overflow. Standard design: a HashMap for O(1) key lookup plus a doubly linked list ordering entries by recency (most recent at the head, LRU at the tail). On access/insert, move the node to the head; on overflow, remove the tail."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "class LRUCache<K,V> {",
+                "  private final int capacity;",
+                "  private final LinkedHashMap<K,V> map;",
+                "  LRUCache(int capacity){",
+                "    this.capacity = capacity;",
+                "    // accessOrder=true makes it reorder on access; override removeEldestEntry to evict",
+                "    this.map = new LinkedHashMap<>(capacity, 0.75f, true){",
+                "      protected boolean removeEldestEntry(Map.Entry<K,V> e){ return size() > capacity; }",
+                "    };",
+                "  }",
+                "  V get(K k){ return map.get(k); }",
+                "  void put(K k, V v){ map.put(k, v); }",
+                "}"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Interviewers usually want the manual HashMap + doubly linked list version (to show you understand the O(1) eviction), then discuss thread-safety (wrap with locks or use a concurrent structure) and a TTL variant. LinkedHashMap with accessOrder is the concise production-style answer."
+            }
+          ]
+        }
+      ]
     }
   ],
   "stage-1": [
@@ -12108,6 +15058,557 @@
             {
               "kind": "text",
               "text": "Pitfalls: hard to test, hidden global state, breaks with multiple class loaders. In Spring, beans are singletons by default, managed by the container."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sectionTitle": "Java 8 Streams - Coding & Conceptual (extra)",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Write a program to print the frequency of each character in a string using Streams.",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Turn the string into a stream of characters and group by the character itself, counting occurrences. chars() yields an IntStream, so map each code point to a Character with mapToObj."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "String s = \"banana\";",
+                "Map<Character, Long> freq = s.chars()",
+                "    .mapToObj(c -> (char) c)",
+                "    .collect(Collectors.groupingBy(c -> c, Collectors.counting()));",
+                "// {a=3, b=1, n=2}",
+                "System.out.println(freq);"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "groupingBy builds the map keyed by character; the downstream Collectors.counting() yields the Long count per group."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Write a program to print a List of integers (e.g., squares of 1..5) using Streams.",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Generate numbers with IntStream.rangeClosed, transform them, then box and collect into a List."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "List<Integer> squares = IntStream.rangeClosed(1, 5)",
+                "    .map(n -> n * n)",
+                "    .boxed()",
+                "    .collect(Collectors.toList());",
+                "// [1, 4, 9, 16, 25]"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "boxed() converts the primitive IntStream into Stream<Integer> so it can be collected into a List of objects."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "Write a program to print the non-duplicate (unique) characters from a string using Streams.",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Group by character to get counts, keep only entries whose count is 1, and preserve first-seen order with a LinkedHashMap supplier."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "String s = \"programming\";",
+                "Map<Character, Long> freq = s.chars().mapToObj(c -> (char) c)",
+                "    .collect(Collectors.groupingBy(c -> c, LinkedHashMap::new, Collectors.counting()));",
+                "String unique = freq.entrySet().stream()",
+                "    .filter(e -> e.getValue() == 1)",
+                "    .map(e -> String.valueOf(e.getKey()))",
+                "    .collect(Collectors.joining());",
+                "// characters appearing exactly once, in first-seen order"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "LinkedHashMap::new keeps insertion order, important when the question wants the first unique character."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Given a list of employees, sort the list by employee name in reverse order using Streams.",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use Comparator.comparing on the name and reverse it. Streams never mutate the source, so collect into a new list."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "List<Employee> sorted = employees.stream()",
+                "    .sorted(Comparator.comparing(Employee::getName).reversed())",
+                "    .collect(Collectors.toList());"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "comparing(Employee::getName) builds an ascending comparator; .reversed() flips it to Z->A."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Given a list of employees, get the highest salary using Streams.",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use max() with a comparator on salary; it returns Optional because the list may be empty."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "Optional<Employee> top = employees.stream()",
+                "    .max(Comparator.comparingDouble(Employee::getSalary));",
+                "",
+                "// Just the max salary value:",
+                "double maxSalary = employees.stream()",
+                "    .mapToDouble(Employee::getSalary)",
+                "    .max().orElse(0.0);"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "mapToDouble + max() avoids boxing and returns OptionalDouble; orElse supplies a fallback for an empty stream."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "Given a list of employees, group the employees by department using Streams.",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Collectors.groupingBy with department as the classifier produces a Map<String, List<Employee>>."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "Map<String, List<Employee>> byDept = employees.stream()",
+                "    .collect(Collectors.groupingBy(Employee::getDepartment));"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "To collect only names per department, add a mapping downstream collector:"
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "Map<String, List<String>> names = employees.stream()",
+                "    .collect(Collectors.groupingBy(Employee::getDepartment,",
+                "        Collectors.mapping(Employee::getName, Collectors.toList())));"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "Given a list of employees, find the highest salary by department using Streams.",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Group by department and reduce each group to the max by salary using a downstream collector."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "Map<String, Optional<Employee>> topByDept = employees.stream()",
+                "    .collect(Collectors.groupingBy(Employee::getDepartment,",
+                "        Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary))));",
+                "",
+                "// Only the max salary number per department:",
+                "Map<String, Double> maxSalary = employees.stream()",
+                "    .collect(Collectors.groupingBy(Employee::getDepartment,",
+                "        Collectors.collectingAndThen(",
+                "            Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary)),",
+                "            e -> e.map(Employee::getSalary).orElse(0.0))));"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "collectingAndThen post-processes the maxBy Optional into a plain value."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "Given words like {\"apple\", \"banana\"}, return the count of each character in each word separately using Streams.",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Map each word to an entry of (word -> per-character frequency map). The inner counting reuses the groupingBy/counting idiom."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "List<String> words = List.of(\"apple\", \"banana\");",
+                "Map<String, Map<Character, Long>> result = words.stream()",
+                "    .collect(Collectors.toMap(",
+                "        w -> w,",
+                "        w -> w.chars().mapToObj(c -> (char) c)",
+                "              .collect(Collectors.groupingBy(c -> c, Collectors.counting()))));",
+                "// apple -> {a=1, p=2, l=1, e=1}",
+                "// banana -> {a=3, b=1, n=2}"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "toMap builds the outer map (word -> innerMap); the inner expression is the character-frequency stream applied per word."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "Write a program to find the sum, average, max, min and count of a list of numbers in one pass using Streams.",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "IntStream/DoubleStream offer summaryStatistics() which computes all aggregates in a single traversal."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "IntSummaryStatistics stats = nums.stream()",
+                "    .mapToInt(Integer::intValue)",
+                "    .summaryStatistics();",
+                "stats.getSum(); stats.getAverage(); stats.getMax(); stats.getMin(); stats.getCount();"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "Write a program to find the second highest number in a list using Streams.",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Sort distinct values in descending order, skip the first, and take the next."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "Optional<Integer> secondHighest = nums.stream()",
+                "    .distinct()",
+                "    .sorted(Comparator.reverseOrder())",
+                "    .skip(1)",
+                "    .findFirst();"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "distinct() avoids treating duplicate maxima as two different ranks."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What are Streams and how are they different from Collections?",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A Collection is an in-memory data structure that stores elements; a Stream is a pipeline that computes over a source on demand and stores no data itself."
+            },
+            {
+              "kind": "text",
+              "text": "Key differences: (1) Storage - collections hold data, streams describe a computation. (2) Evaluation - collections are eager, streams are lazy and run only on a terminal operation. (3) Traversal - a stream is single-use; reusing it throws IllegalStateException. (4) Mutation - stream operations are non-mutating and produce new results. (5) Iteration - streams iterate internally, enabling parallelism via parallelStream()."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What is a functional interface? Name commonly used ones. What if it has two abstract methods?",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A functional interface has exactly one abstract method (SAM) and can be the target of a lambda or method reference. It may also have default and static methods. @FunctionalInterface optionally makes the compiler enforce the single-abstract-method rule."
+            },
+            {
+              "kind": "text",
+              "text": "Common ones from java.util.function: Function<T,R>, BiFunction, Supplier<T>, Consumer<T>, BiConsumer, Predicate<T>, UnaryOperator, BinaryOperator; plus Runnable, Callable, Comparator."
+            },
+            {
+              "kind": "text",
+              "text": "With two abstract methods the interface is NOT functional and cannot back a lambda; annotating it @FunctionalInterface is a compile error."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "Difference between intermediate and terminal operations in Streams.",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Intermediate operations return a new Stream and are lazy - not executed until a terminal operation runs. Examples: filter, map, flatMap, sorted, distinct, limit, peek."
+            },
+            {
+              "kind": "text",
+              "text": "Terminal operations trigger the pipeline, produce a result or side effect, and consume the stream. Examples: collect, forEach, reduce, count, anyMatch, findFirst, toArray. After a terminal op the stream cannot be reused."
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "Explain map() vs flatMap() with a real use case.",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "map() is a one-to-one transformation Stream<T> -> Stream<R>. flatMap() is one-to-many followed by flattening: each element produces a sub-stream and they are merged into a single stream."
+            },
+            {
+              "kind": "text",
+              "text": "Use case: a list of orders, each holding a list of items. map gives a stream of lists; flatMap gives one stream of all items."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "// map -> Stream<List<Item>> (nested)",
+                "orders.stream().map(Order::getItems);",
+                "// flatMap -> Stream<Item> (flattened)",
+                "List<Item> allItems = orders.stream()",
+                "    .flatMap(o -> o.getItems().stream())",
+                "    .collect(Collectors.toList());"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 15,
+          "qText": "How does stream laziness work? When does execution actually happen?",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Intermediate operations only build a description of the pipeline; nothing runs until a terminal operation is invoked. Elements are then pulled through the pipeline one at a time rather than stage-by-stage over the whole dataset."
+            },
+            {
+              "kind": "text",
+              "text": "This enables short-circuiting (findFirst, limit, anyMatch can stop early) and operation fusion (filter+map run per element in one pass). A peek() with no terminal operation prints nothing because the pipeline never executes."
+            }
+          ]
+        },
+        {
+          "qNum": 16,
+          "qText": "Difference between forEach() and forEachOrdered()?",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "On a sequential stream they behave identically. The difference shows on parallel streams: forEach() does not guarantee encounter order (it runs across threads for speed) while forEachOrdered() preserves the stream's encounter order at the cost of some parallelism. Use forEachOrdered when order matters during parallel execution."
+            }
+          ]
+        },
+        {
+          "qNum": 17,
+          "qText": "What are parallel streams, how do they work internally, and when should you NOT use them?",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A parallel stream splits the source via a Spliterator and processes chunks concurrently on the common ForkJoinPool (size = processors - 1), then combines partial results. Create with collection.parallelStream() or stream().parallel()."
+            },
+            {
+              "kind": "text",
+              "text": "Avoid them when: the dataset is small (overhead dominates), operations are cheap, the source splits poorly (LinkedList, IO streams), the pipeline is stateful or order-dependent, lambdas have side effects or are not thread-safe, or you are on a request thread where hijacking the common pool harms other tasks. Parallelism pays off only for large, CPU-bound, easily splittable, side-effect-free work."
+            }
+          ]
+        },
+        {
+          "qNum": 18,
+          "qText": "Difference between findFirst() and findAny()?",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "findFirst() returns the first element in encounter order. findAny() returns any element and may pick whatever is fastest - meaningful in parallel streams where it can return the first element found by any thread. On sequential streams they usually agree; prefer findAny() when order is irrelevant to allow better parallel performance."
+            }
+          ]
+        },
+        {
+          "qNum": 19,
+          "qText": "What is Optional, why was it introduced, and why is Optional.get() discouraged?",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Optional<T> is a container that may or may not hold a non-null value. It makes the possibility of absence explicit in an API and reduces NullPointerExceptions from returning null."
+            },
+            {
+              "kind": "text",
+              "text": "Optional.get() throws NoSuchElementException when empty, so calling it without isPresent() reintroduces the very problem Optional solves. Prefer orElse, orElseGet, orElseThrow, map, filter, or ifPresent."
+            }
+          ]
+        },
+        {
+          "qNum": 20,
+          "qText": "Difference between orElse() and orElseGet()?",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "orElse(value) always evaluates its argument even when the Optional is present. orElseGet(supplier) is lazy - the supplier runs only when the Optional is empty. When the fallback is expensive (DB call, object creation) use orElseGet to avoid needless work."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "opt.orElse(expensiveDefault());        // expensiveDefault() ALWAYS runs",
+                "opt.orElseGet(() -> expensiveDefault()); // runs only when opt is empty"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 21,
+          "qText": "Difference between reduce() and collect()?",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "reduce() is an immutable reduction: it repeatedly combines elements into a single immutable result (sum, max, concatenation) via an identity and an associative combiner. collect() is a mutable reduction: it accumulates elements into a mutable container (List, Map, StringBuilder) via supplier/accumulator/combiner - far more efficient for building collections."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "int sum = nums.stream().reduce(0, Integer::sum);     // reduce",
+                "List<X> list = stream.collect(Collectors.toList());  // collect"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 22,
+          "qText": "Explain Collectors.groupingBy() vs partitioningBy().",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "groupingBy(classifier) splits elements into a Map keyed by the classifier - any number of groups. partitioningBy(predicate) is a special case producing exactly two groups: Map<Boolean, List<T>> with keys true and false (both always present, possibly empty)."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "Map<String, List<Emp>> byDept = emps.stream()",
+                "    .collect(Collectors.groupingBy(Emp::getDept));",
+                "Map<Boolean, List<Emp>> highPaid = emps.stream()",
+                "    .collect(Collectors.partitioningBy(e -> e.getSalary() > 100000));"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 23,
+          "qText": "Explain method references and their types.",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A method reference is shorthand for a lambda that only calls an existing method. Four kinds:"
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "1. Static:                ClassName::staticMethod    e.g. Integer::parseInt",
+                "2. Instance of an object: instance::method            e.g. System.out::println",
+                "3. Instance of arbitrary object of a type: Class::method  e.g. String::toUpperCase",
+                "4. Constructor:           ClassName::new              e.g. ArrayList::new"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Type 3 is the subtle one: String::toUpperCase in map() treats each element as the receiver, equivalent to s -> s.toUpperCase()."
+            }
+          ]
+        },
+        {
+          "qNum": 24,
+          "qText": "What are default and static methods in interfaces, and how are default-method conflicts resolved?",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Default methods (default keyword) provide a body in an interface so existing implementors do not break when it evolves (this is how Collection got stream()). Static interface methods are utilities called on the interface itself, not inherited."
+            },
+            {
+              "kind": "text",
+              "text": "Conflict resolution when inheriting two same-signature defaults: (1) a class method beats any interface default; (2) a more specific sub-interface beats its parent; (3) otherwise it is ambiguous and the class MUST override, optionally delegating via InterfaceName.super.method()."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "interface A { default String hi(){ return \"A\"; } }",
+                "interface B { default String hi(){ return \"B\"; } }",
+                "class C implements A, B {",
+                "    public String hi(){ return A.super.hi(); } // must resolve explicitly",
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 25,
+          "qText": "Difference between a lambda expression and an anonymous inner class?",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A lambda can only implement a functional interface (one abstract method); an anonymous class can extend a class or implement an interface with any number of methods. 'this' in a lambda refers to the enclosing instance, but in an anonymous class it refers to the anonymous class itself. Lambdas compile to invokedynamic (no extra .class file), while each anonymous class produces its own .class file."
+            }
+          ]
+        },
+        {
+          "qNum": 26,
+          "qText": "Why was the new Date-Time API (java.time) introduced?",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Legacy java.util.Date and Calendar were mutable (not thread-safe) and poorly designed (0-indexed months, year offset from 1900) and mixed date and time. java.time (JSR-310) introduced immutable, thread-safe, clearly named types: LocalDate, LocalTime, LocalDateTime, ZonedDateTime, Instant, Duration, Period - with a fluent ISO-8601 API and proper time-zone handling. Immutability makes them safe to share across threads."
+            }
+          ]
+        },
+        {
+          "qNum": 27,
+          "qText": "What does it mean that a Stream is consumed only once, and how do you reuse a pipeline?",
+          "header": "Java 8 Streams - Coding & Conceptual (extra)",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Each Stream backs a one-shot traversal of its source. Once a terminal operation runs, another terminal operation throws IllegalStateException ('stream has already been operated upon or closed')."
+            },
+            {
+              "kind": "text",
+              "text": "To reuse logic, wrap the pipeline in a Supplier<Stream<T>> and call get() for a fresh stream each time, or re-derive the stream from the source collection."
             }
           ]
         }

@@ -1,0 +1,2095 @@
+{
+  "de-1": [
+    {
+      "sectionTitle": "Stage 1 - Advanced SQL Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is the difference between ROW_NUMBER, RANK, and DENSE_RANK?",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "All three are ranking window functions that assign a position within a partition based on an ORDER BY, but they differ in how they handle ties. ROW_NUMBER always assigns a unique, gap-free sequence (1,2,3,4) even when values tie, so ties are broken arbitrarily unless you add more ORDER BY columns. RANK assigns the same rank to ties but then skips numbers (1,1,3) — the gap reflects how many rows tied. DENSE_RANK assigns the same rank to ties but does not skip (1,1,2)."
+            },
+            {
+              "kind": "text",
+              "text": "Use ROW_NUMBER for deduplication and top-N-per-group, RANK when you want competition-style ranking with gaps, and DENSE_RANK when you want consecutive rank groups."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT",
+                "  name,",
+                "  score,",
+                "  ROW_NUMBER() OVER (ORDER BY score DESC) AS rn,",
+                "  RANK()       OVER (ORDER BY score DESC) AS rnk,",
+                "  DENSE_RANK() OVER (ORDER BY score DESC) AS drnk",
+                "FROM results;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Write a query to find the top 2 highest-paid employees in each department.",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "This is the classic top-N-per-group problem. Use ROW_NUMBER partitioned by the group (department) and ordered by the metric (salary) descending, then filter in an outer query because window functions cannot be used directly in a WHERE clause."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "WITH ranked AS (",
+                "  SELECT",
+                "    employee_id,",
+                "    department_id,",
+                "    salary,",
+                "    ROW_NUMBER() OVER (",
+                "      PARTITION BY department_id",
+                "      ORDER BY salary DESC",
+                "    ) AS rn",
+                "  FROM employees",
+                ")",
+                "SELECT employee_id, department_id, salary",
+                "FROM ranked",
+                "WHERE rn <= 2;"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "If you want all employees who tie for second place to be included, swap ROW_NUMBER for RANK or DENSE_RANK."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "Write a query to calculate a running total of daily sales.",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A running (cumulative) total is computed with SUM as a window function, ordered by date, using a frame of all rows from the start of the partition up to the current row."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT",
+                "  sale_date,",
+                "  daily_amount,",
+                "  SUM(daily_amount) OVER (",
+                "    ORDER BY sale_date",
+                "    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW",
+                "  ) AS running_total",
+                "FROM daily_sales",
+                "ORDER BY sale_date;"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Being explicit about the frame (ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) avoids a subtle bug: the implicit default with ORDER BY is RANGE, which sums all rows sharing the same ORDER BY value into the current row's total."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What is the difference between ROWS and RANGE in a window frame?",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Both define the window frame relative to the current row, but ROWS counts physical rows while RANGE works on logical values of the ORDER BY column. With ROWS BETWEEN 1 PRECEDING AND CURRENT ROW you always get exactly two rows. With RANGE, all peer rows that share the same ORDER BY value are treated as one logical position."
+            },
+            {
+              "kind": "text",
+              "text": "This matters for running totals: if two rows share the same date, RANGE (the default when you specify ORDER BY without an explicit frame) will include both peers in the current row's total, whereas ROWS will not. For most cumulative calculations you want explicit ROWS to get deterministic, per-row behavior."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "How do you compute period-over-period change (e.g. month-over-month growth)?",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use LAG to pull the previous period's value into the current row, then compute the delta. LEAD does the same looking forward. Both take an offset and an optional default for the boundary rows."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT",
+                "  month,",
+                "  revenue,",
+                "  LAG(revenue) OVER (ORDER BY month) AS prev_revenue,",
+                "  revenue - LAG(revenue) OVER (ORDER BY month) AS mom_change,",
+                "  ROUND(100.0 * (revenue - LAG(revenue) OVER (ORDER BY month))",
+                "        / NULLIF(LAG(revenue) OVER (ORDER BY month), 0), 2) AS mom_pct",
+                "FROM monthly_revenue",
+                "ORDER BY month;"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "NULLIF guards against divide-by-zero, and the first row's growth is NULL because there is no prior period."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "Write a query to remove duplicate rows, keeping the most recent.",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Number the rows within each duplicate group ordered by the recency column, then keep only the first. This pattern works for both deduped reads and physical deletes."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "WITH ranked AS (",
+                "  SELECT *,",
+                "    ROW_NUMBER() OVER (",
+                "      PARTITION BY customer_id, email",
+                "      ORDER BY updated_at DESC",
+                "    ) AS rn",
+                "  FROM customers",
+                ")",
+                "SELECT * FROM ranked WHERE rn = 1;  -- deduped view",
+                "",
+                "-- To physically delete duplicates (Postgres):",
+                "DELETE FROM customers c",
+                "USING ranked r",
+                "WHERE c.id = r.id AND r.rn > 1;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What is a CTE and how does it differ from a subquery?",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A Common Table Expression (CTE) is a named, temporary result set defined with WITH that exists only for the duration of the query. It improves readability, can be referenced multiple times, and supports recursion. A subquery is an inline query nested inside another statement."
+            },
+            {
+              "kind": "text",
+              "text": "Functionally they often produce identical plans. Historically some databases materialized CTEs as an optimization fence (Postgres did before v12), which could hurt performance; modern optimizers typically inline non-recursive CTEs the same way they would a subquery. Choose CTEs for clarity and reuse, subqueries for simple one-off filters."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "Write a recursive CTE to traverse an employee-manager hierarchy.",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A recursive CTE has an anchor member (the starting rows) and a recursive member that references the CTE itself, joined to the base table, until no new rows are produced."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "WITH RECURSIVE org AS (",
+                "  -- anchor: top-level managers",
+                "  SELECT employee_id, manager_id, name, 1 AS level",
+                "  FROM employees",
+                "  WHERE manager_id IS NULL",
+                "  UNION ALL",
+                "  -- recursive: direct reports of the prior level",
+                "  SELECT e.employee_id, e.manager_id, e.name, o.level + 1",
+                "  FROM employees e",
+                "  JOIN org o ON e.manager_id = o.employee_id",
+                ")",
+                "SELECT * FROM org ORDER BY level, name;"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "When would EXISTS outperform IN, and how do NULLs affect NOT IN?",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "EXISTS stops scanning as soon as it finds a single matching row, so it is efficient for correlated existence checks against large subqueries. IN materializes the full list and compares against it. Many optimizers rewrite one into the other, so on modern engines performance is often comparable, but EXISTS tends to be safer for large or correlated subqueries."
+            },
+            {
+              "kind": "text",
+              "text": "The real trap is NOT IN with NULLs. If the subquery returns any NULL, NOT IN evaluates to UNKNOWN for every row and the query returns no rows. NOT EXISTS does not have this problem because it tests row existence rather than value membership, so prefer NOT EXISTS for anti-joins on nullable columns."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "How do you read an EXPLAIN / EXPLAIN ANALYZE plan?",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "EXPLAIN shows the planner's chosen execution strategy without running it; EXPLAIN ANALYZE actually runs the query and shows real row counts and timings. Read the plan from the innermost/most-indented node outward, since children feed their parents."
+            },
+            {
+              "kind": "text",
+              "text": "Key things to look for: Seq Scan vs Index Scan (a sequential scan on a large filtered table is a red flag), the join algorithm (nested loop, hash, merge), estimated vs actual rows (a large divergence means stale statistics or bad estimates), and expensive Sort or Hash nodes. The cost numbers are relative units; on ANALYZE compare estimated rows to actual rows to spot mis-estimation that drives a bad plan."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "EXPLAIN ANALYZE",
+                "SELECT o.id, c.name",
+                "FROM orders o JOIN customers c ON c.id = o.customer_id",
+                "WHERE o.status = 'PAID';"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What makes a query sargable, and why does wrapping a column in a function hurt indexing?",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Sargable (Search ARGument ABLE) means the database can use an index to satisfy a predicate. A predicate is sargable when the indexed column appears bare on one side of the comparison. When you wrap the column in a function or arithmetic — WHERE YEAR(created_at) = 2024 or WHERE price * 1.1 > 100 — the engine must compute the expression for every row, so it cannot seek the index and falls back to a scan."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "-- Not sargable (function on column):",
+                "WHERE YEAR(created_at) = 2024",
+                "",
+                "-- Sargable (range on the bare column):",
+                "WHERE created_at >= '2024-01-01'",
+                "  AND created_at <  '2025-01-01'"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "The fix is to rewrite as a range, or create a functional/expression index that matches the predicate exactly."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "Explain composite and covering indexes and the leftmost-prefix rule.",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A composite index covers multiple columns in a defined order. Because a B-tree is sorted by the first column, then the second within that, and so on, the index can only be used for predicates that follow the leftmost prefix. An index on (a, b, c) helps queries filtering on a, on a and b, or on a, b, and c — but not a query that filters only on b or c."
+            },
+            {
+              "kind": "text",
+              "text": "A covering index includes every column the query needs (in the key or as INCLUDE columns), so the engine answers entirely from the index without touching the table — an index-only scan. This eliminates the costly random heap lookups and is one of the most effective read optimizations."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "What is table partitioning and how does partition pruning improve performance?",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Partitioning splits one logical table into multiple physical sub-tables by a key — commonly a date range (range partitioning) or a hash. The benefits are partition pruning, where the planner skips partitions that cannot match the WHERE clause, and cheaper maintenance: you can drop an old partition instantly instead of running a massive DELETE."
+            },
+            {
+              "kind": "text",
+              "text": "Partition pruning only happens when the query filters on the partition key. A common mistake is partitioning by event_date but then filtering on a different column, so every partition is still scanned. Partitioning helps with very large tables; for moderate tables a good index is usually better. Avoid over-partitioning into thousands of tiny partitions, which adds planning overhead."
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "Explain the difference between nested loop, hash, and merge joins.",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Nested loop join scans the outer table and, for each row, probes the inner table (ideally via an index). It is excellent when one side is small or the join column on the inner side is indexed, but it degrades to quadratic cost on two large unindexed tables."
+            },
+            {
+              "kind": "text",
+              "text": "Hash join builds an in-memory hash table on the smaller input's join key, then streams the larger input and probes it. It is the workhorse for large equality joins but needs memory and only supports equi-joins. Merge join sorts both inputs on the join key (or uses already-sorted inputs) and walks them in lockstep; it shines when inputs are already sorted, such as from index scans. The optimizer picks based on table sizes, indexes, and statistics."
+            }
+          ]
+        },
+        {
+          "qNum": 15,
+          "qText": "Write a query that returns each customer's first and most recent order date and their order count.",
+          "header": "Stage 1 - Advanced SQL Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A simple GROUP BY aggregation answers this without window functions, which is the most efficient approach when you only need per-group summaries."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "SELECT",
+                "  customer_id,",
+                "  MIN(order_date) AS first_order,",
+                "  MAX(order_date) AS last_order,",
+                "  COUNT(*)        AS order_count",
+                "FROM orders",
+                "GROUP BY customer_id",
+                "HAVING COUNT(*) > 1",
+                "ORDER BY order_count DESC;"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Use HAVING to filter on aggregates (after grouping) and WHERE to filter rows before grouping. If you also needed per-order detail alongside these aggregates, you would switch to window functions instead."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "de-2": [
+    {
+      "sectionTitle": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is the difference between OLTP and OLAP systems?",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "OLTP (Online Transaction Processing) systems run the day-to-day operational workload: many small, concurrent reads and writes against a highly normalized schema, optimized for fast single-row inserts and updates with strict ACID guarantees. Examples are application databases backing checkout or banking."
+            },
+            {
+              "kind": "text",
+              "text": "OLAP (Online Analytical Processing) systems serve analytics: fewer but very large read queries that scan and aggregate huge volumes, on a denormalized, often columnar schema optimized for read throughput rather than write latency. Data warehouses and lakehouses are OLAP. The core trade-off is that OLTP optimizes for write efficiency and consistency while OLAP optimizes for read/scan performance over large datasets."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Why do data warehouses denormalize when transactional databases normalize?",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Normalization (3NF) eliminates redundancy so writes are cheap and consistent — you update a fact in exactly one place, which is ideal for OLTP. The cost is that answering an analytical question requires many joins to reassemble the data."
+            },
+            {
+              "kind": "text",
+              "text": "Warehouses are read-heavy and join-expensive at scale, so dimensional models denormalize: dimensions are flattened wide tables and facts join to them in a simple star. This trades storage and some update complexity for far fewer joins and faster aggregations. Since warehouse data is typically loaded in controlled batches rather than updated row-by-row, the redundancy is manageable."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "Explain the difference between a star schema and a snowflake schema.",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A star schema has a central fact table surrounded by denormalized dimension tables, each joined directly to the fact by a single key. Dimensions are wide and contain redundant descriptive attributes, which keeps queries to a single join per dimension and makes them fast and simple."
+            },
+            {
+              "kind": "text",
+              "text": "A snowflake schema normalizes the dimensions into sub-dimensions (for example splitting product into product, category, and subcategory tables). This saves storage and reduces redundancy but adds joins and complexity. Most modern warehouses favor star schemas because storage is cheap and query simplicity and performance matter more."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart TD",
+                "  D1[dim_date] --> F[fact_sales]",
+                "  D2[dim_customer] --> F[fact_sales]",
+                "  D3[dim_product] --> F[fact_sales]",
+                "  D4[dim_store] --> F[fact_sales]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What is the grain of a fact table and why must you define it first?",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The grain is the precise level of detail one row in the fact table represents — for example 'one row per order line item' or 'one row per customer per day'. Declaring the grain first is the cardinal rule of dimensional modeling because it determines which dimensions can attach and which measures are valid."
+            },
+            {
+              "kind": "text",
+              "text": "Mixing grains in one fact table corrupts aggregations: if some rows are per-line-item and others are per-order, summing the amount double-counts. A clear, consistent, atomic grain keeps the model trustworthy and lets you roll up flexibly."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What are additive, semi-additive, and non-additive facts?",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Additive facts can be summed across every dimension — sales amount and quantity are additive across time, product, and store. They are the easiest and most common measures."
+            },
+            {
+              "kind": "text",
+              "text": "Semi-additive facts can be summed across some dimensions but not others, classically not across time. Account balance or inventory level can be summed across accounts at a point in time, but summing balances across days is meaningless — you average or take a snapshot instead. Non-additive facts, like ratios, percentages, or unit prices, cannot be summed at all; you must recompute them from their additive components after aggregation."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "Explain SCD Type 1, Type 2, and Type 3.",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Slowly Changing Dimensions describe how to handle attribute changes in dimension tables over time. Type 1 simply overwrites the old value with the new one — no history is kept. It is the right choice for corrections or attributes nobody analyzes historically."
+            },
+            {
+              "kind": "text",
+              "text": "Type 2 preserves full history by inserting a new row for each change, with effective_from/effective_to dates and usually a current flag. This is the most important for analytics because it lets you report 'as of' any point in time — for example attributing a sale to the customer's region at the time of purchase. Type 3 keeps only a limited prior value in an extra column (such as previous_region), capturing one prior state without unlimited history."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "Write a SQL MERGE that implements an SCD Type 2 update.",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "SCD Type 2 is a two-part operation: close out (expire) any existing current row whose tracked attributes changed, then insert the new version as current. MERGE handles the expiration; the new-version insert is often a second statement because a single MERGE cannot both update an old row and insert its replacement cleanly."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "-- Step 1: expire changed current rows",
+                "MERGE INTO dim_customer AS tgt",
+                "USING staging_customer AS src",
+                "  ON tgt.customer_bk = src.customer_bk",
+                " AND tgt.is_current = TRUE",
+                "WHEN MATCHED AND (tgt.region <> src.region",
+                "               OR tgt.tier   <> src.tier) THEN",
+                "  UPDATE SET tgt.is_current = FALSE,",
+                "             tgt.effective_to = CURRENT_DATE;",
+                "",
+                "-- Step 2: insert new current versions",
+                "INSERT INTO dim_customer",
+                "  (customer_bk, region, tier, effective_from, effective_to, is_current)",
+                "SELECT s.customer_bk, s.region, s.tier,",
+                "       CURRENT_DATE, NULL, TRUE",
+                "FROM staging_customer s",
+                "JOIN dim_customer d",
+                "  ON d.customer_bk = s.customer_bk",
+                " AND d.is_current = FALSE",
+                " AND d.effective_to = CURRENT_DATE;"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "The surrogate key (not the business key customer_bk) is what facts point to, so each historical version of a customer has its own row and its own surrogate key."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "Why use surrogate keys instead of natural/business keys in a warehouse?",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A surrogate key is a meaningless integer (or hash) generated by the warehouse, while a natural key is the source system's business identifier. Surrogate keys are essential for SCD Type 2: because history creates multiple rows for the same business entity, you need a key that uniquely identifies each version — the natural key alone no longer does."
+            },
+            {
+              "kind": "text",
+              "text": "Surrogate keys also insulate the warehouse from source changes (a business may re-use or reformat its IDs), join faster as compact integers, and let you unify entities from multiple source systems. The natural key is kept as an attribute for lineage and matching."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "Compare the Kimball and Inmon approaches to data warehousing.",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Inmon advocates a top-down approach: first build a normalized (3NF) enterprise data warehouse as the single source of truth, then spin off subject-specific dimensional data marts from it. It emphasizes integration and consistency up front, at the cost of longer time-to-value."
+            },
+            {
+              "kind": "text",
+              "text": "Kimball advocates a bottom-up approach: build dimensional data marts directly using star schemas, tied together by conformed dimensions and an enterprise bus matrix so they integrate over time. It delivers business value faster and is more agile, which is why it is the more common approach in modern cloud warehouses. Data Vault is a third option, modeling hubs, links, and satellites for auditability and flexible loading."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What is a conformed dimension?",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A conformed dimension is a dimension shared, with the same meaning and keys, across multiple fact tables or data marts — a single dim_date or dim_customer used by sales, returns, and marketing facts. Conformance is what lets you compare and combine metrics across business processes, for example sales versus returns by the same product and date."
+            },
+            {
+              "kind": "text",
+              "text": "In Kimball's bus architecture, conformed dimensions are the integration mechanism: each mart can be built independently, but because they reuse the same conformed dimensions, the enterprise stays consistent. Drill-across queries rely on conformance."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What are the three fact table types: transaction, periodic snapshot, and accumulating snapshot?",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A transaction fact records one row per event at the moment it happens (one row per sale). It is the most granular and flexible but does not directly capture state over time."
+            },
+            {
+              "kind": "text",
+              "text": "A periodic snapshot records the state of something at regular intervals (one row per account per day), ideal for trends and semi-additive measures like balances. An accumulating snapshot has one row per process instance (one row per order) with multiple date columns that get updated as the order moves through milestones — order date, ship date, delivery date — making it perfect for measuring lag between pipeline stages."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What are degenerate, junk, and role-playing dimensions?",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A degenerate dimension is a dimension attribute that lives in the fact table itself with no separate dimension table — typically a transaction identifier like order_number used for grouping and drill-down. A junk dimension consolidates several low-cardinality flags and indicators (yes/no fields, status codes) into one small dimension to avoid cluttering the fact table with many tiny columns."
+            },
+            {
+              "kind": "text",
+              "text": "A role-playing dimension is a single physical dimension used in multiple roles via views or aliases — dim_date joined three times as order_date, ship_date, and due_date. You expose it under different names so each role reads naturally in queries."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "What is the difference between a fact table and a dimension table?",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Fact tables store the measurements of a business process — numeric, additive metrics like amount, quantity, and cost — plus foreign keys to the dimensions. They are tall and narrow: many rows, few columns, and they grow continuously."
+            },
+            {
+              "kind": "text",
+              "text": "Dimension tables store the descriptive context that you filter, group, and label by — the who, what, where, when. They are short and wide: relatively few rows but many descriptive attributes. The mnemonic is that facts are what you measure and dimensions are how you slice those measurements."
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "How do you handle a many-to-many relationship in a dimensional model?",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "When a fact relates to many values of a dimension (a single hospital stay with multiple diagnoses, or a bank account with multiple owners), you introduce a bridge table that maps the fact or a group key to the multiple dimension members. The bridge often carries a weighting factor so measures can be allocated proportionally and not double-counted."
+            },
+            {
+              "kind": "text",
+              "text": "The trade-off is that joining through a bridge can inflate row counts if you are not careful with the weighting, so you apply the allocation factor when aggregating to keep totals correct."
+            }
+          ]
+        },
+        {
+          "qNum": 15,
+          "qText": "What is a factless fact table and when would you use one?",
+          "header": "Stage 2 - Data Modeling & Warehousing Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A factless fact table records the occurrence of an event or a relationship without any numeric measure — it contains only foreign keys to dimensions. There are two common uses. The first is event tracking, such as student attendance: a row exists when a student attended a class on a date, and you count rows to answer 'how many attended'."
+            },
+            {
+              "kind": "text",
+              "text": "The second is coverage or condition tables that capture what could have happened, such as which products were on promotion in which stores, so you can detect non-events (a promoted product that had zero sales). The measure is the COUNT of rows or the absence of matching rows."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "de-3": [
+    {
+      "sectionTitle": "Stage 3 - Python for Data Engineering Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Why is vectorization preferred over Python loops in pandas?",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "pandas operations are backed by NumPy arrays, where vectorized operations execute in optimized C over the whole array at once, avoiding the per-element Python interpreter overhead and the Global Interpreter Lock bottleneck. A vectorized column operation can be one to two orders of magnitude faster than iterrows or apply with a Python function."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# Slow: row-by-row Python loop",
+                "df['total'] = df.apply(lambda r: r['qty'] * r['price'], axis=1)",
+                "",
+                "# Fast: vectorized",
+                "df['total'] = df['qty'] * df['price']"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Rule of thumb: reach for built-in vectorized methods first, then np.where/np.select for conditionals, and only use apply as a last resort."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "How do you process a file too large to fit in memory with pandas?",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Read the file in chunks with the chunksize parameter, which returns an iterator of DataFrames you process and aggregate one piece at a time, keeping memory bounded. You can also select only needed columns (usecols), downcast dtypes, and use the category dtype for low-cardinality strings to shrink the footprint."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "total = 0",
+                "for chunk in pd.read_csv('big.csv', chunksize=100_000,",
+                "                         usecols=['amount', 'status']):",
+                "    paid = chunk[chunk['status'] == 'PAID']",
+                "    total += paid['amount'].sum()",
+                "print(total)"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "If the data outgrows single-machine processing entirely, move to Polars (out-of-core, multi-threaded) or distributed Spark."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "Explain the difference between merge, join, and concat in pandas.",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "merge is the general-purpose SQL-style join on one or more columns or indexes, supporting inner, left, right, and outer how options. join is a convenience method that merges on the index by default. concat stacks DataFrames either vertically (axis=0, appending rows) or horizontally (axis=1, aligning on index)."
+            },
+            {
+              "kind": "text",
+              "text": "A frequent interview point is to validate cardinality with the validate parameter (for example validate='one_to_many') to catch unexpected key duplication that would silently fan out rows, and to use indicator=True to see which rows matched in which side."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Compare CSV, JSON, Parquet, Avro, and ORC file formats.",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "CSV and JSON are row-oriented, human-readable text formats: simple and universal but untyped, uncompressed by default, and slow to scan. CSV has no schema; JSON carries structure but is verbose."
+            },
+            {
+              "kind": "text",
+              "text": "Parquet and ORC are columnar binary formats built for analytics: they store data by column, enabling column pruning, predicate pushdown, efficient encoding/compression, and embedded schema and statistics — ideal for warehouse and Spark workloads. Avro is row-oriented binary with a strong, evolvable schema, which makes it the standard for streaming and Kafka message payloads where you write and read whole records. The rule of thumb: Avro for write/streaming, Parquet/ORC for read/analytics."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Why is Parquet efficient for analytical queries?",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Parquet stores data column-by-column within row groups. Because analytical queries usually touch a few columns out of many, the engine reads only the needed column chunks (column pruning) instead of entire rows, drastically cutting I/O. Storing like values together also makes compression and encoding (run-length, dictionary) far more effective."
+            },
+            {
+              "kind": "text",
+              "text": "Each row group and column chunk carries min/max statistics, so the reader can skip entire chunks that cannot satisfy a filter — this is predicate pushdown. Combined with a splittable layout that lets Spark read row groups in parallel, Parquet delivers strong scan performance for OLAP."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is schema evolution and how does Avro handle it?",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Schema evolution is the ability to change a dataset's schema over time — adding, removing, or modifying fields — without breaking existing producers or consumers. Avro is built for this because each record is written with a writer schema and read with a reader schema, and Avro resolves the differences."
+            },
+            {
+              "kind": "text",
+              "text": "Backward compatibility means new consumers can read old data (achieved by giving new fields defaults); forward compatibility means old consumers can read new data (they ignore unknown fields). Adding a field with a default is both backward and forward compatible. This is why Avro plus a Schema Registry is the standard for evolving Kafka event streams."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "How do you reliably consume a paginated REST API in a pipeline?",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Loop over pages using the API's pagination mechanism (page/offset or, preferably, a cursor/next-token), handle rate limits by honoring Retry-After and backing off, retry transient failures with exponential backoff and jitter, and stream results to storage as you go rather than holding everything in memory."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "import requests, time",
+                "",
+                "def fetch_all(url, params):",
+                "    results, cursor = [], None",
+                "    while True:",
+                "        if cursor:",
+                "            params['cursor'] = cursor",
+                "        r = requests.get(url, params=params, timeout=30)",
+                "        if r.status_code == 429:",
+                "            time.sleep(int(r.headers.get('Retry-After', 5)))",
+                "            continue",
+                "        r.raise_for_status()",
+                "        body = r.json()",
+                "        results.extend(body['data'])",
+                "        cursor = body.get('next_cursor')",
+                "        if not cursor:",
+                "            break",
+                "    return results"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Make extraction idempotent by writing to a deterministic path (for example partitioned by run date) so a retry overwrites rather than duplicates."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is the mental-model difference between pandas and PySpark?",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "pandas is single-machine and eager: a DataFrame lives entirely in one process's memory and each operation executes immediately. It is ideal for data that fits on one machine."
+            },
+            {
+              "kind": "text",
+              "text": "PySpark is distributed and lazy: a DataFrame is a logical plan over data partitioned across a cluster, and transformations build a DAG that only runs when an action is called. This lets Spark scale to terabytes and lets the Catalyst optimizer rearrange the plan, but it adds overhead and a different debugging model. You move from pandas to Spark when data no longer fits in memory or when you need cluster-scale parallelism."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "Write basic PySpark to read a CSV, transform it, and write Parquet.",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Use SparkSession as the entry point, the DataFrame API for transformations, and write partitioned Parquet for efficient downstream reads."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from pyspark.sql import SparkSession, functions as F",
+                "",
+                "spark = SparkSession.builder.appName('etl').getOrCreate()",
+                "",
+                "df = (spark.read",
+                "      .option('header', True)",
+                "      .option('inferSchema', True)",
+                "      .csv('s3://raw/orders/'))",
+                "",
+                "clean = (df",
+                "    .filter(F.col('status') == 'PAID')",
+                "    .withColumn('amount', F.col('amount').cast('double'))",
+                "    .withColumn('order_date', F.to_date('created_at')))",
+                "",
+                "(clean.write",
+                "    .mode('overwrite')",
+                "    .partitionBy('order_date')",
+                "    .parquet('s3://curated/orders/'))"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "Why are Python UDFs in Spark expensive, and what are the alternatives?",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A regular Python UDF forces Spark to serialize each row from the JVM to a Python worker process, run interpreted Python row-by-row, and serialize the result back. This serialization boundary and the loss of Catalyst optimization make Python UDFs far slower than native operations, and they become a black box the optimizer cannot reason about."
+            },
+            {
+              "kind": "text",
+              "text": "Prefer built-in Spark SQL functions whenever possible since they run in the JVM and are optimized. If you must use Python logic, use pandas (vectorized) UDFs backed by Apache Arrow, which transfer data in columnar batches and apply the function over whole pandas Series at once, dramatically reducing the per-row overhead."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "How do you handle missing data in pandas?",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "First detect with isna()/isnull() and quantify with df.isna().sum(). Then choose a strategy based on the column's meaning: drop rows or columns with dropna when missingness is rare or the column is unusable, or impute with fillna using a constant, the mean/median, forward/backward fill for time series, or a model-based value."
+            },
+            {
+              "kind": "text",
+              "text": "Be careful with dtypes: NaN forces an integer column to float, and pandas distinguishes NaN, None, and NaT (for datetimes). For nullable integer support use the Int64 (capital I) extension dtype. In a pipeline, log how many nulls were handled so silent data loss is visible."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What does groupby do under the hood, and what is the split-apply-combine pattern?",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "split-apply-combine is the conceptual model behind groupby: split the data into groups by key, apply a function (aggregate, transform, or filter) to each group independently, then combine the results back into one structure. Aggregations like sum or mean reduce each group to one row; transform returns a result aligned to the original index (useful for group-relative calculations); filter keeps or drops whole groups."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "# Aggregate: one row per group",
+                "df.groupby('region')['sales'].sum()",
+                "",
+                "# Multiple aggregations with named output",
+                "df.groupby('region').agg(",
+                "    total=('sales', 'sum'),",
+                "    avg=('sales', 'mean'),",
+                "    n=('sales', 'count'))",
+                "",
+                "# Transform: group total broadcast back to each row",
+                "df['pct'] = df['sales'] / df.groupby('region')['sales'].transform('sum')"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "What compression codecs are common in data engineering and how do you choose?",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The main trade-off is compression ratio versus CPU cost, and whether the codec is splittable so a large file can be read in parallel. Snappy is fast with moderate compression and is the default for Parquet in Spark — favored when CPU and read parallelism matter. Gzip compresses tighter but is slower and, in plain text form, not splittable, so it is better for cold storage."
+            },
+            {
+              "kind": "text",
+              "text": "Zstd offers an excellent ratio with good speed and is increasingly the default choice for archival and warehouse data. Inside columnar formats like Parquet, compression is applied per column chunk so the file remains splittable at the row-group level regardless of codec."
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "What is the SettingWithCopyWarning in pandas and how do you fix it?",
+          "header": "Stage 3 - Python for Data Engineering Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The SettingWithCopyWarning appears when you assign to what might be a view rather than a copy of the data, so pandas cannot guarantee the write lands on the original DataFrame. It typically happens with chained indexing like df[df.x > 0]['y'] = 1, where the first selection may ambiguously return a view or a copy."
+            },
+            {
+              "kind": "text",
+              "text": "The fix is to use a single .loc accessor for combined selection and assignment, which is unambiguous: df.loc[df.x > 0, 'y'] = 1. If you intend an independent copy, call .copy() explicitly. Treating the warning as a real bug rather than noise prevents silent data-corruption issues in pipelines."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "de-4": [
+    {
+      "sectionTitle": "Stage 4 - Apache Spark Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is the difference between RDD, DataFrame, and Dataset?",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "An RDD (Resilient Distributed Dataset) is the low-level, type-safe, immutable distributed collection. It gives full control but has no schema, so Spark cannot optimize operations on it and you manage serialization yourself."
+            },
+            {
+              "kind": "text",
+              "text": "A DataFrame is a distributed collection organized into named columns with a schema. Because Spark knows the structure, it can apply the Catalyst optimizer and Tungsten execution engine, making DataFrames much faster and the recommended API. A Dataset (Scala/Java only) adds compile-time type safety on top of the DataFrame optimizations — in Python a DataFrame is effectively Dataset[Row]. The practical guidance: use DataFrames for almost everything; drop to RDDs only for low-level control you cannot express otherwise."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "Explain transformations vs actions and lazy evaluation in Spark.",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Transformations (select, filter, join, groupBy, map) are lazy: they describe a new dataset but do not execute. Spark records them as a logical plan, building a DAG of dependencies. Actions (count, collect, show, write, take) are what trigger execution — they force Spark to compile and run the accumulated plan."
+            },
+            {
+              "kind": "text",
+              "text": "Laziness is what makes Spark fast: because nothing runs until an action, the Catalyst optimizer sees the whole pipeline and can reorder, combine, and prune it — pushing filters down, collapsing projections, and avoiding unnecessary work. A common gotcha is that each action re-executes the lineage from scratch, so if you trigger multiple actions on an expensive intermediate result you should cache it."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What is the difference between narrow and wide transformations, and what triggers a shuffle?",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A narrow transformation is one where each output partition depends on a single input partition — map, filter, union. No data moves between executors, so these are cheap and pipeline together within a stage."
+            },
+            {
+              "kind": "text",
+              "text": "A wide transformation requires data from multiple input partitions to be redistributed by key across the cluster — groupByKey, reduceByKey, join, distinct, repartition. This redistribution is the shuffle: Spark writes intermediate data to disk, sends it over the network, and reads it on the target executors. The shuffle is the most expensive operation in Spark and marks a stage boundary in the DAG, which is why minimizing and optimizing shuffles is central to Spark tuning."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Walk through how Spark turns a job into stages and tasks.",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "When an action fires, the DAG scheduler takes the logical plan and splits it into stages at every shuffle boundary — all the narrow transformations that can pipeline together form one stage, and a wide transformation starts a new one. Each stage is then divided into tasks, one task per partition, which are the actual units of work sent to executors."
+            },
+            {
+              "kind": "text",
+              "text": "So the hierarchy is: a job (one action) contains one or more stages (split by shuffles), and each stage contains many tasks (one per partition) that run in parallel across executor cores. Reading the Spark UI's job/stage/task breakdown is how you diagnose where time and shuffle bytes go."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart LR",
+                "  A[Action triggers job] --> B[DAG Scheduler]",
+                "  B --> C[Stage 1 narrow ops]",
+                "  C -->|shuffle| D[Stage 2 wide op]",
+                "  C --> T1[Tasks per partition]",
+                "  D --> T2[Tasks per partition]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What is a broadcast join and when does Spark use one?",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A broadcast (map-side) join avoids a shuffle by sending a copy of the small table to every executor, so each executor joins its partitions of the large table against the in-memory small table locally. Because the large table never gets shuffled, this is dramatically faster than a sort-merge join when one side is small."
+            },
+            {
+              "kind": "text",
+              "text": "Spark auto-broadcasts a table when its estimated size is below spark.sql.autoBroadcastJoinThreshold (10MB by default). You can force it with a hint, or raise the threshold if the small side is somewhat larger but still fits in executor memory."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from pyspark.sql.functions import broadcast",
+                "",
+                "result = large_df.join(broadcast(small_df), 'key')",
+                "",
+                "# or raise the threshold (bytes)",
+                "spark.conf.set('spark.sql.autoBroadcastJoinThreshold', 50 * 1024 * 1024)"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "Beware broadcasting a table that is too large — it can cause driver or executor out-of-memory errors."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "When and how should you cache or persist a DataFrame?",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Cache an intermediate result when it is expensive to compute and you reuse it across multiple actions, for example a cleaned dataset you both write out and run several aggregations on. Without caching, Spark recomputes the entire lineage for each action. cache() uses the default MEMORY_AND_DISK storage level; persist() lets you choose levels like MEMORY_ONLY, MEMORY_AND_DISK, or with serialization/replication."
+            },
+            {
+              "kind": "text",
+              "text": "Caching is not free — it consumes executor memory that could otherwise go to shuffles, so do not cache things used only once. Always unpersist when done, and remember caching is also lazy: the data is only materialized after the next action touches it."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What is the Catalyst optimizer and what optimizations does it perform?",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Catalyst is Spark SQL's extensible query optimizer. It takes the parsed logical plan and applies rule-based and cost-based transformations: it resolves and analyzes references, then optimizes the logical plan (predicate pushdown, projection/column pruning, constant folding, filter reordering), and finally generates and selects physical plans, applying whole-stage code generation to compile operators into efficient JVM bytecode."
+            },
+            {
+              "kind": "text",
+              "text": "Predicate pushdown moves filters as close to the data source as possible (even into Parquet row-group skipping), and column pruning reads only needed columns. Because DataFrames expose structure, Catalyst can do all of this automatically — which is exactly why DataFrames outperform raw RDDs. Adaptive Query Execution extends this at runtime."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is Adaptive Query Execution (AQE)?",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "AQE (enabled by default in Spark 3) re-optimizes the physical plan at runtime using actual shuffle statistics rather than only the planner's estimates. Its three main features are: coalescing many small post-shuffle partitions into fewer right-sized ones, dynamically switching a sort-merge join to a broadcast join when a side turns out to be small, and optimizing skew joins by splitting oversized partitions."
+            },
+            {
+              "kind": "text",
+              "text": "Because real runtime sizes are often very different from compile-time estimates, AQE corrects bad plans automatically and is one of the easiest wins for Spark performance."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How do you detect and handle data skew in Spark?",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Skew is when a few keys hold a disproportionate share of rows, so after a shuffle a handful of tasks process huge partitions while the rest finish quickly — you see it in the Spark UI as one or two straggler tasks with far more shuffle bytes and runtime. It is a leading cause of slow joins and groupBys."
+            },
+            {
+              "kind": "text",
+              "text": "Remedies: enable AQE skew-join handling which auto-splits the large partitions; salt the hot keys by appending a random suffix to spread them across partitions and then aggregate in two passes; broadcast the small side if applicable to avoid the shuffle entirely; or filter and process the dominant keys separately. The general goal is to even out partition sizes so no single task dominates."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What is the difference between repartition and coalesce?",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "repartition(n) can increase or decrease the number of partitions and performs a full shuffle to redistribute data evenly; you can also repartition by column to co-locate keys before a join or write. coalesce(n) only reduces the partition count and avoids a full shuffle by merging existing partitions on the same executors, which is much cheaper."
+            },
+            {
+              "kind": "text",
+              "text": "Use coalesce to reduce many small partitions before writing output (to avoid the small-files problem) since it is cheap. Use repartition when you need to increase parallelism or guarantee balanced partitions — for example before a heavy join — accepting the shuffle cost for the even distribution."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What roles do the driver and executors play in a Spark application?",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The driver hosts the SparkSession, builds the DAG, talks to the cluster manager to request resources, schedules tasks, and collects results. There is exactly one driver per application, and operations like collect() pull data back to it — which is why collecting a large dataset runs the driver out of memory."
+            },
+            {
+              "kind": "text",
+              "text": "Executors are the worker JVMs that run the tasks, hold cached data, and provide memory and CPU cores. The cluster manager (YARN, Kubernetes, or standalone) allocates executors. Parallelism is bounded by total executor cores, and tuning executor count, cores, and memory is core to Spark performance."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "Explain Spark Structured Streaming and its processing model.",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Structured Streaming treats a stream as an unbounded table that grows over time; you write essentially the same DataFrame queries as for batch, and Spark runs them incrementally as new data arrives. The default micro-batch engine processes data in small batches at a configurable trigger interval; a continuous mode offers lower latency for limited operations."
+            },
+            {
+              "kind": "text",
+              "text": "It provides exactly-once processing through checkpointing of offsets and state plus idempotent sinks, and it supports event-time windowing with watermarks to handle late data. The output mode (append, update, complete) controls what gets written to the sink each trigger."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "What are watermarks and windowing in Spark streaming?",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Windowing groups streaming events into time buckets based on event time — for example a 5-minute tumbling window of counts. Because events can arrive late and out of order, Spark must decide how long to keep a window's state open."
+            },
+            {
+              "kind": "text",
+              "text": "A watermark is that bound: it tells Spark the maximum lateness it will tolerate, e.g. withWatermark('event_time', '10 minutes'). Spark tracks the maximum event time seen and considers any event older than (max seen minus watermark) too late to update its window, allowing it to finalize and drop that window's state. This bounds state memory while still accepting reasonably late data."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from pyspark.sql.functions import window",
+                "",
+                "counts = (events",
+                "  .withWatermark('event_time', '10 minutes')",
+                "  .groupBy(window('event_time', '5 minutes'), 'device_id')",
+                "  .count())"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "Why is groupByKey discouraged in favor of reduceByKey?",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "groupByKey shuffles every value for a key across the network before any aggregation, so all the raw data moves and large groups can run an executor out of memory. reduceByKey (and aggregateByKey) performs map-side combining first: it partially aggregates within each partition before the shuffle, so only the reduced intermediate values cross the network."
+            },
+            {
+              "kind": "text",
+              "text": "The result is far less shuffle traffic and better scalability. In the DataFrame API this is handled for you — groupBy().agg() applies partial aggregation automatically — which is another reason to prefer DataFrames over low-level RDD operations."
+            }
+          ]
+        },
+        {
+          "qNum": 15,
+          "qText": "How does Spark achieve fault tolerance?",
+          "header": "Stage 4 - Apache Spark Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Spark achieves fault tolerance through lineage. Every RDD/DataFrame remembers the deterministic sequence of transformations that produced it (its lineage graph), so if an executor dies and a partition is lost, Spark simply recomputes just that partition from its parent data rather than restarting the whole job."
+            },
+            {
+              "kind": "text",
+              "text": "For long lineages or iterative jobs, recomputation gets expensive, so checkpointing truncates the lineage by persisting the data to reliable storage like HDFS or S3. In Structured Streaming, checkpointing also durably stores offsets and aggregation state, which combined with idempotent or transactional sinks delivers exactly-once guarantees across failures."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "de-5": [
+    {
+      "sectionTitle": "Stage 5 - Kafka & Streaming Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Explain Kafka's core concepts: broker, topic, partition, and offset.",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A broker is a Kafka server that stores data and serves clients; a cluster is several brokers. A topic is a named logical stream of records, like a category or feed. Each topic is split into partitions, which are the unit of parallelism and ordering: a partition is an append-only, immutable log."
+            },
+            {
+              "kind": "text",
+              "text": "An offset is the monotonically increasing position of a record within a partition. Kafka guarantees ordering only within a partition, not across partitions, so records that must stay ordered relative to each other (e.g. events for one user) should share a partition key. Consumers track their position by committing offsets."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "How does Kafka decide which partition a message goes to?",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "If the producer sets a key, Kafka hashes the key (murmur2 by default) modulo the number of partitions, so all messages with the same key always land in the same partition — this is how you preserve per-key ordering (all events for user_123 stay ordered together). If no key is set, modern clients use a sticky partitioner that batches records to one partition for a while then rotates, balancing load while improving batching."
+            },
+            {
+              "kind": "text",
+              "text": "A key implication is that the partition count is effectively fixed for ordering purposes: increasing partitions later changes the hash mapping, so messages for a given key may move to a different partition and ordering across the change is not preserved."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What is a consumer group and how does rebalancing work?",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A consumer group is a set of consumers that cooperatively read a topic, with each partition assigned to exactly one consumer in the group at a time. This gives horizontal scaling: more consumers (up to the partition count) means more parallelism. Different groups each get their own full copy of the stream, which is how you fan out the same data to multiple applications."
+            },
+            {
+              "kind": "text",
+              "text": "Rebalancing is the process of reassigning partitions when group membership changes — a consumer joins, leaves, or fails (detected by missed heartbeats), or partitions are added. During a rebalance, processing pauses (a stop-the-world event in the eager protocol), which is why frequent rebalances hurt throughput. Cooperative/incremental rebalancing and static membership reduce this disruption. A crucial detail: you can never have more active consumers than partitions in one group, so extra consumers sit idle."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Compare at-most-once, at-least-once, and exactly-once delivery semantics.",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "At-most-once means a message is delivered zero or one time — you commit the offset before processing, so a crash loses in-flight messages but never duplicates. At-least-once means a message is delivered one or more times — you process first and commit after, so a crash before committing causes reprocessing and possible duplicates; this is the common default."
+            },
+            {
+              "kind": "text",
+              "text": "Exactly-once means each message affects the result once and only once despite retries and failures. Kafka achieves this with the idempotent producer (dedupes retries) plus transactions that atomically write output messages and commit the consumed offsets together, so the read-process-write cycle is all-or-nothing. For many pipelines, at-least-once plus idempotent downstream writes is the pragmatic choice."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "How does Kafka implement exactly-once semantics?",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Two mechanisms combine. The idempotent producer assigns each producer a producer ID and a per-partition sequence number; the broker rejects duplicate sequence numbers, so a retried send caused by a network hiccup is not written twice. This gives exactly-once on the producer-to-broker path."
+            },
+            {
+              "kind": "text",
+              "text": "Transactions extend this across the full read-process-write loop: the producer begins a transaction, writes output records to one or more partitions, sends the consumed input offsets to the same transaction, and commits atomically. Consumers set isolation.level=read_committed so they only see committed transactional messages. Together, idempotency plus transactions ensure each input is processed and its effects written exactly once even across failures."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is log compaction and when do you use it?",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Log compaction is a retention policy that, instead of deleting by age or size, retains at least the latest value for each message key and removes superseded older values. The result is that the topic becomes a changelog of the most recent state per key rather than a full event history."
+            },
+            {
+              "kind": "text",
+              "text": "It is ideal for keyed state: database change streams (CDC), configuration topics, or any topic where you only need the current value per entity — a consumer can rebuild full state by reading the compacted log from the start. A null value for a key is a tombstone that signals deletion. Compaction is what makes Kafka usable as a durable, replayable source of truth for state, and it underpins Kafka Streams state stores."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What is the Schema Registry and why is it important?",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The Schema Registry is a centralized service that stores and versions the schemas (typically Avro, Protobuf, or JSON Schema) used by Kafka topics. Producers register and validate the schema and embed only a small schema ID in each message; consumers fetch the schema by ID to deserialize. This keeps messages compact and decouples producers from consumers."
+            },
+            {
+              "kind": "text",
+              "text": "Its key role is enforcing compatibility: it can reject a schema change that would break consumers, according to a configured mode — BACKWARD (new consumers read old data), FORWARD (old consumers read new data), or FULL. This lets producer and consumer teams evolve independently and safely, which is essential at scale."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is the difference between stream and batch processing?",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Batch processing operates on a bounded, complete dataset at scheduled intervals — read a day's files, transform, write — optimizing for throughput and simplicity, with latency measured in minutes to hours. Stream processing operates on an unbounded, continuous flow of events and produces results incrementally with low (sub-second to second) latency."
+            },
+            {
+              "kind": "text",
+              "text": "Streaming is harder: you must reason about event time versus processing time, out-of-order and late data, windowing, and managing state continuously, whereas batch sees all the data at once. Choose batch for periodic analytics and large historical reprocessing; choose streaming for real-time use cases like fraud detection, monitoring, and live dashboards. Many architectures blend both."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "Explain event time vs processing time and why the distinction matters.",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Event time is when the event actually occurred at the source (the timestamp embedded in the record). Processing time is when the stream processor happens to handle it. They diverge because of network delays, retries, mobile devices going offline, and backpressure, so events frequently arrive late and out of order."
+            },
+            {
+              "kind": "text",
+              "text": "Correct analytics — counting transactions per minute, sessionizing user activity — must use event time, otherwise results shift around based on infrastructure timing. The cost is that the system must wait for and tolerate late data, which is exactly what watermarks manage: they declare how long to wait before finalizing an event-time window."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "Describe tumbling, sliding, and session windows.",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Tumbling windows are fixed-size, non-overlapping, contiguous intervals — every 5 minutes — so each event belongs to exactly one window. They are used for periodic aggregates like per-minute counts."
+            },
+            {
+              "kind": "text",
+              "text": "Sliding windows are fixed-size but overlap by advancing on a smaller step — a 10-minute window every 1 minute — so an event can fall into multiple windows; they are used for moving averages and rolling metrics. Session windows are dynamic and gap-based: they group events separated by less than an inactivity gap, so the window length varies with activity — ideal for modeling user sessions where you close the window after, say, 30 minutes of no activity."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What is the role of replication, leaders, and the ISR in Kafka durability?",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Each partition is replicated to a configurable number of brokers (the replication factor). One replica is the leader and handles all reads and writes; the others are followers that replicate the leader's log. The ISR (In-Sync Replicas) is the set of replicas that are sufficiently caught up to the leader."
+            },
+            {
+              "kind": "text",
+              "text": "Durability comes from acks and min.insync.replicas: with acks=all, a produce request is acknowledged only after all in-sync replicas have the record, so the data survives the loss of any broker while still leaving an in-sync copy. If the leader fails, a new leader is elected from the ISR. Setting min.insync.replicas=2 with replication factor 3 and acks=all is the standard durable configuration."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "How would you design a real-time streaming pipeline with Kafka?",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Producers (apps, CDC connectors via Kafka Connect) publish events to topics partitioned by a key that preserves ordering. A stream processor (Kafka Streams, Flink, or Spark Structured Streaming) consumes, performs windowed aggregations and enrichment with managed state, and writes results to sink topics or stores. A serving layer (a warehouse, a key-value store, or a dashboard) reads the output."
+            },
+            {
+              "kind": "text",
+              "text": "Key concerns: schema governance via the registry, exactly-once or at-least-once with idempotent sinks, a dead-letter topic for poison messages, and monitoring consumer lag as the primary health signal."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart LR",
+                "  P[Producers / CDC] --> K[/Kafka topics/]",
+                "  K --> S[Stream processor]",
+                "  S --> O[/Output topic/]",
+                "  S --> DLQ[/Dead-letter topic/]",
+                "  O --> W[(Warehouse / Store)]",
+                "  W --> D[Dashboards]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "What is consumer lag and why is it the key metric to monitor?",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Consumer lag is the difference between the latest offset produced to a partition (the log end offset) and the offset the consumer group has committed — in other words, how many messages the consumer still has to process. It is the single best indicator of whether consumers are keeping up with producers."
+            },
+            {
+              "kind": "text",
+              "text": "Steadily growing lag means consumers are falling behind and end-to-end latency is increasing, signaling you need more consumers (up to the partition count), faster processing, or more partitions. Sudden lag spikes can indicate a slow downstream system, a rebalance, or a stuck consumer. Tools like Burrow or Kafka's own metrics track it per partition."
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "What is Apache Flink and how does it compare to Kafka Streams and Spark Streaming?",
+          "header": "Stage 5 - Kafka & Streaming Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Flink is a true event-at-a-time stream processor with first-class support for event-time semantics, sophisticated windowing, and large managed state with exactly-once via distributed snapshots (Chandy-Lamport checkpointing). It excels at low-latency, complex stateful streaming and also handles batch as a special case of streaming."
+            },
+            {
+              "kind": "text",
+              "text": "Kafka Streams is a lightweight client library (no separate cluster) that runs inside your application and is tightly coupled to Kafka — great when your data already lives in Kafka and you want simple deployment. Spark Structured Streaming uses a micro-batch model that is excellent when you want one engine for both batch and streaming and slightly higher latency is acceptable. The trade-off is latency and streaming sophistication (Flink) versus operational simplicity (Kafka Streams) versus unified batch/stream tooling (Spark)."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "de-6": [
+    {
+      "sectionTitle": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What is a DAG in Airflow and why must pipelines be acyclic?",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A DAG (Directed Acyclic Graph) is Airflow's representation of a workflow: nodes are tasks and edges are dependencies that define execution order and direction. It must be acyclic because a cycle would mean a task ultimately depends on itself, creating an impossible-to-resolve, infinite dependency — the scheduler could never decide what to run first."
+            },
+            {
+              "kind": "text",
+              "text": "The acyclic structure lets Airflow topologically sort tasks, run independent branches in parallel, and retry or resume from the point of failure. A DAG defines the structure and schedule; each execution of it is a DAG run."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "from airflow import DAG",
+                "from airflow.operators.python import PythonOperator",
+                "import pendulum",
+                "",
+                "with DAG(",
+                "    dag_id='daily_sales_etl',",
+                "    schedule='@daily',",
+                "    start_date=pendulum.datetime(2024, 1, 1, tz='UTC'),",
+                "    catchup=False,",
+                "    default_args={'retries': 2},",
+                ") as dag:",
+                "    extract = PythonOperator(task_id='extract', python_callable=do_extract)",
+                "    transform = PythonOperator(task_id='transform', python_callable=do_transform)",
+                "    load = PythonOperator(task_id='load', python_callable=do_load)",
+                "",
+                "    extract >> transform >> load"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What is the difference between an operator, a sensor, and a hook in Airflow?",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "An operator defines a single unit of work — PythonOperator runs a function, BashOperator runs a command, and there are many provider operators for systems like Spark, BigQuery, and S3. A task is an instantiated operator in a DAG."
+            },
+            {
+              "kind": "text",
+              "text": "A sensor is a special operator that waits for a condition to become true before letting downstream tasks run — a FileSensor waiting for a file to land, or an ExternalTaskSensor waiting on another DAG. A hook is the low-level interface to an external system (a database, an API, cloud storage) that operators and sensors use internally to manage connections and credentials. In short: operators do work, sensors wait, hooks connect."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "What is XCom and what are its limitations?",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "XCom (cross-communication) is Airflow's mechanism for passing small pieces of data between tasks — a task pushes a value and a downstream task pulls it. With the TaskFlow API, returning a value from a task automatically pushes an XCom and passing it as a function argument pulls it."
+            },
+            {
+              "kind": "text",
+              "text": "The critical limitation is size: by default XComs are stored in Airflow's metadata database, so they are meant for small values like a file path, a row count, or a date — not for passing large datasets, which would bloat and slow the database. The correct pattern is to pass a reference (an S3 path or table name) through XCom and let tasks read the actual data from external storage. Custom XCom backends can store payloads in S3/GCS to relax the size limit."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "Explain catchup and backfill in Airflow.",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Airflow schedules DAG runs per interval and each run has a logical date (data interval) representing the period it processes. If a DAG's start_date is in the past and catchup=True, the scheduler will automatically create and run all the missed intervals between start_date and now — this is catchup. Setting catchup=False (a common safe default) makes it run only the latest interval."
+            },
+            {
+              "kind": "text",
+              "text": "Backfill is the deliberate, manual re-running of a DAG over a historical date range, typically via the CLI, to (re)process past data — for example after fixing a bug or adding a new pipeline. Both rely on tasks being idempotent and parameterized by the logical date so reprocessing a date cleanly overwrites rather than duplicates that date's output."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "Why must Airflow tasks be idempotent?",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Idempotent means running a task multiple times with the same inputs produces the same result without side effects like duplicates. Airflow retries failed tasks and supports backfills and reruns, so any task may execute more than once for the same logical date — if it is not idempotent, retries create duplicate rows or corrupted state."
+            },
+            {
+              "kind": "text",
+              "text": "The standard pattern is delete-then-insert or overwrite by partition keyed on the logical date: a task for 2024-03-01 first removes that date's data, then loads it fresh, so a rerun yields identical output. Avoid append-only writes keyed on wall-clock time, which silently duplicate on retry."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What is the difference between ETL and ELT, and why has ELT become dominant?",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "In ETL you Extract from sources, Transform in a separate processing engine, then Load the cleaned result into the warehouse. In ELT you Extract and Load the raw data into the warehouse first, then Transform it in place using the warehouse's own compute (typically with SQL/dbt)."
+            },
+            {
+              "kind": "text",
+              "text": "ELT became dominant because cloud warehouses (Snowflake, BigQuery, Redshift) separate cheap scalable storage from elastic compute, so loading raw data and transforming with SQL is fast and economical. ELT preserves the raw data for reprocessing and auditing, lets analysts transform with familiar SQL, and avoids maintaining a separate transformation cluster. ETL still makes sense when you must mask sensitive data before it lands or when transformations need a specialized engine like Spark."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What is dbt and how does it fit into the modern data stack?",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "dbt (data build tool) is the T in ELT: it lets you define transformations as SQL SELECT statements (models) that dbt compiles and runs inside your warehouse, materializing them as views or tables. It brings software engineering practices to analytics — version control, modularity via ref(), testing, documentation, and a generated lineage DAG."
+            },
+            {
+              "kind": "text",
+              "text": "Models reference each other with ref(), which both wires up dependencies into a DAG and lets dbt resolve the correct schema per environment. dbt does not extract or load data; it orchestrates and tests the in-warehouse transformation layer, often triggered by Airflow or dbt Cloud."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "-- models/marts/fct_orders.sql",
+                "with orders as (",
+                "    select * from {{ ref('stg_orders') }}",
+                "),",
+                "customers as (",
+                "    select * from {{ ref('stg_customers') }}",
+                ")",
+                "select",
+                "    o.order_id,",
+                "    o.order_date,",
+                "    c.customer_segment,",
+                "    o.amount",
+                "from orders o",
+                "join customers c on c.customer_id = o.customer_id"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What are dbt materializations and when do you use each?",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A materialization controls how dbt persists a model. view (the default) creates a database view — no storage, always fresh, but recomputed on every query; good for light staging models. table rebuilds the full result as a physical table each run — fast to query but recomputes everything; good for moderate datasets queried often."
+            },
+            {
+              "kind": "text",
+              "text": "incremental only processes and appends/merges new or changed rows on each run instead of rebuilding the whole table — essential for large fact tables where a full rebuild is too expensive. ephemeral is not materialized at all; it is inlined as a CTE into models that reference it, useful for reusable logic you do not want to persist."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How do incremental models work in dbt?",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "An incremental model builds the full table on its first run, then on subsequent runs processes only new or updated rows. You wrap the filter that selects new data in the is_incremental() macro so it applies only after the table already exists, typically comparing a watermark column against the current max in the existing table."
+            },
+            {
+              "kind": "code",
+              "lines": [
+                "{{ config(materialized='incremental', unique_key='event_id') }}",
+                "",
+                "select *",
+                "from {{ ref('stg_events') }}",
+                "{% if is_incremental() %}",
+                "  where event_ts > (select max(event_ts) from {{ this }})",
+                "{% endif %}"
+              ]
+            },
+            {
+              "kind": "text",
+              "text": "The unique_key tells dbt to merge (upsert) rather than blindly append, which keeps the model idempotent and prevents duplicates when late or updated rows arrive. The trade-off versus a full rebuild is speed and cost against the complexity of correctly handling late-arriving and changed data."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What kinds of tests does dbt support and why are they valuable?",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "dbt has two kinds of tests. Generic tests are reusable assertions declared in YAML on columns — unique, not_null, accepted_values, and relationships (referential integrity to another model). Singular tests are bespoke SQL queries that should return zero rows; any returned rows are failures, letting you encode arbitrary business rules."
+            },
+            {
+              "kind": "text",
+              "text": "Because dbt tests run as SQL against the warehouse on every build, they catch data-quality regressions — duplicate keys, broken joins, unexpected values — before bad data reaches dashboards. Combined with the lineage DAG, a failing test can halt downstream models, which is how dbt enforces data contracts within the transformation layer."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "Design a daily batch ETL pipeline end to end.",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A typical batch pipeline lands raw source data into a data lake (the raw/bronze layer), validates and cleans it into a conformed/silver layer, models it into business-ready facts and dimensions (gold), and serves it to a warehouse and BI tools. Airflow orchestrates the dependencies and schedule, dbt handles the in-warehouse transformations, and a quality gate runs before publishing."
+            },
+            {
+              "kind": "text",
+              "text": "Each stage is idempotent and partitioned by load date so a failed or rerun day overwrites cleanly. Sensors wait for source files, the load is incremental where possible, and monitoring tracks freshness and row counts."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart LR",
+                "  S[Sources] --> E[Extract / land raw]",
+                "  E --> R[(Raw / Bronze)]",
+                "  R --> C[Clean + validate]",
+                "  C --> Q{Quality gate}",
+                "  Q -->|pass| M[Model facts/dims]",
+                "  Q -->|fail| A[Alert / quarantine]",
+                "  M --> W[(Warehouse / Gold)]",
+                "  W --> BI[BI / Dashboards]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What is Change Data Capture (CDC) and why is it used for incremental loads?",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "CDC captures row-level changes (inserts, updates, deletes) from a source database as they happen, usually by reading the database's transaction log (the WAL/binlog) with a tool like Debezium, and streams them as events. This lets the warehouse stay in near-real-time sync without repeatedly full-scanning the source."
+            },
+            {
+              "kind": "text",
+              "text": "It is the gold standard for incremental loads because it is low-impact on the source (no heavy queries), captures deletes (which high-watermark queries miss), and provides an ordered change stream you can replay. The alternative, query-based incremental extraction using an updated_at high-watermark, is simpler but cannot detect hard deletes and can miss updates that do not bump the timestamp."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "How do you handle late-arriving data in a batch pipeline?",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Late-arriving data is records that belong to a past period but show up after that period's batch already ran. The robust approach is to make loads idempotent and partition by event date, then reprocess (overwrite) the affected partitions when late data arrives — for example a rolling reprocessing window that always re-runs the last N days so recent late records get folded in."
+            },
+            {
+              "kind": "text",
+              "text": "For dimensions, late-arriving facts that reference a dimension member not yet loaded are handled with an inferred/placeholder dimension member updated later. The general principle is to key everything on event time, keep raw data so you can replay, and design transformations to safely recompute a partition rather than only appending."
+            }
+          ]
+        },
+        {
+          "qNum": 14,
+          "qText": "What is the difference between Airflow's executors (Sequential, Local, Celery, Kubernetes)?",
+          "header": "Stage 6 - Orchestration & ETL/ELT Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The executor determines how and where tasks run. SequentialExecutor runs one task at a time using SQLite — for local testing only. LocalExecutor runs tasks as subprocesses on a single machine in parallel — fine for small-to-medium single-node deployments."
+            },
+            {
+              "kind": "text",
+              "text": "CeleryExecutor distributes tasks to a pool of worker machines via a message broker (Redis/RabbitMQ), scaling horizontally with a fixed worker fleet. KubernetesExecutor launches each task in its own ephemeral Kubernetes pod, giving per-task resource isolation and elastic scaling with no idle workers — ideal for variable, bursty workloads in cloud-native environments. The choice trades operational complexity for scalability and isolation."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "de-7": [
+    {
+      "sectionTitle": "Stage 7 - Cloud Data Platforms Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "Explain Snowflake's three-layer architecture.",
+          "header": "Stage 7 - Cloud Data Platforms Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Snowflake separates storage, compute, and services into three independent layers. The storage layer keeps data as compressed, columnar micro-partitions in cloud object storage (S3/GCS/Azure Blob) — centralized and elastic. The compute layer consists of virtual warehouses, which are independent MPP clusters; multiple warehouses can read the same data simultaneously without contention."
+            },
+            {
+              "kind": "text",
+              "text": "The cloud services layer is the brain: it handles authentication, metadata, query optimization, transaction management, and security. The key benefit of this separation is that you scale compute and storage independently — spin up more or bigger warehouses for heavy queries, isolate workloads (ETL vs BI) on separate warehouses, and pay only for the compute you run, with auto-suspend when idle."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What are micro-partitions and how does Snowflake prune them?",
+          "header": "Stage 7 - Cloud Data Platforms Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Snowflake automatically stores table data in micro-partitions — small (50-500MB uncompressed) columnar units created as data is loaded, with no manual partitioning needed. For each micro-partition Snowflake keeps metadata: the range (min/max) of each column, distinct counts, and more."
+            },
+            {
+              "kind": "text",
+              "text": "At query time Snowflake uses this metadata to prune — skip any micro-partition whose value range cannot satisfy the filter, so a selective query scans only the relevant partitions. Pruning effectiveness depends on how well-clustered the filtered columns are; defining a clustering key on a large table physically co-locates related values to improve pruning on those columns."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "How does BigQuery's architecture differ from a traditional warehouse?",
+          "header": "Stage 7 - Cloud Data Platforms Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "BigQuery is fully serverless: there is no cluster to provision or manage. Storage uses Google's Colossus file system in the columnar Capacitor format, and queries run on Dremel, which dynamically allocates compute units called slots and uses a massively parallel tree architecture to fan out work. Storage and compute are fully decoupled."
+            },
+            {
+              "kind": "text",
+              "text": "Pricing is either on-demand (per bytes scanned) or capacity-based (reserved slots). Because you pay per byte scanned in on-demand mode, the dominant optimization is reducing scanned data through partitioning (commonly by ingestion date) and clustering, plus selecting only needed columns rather than SELECT *."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What are distribution keys and sort keys in Amazon Redshift?",
+          "header": "Stage 7 - Cloud Data Platforms Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Redshift is a clustered MPP warehouse where data is spread across compute nodes and slices. The distribution style/key controls how rows are distributed: KEY distribution co-locates rows with the same key on the same slice so joins on that key avoid redistributing data, ALL replicates a small dimension to every node to eliminate join shuffles, and EVEN spreads rows round-robin. Choosing the right distribution key minimizes the costly data movement during joins."
+            },
+            {
+              "kind": "text",
+              "text": "The sort key determines the physical order of rows on disk so Redshift can skip blocks via zone maps (min/max per block) when filtering — analogous to clustering. Together, distribution keys optimize joins and sort keys optimize range scans. RA3 nodes also separate storage from compute via managed storage, and VACUUM/ANALYZE maintain sort order and statistics."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "What is the lakehouse architecture?",
+          "header": "Stage 7 - Cloud Data Platforms Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The lakehouse combines the low-cost, open, scalable storage of a data lake with the management features and performance of a data warehouse. It stores data as open columnar files (Parquet) on cheap object storage but adds a transactional table format layer — Delta Lake, Apache Iceberg, or Hudi — that provides ACID transactions, schema enforcement and evolution, time travel, and efficient upserts/deletes directly on lake files."
+            },
+            {
+              "kind": "text",
+              "text": "This eliminates the traditional two-tier pattern of a lake plus a separate warehouse with constant copying between them. One copy of open data serves BI, data science, and ML, avoiding vendor lock-in and duplication."
+            },
+            {
+              "kind": "mermaid",
+              "lines": [
+                "flowchart TD",
+                "  SRC[Sources] --> L[(Object storage: Parquet)]",
+                "  L --> TF[Table format: Delta/Iceberg]",
+                "  TF --> BI[SQL / BI]",
+                "  TF --> ML[Data science / ML]",
+                "  TF --> ST[Streaming]"
+              ]
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "How does Delta Lake provide ACID transactions on object storage?",
+          "header": "Stage 7 - Cloud Data Platforms Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Delta Lake adds a transaction log (the _delta_log directory) alongside the Parquet data files. Every write creates a new, atomically committed JSON log entry listing which files were added and removed. Readers consult the log to get a consistent snapshot of exactly which files constitute the current table version, so they never see partial writes."
+            },
+            {
+              "kind": "text",
+              "text": "This log enables ACID semantics on otherwise eventually-consistent object storage, optimistic concurrency control for concurrent writers, time travel (read an older version by reconstructing the log up to that point), and operations like MERGE, UPDATE, and DELETE that object storage does not natively support. Periodic compaction (OPTIMIZE) and log checkpointing keep performance healthy."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "What is Apache Iceberg and what problem does hidden partitioning solve?",
+          "header": "Stage 7 - Cloud Data Platforms Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Iceberg is an open table format that tracks table state through metadata files, manifest lists, and manifests pointing to the data files, with each commit producing a new immutable snapshot — giving ACID, time travel, and safe schema and partition evolution. It is engine-agnostic, so Spark, Flink, Trino, and others can read and write the same tables."
+            },
+            {
+              "kind": "text",
+              "text": "Hidden partitioning solves a long-standing Hive problem. In Hive you partition by physically materialized columns (like event_day) and queries must filter on that exact column to get pruning. Iceberg instead stores partition transforms (e.g. day(event_ts)) in metadata, so you query on the natural column event_ts and Iceberg automatically prunes — users do not need to know the partitioning scheme, and you can change partitioning without rewriting data."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is the small-files problem in a data lake and how do you fix it?",
+          "header": "Stage 7 - Cloud Data Platforms Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The small-files problem occurs when a lake accumulates a huge number of tiny files — often from streaming writes or over-partitioning. Each file carries per-file overhead: metadata listing, open/close I/O, and scheduling, so query engines waste enormous time on file management rather than reading data, and performance collapses even though total volume is modest."
+            },
+            {
+              "kind": "text",
+              "text": "Fixes: compact small files into larger ones (target roughly 128MB-1GB) using Delta OPTIMIZE or Iceberg's rewrite, coalesce partitions before writing in Spark, avoid over-partitioning (do not partition on high-cardinality columns), and for streaming use periodic compaction or auto-optimize. Right-sized files are one of the biggest levers for lake query performance."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How does separation of storage and compute affect cost and scaling?",
+          "header": "Stage 7 - Cloud Data Platforms Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Decoupling storage from compute means you scale and pay for each independently. Storage is cheap object storage that grows without forcing you to buy more compute, and compute is elastic clusters you spin up only when needed. This lets you isolate workloads — give ETL its own warehouse and BI another so they do not contend — and scale a heavy query up temporarily then back down."
+            },
+            {
+              "kind": "text",
+              "text": "For cost control you lean on auto-suspend (stop compute when idle so you pay nothing), auto-scaling for concurrency spikes, and right-sizing the warehouse to the workload. The model rewards short, efficient bursts of compute over always-on clusters, which is the opposite of legacy fixed-size warehouses where storage and compute were locked together."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What strategies reduce query cost in a cloud warehouse?",
+          "header": "Stage 7 - Cloud Data Platforms Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The core principle is scan less and compute less. Partition and cluster tables on the columns you filter on so the engine prunes irrelevant data; this is especially impactful in BigQuery where you pay per byte scanned. Always select only needed columns (columnar storage means SELECT * reads everything) and filter early."
+            },
+            {
+              "kind": "text",
+              "text": "Other levers: materialize expensive repeated transformations rather than recomputing them, leverage result caching for identical queries, right-size and auto-suspend compute, set query timeouts and resource monitors to kill runaway queries, and pre-aggregate into summary tables for dashboards. Monitoring the most expensive queries and tables regularly is how you keep spend in check."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "What is time travel and what is it used for?",
+          "header": "Stage 7 - Cloud Data Platforms Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Time travel lets you query a table as it existed at a previous point in time or version, because the platform retains historical versions — Snowflake keeps changes for a retention period, and Delta/Iceberg keep prior snapshots in their logs. You query with AS OF a timestamp or version number."
+            },
+            {
+              "kind": "text",
+              "text": "Its main uses are recovering from accidental DELETEs or bad transforms (restore or compare to a known-good version), auditing and reproducing a report exactly as it looked on a given date, and debugging pipelines by inspecting the state before a problematic run. The trade-off is storage cost for retained history, so retention windows are bounded."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "When would you choose a data lake, a warehouse, or a lakehouse?",
+          "header": "Stage 7 - Cloud Data Platforms Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A pure data warehouse (Snowflake/BigQuery/Redshift) is the best fit when the workload is primarily SQL analytics and BI on structured data and you want strong governance, performance, and minimal operational effort. A data lake on raw object storage suits cheap retention of massive, varied, semi/unstructured data feeding data science and ML, where schema-on-read flexibility matters more than transactional guarantees."
+            },
+            {
+              "kind": "text",
+              "text": "A lakehouse is the choice when you want one platform serving both: open, low-cost storage for all data types plus warehouse-grade ACID, governance, and SQL performance via Delta or Iceberg — avoiding the cost and drift of maintaining a separate lake and warehouse with copies flowing between them. In practice many organizations converge on a lakehouse for this reason."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "de-8": [
+    {
+      "sectionTitle": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+      "questions": [
+        {
+          "qNum": 1,
+          "qText": "What are the main dimensions of data quality?",
+          "header": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Common dimensions are completeness (are required values present, no unexpected nulls), accuracy (do values reflect reality), consistency (does the same fact agree across systems), uniqueness (no unintended duplicates, keys are unique), validity/conformity (values match the expected format, type, and allowed range), and timeliness/freshness (is the data current relative to its SLA)."
+            },
+            {
+              "kind": "text",
+              "text": "A good answer frames these as testable rules you enforce in the pipeline — null checks, uniqueness checks, range and referential checks, and freshness checks — and notes that you should fail fast or quarantine when critical rules break rather than letting bad data flow to consumers."
+            }
+          ]
+        },
+        {
+          "qNum": 2,
+          "qText": "What is Great Expectations and how is it structured?",
+          "header": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Great Expectations is an open-source data-validation framework. The core unit is an Expectation — a declarative, human-readable assertion about data, such as expect_column_values_to_not_be_null or expect_column_values_to_be_between. Related expectations are grouped into an Expectation Suite that describes what valid data looks like for a dataset."
+            },
+            {
+              "kind": "text",
+              "text": "A Checkpoint runs a suite against a batch of data and produces validation results, which can gate the pipeline (fail the run on critical violations) and generate Data Docs — readable HTML reports of what passed and failed. It plugs into Airflow/dbt so validation runs as a step, turning data quality into testable, version-controlled assertions."
+            }
+          ]
+        },
+        {
+          "qNum": 3,
+          "qText": "Explain idempotent and retryable pipeline design.",
+          "header": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Idempotent means re-running a step with the same input yields the same result with no duplicate or corrupted output; retryable means a step can be safely re-attempted after a transient failure. Together they make pipelines self-healing under the inevitable retries, backfills, and partial failures of distributed systems."
+            },
+            {
+              "kind": "text",
+              "text": "Concrete patterns: overwrite-by-partition or delete-then-insert keyed on the logical/event date instead of blind appends; use upsert/MERGE with a unique key; make API extraction deterministic by writing to a date-partitioned path; and use transactional or exactly-once sinks. The litmus test is: if I run this task twice for the same date, is the output identical? If not, it is not safe to retry."
+            }
+          ]
+        },
+        {
+          "qNum": 4,
+          "qText": "What is data lineage and why does it matter?",
+          "header": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Data lineage is the documented flow of data from its sources through each transformation to its final consumers — essentially a map of where every column and table comes from and what depends on it. Tools like dbt (which auto-generates lineage from ref()), OpenLineage, and data catalogs capture it."
+            },
+            {
+              "kind": "text",
+              "text": "It matters for impact analysis (if I change or break this source, which dashboards are affected?), root-cause analysis (a wrong number on a report traces back through the lineage to the offending upstream step), regulatory compliance (proving where PII flows), and trust (consumers can see how a metric was derived). Lineage is foundational to data governance and incident response."
+            }
+          ]
+        },
+        {
+          "qNum": 5,
+          "qText": "How do you monitor pipeline reliability and what SLAs do you set?",
+          "header": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "You monitor both operational health and data health. Operationally: job success/failure, run duration and trends, retries, and resource usage. Data-wise: freshness (was the data updated by its deadline), volume (row counts within expected bounds — sudden drops or spikes signal problems), schema drift, and distribution/quality checks."
+            },
+            {
+              "kind": "text",
+              "text": "Typical SLAs are freshness (table updated by 6am daily), completeness (all expected partitions present), and quality (critical checks pass). You alert on breaches, ideally before consumers notice, and track an error budget. The goal is to detect issues proactively through monitoring rather than learning of them from a stakeholder's complaint."
+            }
+          ]
+        },
+        {
+          "qNum": 6,
+          "qText": "What are the five pillars of data observability?",
+          "header": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "The five pillars are freshness (is the data up to date), volume (is the amount of data within expected ranges — completeness of rows), schema (have the structure, types, or columns changed unexpectedly), distribution (are the values within acceptable ranges and statistical norms — detecting anomalies and nulls), and lineage (the upstream/downstream map that lets you trace where an issue originated and what it impacts)."
+            },
+            {
+              "kind": "text",
+              "text": "Together they extend application observability concepts to data, enabling automated detection of data downtime — periods where data is missing, wrong, or stale — before it corrupts downstream decisions."
+            }
+          ]
+        },
+        {
+          "qNum": 7,
+          "qText": "How do you handle PII and comply with GDPR in a data pipeline?",
+          "header": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "First, identify and classify PII (names, emails, identifiers, location) and minimize collection. Protect it with masking, tokenization, or encryption — often applying it as early as possible (even pre-load in an ETL step) so raw PII does not spread. Apply access controls so only authorized roles and queries can see sensitive columns, using column- and row-level security."
+            },
+            {
+              "kind": "text",
+              "text": "GDPR also requires honoring the right to be forgotten (delete an individual's data on request), which is why ACID table formats with DELETE/MERGE matter — append-only lakes make targeted deletion hard. You also need data retention limits, consent tracking, purpose limitation, and an auditable record (lineage) of where personal data flows. Pseudonymization plus a separately secured key mapping is a common technique to retain analytical utility while protecting identity."
+            }
+          ]
+        },
+        {
+          "qNum": 8,
+          "qText": "What is the difference between masking, tokenization, and encryption?",
+          "header": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Masking obscures data by replacing or partially hiding it (showing only the last four digits of a card), often irreversibly for display purposes — good for non-production environments and dashboards where the real value is not needed. Tokenization replaces a sensitive value with a non-sensitive surrogate token, with the real value stored in a secure token vault, so the mapping is reversible only by authorized systems and the token can preserve format for analytics joins."
+            },
+            {
+              "kind": "text",
+              "text": "Encryption transforms data with a key so it is unreadable without decryption; it protects data at rest and in transit and is reversible with the key. They are complementary: encrypt for storage/transport security, tokenize to keep PII out of analytical stores while retaining referential ability, and mask for display and lower environments."
+            }
+          ]
+        },
+        {
+          "qNum": 9,
+          "qText": "How do you choose a partitioning strategy for scale and performance?",
+          "header": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Partition on the column most queries filter on — usually a date (event_date) — so the engine prunes irrelevant partitions and scans far less data. Pick a granularity that yields reasonably sized partitions: too coarse (one giant partition) gives no pruning, too fine (high-cardinality keys like user_id, or hourly when daily suffices) creates the small-files problem and metadata overhead."
+            },
+            {
+              "kind": "text",
+              "text": "Avoid partitioning on high-cardinality columns; use clustering/sorting within partitions for secondary filter columns instead. Target partition file sizes around 128MB-1GB, align partitioning with how data arrives so loads can overwrite cleanly (supporting idempotency), and revisit the strategy as query patterns and data volume evolve. Iceberg's hidden partitioning lets you change this later without rewriting all data."
+            }
+          ]
+        },
+        {
+          "qNum": 10,
+          "qText": "What is a data contract and how does it improve reliability?",
+          "header": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "A data contract is an explicit, enforced agreement between a data producer and its consumers defining the schema, semantics, quality guarantees, and SLAs of a dataset or event — essentially an API contract for data. It shifts ownership of quality upstream to the producer rather than leaving consumers to defensively clean whatever arrives."
+            },
+            {
+              "kind": "text",
+              "text": "It improves reliability by catching breaking changes at the source: a producer's CI validates that a schema change is compatible (much like Schema Registry compatibility modes for Kafka) before it ships, preventing the classic failure where an upstream rename silently breaks downstream pipelines. Contracts make expectations explicit, testable, and versioned."
+            }
+          ]
+        },
+        {
+          "qNum": 11,
+          "qText": "How do you safely recover from a pipeline failure and run a backfill?",
+          "header": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "First contain: stop downstream propagation and assess the blast radius using lineage to see which tables and dashboards are affected. Identify the failed date range or partitions. Because tasks are idempotent and partitioned, you re-run only the affected logical dates so the reprocessing overwrites the bad partitions rather than duplicating data."
+            },
+            {
+              "kind": "text",
+              "text": "Use the raw/bronze layer (preserved source data) or time travel to recover the correct inputs, run the backfill (e.g. an Airflow backfill over the date range), then validate with the same quality checks before re-publishing. Finally, do a post-mortem and add a check or alert so the same failure is caught automatically next time. The whole approach depends on idempotency, partitioning by date, and retained raw data."
+            }
+          ]
+        },
+        {
+          "qNum": 12,
+          "qText": "What is the difference between fail-fast and quarantine strategies for bad data?",
+          "header": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "Fail-fast halts the pipeline as soon as a critical quality check fails, so no bad data reaches consumers. It is the right choice for business-critical correctness where serving wrong data is worse than serving none — but it can block the entire load over a few bad records and demands prompt operator attention."
+            },
+            {
+              "kind": "text",
+              "text": "Quarantine (dead-letter) routes the offending records to a separate location for later inspection while letting the valid majority flow through, maximizing availability and isolating problems without stopping everything. The choice depends on criticality: fail-fast for strict correctness and small/critical datasets, quarantine for high-volume streams where partial progress is acceptable and you can reprocess the quarantined records once fixed."
+            }
+          ]
+        },
+        {
+          "qNum": 13,
+          "qText": "How do you detect data anomalies in volume and distribution?",
+          "header": "Stage 8 - Data Quality, Governance & Reliability Interview Q&A",
+          "blocks": [
+            {
+              "kind": "text",
+              "text": "For volume, track row counts (and bytes) per load and compare against expectations — static thresholds, day-over-day or week-over-week deltas, or a rolling baseline with standard-deviation bands. A sudden drop often means an upstream feed broke or a join filtered too aggressively; a spike can mean duplication or a backfill. For distribution, monitor per-column statistics over time: null rate, distinct count, min/max/mean, and category frequencies."
+            },
+            {
+              "kind": "text",
+              "text": "Alert when a metric drifts beyond its expected band — for instance the null rate of a key column jumps, or a previously rare category suddenly dominates (data drift). Tools like Great Expectations encode these as expectations, and observability platforms can learn baselines automatically. The aim is to catch silent data corruption that schema checks alone would miss."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
