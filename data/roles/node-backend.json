@@ -1,0 +1,189 @@
+[
+  {
+    "sectionTitle": "Core JavaScript & TypeScript",
+    "questions": [
+      { "qNum": 1, "qText": "What is a closure and where do you use it in Node?", "level": "beginner", "header": "Core JavaScript & TypeScript", "blocks": [
+        { "kind": "text", "text": "A closure is a function that remembers variables from the scope where it was created, even after that scope has returned. In Node it powers module-private state, per-request handlers that capture config, memoized caches, and middleware factories." },
+        { "kind": "code", "lines": ["function counter() {", "  let n = 0;              // captured by the returned fn", "  return () => ++n;", "}", "const next = counter();", "next(); // 1", "next(); // 2"] }
+      ]},
+      { "qNum": 2, "qText": "What is the difference between == and ===?", "level": "beginner", "header": "Core JavaScript & TypeScript", "blocks": [
+        { "kind": "text", "text": "== does type coercion before comparing (0 == '' is true, null == undefined is true); === compares value AND type with no coercion. Always use === unless you deliberately want null/undefined to both match, where x == null is a handy idiom." }
+      ]},
+      { "qNum": 3, "qText": "var vs let vs const, and the temporal dead zone.", "level": "beginner", "header": "Core JavaScript & TypeScript", "blocks": [
+        { "kind": "text", "text": "var is function-scoped and hoisted (initialized to undefined). let/const are block-scoped and hoisted but not initialized — accessing them before declaration throws (the Temporal Dead Zone). const cannot be reassigned but the referenced object is still mutable. Default to const, use let when reassigning, never var." }
+      ]},
+      { "qNum": 4, "qText": "Promise vs async/await — and how do you run tasks in parallel?", "level": "intermediate", "header": "Core JavaScript & TypeScript", "blocks": [
+        { "kind": "text", "text": "async/await is syntactic sugar over promises — cleaner sequential-looking code with try/catch. But awaiting in a loop serializes work. For independent tasks, start them all and await together with Promise.all (fails fast) or Promise.allSettled (collect all results)." },
+        { "kind": "code", "lines": ["// serial (slow):", "for (const id of ids) await fetchUser(id);", "", "// parallel (fast):", "const users = await Promise.all(ids.map(fetchUser));"] }
+      ]},
+      { "qNum": 5, "qText": "CommonJS vs ES Modules?", "level": "intermediate", "header": "Core JavaScript & TypeScript", "blocks": [
+        { "kind": "text", "text": "CommonJS (require/module.exports) loads synchronously and resolves at runtime — the historical Node default. ES Modules (import/export) are static (analyzable at parse time, enabling tree-shaking), load asynchronously, and are strict by default. Enable ESM via \"type\": \"module\" or the .mjs extension." }
+      ]},
+      { "qNum": 6, "qText": "How does 'this' behave, and how do arrow functions change it?", "level": "intermediate", "header": "Core JavaScript & TypeScript", "blocks": [
+        { "kind": "text", "text": "this depends on HOW a function is called: method call → the object; plain call → undefined (strict); new → the instance; call/apply/bind → the given value. Arrow functions have no own this — they capture it lexically, which is why they're ideal for callbacks inside class methods." }
+      ]},
+      { "qNum": 7, "qText": "What do TypeScript generics give you?", "level": "intermediate", "header": "Core JavaScript & TypeScript", "blocks": [
+        { "kind": "text", "text": "Generics let a function or type work over many types while preserving type information instead of using any — the caller's type flows through to the return type." },
+        { "kind": "code", "lines": ["function first<T>(arr: T[]): T | undefined {", "  return arr[0];", "}", "const n = first([1, 2, 3]);   // number | undefined"] }
+      ]},
+      { "qNum": 8, "qText": "interface vs type in TypeScript?", "level": "intermediate", "header": "Core JavaScript & TypeScript", "blocks": [
+        { "kind": "text", "text": "Both describe object shapes. interface supports declaration merging and is idiomatic for object contracts and class implements. type is more flexible: unions, intersections, mapped/conditional types, tuples. Rule of thumb: interface for extensible object shapes; type for unions and computed types." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "Node.js Runtime",
+    "questions": [
+      { "qNum": 1, "qText": "Is Node.js single-threaded? Explain the architecture.", "level": "beginner", "header": "Node.js Runtime", "blocks": [
+        { "kind": "text", "text": "Your JavaScript runs on a single main thread with one event loop — that's why Node is called single-threaded. Under the hood, libuv provides a thread pool (default 4) for file I/O, DNS, and CPU-bound crypto/zlib, while network I/O uses the OS event mechanism (epoll/kqueue/IOCP). So one JS thread serves thousands of concurrent connections by never blocking on I/O." },
+        { "kind": "mermaid", "lines": ["flowchart TD", "  JS[JS main thread + Event Loop] --> Q{op type}", "  Q -->|network I/O| OS[OS async epoll/kqueue/IOCP]", "  Q -->|file/dns/crypto| TP[libuv thread pool]", "  OS --> CB[callbacks queued]", "  TP --> CB", "  CB --> JS"] }
+      ]},
+      { "qNum": 2, "qText": "Walk through the phases of the event loop.", "level": "advanced", "header": "Node.js Runtime", "blocks": [
+        { "kind": "text", "text": "Each iteration runs ordered phases: timers (setTimeout/setInterval) → pending callbacks → poll (retrieve and run I/O callbacks) → check (setImmediate) → close callbacks. Between phases Node drains microtasks: process.nextTick first, then Promise callbacks. Abusing nextTick can starve I/O." }
+      ]},
+      { "qNum": 3, "qText": "setImmediate vs setTimeout(fn,0) vs process.nextTick?", "level": "advanced", "header": "Node.js Runtime", "blocks": [
+        { "kind": "text", "text": "nextTick runs before the loop continues (highest priority, can starve I/O). Promise microtasks run right after nextTick. setImmediate runs in the check phase (after I/O). setTimeout(fn,0) runs in the timers phase with a ~1ms floor. Inside an I/O callback, setImmediate reliably fires before setTimeout(0)." }
+      ]},
+      { "qNum": 4, "qText": "What are Streams and why use them?", "level": "intermediate", "header": "Node.js Runtime", "blocks": [
+        { "kind": "text", "text": "Streams process data in chunks instead of loading it all into memory — essential for large files, uploads, and proxying. Types: Readable, Writable, Duplex, Transform. pipeline()/pipe() connect them and handle backpressure automatically (a slow consumer pauses a fast producer)." },
+        { "kind": "code", "lines": ["const { pipeline } = require('node:stream/promises');", "await pipeline(", "  fs.createReadStream('big.csv'),", "  zlib.createGzip(),", "  fs.createWriteStream('big.csv.gz')", ");"] }
+      ]},
+      { "qNum": 5, "qText": "How do you use all CPU cores in Node?", "level": "intermediate", "header": "Node.js Runtime", "blocks": [
+        { "kind": "text", "text": "One Node process uses one core for JS. Scale with the cluster module (one worker per core sharing the port) or multiple instances behind a load balancer (PM2/K8s). For CPU-heavy work inside a request, offload to worker_threads so the event loop stays responsive." }
+      ]},
+      { "qNum": 6, "qText": "worker_threads vs cluster vs child_process?", "level": "advanced", "header": "Node.js Runtime", "blocks": [
+        { "kind": "text", "text": "cluster: fork whole Node processes to handle more concurrent requests. child_process: run a separate program (ffmpeg). worker_threads: run JS on another thread in-process, sharing memory via SharedArrayBuffer — best for CPU-bound computation without full-process overhead." }
+      ]},
+      { "qNum": 7, "qText": "How do you handle errors across sync, callback, and promise code?", "level": "intermediate", "header": "Node.js Runtime", "blocks": [
+        { "kind": "text", "text": "Sync/await: try/catch. Callbacks: error-first (err, data). Promises: .catch or await in try/catch. Add process.on('unhandledRejection') and process.on('uncaughtException') to log and gracefully shut down. In Express, forward async errors to next(err)." }
+      ]},
+      { "qNum": 8, "qText": "What causes memory leaks in Node and how do you find them?", "level": "advanced", "header": "Node.js Runtime", "blocks": [
+        { "kind": "text", "text": "Causes: unbounded caches/Maps, forgotten event listeners, closures holding big objects, timers never cleared. Find them by watching heapUsed over time, taking and diffing heap snapshots via --inspect in Chrome DevTools, or clinic.js. Fix with bounded LRU caches, removeListener, and WeakMap for object-keyed metadata." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "Express & API Design",
+    "questions": [
+      { "qNum": 1, "qText": "What is middleware and how does the chain work?", "level": "beginner", "header": "Express & API Design", "blocks": [
+        { "kind": "text", "text": "Middleware are (req, res, next) functions that run in order for a matching route. Each either responds or calls next(); next(err) jumps to error middleware. Used for logging, body parsing, auth, validation, CORS." },
+        { "kind": "code", "lines": ["app.use(express.json());", "app.use((req, res, next) => { req.t = Date.now(); next(); });", "app.get('/health', (req, res) => res.json({ ok: true }));"] }
+      ]},
+      { "qNum": 2, "qText": "How do you write a global error handler?", "level": "intermediate", "header": "Express & API Design", "blocks": [
+        { "kind": "text", "text": "Error middleware has FOUR args (err, req, res, next), registered last. Throw typed errors and map them to a consistent JSON + status here. Wrap async handlers so rejections reach it." },
+        { "kind": "code", "lines": ["const wrap = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);", "app.use((err, req, res, next) => {", "  res.status(err.status || 500).json({ error: err.code || 'INTERNAL', message: err.message });", "});"] }
+      ]},
+      { "qNum": 3, "qText": "PUT vs PATCH vs POST and idempotency?", "level": "beginner", "header": "Express & API Design", "blocks": [
+        { "kind": "text", "text": "POST creates (not idempotent). PUT fully replaces at a known URI (idempotent). PATCH partially updates. For retryable unsafe operations accept an Idempotency-Key header and store key→response so retries don't double-execute." }
+      ]},
+      { "qNum": 4, "qText": "How do you implement JWT auth in Express?", "level": "intermediate", "header": "Express & API Design", "blocks": [
+        { "kind": "text", "text": "On login verify credentials and sign a short-lived access token (+ refresh token). Auth middleware reads the Bearer token, verifies signature/expiry, and sets req.user. Keep it stateless; rotate or store refresh tokens." },
+        { "kind": "code", "lines": ["function auth(req, res, next) {", "  const token = req.headers.authorization?.split(' ')[1];", "  if (!token) return res.status(401).json({ error: 'NO_TOKEN' });", "  try { req.user = jwt.verify(token, process.env.JWT_SECRET); next(); }", "  catch { return res.status(401).json({ error: 'BAD_TOKEN' }); }", "}"] }
+      ]},
+      { "qNum": 5, "qText": "How do you secure an Express API?", "level": "intermediate", "header": "Express & API Design", "blocks": [
+        { "kind": "text", "text": "helmet for headers, cors locked to known origins, express-rate-limit, validate/sanitize input (zod/joi), HTTPS only, httpOnly+secure+sameSite cookies, secrets in env, and follow the OWASP API Top 10 (especially object-level authorization to prevent IDOR)." }
+      ]},
+      { "qNum": 6, "qText": "How do you validate request payloads?", "level": "intermediate", "header": "Express & API Design", "blocks": [
+        { "kind": "text", "text": "Validate at the boundary with a schema (zod/joi), reject with 400 + field errors, and derive your TS type from the schema so validation and types never drift." },
+        { "kind": "code", "lines": ["const Body = z.object({ email: z.string().email(), age: z.number().int().min(0) });", "const parsed = Body.safeParse(req.body);", "if (!parsed.success) return res.status(400).json(parsed.error.flatten());"] }
+      ]},
+      { "qNum": 7, "qText": "How do you design pagination and API versioning?", "level": "intermediate", "header": "Express & API Design", "blocks": [
+        { "kind": "text", "text": "Pagination: offset/limit is simple but unstable/slow deep; cursor (?after=lastId) is stable and fast for feeds. Versioning: URI /v1 is common and cache-friendly. Prioritize backward-compatibility discipline — additive changes need no new version." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "Databases (MongoDB & SQL)",
+    "questions": [
+      { "qNum": 1, "qText": "Embedding vs referencing in MongoDB?", "level": "intermediate", "header": "Databases (MongoDB & SQL)", "blocks": [
+        { "kind": "text", "text": "Embed when data is read together, bounded, and owned by the parent (order + line items). Reference when shared, unbounded, or updated independently (users ↔ posts). Model around access patterns; watch the 16MB document limit and unbounded arrays." }
+      ]},
+      { "qNum": 2, "qText": "Explain the aggregation pipeline with an example.", "level": "intermediate", "header": "Databases (MongoDB & SQL)", "blocks": [
+        { "kind": "text", "text": "Stages transform documents: $match filters, $group aggregates, $project shapes, $lookup joins, $unwind flattens, $sort/$limit. Put $match/$sort early so indexes apply and less data flows downstream." },
+        { "kind": "code", "lines": ["db.orders.aggregate([", "  { $match: { status: 'PAID' } },", "  { $group: { _id: '$userId', total: { $sum: '$amount' } } },", "  { $sort: { total: -1 } }, { $limit: 10 }", "]);"] }
+      ]},
+      { "qNum": 3, "qText": "N+1 query problem and how to fix it in Mongoose?", "level": "intermediate", "header": "Databases (MongoDB & SQL)", "blocks": [
+        { "kind": "text", "text": "Fetching N parents then querying each child fires 1+N queries. Use Mongoose populate() (batches with $in) or aggregation $lookup; in SQL use a JOIN or WHERE id IN (...). Detect by counting queries per request." }
+      ]},
+      { "qNum": 4, "qText": "How do indexes work and when do they hurt?", "level": "intermediate", "header": "Databases (MongoDB & SQL)", "blocks": [
+        { "kind": "text", "text": "B-tree indexes give O(log n) lookups, range scans, and sorted reads. Compound indexes follow leftmost-prefix. They cost write time and storage; low-cardinality fields help little. Confirm usage with explain()/EXPLAIN." }
+      ]},
+      { "qNum": 5, "qText": "Multi-document transactions — do you need them?", "level": "advanced", "header": "Databases (MongoDB & SQL)", "blocks": [
+        { "kind": "text", "text": "MongoDB supports ACID multi-document transactions on replica sets via a session, but prefer a document model where a single atomic update suffices — transactions add latency and contention. Use them for genuine cross-document invariants like transfers." }
+      ]},
+      { "qNum": 6, "qText": "Why use a connection pool?", "level": "intermediate", "header": "Databases (MongoDB & SQL)", "blocks": [
+        { "kind": "text", "text": "Opening a connection per request is expensive; a pool reuses warm connections. Size it modestly (too large exhausts the DB). Classic failure: holding a connection during a slow external call → pool exhaustion → request queue/timeouts." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "System Design (HLD)",
+    "questions": [
+      { "qNum": 1, "qText": "How would you scale a Node.js API for high traffic?", "level": "advanced", "header": "System Design (HLD)", "blocks": [
+        { "kind": "text", "text": "Stateless instances behind a load balancer, Redis for cache and shared session/rate-limit state, a CDN for static assets, DB read replicas, and a queue to offload slow work. Keep the event loop free, add health checks, timeouts, and circuit breakers on downstream calls." },
+        { "kind": "mermaid", "lines": ["flowchart TD", "  C[Clients] --> CDN[CDN]", "  C --> LB[Load Balancer]", "  LB --> A1[Node 1]", "  LB --> A2[Node N]", "  A1 --> R[(Redis)]", "  A1 --> DB[(Primary DB)]", "  DB --> RR[(Read replicas)]", "  A1 --> Q[/Queue/] --> W[Workers]"] }
+      ]},
+      { "qNum": 2, "qText": "How do you implement real-time features?", "level": "intermediate", "header": "System Design (HLD)", "blocks": [
+        { "kind": "text", "text": "WebSockets (ws/socket.io) for bidirectional messaging, or SSE for one-way server→client streams. Across instances, use a Redis pub/sub adapter so a message on one instance reaches clients on another; use sticky sessions or a shared adapter to scale." }
+      ]},
+      { "qNum": 3, "qText": "How do you implement distributed rate limiting?", "level": "advanced", "header": "System Design (HLD)", "blocks": [
+        { "kind": "text", "text": "Keep counters in Redis keyed by user/IP/API-key using token bucket or sliding window, with INCR+EXPIRE or a Lua script for atomicity. Return 429 + Retry-After. Enforce at the gateway for global limits, per-service for hot endpoints." }
+      ]},
+      { "qNum": 4, "qText": "When would you introduce a message queue?", "level": "intermediate", "header": "System Design (HLD)", "blocks": [
+        { "kind": "text", "text": "For async work (emails, image processing, webhooks), to buffer spikes, decouple producers/consumers, and get retries + a dead-letter queue. Respond fast, enqueue, process in a worker, and make consumers idempotent (delivery is at-least-once)." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "DSA & Coding (JavaScript)",
+    "questions": [
+      { "qNum": 1, "qText": "Two Sum — indices of two numbers adding to target.", "level": "beginner", "header": "DSA & Coding (JavaScript)", "blocks": [
+        { "kind": "text", "text": "One pass with a Map of value→index; check for the complement before inserting. O(n) time, O(n) space." },
+        { "kind": "code", "lines": ["function twoSum(nums, target) {", "  const seen = new Map();", "  for (let i = 0; i < nums.length; i++) {", "    const need = target - nums[i];", "    if (seen.has(need)) return [seen.get(need), i];", "    seen.set(nums[i], i);", "  }", "}"] }
+      ]},
+      { "qNum": 2, "qText": "Implement debounce.", "level": "intermediate", "header": "DSA & Coding (JavaScript)", "blocks": [
+        { "kind": "text", "text": "Debounce delays invoking until calls stop for a delay window (search inputs, resize). Throttle instead runs at most once per interval." },
+        { "kind": "code", "lines": ["function debounce(fn, ms) {", "  let t;", "  return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };", "}"] }
+      ]},
+      { "qNum": 3, "qText": "Implement an LRU cache.", "level": "advanced", "header": "DSA & Coding (JavaScript)", "blocks": [
+        { "kind": "text", "text": "A JS Map preserves insertion order: delete+re-insert on access, evict the first key when over capacity. O(1) get/put." },
+        { "kind": "code", "lines": ["class LRU {", "  constructor(cap){ this.cap=cap; this.m=new Map(); }", "  get(k){ if(!this.m.has(k)) return -1; const v=this.m.get(k); this.m.delete(k); this.m.set(k,v); return v; }", "  put(k,v){ if(this.m.has(k)) this.m.delete(k); this.m.set(k,v); if(this.m.size>this.cap) this.m.delete(this.m.keys().next().value); }", "}"] }
+      ]},
+      { "qNum": 4, "qText": "How do you limit concurrency across many async tasks?", "level": "advanced", "header": "DSA & Coding (JavaScript)", "blocks": [
+        { "kind": "text", "text": "Don't Promise.all thousands at once. Run a fixed-size pool of workers pulling from a shared index (or use p-limit) to cap in-flight work while keeping throughput high." },
+        { "kind": "code", "lines": ["async function pool(items, size, worker) {", "  const out = []; let i = 0;", "  await Promise.all(Array.from({ length: size }, async () => {", "    while (i < items.length) { const idx = i++; out[idx] = await worker(items[idx]); }", "  }));", "  return out;", "}"] }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "Scenario / Debugging",
+    "questions": [
+      { "qNum": 1, "qText": "Your Node API becomes unresponsive under load — debug it.", "level": "advanced", "header": "Scenario / Debugging", "blocks": [
+        { "kind": "text", "text": "Likely the event loop is blocked by synchronous work (huge JSON.parse, sync crypto, tight loop, catastrophic regex). Measure event-loop lag (perf_hooks/clinic doctor), find the hot sync call, move it off-thread or stream it. Also check missing downstream timeouts causing pile-ups." }
+      ]},
+      { "qNum": 2, "qText": "You see UnhandledPromiseRejection warnings in production.", "level": "intermediate", "header": "Scenario / Debugging", "blocks": [
+        { "kind": "text", "text": "A rejected promise had no handler. Add error handling at the source, wrap async route handlers so errors reach Express error middleware, and register process.on('unhandledRejection') to log with context and alert. Recent Node crashes by default — treat as bugs." }
+      ]},
+      { "qNum": 3, "qText": "Memory grows until the pod is OOM-killed. Approach?", "level": "advanced", "header": "Scenario / Debugging", "blocks": [
+        { "kind": "text", "text": "Confirm the trend, take two heap snapshots under load and diff them in DevTools to find the growing retained set. Usual culprits: unbounded cache/Map, per-request listeners never removed, closures capturing buffers. Fix with bounded LRU, removeListener, and streaming instead of buffering." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "HR & Behavioral",
+    "questions": [
+      { "qNum": 1, "qText": "Tell me about yourself (Node backend role).", "level": "beginner", "header": "HR & Behavioral", "blocks": [
+        { "kind": "text", "text": "Lead with years + domain, the backend systems you've built (APIs, auth, queues, data), one measurable win (latency/throughput/reliability), and why this Node role. Keep it 45–60 seconds, end pointed at the job." }
+      ]},
+      { "qNum": 2, "qText": "Why Node.js over Java/Python for backend?", "level": "beginner", "header": "HR & Behavioral", "blocks": [
+        { "kind": "text", "text": "Node excels at I/O-bound, real-time, high-concurrency services with one language across the stack and a huge ecosystem. Be honest: it's not ideal for CPU-bound work (offload to workers). Frame it as the right tool, not tribalism." }
+      ]},
+      { "qNum": 3, "qText": "Describe a production incident you handled.", "level": "intermediate", "header": "HR & Behavioral", "blocks": [
+        { "kind": "text", "text": "Use STAR: Situation (impact), Task (ownership), Actions (isolate, mitigate, root-cause), Result (restored + prevention). Have the specific technical root cause ready — interviewers drill in." }
+      ]},
+      { "qNum": 4, "qText": "Do you have questions for us?", "level": "beginner", "header": "HR & Behavioral", "blocks": [
+        { "kind": "text", "text": "Always yes: 'What does the first 90 days look like?', 'How does the team handle on-call/incidents?', 'Biggest technical challenge right now?' Avoid asking only about leave/WFH in round one." }
+      ]}
+    ]
+  }
+]

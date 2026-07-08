@@ -308,6 +308,7 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <TrackSwitcher activeTrack={activeTrack} onSelect={selectTrack} />
+            <Link href="/roles" title="Prepare for a job role" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 bg-indigo-700/40 hover:bg-indigo-700/60 border border-indigo-800 rounded-lg">💼<span className="hidden sm:inline"> Roles</span></Link>
             <Link href="/flashcards" title="Flashcard mode" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 bg-pink-700/40 hover:bg-pink-700/60 border border-pink-800 rounded-lg">🎯<span className="hidden sm:inline"> Quiz</span></Link>
             <Link href="/bookmarks" title="Bookmarks" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 bg-amber-700/30 hover:bg-amber-700/50 border border-amber-800 rounded-lg">★<span className="hidden sm:inline"> {bookmarkCount}</span></Link>
             <button onClick={signOut} className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg"><span className="sm:hidden">↩</span><span className="hidden sm:inline">Sign out</span></button>

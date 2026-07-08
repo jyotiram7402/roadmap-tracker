@@ -7,6 +7,12 @@ export function qaKey(stageId, sectionIdx, qNum) {
   return `${stageId}::${sectionIdx}::${qNum}`;
 }
 
+const LEVEL_DOT = {
+  beginner: { cls: "bg-green-500", title: "Beginner · 1–3 yrs" },
+  intermediate: { cls: "bg-amber-500", title: "Intermediate · 2–4 yrs" },
+  advanced: { cls: "bg-rose-500", title: "Advanced · Senior / SDE-2" },
+};
+
 export default function StudyMaterial({
   stageId,
   sections,
@@ -98,7 +104,12 @@ export default function StudyMaterial({
                       onClick={() => setOpenQ(isOpen ? null : key)}
                       className="flex-1 text-left px-3 py-2.5 hover:bg-slate-800/60 transition flex items-start gap-2 min-w-0"
                     >
-                      <span className="text-blue-400 font-mono text-xs mt-0.5 flex-shrink-0">Q{q.qNum}</span>
+                      <span className="flex items-center gap-1 mt-0.5 flex-shrink-0">
+                        {q.level && LEVEL_DOT[q.level] && (
+                          <span className={`w-2 h-2 rounded-full ${LEVEL_DOT[q.level].cls}`} title={LEVEL_DOT[q.level].title} />
+                        )}
+                        <span className="text-blue-400 font-mono text-xs">Q{q.qNum}</span>
+                      </span>
                       <span className={`flex-1 text-sm font-medium min-w-0 break-words ${known ? "text-slate-400" : "text-slate-100"}`}>
                         {q.qText}
                       </span>

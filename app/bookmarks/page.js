@@ -4,15 +4,31 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { loadTrackData, trackIdForStage, getTrackMeta } from "@/data/tracks";
+import { loadRoleData, isRoleStage, roleIdFromStage, getRoleMeta } from "@/data/roles";
 import MermaidDiagram from "@/components/MermaidDiagram";
 import CodeBlock from "@/components/CodeBlock";
+
+// A bookmark's stage id is either a track stage (learning tracks) or a
+// `role-<id>` pseudo-stage (job-role banks). This returns a stable group key.
+function groupKeyFor(stageId) {
+  return isRoleStage(stageId) ? `role:${roleIdFromStage(stageId)}` : `track:${trackIdForStage(stageId)}`;
+}
+function groupMetaFor(key) {
+  if (key.startsWith("role:")) {
+    const m = getRoleMeta(key.slice(5));
+    return { icon: m.icon, name: `${m.name} (role)` };
+  }
+  const m = getTrackMeta(key.slice(6));
+  return { icon: m.icon, name: m.name };
+}
 
 export default function BookmarksPage() {
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState(null);
   const [bookmarks, setBookmarks] = useState([]);
-  const [studyByTrack, setStudyByTrack] = useState({});
+  const [studyByTrack, setStudyByTrack] = useState({});   // trackId -> study object
+  const [roleById, setRoleById] = useState({});           // roleId  -> sections array
   const [loading, setLoading] = useState(true);
   const [openKey, setOpenKey] = useState(null);
 
@@ -28,16 +44,19 @@ export default function BookmarksPage() {
         .order("created_at", { ascending: false });
       const rows = data || [];
 
-      // lazy-load study material for every track present in bookmarks
-      const trackIds = [...new Set(rows.map((b) => trackIdForStage(b.stage_id)))];
-      const loaded = {};
-      await Promise.all(trackIds.map(async (tid) => {
-        try { loaded[tid] = (await loadTrackData(tid)).study; } catch { loaded[tid] = {}; }
-      }));
+      // lazy-load data for every track AND role present in the bookmarks
+      const trackIds = [...new Set(rows.filter((b) => !isRoleStage(b.stage_id)).map((b) => trackIdForStage(b.stage_id)))];
+      const roleIds = [...new Set(rows.filter((b) => isRoleStage(b.stage_id)).map((b) => roleIdFromStage(b.stage_id)))];
+      const loadedTracks = {}, loadedRoles = {};
+      await Promise.all([
+        ...trackIds.map(async (tid) => { try { loadedTracks[tid] = (await loadTrackData(tid)).study; } catch { loadedTracks[tid] = {}; } }),
+        ...roleIds.map(async (rid) => { try { loadedRoles[rid] = await loadRoleData(rid); } catch { loadedRoles[rid] = []; } }),
+      ]);
 
       if (mounted) {
         setBookmarks(rows);
-        setStudyByTrack(loaded);
+        setStudyByTrack(loadedTracks);
+        setRoleById(loadedRoles);
         setLoading(false);
       }
     })();
@@ -52,16 +71,20 @@ export default function BookmarksPage() {
   const grouped = useMemo(() => {
     const m = new Map();
     for (const b of bookmarks) {
-      const tid = trackIdForStage(b.stage_id);
-      if (!m.has(tid)) m.set(tid, []);
-      m.get(tid).push(b);
+      const key = groupKeyFor(b.stage_id);
+      if (!m.has(key)) m.set(key, []);
+      m.get(key).push(b);
     }
     return m;
   }, [bookmarks]);
 
   function findQuestion(b) {
-    const tid = trackIdForStage(b.stage_id);
-    const study = studyByTrack[tid];
+    if (isRoleStage(b.stage_id)) {
+      const sections = roleById[roleIdFromStage(b.stage_id)] || [];
+      const section = sections[b.section_idx];
+      return section?.questions.find((q) => q.qNum === b.q_num) || null;
+    }
+    const study = studyByTrack[trackIdForStage(b.stage_id)];
     const section = study?.[b.stage_id]?.[b.section_idx];
     return section?.questions.find((q) => q.qNum === b.q_num) || null;
   }
@@ -86,10 +109,10 @@ export default function BookmarksPage() {
             <p className="text-xs mt-1">Star a Q&A on any track to save it here for quick revision.</p>
           </div>
         ) : (
-          Array.from(grouped.entries()).map(([trackId, items]) => {
-            const meta = getTrackMeta(trackId);
+          Array.from(grouped.entries()).map(([groupKey, items]) => {
+            const meta = groupMetaFor(groupKey);
             return (
-              <div key={trackId}>
+              <div key={groupKey}>
                 <h2 className="font-bold text-cyan-400 text-sm sm:text-base mb-2 sticky top-12 bg-slate-900/90 py-2 -mx-4 px-4 backdrop-blur">
                   {meta.icon} {meta.name} <span className="text-slate-500 font-normal">· {items.length}</span>
                 </h2>

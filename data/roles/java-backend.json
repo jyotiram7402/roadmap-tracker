@@ -1,0 +1,2326 @@
+[
+  {
+    "sectionTitle": "Core Java",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "What is the difference between JDK, JRE, and JVM?",
+        "level": "beginner",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "JVM executes bytecode (platform-specific). JRE = JVM + core libraries needed to *run* Java programs. JDK = JRE + development tools (javac, debugger) needed to *write* Java programs. JDK ⊃ JRE ⊃ JVM."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Why is Java platform-independent?",
+        "level": "beginner",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Java compiles source code to bytecode (.class), not machine code. Any machine with a JVM can execute the same bytecode — \"write once, run anywhere.\" The JVM itself is platform-specific; the bytecode is not."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "What are the 4 pillars of OOP? Give a real example of each.",
+        "level": "beginner",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "1. Encapsulation — hiding state behind methods (private fields + getters; e.g., a PaymentRequest class that validates amount in its setter). 2. Inheritance — StripeGateway extends PaymentGateway. 3. Polymorphism — calling gateway.charge() works whether the object is PayPal, Stripe, or AsiaPay. 4. Abstraction — exposing *what* (interface PaymentGateway) and hiding *how* (each implementation)."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Difference between == and .equals()?",
+        "level": "beginner",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "== compares references (same object in memory). .equals() compares logical content (if overridden; default is same as ==). For Strings always use .equals(). Interview trap: Integer a=127, b=127; a==b is true (Integer cache −128..127) but a=128, b=128; a==b is false."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "Why is String immutable in Java?",
+        "level": "beginner",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Security (Strings hold classpaths, credentials), thread-safety without synchronization, safe HashMap keys (hashCode cached), and the String pool — multiple references share one literal, saving memory. Any \"modification\" creates a new object."
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "String vs StringBuilder vs StringBuffer?",
+        "level": "beginner",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "String — immutable. StringBuilder — mutable, not thread-safe, fastest for concatenation in loops. StringBuffer — mutable, synchronized (thread-safe), slower. Rule: use StringBuilder unless multiple threads share the buffer (rare)."
+          }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "What is the contract between equals() and hashCode()?",
+        "level": "beginner",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "If two objects are equal via equals(), they must have the same hashCode(). (Reverse not required — hash collisions are legal.) Breaking this contract breaks HashMap/HashSet: an object stored in a map can become unfindable."
+          }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "How does HashMap work internally?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Array of buckets. put(key, value): compute hashCode(), spread bits, index = hash & (capacity-1). Collisions go into a linked list in that bucket; since Java 8, a list longer than 8 converts to a red-black tree (O(log n)). When size > capacity × load factor (default 0.75), the map resizes (doubles) and rehashes. Get/put are O(1) average."
+          }
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "HashMap vs ConcurrentHashMap vs Hashtable?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "HashMap — not thread-safe; concurrent modification can corrupt it. Hashtable — legacy; synchronizes every method on one lock (slow). ConcurrentHashMap — thread-safe with fine-grained locking: Java 8+ locks only the bucket head node (CAS + synchronized on bin), so reads are lock-free and writes rarely contend. Doesn't allow null keys/values."
+          }
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "ArrayList vs LinkedList — when would you actually use LinkedList?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "ArrayList: O(1) random access, cache-friendly, amortized O(1) append — the default. LinkedList: O(1) insert/remove at ends given the node. Honest answer interviewers like: \"Almost never — ArrayList wins in practice due to CPU cache locality; I'd use ArrayDeque for queue/stack behavior.\""
+          }
+        ]
+      },
+      {
+        "qNum": 11,
+        "qText": "What is fail-fast vs fail-safe iteration?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Fail-fast (ArrayList, HashMap iterators): throw ConcurrentModificationException if the collection is structurally modified during iteration (detected via modCount). Fail-safe (ConcurrentHashMap, CopyOnWriteArrayList): iterate over a snapshot/weakly-consistent view — no exception, but may not reflect latest changes."
+          }
+        ]
+      },
+      {
+        "qNum": 12,
+        "qText": "Checked vs unchecked exceptions?",
+        "level": "beginner",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Checked (extends Exception, e.g., IOException) — compiler forces handling; represent recoverable external failures. Unchecked (extends RuntimeException, e.g., NullPointerException) — programming errors; not forced. Errors (OutOfMemoryError) — JVM-level, don't catch. Modern practice: prefer unchecked + a global exception handler at the API boundary."
+          }
+        ]
+      },
+      {
+        "qNum": 13,
+        "qText": "What happens if an exception is thrown in a finally block?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "It replaces any exception from the try block — the original is lost. That's why cleanup logic in finally should be exception-safe, and why try-with-resources is preferred (it suppresses secondary exceptions and attaches them via getSuppressed())."
+          }
+        ]
+      },
+      {
+        "qNum": 14,
+        "qText": "Explain try-with-resources.",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Any class implementing AutoCloseable declared in try(...) is closed automatically in reverse order, even on exception. Eliminates leaked connections/streams:"
+          },
+          {
+            "kind": "code",
+            "lines": [
+              "try (Connection c = dataSource.getConnection();",
+              "     PreparedStatement ps = c.prepareStatement(sql)) { ... }"
+            ]
+          }
+        ]
+      },
+      {
+        "qNum": 15,
+        "qText": "What are Java 8's main features?",
+        "level": "beginner",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Lambda expressions, Streams API, Optional, default/static methods in interfaces, method references, new Date/Time API (java.time), CompletableFuture, functional interfaces (Function, Predicate, Supplier, Consumer)."
+          }
+        ]
+      },
+      {
+        "qNum": 16,
+        "qText": "What is a functional interface?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "An interface with exactly one abstract method (SAM), so it can be implemented by a lambda. @FunctionalInterface enforces it. Built-ins: Function<T,R>, Predicate<T>, Supplier<T>, Consumer<T>, BiFunction<T,U,R>."
+          }
+        ]
+      },
+      {
+        "qNum": 17,
+        "qText": "Intermediate vs terminal stream operations?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Intermediate (map, filter, sorted, distinct) — lazy, return a Stream, build a pipeline. Terminal (collect, forEach, reduce, count, findFirst) — trigger execution. Nothing runs until a terminal operation is called. A stream can be consumed only once."
+          }
+        ]
+      },
+      {
+        "qNum": 18,
+        "qText": "map() vs flatMap()?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "map transforms each element 1→1 (Stream<Order> → Stream<BigDecimal>). flatMap transforms 1→many and flattens nested streams (Stream<Order> where each order has List<Item> → Stream<Item>). Use flatMap when your mapping function returns a collection/stream/Optional."
+          }
+        ]
+      },
+      {
+        "qNum": 19,
+        "qText": "Write: given List<Employee>, find the average salary per department.",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "code",
+            "lines": [
+              "Map<String, Double> avg = employees.stream()",
+              "    .collect(Collectors.groupingBy(",
+              "        Employee::getDepartment,",
+              "        Collectors.averagingDouble(Employee::getSalary)));"
+            ]
+          },
+          {
+            "kind": "text",
+            "text": "Know the groupingBy family: counting(), mapping(), partitioningBy(), toMap()."
+          }
+        ]
+      },
+      {
+        "qNum": 20,
+        "qText": "What is Optional and how should it (not) be used?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "A container that may or may not hold a value — makes \"absence\" explicit instead of null. Use as a return type; chain with map/filter/orElse/orElseThrow. Anti-patterns: Optional.get() without check, Optional as a field or method parameter, if(opt.isPresent()) opt.get() (just use orElse/map)."
+          }
+        ]
+      },
+      {
+        "qNum": 21,
+        "qText": "Difference between interface and abstract class (post-Java 8)?",
+        "level": "beginner",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Abstract class: constructors, state (instance fields), any access modifiers; single inheritance. Interface: no instance state, default/static methods allowed, multiple inheritance of type. Rule of thumb: interface = capability (\"can charge payments\"); abstract class = shared identity + partial implementation."
+          }
+        ]
+      },
+      {
+        "qNum": 22,
+        "qText": "What are Java Records (Java 16+)?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Immutable data carriers: record PaymentEvent(String id, BigDecimal amount) {} auto-generates constructor, accessors, equals/hashCode/toString. Great for DTOs and Kafka event payloads. Cannot extend classes; fields are final."
+          }
+        ]
+      },
+      {
+        "qNum": 23,
+        "qText": "What is the difference between Comparable and Comparator?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Comparable — natural ordering, implemented *by* the class (compareTo). Comparator — external ordering strategy, many can exist. Modern style: Comparator.comparing(Employee::getSalary).reversed().thenComparing(Employee::getName)."
+          }
+        ]
+      },
+      {
+        "qNum": 24,
+        "qText": "How does garbage collection work at a high level?",
+        "level": "advanced",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "JVM heap is split into Young generation (Eden + two Survivor spaces) and Old generation. New objects go in Eden; minor GCs copy survivors between survivor spaces; long-lived objects get promoted to Old gen, collected by slower major/full GCs. GC roots (stack references, static fields) determine reachability — unreachable objects are reclaimed. Common collectors: G1 (default, region-based, pause-target driven), ZGC/Shenandoah (sub-millisecond pauses, huge heaps)."
+          }
+        ]
+      },
+      {
+        "qNum": 25,
+        "qText": "Stack vs heap memory?",
+        "level": "advanced",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Stack — per thread; stores frames: local variables, references, call state; automatically freed on method return; StackOverflowError on deep recursion. Heap — shared; all objects live here; managed by GC; OutOfMemoryError when exhausted. A local variable Order o sits on the stack; the Order object it points to sits on the heap."
+          }
+        ]
+      },
+      {
+        "qNum": 26,
+        "qText": "What is a memory leak in Java and give real examples.",
+        "level": "advanced",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Objects still *reachable* but never used, so GC can't reclaim them. Classic causes: static collections that only grow (caches without eviction), unclosed resources, listeners never deregistered, ThreadLocal not removed in thread pools, keys in HashMap with mutable/broken hashCode. Detection: heap dump + Eclipse MAT, or monitoring old-gen growth."
+          }
+        ]
+      },
+      {
+        "qNum": 27,
+        "qText": "final vs finally vs finalize?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "final — constant variable / non-overridable method / non-extendable class. finally — block that always runs after try/catch. finalize() — deprecated GC callback; never rely on it (use try-with-resources or Cleaner)."
+          }
+        ]
+      },
+      {
+        "qNum": 28,
+        "qText": "Pass by value or pass by reference?",
+        "level": "beginner",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Java is always pass-by-value. For objects, the *value passed is the reference* — so a method can mutate the object's state but cannot make the caller's variable point to a different object."
+          }
+        ]
+      },
+      {
+        "qNum": 29,
+        "qText": "What is autoboxing and what problems can it cause?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Automatic conversion between primitives and wrappers (int ↔ Integer). Problems: NullPointerException when unboxing null, performance in hot loops (object allocation), the == Integer-cache trap, and accidental use in collections (List<Integer> boxing every element)."
+          }
+        ]
+      },
+      {
+        "qNum": 30,
+        "qText": "What are generics and what is type erasure?",
+        "level": "intermediate",
+        "header": "Core Java",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Generics give compile-time type safety (List<Payment> can't hold a String). Type erasure: generic types are removed at compile time — at runtime a List<Payment> is just a List. Consequences: no new T(), no T.class, no overloading on List<A> vs List<B>, and generic arrays are illegal."
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "Multithreading & Concurrency",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "What are the ways to create a thread?",
+        "level": "beginner",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Extend Thread, implement Runnable (preferred — composition), implement Callable<V> (returns a value, can throw), or best: submit tasks to an ExecutorService — you almost never create raw threads in real backend code."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Explain the thread lifecycle states.",
+        "level": "intermediate",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "NEW → RUNNABLE (running or ready) → BLOCKED (waiting for a monitor lock) / WAITING (wait(), join()) / TIMED_WAITING (sleep, wait(timeout)) → TERMINATED."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "What does synchronized actually do?",
+        "level": "intermediate",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Acquires the object's monitor lock — only one thread can hold it, others block. It also creates a happens-before relationship: changes made inside the block are visible to the next thread acquiring the same lock (solves both atomicity and visibility for the guarded state). Can be applied to methods (locks this / the Class) or blocks (locks any object)."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "What is volatile and when is it enough?",
+        "level": "intermediate",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Guarantees visibility (reads see the latest write; no CPU-cache staleness) and prevents instruction reordering around it — but NOT atomicity. Enough for: status flags (volatile boolean running), safe publication of immutable objects. Not enough for count++ (read-modify-write) — use AtomicInteger or a lock."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "Explain the double-checked locking singleton and why volatile is needed.",
+        "level": "advanced",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "code",
+            "lines": [
+              "class Config {",
+              "  private static volatile Config instance;",
+              "  static Config getInstance() {",
+              "    if (instance == null) {",
+              "      synchronized (Config.class) {",
+              "        if (instance == null) instance = new Config();",
+              "      }",
+              "    }",
+              "    return instance;",
+              "  }",
+              "}"
+            ]
+          },
+          {
+            "kind": "text",
+            "text": "Without volatile, instruction reordering can publish a partially constructed object to another thread. (Also mention: enum singletons or a static holder class are simpler.)"
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "What is a deadlock? How do you prevent it?",
+        "level": "intermediate",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Two+ threads each hold a lock the other needs — permanent standstill. Conditions: mutual exclusion, hold-and-wait, no preemption, circular wait. Prevention: acquire locks in a global consistent order, use tryLock with timeout, keep lock scope small, or design lock-free (queues, atomics). Detection: thread dump (jstack) shows \"Found one Java-level deadlock.\""
+          }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "What is ExecutorService and the main thread pool types?",
+        "level": "intermediate",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Manages a pool of worker threads executing submitted tasks. newFixedThreadPool(n) — bounded workers, unbounded queue; newCachedThreadPool — grows on demand (dangerous under load); newScheduledThreadPool — delayed/periodic tasks. Production answer: build a ThreadPoolExecutor explicitly with a bounded queue and a rejection policy so overload fails fast instead of OOM-ing."
+          }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "How do you size a thread pool?",
+        "level": "advanced",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "CPU-bound: ≈ number of cores. IO-bound: cores × (1 + wait/compute ratio) — many more threads since most sit waiting. Real answer: start with a formula, then load-test and measure; also bound the queue so backpressure propagates."
+          }
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "Explain CompletableFuture with a payment example.",
+        "level": "advanced",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Composable async pipeline:"
+          },
+          {
+            "kind": "code",
+            "lines": [
+              "CompletableFuture<FraudResult> fraud = CompletableFuture.supplyAsync(() -> fraudCheck(req), pool);",
+              "CompletableFuture<Balance> bal = CompletableFuture.supplyAsync(() -> getBalance(req), pool);",
+              "fraud.thenCombine(bal, (f, b) -> authorize(f, b))",
+              "     .thenApply(this::capture)",
+              "     .exceptionally(ex -> refundAndAlert(ex));"
+            ]
+          },
+          {
+            "kind": "text",
+            "text": "Fraud check and balance lookup run in parallel; thenCombine joins them; exceptionally/handle deal with failures. Key methods: supplyAsync, thenApply, thenCompose (flatMap for futures), thenCombine, allOf/anyOf."
+          }
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "thenApply vs thenCompose?",
+        "level": "advanced",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "thenApply maps the result with a plain function (T → U). thenCompose chains a function that itself returns a CompletableFuture (T → CompletableFuture<U>) and flattens it — otherwise you'd get CompletableFuture<CompletableFuture<U>>. Exactly analogous to map vs flatMap."
+          }
+        ]
+      },
+      {
+        "qNum": 11,
+        "qText": "What are virtual threads (Java 21)?",
+        "level": "advanced",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Lightweight threads managed by the JVM, not the OS — millions can exist. A virtual thread unmounts from its carrier OS thread while blocked on IO, so blocking code scales like async code without CompletableFuture complexity. Ideal for request-per-thread servers doing lots of IO (DB calls, HTTP). Caveats: pinning inside synchronized blocks (use ReentrantLock), no benefit for CPU-bound work."
+          }
+        ]
+      },
+      {
+        "qNum": 12,
+        "qText": "What is ThreadLocal and its danger in web apps?",
+        "level": "intermediate",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Gives each thread its own copy of a variable (e.g., current user context, SimpleDateFormat). Danger: in servlet thread pools threads are reused — a ThreadLocal not cleaned via remove() leaks memory and *leaks data across requests* (user A's context seen by user B). Always remove in a finally/filter."
+          }
+        ]
+      },
+      {
+        "qNum": 13,
+        "qText": "wait()/notify() vs sleep()?",
+        "level": "intermediate",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "wait() releases the monitor lock and suspends until notify()/notifyAll() — used for inter-thread coordination, must be inside synchronized. sleep() pauses the thread but keeps any locks. Modern code prefers higher-level tools: BlockingQueue, CountDownLatch, Semaphore, CompletableFuture."
+          }
+        ]
+      },
+      {
+        "qNum": 14,
+        "qText": "What is AtomicInteger / CAS?",
+        "level": "intermediate",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Lock-free atomicity using Compare-And-Swap: the CPU updates the value only if it still equals the expected value, retrying on contention. incrementAndGet() is atomic without a lock. Basis of high-performance counters and ConcurrentHashMap internals. Downside under extreme contention: retry spinning (LongAdder fixes that)."
+          }
+        ]
+      },
+      {
+        "qNum": 15,
+        "qText": "How would you make a counter shared by many threads correct AND fast?",
+        "level": "advanced",
+        "header": "Multithreading & Concurrency",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Options in increasing sophistication: synchronized (correct, contended), AtomicLong (lock-free CAS), LongAdder (best under heavy contention — stripes the counter across cells and sums on read). Explain the trade-off — this shows depth."
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "JVM Internals",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "What are the JVM memory areas?",
+        "level": "intermediate",
+        "header": "JVM Internals",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Heap (objects; young + old gen), Stack (per-thread frames), Metaspace (class metadata; replaced PermGen in Java 8), Code cache (JIT-compiled code), Native memory. Know which OutOfMemoryError comes from where."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "What is JIT compilation?",
+        "level": "intermediate",
+        "header": "JVM Internals",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "The JVM starts by interpreting bytecode, profiles hot methods, and the Just-In-Time compiler compiles them to optimized native code at runtime (inlining, escape analysis, loop unrolling). This is why Java \"warms up\" — and why microbenchmarks without warmup lie."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "How would you troubleshoot high memory usage in a Java service?",
+        "level": "advanced",
+        "header": "JVM Internals",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "1) Confirm with metrics (heap usage trend, GC frequency/pause from GC logs). 2) Take a heap dump (jmap -dump or on OOM via -XX:+HeapDumpOnOutOfMemoryError). 3) Analyze in Eclipse MAT — look at dominator tree for the biggest retained objects. 4) Common culprits: unbounded caches, huge query results, ThreadLocals. 5) Fix, then verify old-gen stabilizes."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "How would you troubleshoot a Java service with 100% CPU?",
+        "level": "advanced",
+        "header": "JVM Internals",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "top -H to find hot thread IDs → convert to hex → match in a thread dump (jstack) to find the exact stack trace. Usual suspects: infinite loops, regex catastrophic backtracking, excessive GC (check GC logs — GC threads burning CPU means memory problem, not CPU problem), busy-wait loops."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "What is a happens-before relationship?",
+        "level": "advanced",
+        "header": "JVM Internals",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "The Java Memory Model's rule for visibility: if action A happens-before B, A's writes are visible to B. Established by: program order in one thread, unlock → subsequent lock of same monitor, volatile write → subsequent read, thread start/join. Without a happens-before edge, threads may see stale values — the root cause of most \"impossible\" concurrency bugs."
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "What JVM flags have you actually used?",
+        "level": "intermediate",
+        "header": "JVM Internals",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Good honest set: -Xms/-Xmx (heap size — set equal in containers), -XX:+HeapDumpOnOutOfMemoryError, -XX:MaxRAMPercentage (container-aware sizing), GC logging (-Xlog:gc*). Mentioning container awareness (JVM respecting cgroup limits) is a strong modern signal."
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "Spring & Spring Boot",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "What is Inversion of Control and Dependency Injection?",
+        "level": "beginner",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "IoC: the framework, not your code, controls object creation and wiring. DI is the mechanism — dependencies are *given* to a class (constructor/setter/field) instead of being constructed inside it. Benefits: loose coupling, easy testing (inject mocks), single place for configuration. Prefer constructor injection (immutable, required deps explicit, test-friendly)."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "@Component vs @Service vs @Repository vs @Controller?",
+        "level": "beginner",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "All create beans via component scanning; the difference is intent + extras. @Repository additionally translates persistence exceptions into Spring's DataAccessException hierarchy; @Controller/@RestController participate in MVC; @Service is semantic. Knowing @Repository's exception translation is the differentiator answer."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "@Component vs @Bean?",
+        "level": "intermediate",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "@Component — class-level, discovered by scanning, Spring instantiates it. @Bean — method-level inside a @Configuration class; you write the creation logic. Use @Bean for third-party classes you can't annotate (e.g., configuring a Stripe client, ObjectMapper, DataSource)."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "What are bean scopes?",
+        "level": "intermediate",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "singleton (default — one instance per container), prototype (new instance per injection/request to the container), plus web scopes: request, session, application. Trap question: injecting a prototype into a singleton gives you ONE prototype instance forever — fix with ObjectProvider or @Lookup."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "Explain the Spring bean lifecycle.",
+        "level": "intermediate",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Instantiate → populate dependencies → Aware callbacks → BeanPostProcessor before-init → @PostConstruct / afterPropertiesSet → BeanPostProcessor after-init (this is where AOP proxies are created) → bean ready → @PreDestroy on shutdown. Knowing proxies are applied in post-processing explains many @Transactional mysteries."
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "What does @SpringBootApplication do?",
+        "level": "beginner",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Combines three: @Configuration (bean definitions), @EnableAutoConfiguration (configure beans based on classpath — see Q58), @ComponentScan (scan current package and below). This is why your main class location matters."
+          }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "How does Spring Boot auto-configuration work?",
+        "level": "intermediate",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Spring Boot ships many @Configuration classes guarded by @Conditional annotations (@ConditionalOnClass, @ConditionalOnMissingBean, @ConditionalOnProperty). At startup it evaluates them: H2 on classpath + no DataSource bean → auto-configure an embedded DataSource. Your own beans win because of @ConditionalOnMissingBean. Debug with --debug flag (conditions evaluation report)."
+          }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "Explain how @Transactional works internally. (Very common!)",
+        "level": "advanced",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Spring wraps your bean in a proxy (JDK dynamic proxy or CGLIB). The proxy intercepts the method call: begins/joins a transaction via the TransactionManager, binds the Connection to the thread, invokes your method, then commits on success or rolls back on RuntimeException (by default). Key consequences:"
+          },
+          {
+            "kind": "text",
+            "text": "• Self-invocation doesn't work: this.otherTransactionalMethod() bypasses the proxy — no transaction. Fix: move to another bean or inject self."
+          },
+          {
+            "kind": "text",
+            "text": "• Only works on public methods (proxy limitation)."
+          },
+          {
+            "kind": "text",
+            "text": "• Default rollback is only for unchecked exceptions; checked exceptions commit unless rollbackFor is set."
+          },
+          {
+            "kind": "text",
+            "text": "• The transaction spans the method — keep it short; don't call external HTTP APIs inside it."
+          }
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "Explain transaction propagation levels.",
+        "level": "advanced",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "REQUIRED (default — join existing or create new), REQUIRES_NEW (suspend current, always new — e.g., writing an audit log that must survive rollback of the main transaction), NESTED (savepoint within current), SUPPORTS/NOT_SUPPORTED/NEVER/MANDATORY. Real scenario: payment attempt logging uses REQUIRES_NEW so the log commits even if the payment transaction rolls back."
+          }
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "How does a request flow through Spring MVC?",
+        "level": "intermediate",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "DispatcherServlet receives the request → HandlerMapping finds the controller method → HandlerAdapter invokes it (argument resolvers bind @RequestBody, @PathVariable) → return value → HttpMessageConverter (Jackson) serializes to JSON → response. Filters run before the DispatcherServlet; interceptors run around the handler."
+          }
+        ]
+      },
+      {
+        "qNum": 11,
+        "qText": "How do you handle exceptions globally in a REST API?",
+        "level": "intermediate",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "@RestControllerAdvice + @ExceptionHandler methods mapping exceptions to a consistent error body (code, message, traceId) and proper HTTP status. Also: @Valid + MethodArgumentNotValidException → 400 with field errors. Never leak stack traces to clients."
+          }
+        ]
+      },
+      {
+        "qNum": 12,
+        "qText": "application.yml profiles — how do you manage environments?",
+        "level": "intermediate",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "application.yml (defaults) + application-prod.yml overrides, activated via spring.profiles.active. Secrets never in files — environment variables or a secret manager. @ConfigurationProperties binds config to type-safe beans (preferred over scattered @Value)."
+          }
+        ]
+      },
+      {
+        "qNum": 13,
+        "qText": "How does Spring Security's filter chain work with JWT?",
+        "level": "advanced",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Every request passes a chain of security filters. For JWT: a custom OncePerRequestFilter extracts the Bearer token → validates signature/expiry → builds an Authentication object → stores it in SecurityContextHolder (thread-local) → downstream authorization checks (@PreAuthorize, route rules) read it. Stateless: SessionCreationPolicy.STATELESS, no server session. Login endpoint issues the token (short-lived access + refresh token)."
+          }
+        ]
+      },
+      {
+        "qNum": 14,
+        "qText": "JWT structure and validation?",
+        "level": "intermediate",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "header.payload.signature, each base64url. Header: algorithm; payload: claims (sub, exp, roles); signature: HMAC or RSA over header+payload. Server validates signature + expiry — no DB lookup needed (that's the point). Trade-off: can't revoke easily → keep access tokens short (5–15 min) + refresh tokens, or maintain a denylist."
+          }
+        ]
+      },
+      {
+        "qNum": 15,
+        "qText": "OAuth2 vs JWT — clear the confusion.",
+        "level": "intermediate",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "OAuth2 is an authorization framework/protocol (roles: resource owner, client, auth server, resource server; flows like authorization code). JWT is a token format. OAuth2 often *uses* JWTs as access tokens, but they're different layers. Bonus: OIDC = identity layer on top of OAuth2."
+          }
+        ]
+      },
+      {
+        "qNum": 16,
+        "qText": "How do you test a Spring Boot application?",
+        "level": "intermediate",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Unit: plain JUnit 5 + Mockito, no Spring context (fast). Slice tests: @WebMvcTest (controllers with MockMvc), @DataJpaTest (repositories with embedded/testcontainer DB). Full: @SpringBootTest for integration. Gold-standard mention: Testcontainers for real MySQL/Kafka in integration tests."
+          }
+        ]
+      },
+      {
+        "qNum": 17,
+        "qText": "What is Spring Data JPA and what does a repository interface do?",
+        "level": "beginner",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "You declare interface PaymentRepo extends JpaRepository<Payment, Long> — Spring generates the implementation at runtime. Query derivation from method names (findByStatusAndCreatedAtAfter), @Query for JPQL/native, pagination via Pageable, projections for partial selects."
+          }
+        ]
+      },
+      {
+        "qNum": 18,
+        "qText": "Common @Transactional + JPA pitfalls you've seen or know?",
+        "level": "advanced",
+        "header": "Spring & Spring Boot",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "1) LazyInitializationException — accessing a lazy collection after the transaction/session closed. 2) Self-invocation (Q59). 3) Long transactions holding connections during external API calls → pool exhaustion. 4) readOnly=true missed on queries (skips dirty checking, big win). 5) Catching the exception inside the method so rollback never triggers."
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "Hibernate / JPA",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "What are the entity states in JPA?",
+        "level": "beginner",
+        "header": "Hibernate / JPA",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Transient (new, not tracked) → Managed/Persistent (attached to persistence context; changes auto-flushed via dirty checking) → Detached (context closed; changes not tracked) → Removed. Most confusion (LazyInitializationException, lost updates) comes from detached entities."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Lazy vs Eager fetching?",
+        "level": "intermediate",
+        "header": "Hibernate / JPA",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "LAZY: association loaded only when accessed (proxy). EAGER: loaded with the owner — always, whether needed or not. Default: @ManyToOne EAGER (change it!), @OneToMany LAZY. Rule: everything LAZY, fetch what you need per-query with join fetch or EntityGraph."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "What is the N+1 problem and how do you fix it? (Guaranteed question)",
+        "level": "advanced",
+        "header": "Hibernate / JPA",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Fetching N orders, then lazily accessing each order's customer fires 1 + N queries. Fixes: JOIN FETCH in JPQL, @EntityGraph, batch fetching (default_batch_fetch_size), or a DTO projection query. Detection: enable SQL logging / use datasource-proxy in tests and count queries."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "First-level vs second-level cache?",
+        "level": "intermediate",
+        "header": "Hibernate / JPA",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "L1: the persistence context itself — per transaction/session, always on; same entity fetched twice in one transaction = one query. L2: shared across sessions (Ehcache/Redis via provider), opt-in per entity; helps read-heavy reference data; invalidation complexity means use deliberately."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "Optimistic vs pessimistic locking — with a payment example.",
+        "level": "advanced",
+        "header": "Hibernate / JPA",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Optimistic: @Version column; update fails (OptimisticLockException) if the row changed since read — great for low-contention, retry on failure. Pessimistic: SELECT ... FOR UPDATE (PESSIMISTIC_WRITE) blocks other writers — for hot rows like an account balance during a debit. Payment answer: wallet debit uses pessimistic or atomic UPDATE with balance check; profile edits use optimistic."
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "What does dirty checking mean?",
+        "level": "intermediate",
+        "header": "Hibernate / JPA",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Hibernate snapshots managed entities on load; on flush/commit it compares current state to the snapshot and generates UPDATEs for changed fields automatically — you rarely call save() for updates on managed entities inside a transaction."
+          }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "save() vs saveAndFlush()? flush vs commit?",
+        "level": "intermediate",
+        "header": "Hibernate / JPA",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "flush = push pending SQL to the DB (still uncommitted, visible only in this transaction). commit = flush + make permanent. saveAndFlush forces immediate SQL — useful before native queries or to surface constraint violations early."
+          }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "How do you handle DB schema changes safely?",
+        "level": "intermediate",
+        "header": "Hibernate / JPA",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Never ddl-auto=update in production. Use Flyway/Liquibase versioned migrations in the app's deployment; backward-compatible migrations for zero-downtime (add column nullable → deploy code → backfill → add constraint)."
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "REST API Design",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "What makes an API RESTful?",
+        "level": "beginner",
+        "header": "REST API Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Resources identified by URIs, manipulated via standard methods (GET/POST/PUT/PATCH/DELETE), stateless requests, proper status codes, representations (JSON). Practical over academic: consistent nouns (/payments/{id}), no verbs in paths, correct semantics per method."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "PUT vs PATCH vs POST?",
+        "level": "beginner",
+        "header": "REST API Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "POST: create (server assigns ID) or non-idempotent actions. PUT: full replace at a known URI — idempotent. PATCH: partial update. Idempotency is the interview keyword: PUT twice = same result; POST twice = possibly two resources."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Which HTTP status codes do you actually use?",
+        "level": "intermediate",
+        "header": "REST API Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "200 OK, 201 Created (+Location header), 204 No Content, 400 validation error, 401 unauthenticated, 403 unauthorized, 404 not found, 409 conflict (duplicate/version clash), 422 semantic error, 429 rate limited, 500 server error, 503 unavailable. Bonus: 402 exists but is rarely used even in payments."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "How do you make a payment API idempotent? (Your specialty — own this one)",
+        "level": "advanced",
+        "header": "REST API Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Client sends an Idempotency-Key header. Server stores key → response mapping (Redis/DB with unique constraint) before processing; a retry with the same key returns the stored response instead of charging twice. Critical for payments because network timeouts make clients retry. Also: DB unique constraint on (merchant_id, client_reference) as the last line of defense."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "How do you version an API?",
+        "level": "intermediate",
+        "header": "REST API Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "URI versioning /v1/payments (most common, cache-friendly), header versioning (cleaner URIs), or media-type. More important than the mechanism: backward compatibility discipline — additive changes don't need a version; breaking changes do, with a deprecation window."
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "How do you design pagination?",
+        "level": "intermediate",
+        "header": "REST API Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Offset/limit (?page=2&size=20) — simple but slow on deep pages and unstable under inserts. Cursor/keyset (?after=<lastId>) — stable and fast for feeds/large data. Return metadata (next cursor / total where cheap)."
+          }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "How do you secure a public REST API?",
+        "level": "intermediate",
+        "header": "REST API Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "HTTPS only; authentication (JWT/OAuth2); authorization per resource (object-level checks — IDOR is the classic hole); input validation; rate limiting; no sensitive data in URLs/logs; CORS configured deliberately; security headers. Mention OWASP API Top 10 for credibility."
+          }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "How do webhooks work and how do you process them reliably? (Your daily job)",
+        "level": "intermediate",
+        "header": "REST API Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Provider POSTs events to your endpoint. Reliability rules I follow: verify the signature (e.g., Stripe-Signature HMAC), respond 200 fast and process async (queue), be idempotent (event IDs are redelivered), handle out-of-order events, and reconcile periodically with the provider's API in case a webhook was missed."
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "Microservices & Distributed Systems",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "Monolith vs microservices — honest trade-offs?",
+        "level": "beginner",
+        "header": "Microservices & Distributed Systems",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Microservices: independent deploys/scaling, tech freedom, fault isolation — at the cost of network complexity, distributed transactions, observability burden, and operational overhead. Correct 2-YOE answer: \"Start modular-monolith; split when team size and scaling pain justify it.\" That maturity impresses more than microservice cheerleading."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "How do services communicate?",
+        "level": "intermediate",
+        "header": "Microservices & Distributed Systems",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Sync: REST (simple, coupled to availability), gRPC (fast, contract-first). Async: message brokers (Kafka/RabbitMQ) — decoupled, resilient, eventual consistency. Rule: commands that need an immediate answer → sync; events/facts (\"PaymentCompleted\") → async."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "What is an API Gateway and what does it handle?",
+        "level": "intermediate",
+        "header": "Microservices & Distributed Systems",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Single entry point in front of services: routing, authentication, rate limiting, TLS termination, request aggregation, canary routing. Examples: Spring Cloud Gateway, Kong, AWS API Gateway. Prevents clients from knowing internal topology."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "What is service discovery?",
+        "level": "intermediate",
+        "header": "Microservices & Distributed Systems",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Services register their location (Eureka/Consul/Kubernetes DNS); callers resolve by name instead of hard-coded hosts, enabling scaling and failover. In Kubernetes, the platform's Service + DNS largely replaces Eureka-style discovery."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "Explain the Circuit Breaker pattern.",
+        "level": "advanced",
+        "header": "Microservices & Distributed Systems",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "When a downstream keeps failing, stop calling it: CLOSED (normal) → failures exceed threshold → OPEN (fail fast, no calls) → after cool-down → HALF-OPEN (probe requests) → success closes it. Prevents cascade failures and thread-pool exhaustion. Tool: Resilience4j (@CircuitBreaker with fallback), combined with timeouts, retries with backoff + jitter, and bulkheads."
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "How do you handle a transaction spanning multiple services? (Saga)",
+        "level": "advanced",
+        "header": "Microservices & Distributed Systems",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "No distributed ACID — use a Saga: sequence of local transactions with compensating actions for rollback. Choreography: services react to each other's events (simple, but flow is implicit). Orchestration: a coordinator commands each step (explicit, easier to reason about). Payment example: reserve inventory → charge card → (charge fails) → compensate: release inventory."
+          }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "What is eventual consistency and where is it acceptable?",
+        "level": "advanced",
+        "header": "Microservices & Distributed Systems",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Replicas/services converge to the same state *eventually*, not instantly. Acceptable: order history, notifications, analytics, search indexes. Not acceptable without care: account balance debits, inventory for the last item. Complement with idempotency + reconciliation jobs."
+          }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "What is the outbox pattern? (Strong senior signal)",
+        "level": "advanced",
+        "header": "Microservices & Distributed Systems",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Problem: \"save to DB + publish to Kafka\" can't be atomic — crash between them loses/duplicates events. Solution: write the event to an outbox table in the same DB transaction as the business change; a separate publisher (poller or Debezium CDC) reliably ships outbox rows to Kafka. Guarantees at-least-once publication consistent with the DB."
+          }
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "CAP theorem in one minute.",
+        "level": "intermediate",
+        "header": "Microservices & Distributed Systems",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Under a network Partition you must choose: Consistency (reject requests rather than serve stale data) or Availability (serve possibly-stale data). Partitions are a given in distributed systems, so the real choice is C vs A per use case — banking leans C, product catalogs lean A."
+          }
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "How do you implement rate limiting?",
+        "level": "intermediate",
+        "header": "Microservices & Distributed Systems",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Algorithms: token bucket (bursty-friendly, most common), sliding window log/counter. Distributed: counters in Redis (INCR + EXPIRE, or Lua for atomicity) keyed by user/API-key. Return 429 + Retry-After. Where: API gateway for global limits, per-service for hot endpoints."
+          }
+        ]
+      },
+      {
+        "qNum": 11,
+        "qText": "How do you implement a distributed lock?",
+        "level": "advanced",
+        "header": "Microservices & Distributed Systems",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Redis: SET lockKey uniqueId NX PX 30000; release with a Lua script that checks uniqueId (never delete someone else's lock); handle expiry vs long tasks (watchdog/fencing tokens). Alternatives: DB row lock (simple, fine at low scale), ZooKeeper/etcd for stronger guarantees. Always ask: \"can I redesign to avoid the lock?\" — e.g., idempotency or partitioned ownership."
+          }
+        ]
+      },
+      {
+        "qNum": 12,
+        "qText": "How do you observe/debug microservices in production?",
+        "level": "intermediate",
+        "header": "Microservices & Distributed Systems",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Three pillars: logs (structured JSON, centralized — ELK), metrics (Micrometer → Prometheus, dashboards + alerts in Grafana), traces (OpenTelemetry — one traceId across services; find WHERE the latency is). Correlation ID propagated through every hop and printed in every log line."
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "Apache Kafka",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "Explain Kafka's architecture in simple terms.",
+        "level": "beginner",
+        "header": "Apache Kafka",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Producers write records to topics; topics are split into partitions (the unit of parallelism and ordering); partitions are replicated across brokers (one leader + followers); consumer groups divide partitions among consumers; offsets track each group's read position. Kafka persists everything to disk with a retention period — it's a distributed commit log, not a queue that deletes on read."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "How does Kafka guarantee ordering? (The classic)",
+        "level": "intermediate",
+        "header": "Apache Kafka",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Ordering is guaranteed only within a partition. Records with the same key (e.g., orderId, userId) hash to the same partition, so all events for one order arrive in order. There is NO global ordering across partitions — designing keys correctly IS designing your ordering."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "What happens when a consumer group rebalances?",
+        "level": "intermediate",
+        "header": "Apache Kafka",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "When consumers join/leave/crash, partitions are reassigned across the group. During rebalance, consumption pauses; after it, a consumer may re-read from the last committed offset → duplicates possible. Mitigations: cooperative (incremental) rebalancing, sane max.poll.interval.ms, and idempotent processing."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "At-most-once vs at-least-once vs exactly-once?",
+        "level": "advanced",
+        "header": "Apache Kafka",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Depends on WHEN you commit offsets. Commit before processing = at-most-once (may lose). Commit after = at-least-once (may duplicate — the sane default; make handlers idempotent). Exactly-once: idempotent producer (enable.idempotence) + transactions (transactional.id, consume-transform-produce atomically) — works within Kafka; once you touch an external DB, you're back to idempotency/outbox patterns."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "What do acks=0/1/all mean for a producer?",
+        "level": "intermediate",
+        "header": "Apache Kafka",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "0: fire-and-forget (fastest, can lose). 1: leader wrote it (lost if leader dies before replication). all: leader + all in-sync replicas (with min.insync.replicas=2, survives a broker loss). Payments: acks=all + idempotent producer, no debate."
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "How do you handle a poison message / repeated failure?",
+        "level": "intermediate",
+        "header": "Apache Kafka",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Retry with backoff a bounded number of times (retry topics), then route to a Dead Letter Queue/topic with error metadata; alert on DLQ depth; build a replay tool. Never let one bad message block the partition forever."
+          }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "Kafka vs RabbitMQ?",
+        "level": "intermediate",
+        "header": "Apache Kafka",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Kafka: distributed log, replayable, huge throughput, consumer-controlled offsets, great for event streaming and multiple independent consumers. RabbitMQ: smart broker, per-message routing, low latency, delete-on-ack — great for task queues and complex routing. Answer with a use case, not a winner."
+          }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "How do you choose the number of partitions?",
+        "level": "advanced",
+        "header": "Apache Kafka",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Partitions = max parallelism for a consumer group. Estimate: target throughput ÷ per-consumer throughput, plus headroom. Too many: more open files, longer rebalances, leader election load. Note: you can add partitions later but key→partition mapping changes (breaks ordering assumptions) — plan up front."
+          }
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "How did/would you use Kafka in your Foodies project? (They WILL ask about your project)",
+        "level": "intermediate",
+        "header": "Apache Kafka",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Order events published by merchant-service (key = orderId → ordering per order); driver-service and notification-service consume in separate consumer groups (each gets all events, scaled by partitions within the group); at-least-once + idempotent notification handling to avoid duplicate SMS on rebalance. Be ready to draw this."
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "Redis & Caching",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "Redis data structures and one real use each?",
+        "level": "beginner",
+        "header": "Redis & Caching",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "String (cache JSON, counters), Hash (object fields — user session), List (recent activity feed), Set (unique visitors, tags), Sorted Set (leaderboards, rate-limit sliding windows), plus TTL on any key. Single-threaded event loop = atomic single commands."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Cache-aside vs read-through vs write-through vs write-behind?",
+        "level": "intermediate",
+        "header": "Redis & Caching",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Cache-aside (most common — app checks cache → miss → load DB → populate cache), read-through (cache loads on miss itself), write-through (write cache+DB together — consistent, slower writes), write-behind (write cache, async to DB — fast, risk of loss). Say cache-aside with TTL is your default."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "How do you keep cache and DB consistent?",
+        "level": "advanced",
+        "header": "Redis & Caching",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Perfect consistency is impossible with two systems; strategies: short TTLs (bounded staleness), delete-on-write (invalidate the key after DB commit — deletion beats update to avoid races), event-driven invalidation (DB change events), versioned keys. Also know the classic race: read-miss loads stale data after a concurrent update — mitigated by delete + TTL."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Cache stampede / avalanche / penetration — what and how to prevent?",
+        "level": "advanced",
+        "header": "Redis & Caching",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Stampede: hot key expires, thousands of requests hit DB simultaneously → per-key mutex (single flight), stale-while-revalidate, jittered TTLs. Avalanche: many keys expire together → randomize TTLs. Penetration: queries for keys that never exist bypass cache → cache negative results briefly, or Bloom filter."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "Redis eviction policies?",
+        "level": "intermediate",
+        "header": "Redis & Caching",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "When maxmemory hit: noeviction (errors on write), allkeys-lru (evict least-recently-used anywhere — common for pure cache), volatile-lru/ttl (only keys with TTL), allkeys-lfu (frequency-based). Choose based on whether Redis holds only cache or also durable-ish data."
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "Is Redis single-threaded? Implications?",
+        "level": "intermediate",
+        "header": "Redis & Caching",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Command execution is single-threaded (I/O threads exist in Redis 6+ for network). Implications: commands are atomic; one slow command (KEYS, huge SORT) blocks everyone — never run KEYS in prod (use SCAN); use pipelines to cut round trips."
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "SQL & Databases",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "Explain ACID with a payment example.",
+        "level": "beginner",
+        "header": "SQL & Databases",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Atomicity: debit + credit both happen or neither. Consistency: constraints hold (balance ≥ 0). Isolation: concurrent transfers don't interleave incorrectly. Durability: once committed, survives crash. Money transfer is THE canonical example — use it, it's your domain."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Explain isolation levels and their anomalies. (Very frequent)",
+        "level": "advanced",
+        "header": "SQL & Databases",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "READ UNCOMMITTED: dirty reads possible. READ COMMITTED: no dirty reads; non-repeatable reads possible (same row differs within one txn). REPEATABLE READ (MySQL default): stable rows; phantom rows possible (MySQL largely prevents via gap locks). SERIALIZABLE: full isolation, lowest concurrency. Real answer: READ COMMITTED / RR + explicit locking or optimistic versioning where it matters."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "How do indexes work and when do they hurt?",
+        "level": "intermediate",
+        "header": "SQL & Databases",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "B-tree: sorted structure enabling O(log n) lookups and range scans. Composite index (a,b,c) serves queries filtering a, a+b, a+b+c — leftmost prefix rule. They hurt: every write updates every index; low-cardinality columns (status with 3 values) help little; functions on the column (WHERE YEAR(created)) kill index use."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "A query is slow — walk me through your process.",
+        "level": "intermediate",
+        "header": "SQL & Databases",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "1) EXPLAIN the query — full scan? filesort? rows examined vs returned. 2) Add/fix the index for the WHERE + ORDER BY. 3) Select only needed columns; kill N+1 at the app layer. 4) Check data volume — pagination, archiving. 5) Only then: caching or denormalization. Mention MySQL slow-query log as the detection source."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "What is connection pooling and why HikariCP?",
+        "level": "intermediate",
+        "header": "SQL & Databases",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Opening DB connections is expensive; a pool keeps warm connections reused across requests. HikariCP = Spring Boot default, fastest, sane defaults. Know the failure mode: pool exhaustion (long transactions holding connections during external calls) → requests queue → timeouts. Pool size: small is beautiful (≈ cores × 2, then measure)."
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "SQL vs NoSQL — how do you choose?",
+        "level": "intermediate",
+        "header": "SQL & Databases",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Relational: transactions, joins, structured data, strong consistency (payments, orders). Document (MongoDB): flexible schema, aggregate-oriented reads (catalogs, profiles). Key-value (Redis): caching, sessions. Honest answer: \"default to relational; adopt NoSQL for a specific access pattern, not fashion.\""
+          }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "How would you avoid double-spending on a wallet with concurrent requests?",
+        "level": "intermediate",
+        "header": "SQL & Databases",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Atomic conditional update: UPDATE wallet SET balance = balance - :amt WHERE user_id = :id AND balance >= :amt — check affected rows. Or SELECT ... FOR UPDATE then update. Plus idempotency key so a retried request doesn't debit twice. This combines Q74 + Q81 — a favorite payment-company question."
+          }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "INNER vs LEFT JOIN; find employees with no orders.",
+        "level": "beginner",
+        "header": "SQL & Databases",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "INNER: only matching rows. LEFT: all left rows + NULLs for missing right. Query: SELECT e.* FROM employee e LEFT JOIN orders o ON o.emp_id = e.id WHERE o.id IS NULL. Also know GROUP BY + HAVING, and the classic \"second highest salary\": SELECT MAX(salary) FROM emp WHERE salary < (SELECT MAX(salary) FROM emp) or DENSE_RANK."
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "Docker, Kubernetes, AWS, CI/CD",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "Container vs VM? What problem does Docker solve?",
+        "level": "beginner",
+        "header": "Docker, Kubernetes, AWS, CI/CD",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "VM virtualizes hardware (guest OS each — heavy); container shares host kernel, isolates processes via namespaces/cgroups — MBs, starts in ms. Docker solves \"works on my machine\": image = code + runtime + deps, identical everywhere. You LIVED this: your Dev Container project is your proof — tell that story."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Write a good Dockerfile for a Spring Boot app.",
+        "level": "intermediate",
+        "header": "Docker, Kubernetes, AWS, CI/CD",
+        "blocks": [
+          {
+            "kind": "code",
+            "lines": [
+              "FROM eclipse-temurin:17-jre-alpine",
+              "WORKDIR /app",
+              "COPY target/app.jar app.jar",
+              "EXPOSE 8080",
+              "ENTRYPOINT [\"java\",\"-XX:MaxRAMPercentage=75\",\"-jar\",\"app.jar\"]"
+            ]
+          },
+          {
+            "kind": "text",
+            "text": "Talking points: multi-stage build (Maven stage → slim JRE stage), layer caching (dependencies before source), non-root user, MaxRAMPercentage for container-aware memory."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Core Kubernetes objects?",
+        "level": "intermediate",
+        "header": "Docker, Kubernetes, AWS, CI/CD",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pod (smallest unit, 1+ containers) → Deployment (replicas + rolling updates) → Service (stable virtual IP/load-balancing over pods) → Ingress (HTTP routing in) → ConfigMap/Secret (config) → HPA (autoscaling). Liveness probe = restart if dead; readiness probe = remove from traffic if not ready."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "How does a rolling deployment achieve zero downtime?",
+        "level": "intermediate",
+        "header": "Docker, Kubernetes, AWS, CI/CD",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Deployment gradually replaces pods: start new pod → readiness probe passes → receives traffic → old pod terminated (after grace period, honoring in-flight requests). Requires: readiness probes, graceful shutdown in the app, and backward-compatible DB migrations."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "Which AWS services do you know for a backend deployment?",
+        "level": "beginner",
+        "header": "Docker, Kubernetes, AWS, CI/CD",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "EC2 (VMs), S3 (object storage — you used it in MusicON), RDS (managed MySQL/Postgres), ElastiCache (managed Redis), SQS/SNS (queues/pubsub), Lambda (serverless), ECS/EKS (containers), CloudWatch (metrics/logs), IAM (permissions — least privilege), ALB (load balancer), Secrets Manager."
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "Describe a CI/CD pipeline you'd build for a Spring Boot service.",
+        "level": "intermediate",
+        "header": "Docker, Kubernetes, AWS, CI/CD",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Push → CI: compile, unit tests, static analysis, build Docker image, tag with commit SHA, push to registry → CD: deploy to staging, run integration/smoke tests, manual or automatic promotion to prod via rolling deploy → monitor error rate/latency, auto-rollback on regression. Tools you know: Jenkins, Azure DevOps, GitHub Actions."
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "Coding Questions",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "Reverse a string / check palindrome (warm-up).",
+        "level": "beginner",
+        "header": "Coding Questions",
+        "blocks": [
+          {
+            "kind": "code",
+            "lines": [
+              "boolean isPalindrome(String s) {",
+              "    int i = 0, j = s.length() - 1;",
+              "    while (i < j) if (s.charAt(i++) != s.charAt(j--)) return false;",
+              "    return true;",
+              "}"
+            ]
+          },
+          {
+            "kind": "text",
+            "text": "Follow-up they love: ignore case and non-alphanumerics (two pointers with Character.isLetterOrDigit)."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Find the first non-repeating character.",
+        "level": "beginner",
+        "header": "Coding Questions",
+        "blocks": [
+          {
+            "kind": "code",
+            "lines": [
+              "Character firstUnique(String s) {",
+              "    Map<Character,Integer> count = new LinkedHashMap<>();",
+              "    for (char c : s.toCharArray()) count.merge(c, 1, Integer::sum);",
+              "    return count.entrySet().stream().filter(e -> e.getValue()==1)",
+              "                .map(Map.Entry::getKey).findFirst().orElse(null);",
+              "}"
+            ]
+          },
+          {
+            "kind": "text",
+            "text": "LinkedHashMap preserves order — mention it, that's the point being tested."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Two Sum (the universal screener).",
+        "level": "beginner",
+        "header": "Coding Questions",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "HashMap of value→index; for each x, check if target−x already seen. O(n) time, O(n) space. Be able to write it in under 3 minutes cold."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Valid parentheses.",
+        "level": "intermediate",
+        "header": "Coding Questions",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Stack: push openers; on a closer, pop and check match; valid iff stack empty at end. O(n). Interviewers use it to check you handle edge cases (leading closer, leftover openers)."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "Given a list of transactions, top-K merchants by total amount (Streams).",
+        "level": "intermediate",
+        "header": "Coding Questions",
+        "blocks": [
+          {
+            "kind": "code",
+            "lines": [
+              "List<String> topK = txns.stream()",
+              "    .collect(Collectors.groupingBy(Txn::merchant,",
+              "             Collectors.reducing(BigDecimal.ZERO, Txn::amount, BigDecimal::add)))",
+              "    .entrySet().stream()",
+              "    .sorted(Map.Entry.<String,BigDecimal>comparingByValue().reversed())",
+              "    .limit(k).map(Map.Entry::getKey).toList();"
+            ]
+          },
+          {
+            "kind": "text",
+            "text": "Payment-flavored stream questions are extremely common for your profile. Note BigDecimal for money — never double (say this out loud; it scores points)."
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "Detect duplicate transactions within a 5-minute window (scenario coding).",
+        "level": "intermediate",
+        "header": "Coding Questions",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Sort by timestamp; sliding window or HashMap key = (userId, amount, merchant) → last timestamp; flag if same key within 300s. Tests: data modeling + edge thinking, not algorithms trivia."
+          }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "Merge two sorted lists / arrays.",
+        "level": "intermediate",
+        "header": "Coding Questions",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Two pointers, compare heads, advance smaller. Basis of merge sort and of \"merge K sorted lists\" (min-heap, O(N log K)) — know both."
+          }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "Find the majority element / most frequent element.",
+        "level": "intermediate",
+        "header": "Coding Questions",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "HashMap counting (O(n)/O(n)) — then mention Boyer–Moore voting for O(1) space if a strict majority exists. Offering the trade-off unprompted is a strong signal."
+          }
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "Implement an LRU Cache. (Top-5 most asked for backend roles)",
+        "level": "intermediate",
+        "header": "Coding Questions",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "LinkedHashMap shortcut:"
+          },
+          {
+            "kind": "code",
+            "lines": [
+              "class LRU<K,V> extends LinkedHashMap<K,V> {",
+              "    private final int cap;",
+              "    LRU(int cap){ super(cap, 0.75f, true); this.cap = cap; }",
+              "    protected boolean removeEldestEntry(Map.Entry<K,V> e){ return size() > cap; }",
+              "}"
+            ]
+          },
+          {
+            "kind": "text",
+            "text": "Then explain the manual design: HashMap + doubly linked list, O(1) get/put — and relate it to Redis LRU eviction. Cache question + your Redis experience = home ground."
+          }
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "Producer-consumer with BlockingQueue.",
+        "level": "intermediate",
+        "header": "Coding Questions",
+        "blocks": [
+          {
+            "kind": "code",
+            "lines": [
+              "BlockingQueue<Task> q = new ArrayBlockingQueue<>(100);",
+              "// producer: q.put(task);  blocks when full (backpressure)",
+              "// consumer: Task t = q.take();  blocks when empty"
+            ]
+          },
+          {
+            "kind": "text",
+            "text": "Explain why BlockingQueue beats wait/notify (correctness handled for you) and relate to Kafka conceptually."
+          }
+        ]
+      },
+      {
+        "qNum": 11,
+        "qText": "Print odd and even numbers alternately using two threads.",
+        "level": "advanced",
+        "header": "Coding Questions",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Shared lock + flag with wait/notify, or two Semaphores ping-ponging. Concurrency coding classic — practice it once so you're not deriving it live."
+          }
+        ]
+      },
+      {
+        "qNum": 12,
+        "qText": "Implement a rate limiter class (token bucket).",
+        "level": "advanced",
+        "header": "Coding Questions",
+        "blocks": [
+          {
+            "kind": "code",
+            "lines": [
+              "class TokenBucket {",
+              "    private final long capacity, refillPerSec; private double tokens; private long last;",
+              "    synchronized boolean allow() {",
+              "        long now = System.nanoTime();",
+              "        tokens = Math.min(capacity, tokens + (now-last)/1e9 * refillPerSec);",
+              "        last = now;",
+              "        if (tokens >= 1) { tokens -= 1; return true; }",
+              "        return false;",
+              "    }",
+              "}"
+            ]
+          },
+          {
+            "kind": "text",
+            "text": "Then discuss the distributed version (Redis + Lua) — connects to Q95."
+          }
+        ]
+      },
+      {
+        "qNum": 13,
+        "qText": "DSA topics to grind (priority order for 2 YOE product interviews)",
+        "level": "intermediate",
+        "header": "Coding Questions",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Arrays & strings, HashMap patterns, two pointers/sliding window, stack/queue, linked list, binary search, BFS/DFS on trees, heap/top-K, basic DP (climb stairs, coin change), graphs (islands). ~150 LeetCode problems across these ≈ interview-ready for most SDE-1."
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "Scenario / System Design",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "\"A payment succeeded at the gateway but your DB says failed. What do you do?\" (You've LIVED this)",
+        "level": "advanced",
+        "header": "Scenario / System Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Answer as an incident: 1) Reconcile — query the gateway API for the transaction's true state (source of truth). 2) Idempotently repair local state; never re-charge. 3) Root cause: usually a timeout after the gateway processed but before our commit, or a missed webhook. 4) Prevention: idempotency keys, webhook + polling reconciliation job, outbox pattern, alert on state mismatches. Then tell your Spot Award midnight PayPal story — real beats theoretical."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Design a payment system (mini system design).",
+        "level": "advanced",
+        "header": "Scenario / System Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Cover: API with idempotency-key → validate → create payment record (PENDING) → call gateway (timeout + retry policy) → handle sync response AND async webhook → state machine (PENDING→AUTHORIZED→CAPTURED / FAILED / REFUNDED) → events to Kafka for downstream (ledger, notifications) → reconciliation job vs gateway reports → security: PCI scope (never store PANs; tokenize via gateway). You have real gateway experience — anchor every point in it."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Design a URL shortener (the classic).",
+        "level": "advanced",
+        "header": "Scenario / System Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "API: POST long→short, GET short→301. Key generation: base62 of an auto-increment/snowflake ID (predictable) vs random with collision check. Storage: key→URL table; read-heavy → Redis cache in front. Scale reads with replicas + cache; 301 vs 302 (caching vs analytics). Estimate QPS and storage out loud — the estimation is the test."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Your API p99 latency jumped from 200ms to 3s after a deploy. Steps?",
+        "level": "advanced",
+        "header": "Scenario / System Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "1) Rollback first if impact is high — debug later. 2) Diff the deploy (code, config, dependency versions). 3) Check traces for WHERE time goes (DB? external call? GC?). 4) Common culprits: an N+1 introduced, missing index on a new query, connection-pool shrink, GC pauses from a heap change, retry storm. Show a method, not guesses."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "One service is slow and it's cascading — threads all stuck waiting. What went wrong and how do you fix it?",
+        "level": "advanced",
+        "header": "Scenario / System Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Missing timeouts and bulkheads: threads pile up waiting on the slow dependency until the pool exhausts. Fix: aggressive client timeouts, circuit breaker (Resilience4j), separate thread pools per dependency (bulkhead), fallbacks/degradation, load-shedding (429). This is THE resilience question."
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "How would you migrate a monolith module to a microservice with zero downtime? (Perfect for your Magento context)",
+        "level": "advanced",
+        "header": "Scenario / System Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Strangler-fig: 1) Define the seam (e.g., payment module). 2) Build the new service; dual-write or CDC to sync data. 3) Route a small % of traffic via gateway (canary), compare results (shadow traffic). 4) Ramp to 100%, keep rollback path. 5) Remove old code. Bonus: this is literally how PHP/Magento shops adopt Java services — you can speak to it credibly."
+          }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "Design notification service (email/SMS/push) for millions of users.",
+        "level": "advanced",
+        "header": "Scenario / System Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "API/event intake → Kafka (buffer + retry) → workers per channel → provider adapters (interchangeable) → rate limiting per provider → retries with backoff + DLQ → idempotency (no duplicate SMS) → user preferences/quiet hours → status tracking + webhooks from providers. Maps directly to your Foodies notification-service — say so."
+          }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "How do you take a feature from dev to production safely? (They're testing maturity)",
+        "level": "advanced",
+        "header": "Scenario / System Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Feature flag → code review → tests (unit/integration) → staging with prod-like data → canary/percentage rollout → monitor dashboards (error rate, latency, business metric) → full rollout → flag cleanup. Mention your real experience: AI search shipped to production within 1 month with zero post-release defects — describe WHAT you did to achieve that (testing, staged rollout)."
+          }
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "Where would you add caching in an e-commerce site, and what would you never cache?",
+        "level": "advanced",
+        "header": "Scenario / System Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Cache: product catalog, category pages, search results (short TTL), sessions, config. Never/carefully: cart, inventory count at checkout, payment status, anything personalized without keying by user. Bonus: your OpenSearch experience — search index as a \"read-optimized view.\""
+          }
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "Debug: intermittent duplicate order emails. Walk through it.",
+        "level": "advanced",
+        "header": "Scenario / System Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Hypotheses in order: consumer rebalance re-delivering events (at-least-once), retry without idempotency, two instances both processing (missing group id / distributed cron), webhook redelivery. Fix: idempotency key on the send (event id), dedup store with TTL. Shows you understand at-least-once reality."
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "GenAI / AI Engineer",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "What is an LLM in one minute, for an engineer?",
+        "level": "beginner",
+        "header": "GenAI / AI Engineer",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "A neural network trained on huge text corpora to predict the next token; at scale this yields general language/reasoning ability. As engineers we consume them via APIs: prompt in → completion out, with parameters like temperature (randomness) and max tokens. Key limits: hallucination, context window size, no knowledge after training cutoff — which is why RAG exists."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "What are embeddings and vector databases?",
+        "level": "intermediate",
+        "header": "GenAI / AI Engineer",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Embedding: text mapped to a numeric vector where semantic similarity ≈ vector closeness (cosine similarity). Vector DB (pgvector, Pinecone, OpenSearch k-NN) indexes millions of embeddings for fast nearest-neighbor search. Foundation of semantic search and RAG. You can link this to your AI search work with OpenSearch."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Explain RAG (Retrieval-Augmented Generation).",
+        "level": "intermediate",
+        "header": "GenAI / AI Engineer",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Instead of relying on the model's memory: 1) chunk + embed your documents into a vector store (offline); 2) at query time, embed the question, retrieve top-K relevant chunks; 3) inject them into the prompt as context; 4) LLM answers grounded in YOUR data, with citations. Solves hallucination-on-private-data and stale knowledge. Discuss chunking strategy and retrieval quality as the real engineering."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "What is prompt engineering — beyond \"write good prompts\"?",
+        "level": "intermediate",
+        "header": "GenAI / AI Engineer",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Structured technique: clear role + task + constraints, few-shot examples, output schemas (JSON mode), chain-of-thought for reasoning tasks, delimiters to separate instructions from data (also a security measure). Treat prompts like code: versioned, tested against eval sets, regression-checked."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "What is agentic AI and how does it differ from a chatbot?",
+        "level": "intermediate",
+        "header": "GenAI / AI Engineer",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "An agent doesn't just answer — it acts: it plans, calls tools (APIs, DB queries, code execution), observes results, and iterates toward a goal in a loop. Chatbot = single-turn text; agent = LLM + tools + loop + memory. Claude Code is a coding agent — you've deployed one in a real enterprise, which very few 2-YOE candidates can say."
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "What is MCP (Model Context Protocol)?",
+        "level": "intermediate",
+        "header": "GenAI / AI Engineer",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "An open standard for connecting AI models/agents to external tools and data sources through a uniform interface — an \"adapter layer\" so any MCP-compatible client can use any MCP server (filesystem, database, Jira, etc.) without custom integration per pair. You evaluated this in your Claude Code R&D — mention capabilities/tools/resources concepts."
+          }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "What are the security risks of AI coding tools in an enterprise? (YOUR flagship answer)",
+        "level": "advanced",
+        "header": "GenAI / AI Engineer",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Risks: the agent reads sensitive data in the repo/filesystem (secrets, customer records), prompt injection via files it reads, data leaving the boundary to model APIs, and unreviewed AI-generated code introducing vulnerabilities. Then your story: identified exactly this risk with legacy customer records, engineered a Docker Dev Container isolation layer — controlled mounts, no access to sensitive paths — adopted by all 20 developers. This single answer can carry a GenAI interview."
+          }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "How would you integrate an LLM into a Java/Spring Boot application?",
+        "level": "intermediate",
+        "header": "GenAI / AI Engineer",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Options: direct REST calls to the provider API (simple), Spring AI (ChatClient abstraction, prompt templates, structured output mapping, vector store integration), or LangChain4j. Production concerns: timeouts + retries, token/cost tracking, streaming responses, caching identical prompts, evals before rollout, and a fallback when the model fails."
+          }
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "How do you evaluate whether your LLM feature is good?",
+        "level": "advanced",
+        "header": "GenAI / AI Engineer",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Build an eval set (representative inputs + expected qualities), score with exact checks where possible, LLM-as-judge for subjective quality, track relevance/groundedness for RAG, run evals on every prompt/model change (regression testing), monitor in prod: user feedback, fallback rates, latency, cost per request. \"Evals over vibes\" is the phrase that signals maturity."
+          }
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "Fine-tuning vs RAG vs prompt engineering — when each?",
+        "level": "intermediate",
+        "header": "GenAI / AI Engineer",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Prompting first (cheapest, fastest iteration). RAG when the model needs YOUR knowledge/documents (most enterprise cases). Fine-tuning when you need consistent style/format or domain behavior that prompting can't achieve — costly, needs data + eval discipline. Interview-safe answer: \"prompt → RAG → fine-tune, escalate only when the simpler level fails.\""
+          },
+          {
+            "kind": "text",
+            "text": "---"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "HR / Managerial / Behavioral",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "\"Tell me about yourself.\" (60-second switcher script)",
+        "level": "intermediate",
+        "header": "HR / Managerial / Behavioral",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "\"I'm a software engineer with 2 years at Southco, where I work on an enterprise e-commerce platform. I own the payment gateway integrations — PayPal, Stripe, and AsiaPay — and I'm the single point of contact for payment issues, including a midnight production fix that earned me a Spot Award. I also led our adoption of AI tooling: I evaluated Claude Code for our CTO, found a data-security risk, and built a Docker Dev Container solution now used by all 20 developers — that won me Employee of the Month. While my company's platform is PHP-based, I've deliberately built my depth in Java: multiple Spring Boot microservices projects with Kafka, Redis, and JWT security. I'm now looking for a Java backend role where I can bring my production payment experience to a Java stack.\""
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "\"Why are you switching from PHP/Magento to Java?\" (THE question — never be defensive)",
+        "level": "intermediate",
+        "header": "HR / Managerial / Behavioral",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "\"It's a deliberate career decision, not an escape. I chose Java because I want to build large-scale distributed backend systems, and the Java ecosystem — Spring Boot, Kafka, the JVM — is where that work happens. I didn't wait for permission: I built microservices projects, studied JVM internals and concurrency, and earned certifications. My production experience — payments, webhooks, incidents, integrations — is language-independent; I'm bringing all of it with me.\" (Positive framing, zero criticism of PHP.)"
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "\"Tell me about a time you handled a production incident.\" (STAR — Spot Award)",
+        "level": "intermediate",
+        "header": "HR / Managerial / Behavioral",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "S: A critical PayPal payment failure hit our live environment at midnight — customers couldn't pay. T: As the payment owner, I had to restore payments fast with zero downtime. A: Systematically isolated the failure (gateway callbacks vs our processing), identified the root cause, applied and verified the fix on live with no service interruption, and monitored recovery. R: Payments restored with zero downtime; received a Spot Award; added safeguards so the failure mode couldn't silently recur. Prepare the specific technical root cause — interviewers will drill."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "\"Tell me about a time you showed initiative / went beyond your role.\" (STAR — Dev Container)",
+        "level": "intermediate",
+        "header": "HR / Managerial / Behavioral",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "S: Our CTO asked me to research Claude Code for the team. T: Evaluate it AND make it safe — our codebase contained legacy customer records an AI tool could read. A: Instead of reporting a blocker, I treated it as a challenge: designed a Docker-based Dev Container that isolates the AI from sensitive data, built the module, and drove adoption. R: All 20 developers use it daily; AI adoption unblocked safely; Employee of the Month. This story shows initiative, security thinking, AND influence — your best card; practice it until smooth."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "\"Tell me about a failure or mistake.\"",
+        "level": "intermediate",
+        "header": "HR / Managerial / Behavioral",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pick something real and small-but-honest, e.g.: \"Early on, I pushed a payment-config change without testing one region's gateway sandbox; it broke a test-environment flow. I caught it, fixed it same day, and built a checklist for gateway config changes that the team now uses. Since then, zero config-related issues from my changes.\" Formula: real mistake → fast ownership → systemic fix → changed behavior. Never say \"I can't think of one.\""
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "\"Tell me about a conflict with a teammate.\"",
+        "level": "intermediate",
+        "header": "HR / Managerial / Behavioral",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Structure: disagreement on approach (e.g., sync API call vs event-driven for a feature) → you listened first, restated their concern → brought data/prototype rather than opinion → agreed on a trade-off/deadline → relationship intact. What they test: do you fight ideas or people."
+          }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "\"Where do you see yourself in 5 years?\"",
+        "level": "intermediate",
+        "header": "HR / Managerial / Behavioral",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "\"Short term, becoming a strong Java backend engineer shipping production systems here. In 3–5 years, a senior engineer who owns service design end-to-end and mentors juniors — and given how I've already worked with AI tooling, I want to be the engineer who bridges backend systems and AI capabilities as that becomes standard.\" Ambitious, loyal-sounding, and true."
+          }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "\"Why should we hire you over someone with 2 years of actual Java experience?\"",
+        "level": "intermediate",
+        "header": "HR / Managerial / Behavioral",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "\"Three things they may not have: production payment ownership — I've handled real money, real incidents, real gateways; proven self-driven learning — I mastered a second stack while excelling at my job; and real enterprise AI experience — I've deployed agentic AI tooling safely for 20 developers. The Java syntax gap closes in weeks; ownership and initiative take years to build.\" Deliver calmly, not arrogantly."
+          }
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "\"What are your salary expectations?\" (India, 2 YOE switch context)",
+        "level": "intermediate",
+        "header": "HR / Managerial / Behavioral",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Never give a number first if avoidable: \"I'm focusing on the right role and team; I'm confident we can agree on fair compensation — what's the band for this position?\" If forced, give a researched range for the company tier and say it's negotiable. Know your current CTC story and don't inflate it — offer letters get verified."
+          }
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "\"Do you have any questions for us?\" (Always have 3)",
+        "level": "intermediate",
+        "header": "HR / Managerial / Behavioral",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Good ones: \"What does the first 90 days look like for this role?\" / \"How does the team handle production incidents and on-call?\" / \"How is the team thinking about AI-assisted development?\" (the last one lets YOU shine again). Never ask only about leave policy/WFH in round 1."
+          }
+        ]
+      },
+      {
+        "qNum": 11,
+        "qText": "\"Why this company?\"",
+        "level": "intermediate",
+        "header": "HR / Managerial / Behavioral",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Do 15 minutes of research per company; connect ONE real thing (their product, scale, engineering blog, payment domain) to YOUR experience: \"You process payments at scale — I've owned three gateway integrations and handled live payment incidents; this is exactly the problem space I want to go deeper in on a Java stack.\""
+          }
+        ]
+      },
+      {
+        "qNum": 12,
+        "qText": "\"Are you interviewing elsewhere?\" / \"How soon can you join?\"",
+        "level": "intermediate",
+        "header": "HR / Managerial / Behavioral",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Interviewing elsewhere: \"Yes, I'm in processes with a few companies, but I'm genuinely interested in this role because ___.\" (Honest + creates healthy urgency.) Notice period: state it accurately; mention if buyout/negotiation is possible. Never lie about notice period — it unravels at offer stage."
+          }
+        ]
+      }
+    ]
+  }
+]

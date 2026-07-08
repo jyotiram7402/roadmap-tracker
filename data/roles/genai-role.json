@@ -1,0 +1,155 @@
+[
+  {
+    "sectionTitle": "AI/ML Foundations",
+    "questions": [
+      { "qNum": 1, "qText": "AI vs ML vs Deep Learning vs Generative AI?", "level": "beginner", "header": "AI/ML Foundations", "blocks": [
+        { "kind": "text", "text": "AI is the broad goal of machines doing intelligent tasks. ML is a subset that learns patterns from data instead of hard-coded rules. Deep Learning is ML using multi-layer neural networks. Generative AI is deep learning that produces new content (text, images, code) — LLMs are its text form." }
+      ]},
+      { "qNum": 2, "qText": "What is overfitting and how do you prevent it?", "level": "beginner", "header": "AI/ML Foundations", "blocks": [
+        { "kind": "text", "text": "Overfitting is when a model memorizes training data (great train accuracy, poor test accuracy). Prevent with more/augmented data, regularization (L1/L2, dropout), simpler models, early stopping, and proper train/validation/test splits with cross-validation." }
+      ]},
+      { "qNum": 3, "qText": "What is an embedding and why does semantic similarity work?", "level": "intermediate", "header": "AI/ML Foundations", "blocks": [
+        { "kind": "text", "text": "An embedding maps text (or image) to a dense numeric vector so that semantically similar items sit close together in vector space. Similarity is measured with cosine similarity (angle between vectors). This underpins semantic search, clustering, and RAG retrieval." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "LLM Fundamentals",
+    "questions": [
+      { "qNum": 1, "qText": "What is an LLM, for an engineer?", "level": "beginner", "header": "LLM Fundamentals", "blocks": [
+        { "kind": "text", "text": "A neural network (transformer) trained on huge text corpora to predict the next token; at scale this yields general language and reasoning ability. You consume it via an API: prompt in → completion out, tuned by parameters like temperature and max tokens. Limits: hallucination, finite context window, no knowledge past the training cutoff." }
+      ]},
+      { "qNum": 2, "qText": "Explain self-attention intuitively (and the √d_k scaling).", "level": "advanced", "header": "LLM Fundamentals", "blocks": [
+        { "kind": "text", "text": "Attention lets each token look at every other token and weight how relevant they are, computed as softmax(QKᵀ/√d_k)·V. Dividing by √d_k keeps dot products from growing large as dimensionality rises, which would push softmax into saturated regions with tiny gradients. Multi-head attention runs several of these in parallel to capture different relationships." }
+      ]},
+      { "qNum": 3, "qText": "What are tokens, context window, and parameters?", "level": "beginner", "header": "LLM Fundamentals", "blocks": [
+        { "kind": "text", "text": "A token is a sub-word chunk the model reads/writes (~4 chars of English). The context window is the max tokens (prompt + output) the model can attend to at once. Parameters are the learned weights (billions) that encode the model's knowledge. You pay per token and must fit within the context window." }
+      ]},
+      { "qNum": 4, "qText": "temperature vs top-p, and what causes hallucination?", "level": "intermediate", "header": "LLM Fundamentals", "blocks": [
+        { "kind": "text", "text": "Temperature scales randomness (0 = deterministic/precise, higher = more creative). top-p (nucleus) samples from the smallest set of tokens whose cumulative probability ≥ p. Hallucination = confident but wrong output, because the model predicts plausible text, not truth; mitigate with RAG (grounding), lower temperature, asking for citations, and validation." }
+      ]},
+      { "qNum": 5, "qText": "How are LLMs trained (pretraining, SFT, RLHF)?", "level": "advanced", "header": "LLM Fundamentals", "blocks": [
+        { "kind": "text", "text": "Pretraining: next-token prediction on massive text (learns language + world knowledge). Supervised fine-tuning (SFT): train on curated instruction→response pairs to follow instructions. RLHF/DPO: align outputs to human preferences using a reward signal. Result: a helpful, instruction-following assistant." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "Prompt Engineering",
+    "questions": [
+      { "qNum": 1, "qText": "What is prompt engineering beyond 'write good prompts'?", "level": "beginner", "header": "Prompt Engineering", "blocks": [
+        { "kind": "text", "text": "Structured technique: clear role + task + constraints, few-shot examples, output schemas (JSON mode), chain-of-thought for reasoning, and delimiters separating instructions from data. Treat prompts like code — version them and test against an eval set." }
+      ]},
+      { "qNum": 2, "qText": "Zero-shot vs few-shot vs chain-of-thought?", "level": "intermediate", "header": "Prompt Engineering", "blocks": [
+        { "kind": "text", "text": "Zero-shot: instruction only. Few-shot: include a few input→output examples to steer format/behavior. Chain-of-thought: ask the model to reason step by step before answering, improving accuracy on multi-step problems (hide the reasoning in production if needed)." }
+      ]},
+      { "qNum": 3, "qText": "What is prompt injection and how do you mitigate it?", "level": "advanced", "header": "Prompt Engineering", "blocks": [
+        { "kind": "text", "text": "Untrusted input (or retrieved content) contains instructions that hijack the model (e.g., 'ignore previous instructions'). Mitigate by separating trusted instructions from untrusted data with clear delimiters, least-privilege tools, output validation, not executing model output blindly, and treating retrieved documents as data, never commands." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "RAG",
+    "questions": [
+      { "qNum": 1, "qText": "Explain RAG end to end.", "level": "intermediate", "header": "RAG", "blocks": [
+        { "kind": "text", "text": "Offline: chunk documents, embed them, store vectors in a vector DB. At query time: embed the question, retrieve top-K similar chunks, inject them into the prompt as context, and the LLM answers grounded in your data (ideally with citations). Solves stale knowledge and hallucination on private data." },
+        { "kind": "mermaid", "lines": ["flowchart LR", "  D[Docs] --> CH[Chunk] --> EM[Embed] --> VS[(Vector DB)]", "  Q[Question] --> QE[Embed] --> VS", "  VS --> TK[Top-K chunks] --> P[Prompt + context] --> LLM --> A[Grounded answer]"] }
+      ]},
+      { "qNum": 2, "qText": "RAG vs fine-tuning — when each?", "level": "intermediate", "header": "RAG", "blocks": [
+        { "kind": "text", "text": "RAG injects knowledge at query time — best when facts change or are private/large (most enterprise cases), and gives citations. Fine-tuning changes model behavior/style/format — use when you need consistent tone or domain behavior prompting can't achieve. Escalate prompt → RAG → fine-tune only when the simpler level fails." }
+      ]},
+      { "qNum": 3, "qText": "What chunking strategies matter, and why is retrieval quality the real work?", "level": "advanced", "header": "RAG", "blocks": [
+        { "kind": "text", "text": "Chunk by semantic boundaries with overlap so context isn't cut mid-thought; size to balance recall vs noise. Retrieval quality dominates answer quality: use hybrid search (vector + keyword BM25), re-rank the top results with a cross-encoder, and rewrite queries (HyDE). Bad retrieval → confident wrong answers." }
+      ]},
+      { "qNum": 4, "qText": "How do you evaluate a RAG system?", "level": "advanced", "header": "RAG", "blocks": [
+        { "kind": "text", "text": "Measure retrieval (are the right chunks fetched?) and generation (faithfulness/groundedness — is the answer supported by the retrieved context — plus relevance/completeness). Use an eval set + tools like RAGAS, run on every prompt/model change, and monitor production feedback and fallback rates." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "Agents & Tools",
+    "questions": [
+      { "qNum": 1, "qText": "What is an AI agent vs a chatbot?", "level": "intermediate", "header": "Agents & Tools", "blocks": [
+        { "kind": "text", "text": "A chatbot answers in a single turn. An agent acts: it plans, calls tools (APIs, DB queries, code), observes results, and iterates toward a goal in a loop with memory. Agent = LLM + tools + loop + memory." },
+        { "kind": "mermaid", "lines": ["flowchart TD", "  U[Goal] --> R[Reason/plan]", "  R --> A{Need a tool?}", "  A -->|yes| T[Call tool] --> O[Observe result] --> R", "  A -->|no| F[Final answer]"] }
+      ]},
+      { "qNum": 2, "qText": "What is function calling / tool use?", "level": "intermediate", "header": "Agents & Tools", "blocks": [
+        { "kind": "text", "text": "You describe tools (name, description, JSON schema of args) to the model; it returns a structured request to call one with arguments. Your code executes it and feeds the result back. This is how LLMs query databases, hit APIs, or run calculations reliably instead of hallucinating." }
+      ]},
+      { "qNum": 3, "qText": "What is MCP (Model Context Protocol)?", "level": "intermediate", "header": "Agents & Tools", "blocks": [
+        { "kind": "text", "text": "An open standard that connects AI models/agents to external tools and data through a uniform interface — an adapter layer so any MCP client can use any MCP server (filesystem, database, Jira) without custom per-pair integration. Core concepts: tools, resources, and prompts exposed by a server." }
+      ]},
+      { "qNum": 4, "qText": "How do you give an agent/chatbot memory?", "level": "advanced", "header": "Agents & Tools", "blocks": [
+        { "kind": "text", "text": "Short-term: keep recent turns in the context window (and summarize older turns when it fills). Long-term: store facts/embeddings in a vector store and retrieve relevant memory per turn (RAG over conversation history). Persist session state in a DB keyed by conversation id." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "Fine-tuning & Model Ops",
+    "questions": [
+      { "qNum": 1, "qText": "What are LoRA and QLoRA?", "level": "advanced", "header": "Fine-tuning & Model Ops", "blocks": [
+        { "kind": "text", "text": "LoRA freezes the base model weights and trains small low-rank adapter matrices (A·B) injected into layers — far fewer trainable params, cheaper and faster, adapters are swappable. QLoRA adds 4-bit NF4 quantization of the base model (plus paged optimizers) so you can fine-tune large models on a single GPU with minimal quality loss." }
+      ]},
+      { "qNum": 2, "qText": "How do you control LLM cost and latency in production?", "level": "intermediate", "header": "Fine-tuning & Model Ops", "blocks": [
+        { "kind": "text", "text": "Right-size the model (small model for easy tasks, big for hard), cap max tokens, cache identical/semantically-similar prompts, shorten prompts and retrieved context, stream responses for perceived latency, and batch where possible. Track tokens and cost per request as a first-class metric." }
+      ]},
+      { "qNum": 3, "qText": "What are guardrails and why do you need them?", "level": "intermediate", "header": "Fine-tuning & Model Ops", "blocks": [
+        { "kind": "text", "text": "Guardrails validate inputs and outputs: content filtering, PII detection/redaction, blocking prompt injection, schema-validating structured output, and refusing out-of-scope requests. They keep an LLM feature safe, on-topic, and compliant." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "AI Backend Engineering",
+    "questions": [
+      { "qNum": 1, "qText": "How would you integrate an LLM into a Java/Spring Boot backend?", "level": "intermediate", "header": "AI Backend Engineering", "blocks": [
+        { "kind": "text", "text": "Options: direct REST calls to the provider, Spring AI (ChatClient abstraction, prompt templates, structured output to POJOs, vector store integration), or LangChain4j. Production concerns: timeouts + retries, token/cost tracking, streaming (SSE), caching identical prompts, and a fallback when the model fails or is rate-limited." },
+        { "kind": "code", "lines": ["String answer = chatClient.prompt()", "    .system(\"You are a support agent. Use only the provided context.\")", "    .user(u -> u.text(question))", "    .call().content();"] }
+      ]},
+      { "qNum": 2, "qText": "What is a semantic cache and when do you use it?", "level": "advanced", "header": "AI Backend Engineering", "blocks": [
+        { "kind": "text", "text": "Instead of caching by exact string, embed the query and return a cached answer if a previous query is close enough in vector space (above a similarity threshold). Cuts cost and latency for FAQ-style traffic. Guard with a conservative threshold and TTL so slightly-different questions don't get wrong cached answers." }
+      ]},
+      { "qNum": 3, "qText": "How do you make LLM API calls reliable in a backend?", "level": "intermediate", "header": "AI Backend Engineering", "blocks": [
+        { "kind": "text", "text": "Set timeouts, retry with exponential backoff + jitter on 429/5xx, add a circuit breaker so a provider outage fails fast, stream to improve perceived latency, and provide a graceful fallback (smaller model, cached answer, or a safe canned response). Log prompts/responses/tokens for observability." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "System Design",
+    "questions": [
+      { "qNum": 1, "qText": "Design a RAG-based Q&A chatbot over company docs.", "level": "advanced", "header": "System Design", "blocks": [
+        { "kind": "text", "text": "Ingestion pipeline: load docs → chunk → embed → store in a vector DB (with metadata for filtering + access control). Query path: embed question → retrieve top-K (hybrid + re-rank) → build prompt with context and history → LLM → stream answer with citations. Add caching, guardrails, evals, and cost/latency monitoring." },
+        { "kind": "mermaid", "lines": ["flowchart TD", "  subgraph Ingest", "  DOC[Docs] --> C[Chunk+Embed] --> V[(Vector DB)]", "  end", "  U[User] --> API[Chat API] --> RET[Retrieve top-K] --> V", "  RET --> PR[Prompt+context+history] --> LLM --> R[Answer + citations] --> U", "  API --> CACHE[(Semantic cache)]"] }
+      ]},
+      { "qNum": 2, "qText": "Design an AI customer-support bot for a SaaS company.", "level": "advanced", "header": "System Design", "blocks": [
+        { "kind": "text", "text": "RAG over help docs + tickets for grounded answers; function calling to fetch the user's account/order status; guardrails for PII and scope; escalation to a human when confidence is low or the user asks. Track deflection rate, CSAT, and cost per conversation; log everything for eval and improvement." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "Scenario / Debugging",
+    "questions": [
+      { "qNum": 1, "qText": "Your RAG bot returns irrelevant or wrong answers. How do you debug it?", "level": "advanced", "header": "Scenario / Debugging", "blocks": [
+        { "kind": "text", "text": "Isolate retrieval vs generation. Inspect the retrieved chunks: if they're wrong, fix chunking, embeddings, add hybrid search + re-ranking, or query rewriting. If retrieval is good but the answer is wrong, tighten the prompt ('use only the context', ask for citations), lower temperature, and add a groundedness check. Measure with an eval set, don't guess." }
+      ]},
+      { "qNum": 2, "qText": "LLM costs suddenly spiked in production. What do you check?", "level": "intermediate", "header": "Scenario / Debugging", "blocks": [
+        { "kind": "text", "text": "Check token usage per request (prompt bloat from growing context/history?), traffic volume, whether caching still hits, retries looping, and whether someone switched to a bigger model. Add per-request token/cost logging and alerts, cap max tokens, trim context, and enable semantic caching." }
+      ]},
+      { "qNum": 3, "qText": "How do you evaluate whether your LLM feature is good enough to ship?", "level": "advanced", "header": "Scenario / Debugging", "blocks": [
+        { "kind": "text", "text": "Build an eval set of representative inputs + expected qualities; score with exact checks where possible and LLM-as-judge for subjective quality; track groundedness/relevance for RAG; run evals on every prompt/model change; and monitor production (feedback, fallback rate, latency, cost). Evals over vibes." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "HR & Behavioral",
+    "questions": [
+      { "qNum": 1, "qText": "Why do you want to be an AI/GenAI engineer?", "level": "beginner", "header": "HR & Behavioral", "blocks": [
+        { "kind": "text", "text": "Connect a real thing you built or shipped with LLMs to the impact it had, and your engineering discipline around it (evals, cost, safety). Show you treat AI as production software, not demos." }
+      ]},
+      { "qNum": 2, "qText": "How do you stay current in such a fast-moving field?", "level": "beginner", "header": "HR & Behavioral", "blocks": [
+        { "kind": "text", "text": "Name concrete habits: reading model/provider release notes and key papers, building small projects, following a few high-signal sources, and validating claims with your own evals rather than hype. Give one recent example you tried." }
+      ]},
+      { "qNum": 3, "qText": "Tell me about an AI project you built end to end.", "level": "intermediate", "header": "HR & Behavioral", "blocks": [
+        { "kind": "text", "text": "STAR: the problem, your design (RAG/agent/integration), the hard engineering (retrieval quality, cost, guardrails, evals), and the measurable result. Be ready to discuss trade-offs and what you'd improve." }
+      ]}
+    ]
+  }
+]

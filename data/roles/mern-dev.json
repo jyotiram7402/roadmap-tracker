@@ -1,0 +1,1761 @@
+[
+  {
+    "sectionTitle": "JavaScript & TypeScript Core",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "What is the difference between var, let, and const?",
+        "level": "beginner",
+        "header": "JavaScript & TypeScript Core",
+        "blocks": [
+          { "kind": "text", "text": "var is function-scoped and hoisted (initialized as undefined), so it can be used before declaration and re-declared. let and const are block-scoped and live in the Temporal Dead Zone until the declaration line, so accessing them earlier throws a ReferenceError. const cannot be reassigned, but for objects/arrays the referenced value is still mutable." },
+          { "kind": "code", "lines": [
+            "console.log(a); // undefined (var hoisted)",
+            "var a = 1;",
+            "",
+            "console.log(b); // ReferenceError (TDZ)",
+            "let b = 2;",
+            "",
+            "const obj = { x: 1 };",
+            "obj.x = 2;      // OK - value mutated",
+            "obj = {};       // TypeError - reassignment"
+          ]}
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Explain closures with a practical example.",
+        "level": "beginner",
+        "header": "JavaScript & TypeScript Core",
+        "blocks": [
+          { "kind": "text", "text": "A closure is a function that remembers the variables from the lexical scope in which it was created, even after that outer function has returned. Closures are the basis for data privacy, function factories, and memoization." },
+          { "kind": "code", "lines": [
+            "function counter() {",
+            "  let count = 0;              // private state",
+            "  return {",
+            "    inc: () => ++count,",
+            "    get: () => count",
+            "  };",
+            "}",
+            "const c = counter();",
+            "c.inc(); c.inc();",
+            "console.log(c.get()); // 2  (count is not directly accessible)"
+          ]}
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "What is the difference between == and ===?",
+        "level": "beginner",
+        "header": "JavaScript & TypeScript Core",
+        "blocks": [
+          { "kind": "text", "text": "== (loose equality) performs type coercion before comparing, so values of different types can be equal. === (strict equality) compares both value and type with no coercion. Always prefer === to avoid surprising coercion bugs." },
+          { "kind": "code", "lines": [
+            "0 == '';        // true  (coerced)",
+            "0 == '0';       // true",
+            "null == undefined; // true",
+            "0 === '';       // false (different types)",
+            "NaN === NaN;    // false (use Number.isNaN)"
+          ]}
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Explain the event loop, call stack, microtasks and macrotasks.",
+        "level": "intermediate",
+        "header": "JavaScript & TypeScript Core",
+        "blocks": [
+          { "kind": "text", "text": "JavaScript is single-threaded. Synchronous code runs on the call stack. Async callbacks are queued: Promises/queueMicrotask go to the microtask queue, while setTimeout/setInterval/I/O go to the macrotask (task) queue. After each macrotask (and after the stack empties), the engine drains the ENTIRE microtask queue before rendering or picking the next macrotask. This is why Promise callbacks run before setTimeout." },
+          { "kind": "code", "lines": [
+            "console.log('1');",
+            "setTimeout(() => console.log('2'), 0);",
+            "Promise.resolve().then(() => console.log('3'));",
+            "console.log('4');",
+            "// Output: 1, 4, 3, 2"
+          ]},
+          { "kind": "subheader", "text": "Why it matters" },
+          { "kind": "text", "text": "Microtasks can starve rendering if you recursively schedule them; long synchronous work blocks the single thread and freezes the UI." }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "What is the difference between call, apply, and bind?",
+        "level": "intermediate",
+        "header": "JavaScript & TypeScript Core",
+        "blocks": [
+          { "kind": "text", "text": "All three set the 'this' value of a function. call invokes immediately with args listed individually; apply invokes immediately with args as an array; bind returns a NEW function with 'this' permanently bound, invoked later." },
+          { "kind": "code", "lines": [
+            "function greet(greeting) { return greeting + ', ' + this.name; }",
+            "const user = { name: 'Ada' };",
+            "",
+            "greet.call(user, 'Hi');       // 'Hi, Ada'",
+            "greet.apply(user, ['Hello']); // 'Hello, Ada'",
+            "const bound = greet.bind(user);",
+            "bound('Hey');                 // 'Hey, Ada'"
+          ]}
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "Explain prototypal inheritance and the prototype chain.",
+        "level": "intermediate",
+        "header": "JavaScript & TypeScript Core",
+        "blocks": [
+          { "kind": "text", "text": "Every JS object has an internal [[Prototype]] link (accessible via Object.getPrototypeOf). When you access a property, the engine walks up the prototype chain until it finds it or reaches null. Classes are syntactic sugar over this: methods live on the prototype object, shared by all instances." },
+          { "kind": "code", "lines": [
+            "const animal = { speaks: true };",
+            "const dog = Object.create(animal);",
+            "dog.bark = () => 'woof';",
+            "console.log(dog.speaks); // true (found on prototype)",
+            "console.log(Object.getPrototypeOf(dog) === animal); // true"
+          ]}
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "What is the difference between shallow copy and deep copy? How do you deep clone?",
+        "level": "intermediate",
+        "header": "JavaScript & TypeScript Core",
+        "blocks": [
+          { "kind": "text", "text": "A shallow copy (spread, Object.assign) copies top-level properties but nested objects are still shared references. A deep copy duplicates all nested levels. Use structuredClone for a built-in deep clone (handles Dates, Maps, Sets, cyclic refs); JSON.parse(JSON.stringify(x)) works only for JSON-safe data and drops functions/undefined/Dates." },
+          { "kind": "code", "lines": [
+            "const a = { user: { name: 'Ada' } };",
+            "const shallow = { ...a };",
+            "shallow.user.name = 'Bob';",
+            "console.log(a.user.name); // 'Bob' - shared reference",
+            "",
+            "const deep = structuredClone(a);",
+            "deep.user.name = 'Cara';",
+            "console.log(a.user.name); // unchanged"
+          ]}
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "Explain Promises, async/await, and error handling.",
+        "level": "intermediate",
+        "header": "JavaScript & TypeScript Core",
+        "blocks": [
+          { "kind": "text", "text": "A Promise represents a future value in one of three states: pending, fulfilled, or rejected. async/await is syntactic sugar over Promises that lets you write asynchronous code sequentially. Wrap awaits in try/catch to handle rejections; an unhandled rejection can crash a Node process." },
+          { "kind": "code", "lines": [
+            "async function getUser(id) {",
+            "  try {",
+            "    const res = await fetch('/api/users/' + id);",
+            "    if (!res.ok) throw new Error('HTTP ' + res.status);",
+            "    return await res.json();",
+            "  } catch (err) {",
+            "    console.error('Failed:', err.message);",
+            "    throw err; // re-throw for caller to handle",
+            "  }",
+            "}"
+          ]},
+          { "kind": "subheader", "text": "Concurrent vs sequential" },
+          { "kind": "text", "text": "Use Promise.all for parallel independent calls; awaiting them one-by-one runs them sequentially and is slower." },
+          { "kind": "code", "lines": [
+            "// parallel - faster",
+            "const [u, p] = await Promise.all([getUser(1), getPosts(1)]);"
+          ]}
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "What is the difference between Promise.all, allSettled, race, and any?",
+        "level": "advanced",
+        "header": "JavaScript & TypeScript Core",
+        "blocks": [
+          { "kind": "text", "text": "Promise.all resolves when ALL fulfill, or rejects on the FIRST rejection. allSettled always resolves with an array of {status, value/reason} for every promise (never short-circuits). race settles as soon as the FIRST promise settles (fulfilled OR rejected). any resolves with the first FULFILLED value and rejects only if all reject (AggregateError)." },
+          { "kind": "code", "lines": [
+            "await Promise.allSettled([p1, p2]);",
+            "// [{status:'fulfilled', value:...}, {status:'rejected', reason:...}]",
+            "",
+            "await Promise.any([slow, fast]); // first success",
+            "await Promise.race([task, timeout]); // first to settle"
+          ]}
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "Explain debounce and throttle and implement one.",
+        "level": "advanced",
+        "header": "JavaScript & TypeScript Core",
+        "blocks": [
+          { "kind": "text", "text": "Debounce delays running a function until N ms after the last call (good for search-as-you-type, resize). Throttle guarantees the function runs at most once per N ms (good for scroll, mousemove). Both use closures to hold timer state." },
+          { "kind": "code", "lines": [
+            "function debounce(fn, delay) {",
+            "  let timer;",
+            "  return function (...args) {",
+            "    clearTimeout(timer);",
+            "    timer = setTimeout(() => fn.apply(this, args), delay);",
+            "  };",
+            "}",
+            "const onSearch = debounce(q => fetchResults(q), 300);"
+          ]}
+        ]
+      },
+      {
+        "qNum": 11,
+        "qText": "What are TypeScript generics and why are they useful?",
+        "level": "intermediate",
+        "header": "JavaScript & TypeScript Core",
+        "blocks": [
+          { "kind": "text", "text": "Generics let you write reusable, type-safe code that works over many types while preserving the relationship between input and output types. Instead of using 'any' (which disables type-checking), a generic parameter <T> captures the actual type at the call site." },
+          { "kind": "code", "lines": [
+            "function first<T>(arr: T[]): T | undefined {",
+            "  return arr[0];",
+            "}",
+            "const n = first([1, 2, 3]);   // n: number | undefined",
+            "const s = first(['a', 'b']);  // s: string | undefined",
+            "",
+            "interface ApiResponse<T> { data: T; error?: string; }",
+            "const res: ApiResponse<User[]> = await getUsers();"
+          ]}
+        ]
+      },
+      {
+        "qNum": 12,
+        "qText": "Explain interface vs type in TypeScript, and utility types like Partial, Pick, Omit.",
+        "level": "intermediate",
+        "header": "JavaScript & TypeScript Core",
+        "blocks": [
+          { "kind": "text", "text": "interface and type are largely interchangeable for object shapes. interface supports declaration merging and is idiomatic for public object contracts; type can express unions, intersections, tuples, and mapped types. Utility types transform existing types: Partial<T> makes all props optional, Required<T> the opposite, Pick<T,K> selects keys, Omit<T,K> removes keys, Record<K,V> builds a map type." },
+          { "kind": "code", "lines": [
+            "interface User { id: number; name: string; email: string; }",
+            "",
+            "type UserPreview = Pick<User, 'id' | 'name'>;",
+            "type UserUpdate = Partial<Omit<User, 'id'>>;",
+            "type Status = 'active' | 'banned';",
+            "type UsersByStatus = Record<Status, User[]>;"
+          ]}
+        ]
+      },
+      {
+        "qNum": 13,
+        "qText": "What are TypeScript union types, type narrowing, and discriminated unions?",
+        "level": "advanced",
+        "header": "JavaScript & TypeScript Core",
+        "blocks": [
+          { "kind": "text", "text": "A union (A | B) allows a value to be one of several types. Narrowing uses runtime checks (typeof, in, instanceof, equality) so the compiler knows the specific type in a branch. A discriminated (tagged) union shares a common literal field the compiler uses to narrow exhaustively, which pairs perfectly with a switch and a 'never' exhaustiveness check." },
+          { "kind": "code", "lines": [
+            "type Shape =",
+            "  | { kind: 'circle'; r: number }",
+            "  | { kind: 'rect'; w: number; h: number };",
+            "",
+            "function area(s: Shape): number {",
+            "  switch (s.kind) {",
+            "    case 'circle': return Math.PI * s.r ** 2;",
+            "    case 'rect': return s.w * s.h;",
+            "    default: const _exhaustive: never = s; return _exhaustive;",
+            "  }",
+            "}"
+          ]}
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "React",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "What is the Virtual DOM and how does React reconciliation work?",
+        "level": "beginner",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "The Virtual DOM is a lightweight in-memory tree of React elements. On each render React builds a new tree and diffs it against the previous one (reconciliation), then applies the minimal set of real DOM mutations. React uses heuristics: different element types produce a full subtree replacement, and the 'key' prop lets React match list items across renders so it can move/reuse instead of recreating nodes." },
+          { "kind": "text", "text": "This is why stable, unique keys matter and why using array index as a key can cause bugs when the list reorders." }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "What are the rules of hooks and why do they exist?",
+        "level": "beginner",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "Two rules: (1) Only call hooks at the top level - never inside loops, conditions, or nested functions. (2) Only call hooks from React function components or custom hooks. React tracks hook state by call ORDER, not by name, so conditional calls would misalign state between renders." },
+          { "kind": "code", "lines": [
+            "// WRONG - conditional hook",
+            "if (isLoggedIn) { const [x] = useState(0); }",
+            "",
+            "// RIGHT - hook always runs, condition inside",
+            "const [x, setX] = useState(0);",
+            "if (isLoggedIn) { /* use x */ }"
+          ]}
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Explain useState and how state updates are batched.",
+        "level": "beginner",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "useState returns a stateful value and a setter. Setting state schedules a re-render; it does not mutate the variable synchronously. React batches multiple setState calls in the same event into a single render. When the new state depends on the previous value, pass an updater function to avoid stale reads." },
+          { "kind": "code", "lines": [
+            "const [count, setCount] = useState(0);",
+            "",
+            "// stale - all read count=0, result is 1",
+            "setCount(count + 1); setCount(count + 1);",
+            "",
+            "// correct - functional update, result is 2",
+            "setCount(c => c + 1); setCount(c => c + 1);"
+          ]}
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Explain useEffect, its dependency array, and cleanup.",
+        "level": "intermediate",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "useEffect runs side effects after render. The dependency array controls when it re-runs: [] runs once on mount, [a, b] runs when a or b change, and no array runs after every render. The returned function is a cleanup that runs before the next effect and on unmount - use it to unsubscribe, clear timers, or abort requests." },
+          { "kind": "code", "lines": [
+            "useEffect(() => {",
+            "  const controller = new AbortController();",
+            "  fetch('/api/data', { signal: controller.signal })",
+            "    .then(r => r.json()).then(setData);",
+            "  return () => controller.abort(); // cleanup",
+            "}, []); // run once on mount"
+          ]},
+          { "kind": "subheader", "text": "Common pitfall" },
+          { "kind": "text", "text": "Omitting a used value from deps causes stale closures; adding a new object/function every render causes infinite loops. Stabilize with useCallback/useMemo." }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "What is the difference between useMemo and useCallback?",
+        "level": "intermediate",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "Both memoize across renders based on a dependency array. useMemo caches a computed VALUE (result of a function); useCallback caches a FUNCTION reference. useCallback(fn, deps) is equivalent to useMemo(() => fn, deps). Use them to avoid expensive recomputation or to keep referential stability for props passed to memoized children." },
+          { "kind": "code", "lines": [
+            "const sorted = useMemo(",
+            "  () => [...items].sort((a, b) => a.price - b.price),",
+            "  [items]",
+            ");",
+            "",
+            "const handleClick = useCallback(",
+            "  (id) => onSelect(id),",
+            "  [onSelect]",
+            ");"
+          ]},
+          { "kind": "text", "text": "Do not over-use them; memoization has its own cost and only helps when the input is stable or the child is wrapped in React.memo." }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "How does the Context API work and when should you use it?",
+        "level": "intermediate",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "Context provides a way to pass data through the tree without prop drilling. You create a context, wrap part of the tree in a Provider, and read it with useContext. Use it for low-frequency global data like theme, auth user, or locale. Every consumer re-renders when the Provider value changes, so avoid putting rapidly-changing state in one big context - split contexts or memoize the value." },
+          { "kind": "code", "lines": [
+            "const AuthContext = createContext(null);",
+            "",
+            "function App() {",
+            "  const [user, setUser] = useState(null);",
+            "  const value = useMemo(() => ({ user, setUser }), [user]);",
+            "  return (",
+            "    <AuthContext.Provider value={value}>",
+            "      <Dashboard />",
+            "    </AuthContext.Provider>",
+            "  );",
+            "}",
+            "",
+            "function Profile() {",
+            "  const { user } = useContext(AuthContext);",
+            "  return <span>{user?.name}</span>;",
+            "}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "What causes unnecessary re-renders and how do you optimize React performance?",
+        "level": "advanced",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "A component re-renders when its state/props change or its parent re-renders. Common causes of waste: new object/array/function literals passed as props each render, context value changes, and large lists. Techniques: React.memo to skip re-render when props are shallow-equal, useMemo/useCallback for referential stability, key-based list reconciliation, list virtualization (react-window), lifting expensive state down, and code-splitting with React.lazy/Suspense." },
+          { "kind": "code", "lines": [
+            "const Row = React.memo(function Row({ item, onSelect }) {",
+            "  return <li onClick={() => onSelect(item.id)}>{item.name}</li>;",
+            "});",
+            "",
+            "// parent stabilizes the callback so React.memo can work",
+            "const onSelect = useCallback((id) => setSelected(id), []);"
+          ]},
+          { "kind": "subheader", "text": "Measure first" },
+          { "kind": "text", "text": "Use the React DevTools Profiler to find the actual bottleneck before adding memoization everywhere." }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "What is the difference between useEffect, useLayoutEffect, and useRef?",
+        "level": "advanced",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "useEffect runs asynchronously AFTER the browser paints, so it does not block visual updates - use it for data fetching and subscriptions. useLayoutEffect runs synchronously AFTER DOM mutations but BEFORE paint - use it to read layout (measure a node) and mutate the DOM to avoid a flicker. useRef holds a mutable value that persists across renders WITHOUT triggering a re-render, commonly used for DOM node references or storing timers/previous values." },
+          { "kind": "code", "lines": [
+            "const inputRef = useRef(null);",
+            "useEffect(() => { inputRef.current.focus(); }, []);",
+            "",
+            "// persist a value without re-rendering",
+            "const renderCount = useRef(0);",
+            "renderCount.current++;"
+          ]}
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "How do you implement client-side routing with React Router?",
+        "level": "intermediate",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "React Router maps URL paths to components without full page reloads. You define routes, render matched elements via an Outlet for nested layouts, read params with useParams, and navigate programmatically with useNavigate. Protected routes wrap children in an auth check that redirects unauthenticated users." },
+          { "kind": "code", "lines": [
+            "<BrowserRouter>",
+            "  <Routes>",
+            "    <Route path='/' element={<Layout />}>",
+            "      <Route index element={<Home />} />",
+            "      <Route path='users/:id' element={<User />} />",
+            "      <Route element={<RequireAuth />}>",
+            "        <Route path='dashboard' element={<Dashboard />} />",
+            "      </Route>",
+            "    </Route>",
+            "  </Routes>",
+            "</BrowserRouter>"
+          ]}
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "How do you handle forms in React (controlled vs uncontrolled)?",
+        "level": "intermediate",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "In a controlled component React state is the single source of truth: the input value comes from state and onChange updates it. In an uncontrolled component the DOM holds the value and you read it via a ref. Controlled inputs give validation and conditional UI; uncontrolled are simpler and slightly more performant. Libraries like React Hook Form use refs (uncontrolled) for performance while still giving validation." },
+          { "kind": "code", "lines": [
+            "// controlled",
+            "const [email, setEmail] = useState('');",
+            "<input value={email} onChange={e => setEmail(e.target.value)} />",
+            "",
+            "// react-hook-form (uncontrolled, minimal re-renders)",
+            "const { register, handleSubmit } = useForm();",
+            "<input {...register('email', { required: true })} />"
+          ]}
+        ]
+      },
+      {
+        "qNum": 11,
+        "qText": "What problem does React Query (TanStack Query) solve and how does caching work?",
+        "level": "intermediate",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "React Query manages server state: fetching, caching, background refetching, deduplication, and invalidation - things useEffect + useState do poorly. Each query has a key and cached data with staleTime (how long data is considered fresh) and gcTime (how long unused cache is kept). Mutations update the server and then invalidate related queries to refetch fresh data." },
+          { "kind": "code", "lines": [
+            "const { data, isLoading, error } = useQuery({",
+            "  queryKey: ['users', page],",
+            "  queryFn: () => fetchUsers(page),",
+            "  staleTime: 60000",
+            "});",
+            "",
+            "const mutation = useMutation({",
+            "  mutationFn: createUser,",
+            "  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] })",
+            "});"
+          ]},
+          { "kind": "text", "text": "Benefits: automatic loading/error states, no manual cache code, and consistent data across components sharing a key." }
+        ]
+      },
+      {
+        "qNum": 12,
+        "qText": "What are keys in React lists and why should you avoid using the array index?",
+        "level": "beginner",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "Keys give React a stable identity for each list item so it can match items across renders and reuse DOM/component state instead of recreating them. Using the array index as a key breaks when the list is reordered, filtered, or has items inserted/removed - React associates the wrong state (e.g. input values, focus) with the wrong item. Use a stable unique id from your data." },
+          { "kind": "code", "lines": [
+            "// avoid: index changes when list reorders",
+            "{items.map((it, i) => <Row key={i} item={it} />)}",
+            "",
+            "// prefer: stable id",
+            "{items.map(it => <Row key={it.id} item={it} />)}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 13,
+        "qText": "What is a custom hook and how do you build one?",
+        "level": "intermediate",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "A custom hook is a function starting with 'use' that composes built-in hooks to extract and reuse stateful logic across components. It does not share state between components - each call gets its own state. This is React's primary mechanism for logic reuse, replacing older HOC and render-prop patterns." },
+          { "kind": "code", "lines": [
+            "function useDebouncedValue(value, delay = 300) {",
+            "  const [debounced, setDebounced] = useState(value);",
+            "  useEffect(() => {",
+            "    const t = setTimeout(() => setDebounced(value), delay);",
+            "    return () => clearTimeout(t);",
+            "  }, [value, delay]);",
+            "  return debounced;",
+            "}",
+            "",
+            "const search = useDebouncedValue(query, 400);"
+          ]}
+        ]
+      },
+      {
+        "qNum": 14,
+        "qText": "What are Error Boundaries and how do you handle rendering errors?",
+        "level": "advanced",
+        "header": "React",
+        "blocks": [
+          { "kind": "text", "text": "An Error Boundary is a component that catches JavaScript errors thrown during rendering, in lifecycle methods, and in constructors of its child tree, then renders a fallback UI instead of crashing the whole app. They are implemented with class components using getDerivedStateFromError and componentDidCatch. They do NOT catch errors in event handlers, async code, or SSR - handle those with try/catch." },
+          { "kind": "code", "lines": [
+            "class ErrorBoundary extends React.Component {",
+            "  state = { hasError: false };",
+            "  static getDerivedStateFromError() { return { hasError: true }; }",
+            "  componentDidCatch(err, info) { logToService(err, info); }",
+            "  render() {",
+            "    if (this.state.hasError) return <Fallback />;",
+            "    return this.props.children;",
+            "  }",
+            "}"
+          ]}
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "Node.js & Express",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "How does Node.js handle concurrency if it is single-threaded?",
+        "level": "beginner",
+        "header": "Node.js & Express",
+        "blocks": [
+          { "kind": "text", "text": "Node runs your JS on a single main thread but uses an event loop plus a libuv thread pool for I/O. When you make an I/O call (file, network, DB), Node offloads it and continues executing; when the operation completes, its callback is queued and run on the main thread. This non-blocking model handles thousands of concurrent connections efficiently, as long as you avoid blocking the loop with heavy synchronous CPU work." }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "What is middleware in Express and how does the chain work?",
+        "level": "beginner",
+        "header": "Node.js & Express",
+        "blocks": [
+          { "kind": "text", "text": "Middleware are functions with signature (req, res, next) that run in order for a request. Each can read/modify req and res, end the response, or call next() to pass control to the next middleware. This chain powers logging, body parsing, auth, and error handling. Order matters - a body parser must run before routes that read req.body." },
+          { "kind": "code", "lines": [
+            "app.use(express.json());              // parse JSON body",
+            "app.use((req, res, next) => {          // logger",
+            "  console.log(req.method, req.url);",
+            "  next();",
+            "});",
+            "app.get('/users', authMiddleware, getUsers);"
+          ]}
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "How do you handle errors in Express, including async route handlers?",
+        "level": "intermediate",
+        "header": "Node.js & Express",
+        "blocks": [
+          { "kind": "text", "text": "Express has a special error-handling middleware with four args (err, req, res, next). Synchronous throws are caught automatically, but errors in async handlers must be passed to next(err) or the request hangs. A common pattern is an asyncHandler wrapper that catches rejected promises and forwards them to the central error handler." },
+          { "kind": "code", "lines": [
+            "const asyncHandler = fn => (req, res, next) =>",
+            "  Promise.resolve(fn(req, res, next)).catch(next);",
+            "",
+            "app.get('/u/:id', asyncHandler(async (req, res) => {",
+            "  const u = await User.findById(req.params.id);",
+            "  if (!u) throw new AppError('Not found', 404);",
+            "  res.json(u);",
+            "}));",
+            "",
+            "// central handler (registered LAST)",
+            "app.use((err, req, res, next) => {",
+            "  res.status(err.status || 500).json({ error: err.message });",
+            "});"
+          ]}
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "What is the difference between process.nextTick, setImmediate, and setTimeout?",
+        "level": "advanced",
+        "header": "Node.js & Express",
+        "blocks": [
+          { "kind": "text", "text": "process.nextTick callbacks run BEFORE the event loop continues, right after the current operation completes - they can starve I/O if abused. setImmediate runs on the 'check' phase, after the current poll phase. setTimeout(fn, 0) runs in the timers phase after at least the minimum delay. Order in practice: nextTick first, then Promise microtasks, then timers/immediate depending on context." },
+          { "kind": "code", "lines": [
+            "setTimeout(() => console.log('timeout'), 0);",
+            "setImmediate(() => console.log('immediate'));",
+            "process.nextTick(() => console.log('nextTick'));",
+            "// nextTick runs first; timeout vs immediate order varies"
+          ]}
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "What are streams in Node.js and why are they useful?",
+        "level": "intermediate",
+        "header": "Node.js & Express",
+        "blocks": [
+          { "kind": "text", "text": "Streams process data in chunks instead of loading it all into memory, so you can handle large files or continuous data with low, constant memory. The four types are Readable, Writable, Duplex, and Transform. pipeline() connects them and handles backpressure automatically - it pauses the source when the destination is slow." },
+          { "kind": "code", "lines": [
+            "const { pipeline } = require('stream/promises');",
+            "const fs = require('fs');",
+            "const zlib = require('zlib');",
+            "",
+            "await pipeline(",
+            "  fs.createReadStream('big.log'),",
+            "  zlib.createGzip(),",
+            "  fs.createWriteStream('big.log.gz')",
+            ");"
+          ]}
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "How do you structure a scalable Express application?",
+        "level": "intermediate",
+        "header": "Node.js & Express",
+        "blocks": [
+          { "kind": "text", "text": "Separate concerns into layers: routes (HTTP mapping), controllers (request/response handling), services (business logic), and models/data access. Keep configuration in environment variables, centralize error handling and validation middleware, and use a Router per feature. This keeps controllers thin and business logic testable independent of Express." },
+          { "kind": "code", "lines": [
+            "// routes/users.js",
+            "const router = require('express').Router();",
+            "router.get('/', userController.list);",
+            "router.post('/', validate(userSchema), userController.create);",
+            "module.exports = router;",
+            "",
+            "// app.js",
+            "app.use('/api/users', require('./routes/users'));"
+          ]}
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "How do you avoid blocking the event loop with CPU-intensive work?",
+        "level": "advanced",
+        "header": "Node.js & Express",
+        "blocks": [
+          { "kind": "text", "text": "Long synchronous CPU work (crypto, image processing, big JSON, sorting) blocks the single main thread and stalls all requests. Options: offload to Worker Threads for CPU parallelism, spawn a child process, break work into chunks with setImmediate, move it to a background job queue (BullMQ/Redis), or use native async APIs (e.g. crypto.pbkdf2 async). Always benchmark to confirm the loop is the bottleneck." },
+          { "kind": "code", "lines": [
+            "const { Worker } = require('worker_threads');",
+            "function runHeavy(data) {",
+            "  return new Promise((resolve, reject) => {",
+            "    const w = new Worker('./heavy-worker.js', { workerData: data });",
+            "    w.on('message', resolve);",
+            "    w.on('error', reject);",
+            "  });",
+            "}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "What is the difference between require (CommonJS) and import (ES Modules)?",
+        "level": "beginner",
+        "header": "Node.js & Express",
+        "blocks": [
+          { "kind": "text", "text": "CommonJS (require/module.exports) is synchronous, loads modules at runtime, and is the historical Node default. ES Modules (import/export) are the standard, support static analysis and tree-shaking, are asynchronous, and allow top-level await. You opt into ESM with type: module in package.json or the .mjs extension. In ESM, __dirname is not defined - derive it from import.meta.url." },
+          { "kind": "code", "lines": [
+            "// CommonJS",
+            "const express = require('express');",
+            "module.exports = router;",
+            "",
+            "// ES Modules",
+            "import express from 'express';",
+            "export default router;"
+          ]}
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "How do you implement rate limiting and basic security in Express?",
+        "level": "intermediate",
+        "header": "Node.js & Express",
+        "blocks": [
+          { "kind": "text", "text": "Use express-rate-limit to cap requests per IP/window (protects against brute force and abuse), helmet to set secure HTTP headers, cors to control cross-origin access, and validate/sanitize all input. Never trust client data; store secrets in env vars; hash passwords with bcrypt/argon2." },
+          { "kind": "code", "lines": [
+            "const rateLimit = require('express-rate-limit');",
+            "const helmet = require('helmet');",
+            "",
+            "app.use(helmet());",
+            "app.use('/api/', rateLimit({",
+            "  windowMs: 15 * 60 * 1000, // 15 min",
+            "  max: 100                  // per IP",
+            "}));"
+          ]}
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "How do you manage environment configuration and secrets in Node?",
+        "level": "beginner",
+        "header": "Node.js & Express",
+        "blocks": [
+          { "kind": "text", "text": "Keep environment-specific values (DB URLs, JWT secrets, API keys) out of source code. Load them from environment variables via process.env, using a .env file locally (dotenv) that is git-ignored. Validate required vars at startup so the app fails fast if misconfigured, and never commit secrets." },
+          { "kind": "code", "lines": [
+            "require('dotenv').config();",
+            "const required = ['MONGO_URI', 'JWT_SECRET'];",
+            "for (const key of required) {",
+            "  if (!process.env[key]) throw new Error('Missing env: ' + key);",
+            "}",
+            "const PORT = process.env.PORT || 3000;"
+          ]}
+        ]
+      },
+      {
+        "qNum": 11,
+        "qText": "How does clustering / the cluster module help Node scale?",
+        "level": "advanced",
+        "header": "Node.js & Express",
+        "blocks": [
+          { "kind": "text", "text": "A single Node process uses one CPU core. The cluster module (or PM2 in cluster mode) forks one worker per core; all workers share the same listening port and the OS load-balances connections. This gives vertical scaling across cores on one machine. Workers do not share memory, so keep sessions/cache in an external store like Redis. For true horizontal scale, run multiple instances behind a load balancer." },
+          { "kind": "code", "lines": [
+            "const cluster = require('cluster');",
+            "const os = require('os');",
+            "if (cluster.isPrimary) {",
+            "  os.cpus().forEach(() => cluster.fork());",
+            "} else {",
+            "  require('./server'); // each worker runs the app",
+            "}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 12,
+        "qText": "What is a memory leak in Node and how do you diagnose one?",
+        "level": "advanced",
+        "header": "Node.js & Express",
+        "blocks": [
+          { "kind": "text", "text": "A memory leak is when memory that is no longer needed is not released, usually because references are retained: growing global arrays/maps, forgotten event listeners, closures capturing large objects, or unbounded caches. Symptoms: RSS grows over time and eventually crashes with heap out of memory. Diagnose by watching process.memoryUsage(), taking heap snapshots in Chrome DevTools or clinic.js, and comparing snapshots to find retained objects." },
+          { "kind": "code", "lines": [
+            "// common leak: listener added on every request, never removed",
+            "app.get('/x', (req, res) => {",
+            "  emitter.on('event', handler); // grows forever",
+            "  res.end();",
+            "});",
+            "// fix: use once(), remove the listener, or move it out of the handler"
+          ]}
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "MongoDB & Mongoose",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "When should you embed documents vs reference them in MongoDB?",
+        "level": "intermediate",
+        "header": "MongoDB & Mongoose",
+        "blocks": [
+          { "kind": "text", "text": "Embed when data is accessed together, has a one-to-few relationship, and does not grow unbounded (e.g. an address inside a user). Embedding gives a single fast read with no joins. Reference when data is shared across documents, grows large/unbounded (one-to-many, many-to-many), or is updated independently (e.g. users and their thousands of orders). Referencing avoids duplication and huge documents (16MB doc limit)." },
+          { "kind": "code", "lines": [
+            "// embedded (read together, bounded)",
+            "{ _id, name, address: { street, city, zip } }",
+            "",
+            "// referenced (unbounded, shared)",
+            "{ _id: orderId, userId: ObjectId('...'), total: 99 }"
+          ]}
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "What is the MongoDB aggregation pipeline? Give an example.",
+        "level": "intermediate",
+        "header": "MongoDB & Mongoose",
+        "blocks": [
+          { "kind": "text", "text": "The aggregation pipeline processes documents through a sequence of stages, each transforming the stream: $match filters, $group aggregates, $sort orders, $project reshapes, $lookup joins other collections. It runs server-side and is the primary tool for reporting and analytics." },
+          { "kind": "code", "lines": [
+            "Order.aggregate([",
+            "  { $match: { status: 'paid' } },",
+            "  { $group: { _id: '$userId', total: { $sum: '$amount' } } },",
+            "  { $sort: { total: -1 } },",
+            "  { $limit: 10 }",
+            "]);"
+          ]}
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "How do indexes work in MongoDB and when should you add them?",
+        "level": "intermediate",
+        "header": "MongoDB & Mongoose",
+        "blocks": [
+          { "kind": "text", "text": "An index is a B-tree that lets MongoDB find documents without a full collection scan (COLLSCAN). Add indexes on fields used in query filters, sorts, and join keys. Compound indexes follow the ESR rule (Equality, Sort, Range) for field order. Indexes speed reads but slow writes and use memory, so index deliberately. Use explain('executionStats') to verify an index is used (IXSCAN)." },
+          { "kind": "code", "lines": [
+            "db.users.createIndex({ email: 1 }, { unique: true });",
+            "db.orders.createIndex({ userId: 1, createdAt: -1 });",
+            "",
+            "// verify",
+            "db.orders.find({ userId: id }).sort({ createdAt: -1 }).explain('executionStats');"
+          ]}
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "What is Mongoose populate and how does it work?",
+        "level": "beginner",
+        "header": "MongoDB & Mongoose",
+        "blocks": [
+          { "kind": "text", "text": "populate() replaces a referenced ObjectId (or array of ids) with the actual document(s) from another collection, giving a join-like result. Under the hood Mongoose runs a second query. Select only needed fields to keep it fast, and be aware that populating many documents can cause an N+1-style overhead - $lookup in an aggregation can be more efficient for large joins." },
+          { "kind": "code", "lines": [
+            "const orderSchema = new Schema({",
+            "  user: { type: Schema.Types.ObjectId, ref: 'User' },",
+            "  total: Number",
+            "});",
+            "",
+            "const orders = await Order.find()",
+            "  .populate('user', 'name email'); // only name, email"
+          ]}
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "How do transactions work in MongoDB with Mongoose?",
+        "level": "advanced",
+        "header": "MongoDB & Mongoose",
+        "blocks": [
+          { "kind": "text", "text": "MongoDB supports multi-document ACID transactions on replica sets/sharded clusters. You start a session, run operations with that session, then commit or abort. Use them when multiple documents must change atomically (e.g. transfer funds, deduct stock while creating an order). Transactions have overhead, so prefer atomic single-document updates when the data model allows." },
+          { "kind": "code", "lines": [
+            "const session = await mongoose.startSession();",
+            "try {",
+            "  session.startTransaction();",
+            "  await Account.updateOne({ _id: from }, { $inc: { bal: -100 } }, { session });",
+            "  await Account.updateOne({ _id: to }, { $inc: { bal: 100 } }, { session });",
+            "  await session.commitTransaction();",
+            "} catch (e) {",
+            "  await session.abortTransaction();",
+            "  throw e;",
+            "} finally {",
+            "  session.endSession();",
+            "}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "What are Mongoose schemas, models, and validation?",
+        "level": "beginner",
+        "header": "MongoDB & Mongoose",
+        "blocks": [
+          { "kind": "text", "text": "A Schema defines the shape, types, defaults, and validation rules for documents in a collection. A Model is a constructor compiled from a schema that you use to create and query documents. Mongoose runs validators before saving, enforcing required fields, enums, min/max, and custom validators - so bad data is rejected at the app layer." },
+          { "kind": "code", "lines": [
+            "const userSchema = new Schema({",
+            "  email: { type: String, required: true, unique: true,",
+            "           match: /.+@.+/ },",
+            "  role: { type: String, enum: ['user', 'admin'], default: 'user' },",
+            "  age: { type: Number, min: 0 }",
+            "}, { timestamps: true });",
+            "",
+            "const User = mongoose.model('User', userSchema);"
+          ]}
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "What is the N+1 query problem in MongoDB and how do you avoid it?",
+        "level": "advanced",
+        "header": "MongoDB & Mongoose",
+        "blocks": [
+          { "kind": "text", "text": "N+1 happens when you run one query to fetch N parent documents, then a separate query per parent to fetch related data - resulting in N+1 round trips. Avoid it by using populate (which batches into a single $in query per path), a $lookup aggregation, or by embedding when appropriate. Always look for queries inside loops." },
+          { "kind": "code", "lines": [
+            "// N+1 - one query per order (bad)",
+            "for (const o of orders) {",
+            "  o.user = await User.findById(o.userId);",
+            "}",
+            "",
+            "// batched - single populate call",
+            "const orders = await Order.find().populate('userId');"
+          ]}
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "What is the difference between findOneAndUpdate and update with atomic operators?",
+        "level": "intermediate",
+        "header": "MongoDB & Mongoose",
+        "blocks": [
+          { "kind": "text", "text": "Atomic update operators like $inc, $set, $push, $pull modify a document server-side without a read-modify-write race. findOneAndUpdate applies such an update and can return the modified document (use new: true to get the updated version). Reading a value into JS, changing it, and saving() risks a lost update under concurrency; atomic operators avoid that." },
+          { "kind": "code", "lines": [
+            "// atomic increment - safe under concurrency",
+            "const post = await Post.findOneAndUpdate(",
+            "  { _id: id },",
+            "  { $inc: { views: 1 } },",
+            "  { new: true }",
+            ");"
+          ]}
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "How do you paginate large result sets efficiently?",
+        "level": "intermediate",
+        "header": "MongoDB & Mongoose",
+        "blocks": [
+          { "kind": "text", "text": "skip/limit is simple but degrades on deep pages because the server still scans and discards the skipped documents. For large data prefer range/cursor-based (keyset) pagination: sort by an indexed field and fetch the next page using a filter on the last seen value. This stays fast regardless of page depth." },
+          { "kind": "code", "lines": [
+            "// offset pagination (simple, slow deep)",
+            "Post.find().sort({ _id: -1 }).skip(page * size).limit(size);",
+            "",
+            "// keyset pagination (fast, stable)",
+            "Post.find({ _id: { $lt: lastId } })",
+            "    .sort({ _id: -1 }).limit(size);"
+          ]}
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "How do you model a many-to-many relationship in MongoDB?",
+        "level": "intermediate",
+        "header": "MongoDB & Mongoose",
+        "blocks": [
+          { "kind": "text", "text": "Common approaches: store an array of referenced ids on one or both sides (good for bounded relationships like a user's roles), or use a separate join/link collection for large, queryable-from-both-sides relationships (like students and courses with enrollment metadata). Choose based on cardinality and which direction you query most." },
+          { "kind": "code", "lines": [
+            "// array of refs (bounded)",
+            "{ _id: userId, roleIds: [ObjectId('...'), ObjectId('...')] }",
+            "",
+            "// join collection (large, with metadata)",
+            "{ studentId, courseId, enrolledAt, grade }"
+          ]}
+        ]
+      },
+      {
+        "qNum": 11,
+        "qText": "What are read/write concerns and how does a replica set provide availability?",
+        "level": "advanced",
+        "header": "MongoDB & Mongoose",
+        "blocks": [
+          { "kind": "text", "text": "A replica set is a group of mongod nodes: one primary (takes writes) and secondaries (replicate the oplog). If the primary fails, an election promotes a secondary, giving high availability. Write concern (e.g. w: 'majority') controls how many nodes must acknowledge a write for durability; read concern and read preference control consistency vs reading from secondaries. Majority write + majority read gives strong consistency." }
+        ]
+      },
+      {
+        "qNum": 12,
+        "qText": "What is sharding and when do you need it?",
+        "level": "advanced",
+        "header": "MongoDB & Mongoose",
+        "blocks": [
+          { "kind": "text", "text": "Sharding horizontally partitions a collection across multiple servers using a shard key, letting you scale write throughput and storage beyond one machine. You need it when a single replica set can no longer hold the data or handle the write load. Choosing a good shard key is critical - it should have high cardinality and even distribution to avoid hotspots; a poor key (like a monotonically increasing timestamp) creates an overloaded shard." }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "Full-Stack Integration",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "Walk through JWT authentication from the React frontend to the Express backend.",
+        "level": "intermediate",
+        "header": "Full-Stack Integration",
+        "blocks": [
+          { "kind": "text", "text": "The user logs in; the server verifies credentials, signs a JWT containing claims (userId, role, exp) with a secret, and returns it. The client stores the token (ideally an httpOnly cookie) and sends it on each request. Auth middleware verifies the signature and expiry, attaches the decoded user to req, and protected routes proceed. Because JWTs are stateless, the server does not store sessions - but you cannot easily revoke a token before it expires without a denylist or short-lived access tokens plus refresh tokens." },
+          { "kind": "code", "lines": [
+            "// sign on login",
+            "const token = jwt.sign({ sub: user.id, role: user.role },",
+            "  process.env.JWT_SECRET, { expiresIn: '15m' });",
+            "",
+            "// verify middleware",
+            "function auth(req, res, next) {",
+            "  const token = req.cookies.token; // or Authorization header",
+            "  try {",
+            "    req.user = jwt.verify(token, process.env.JWT_SECRET);",
+            "    next();",
+            "  } catch { res.status(401).json({ error: 'Invalid token' }); }",
+            "}"
+          ]},
+          { "kind": "mermaid", "lines": [
+            "sequenceDiagram",
+            "  participant C as React Client",
+            "  participant S as Express Server",
+            "  participant DB as MongoDB",
+            "  C->>S: POST /login {email, password}",
+            "  S->>DB: find user, compare bcrypt hash",
+            "  DB-->>S: user record",
+            "  S-->>C: Set-Cookie: httpOnly JWT (access) + refresh",
+            "  C->>S: GET /api/profile (cookie sent automatically)",
+            "  S->>S: verify JWT signature + expiry",
+            "  S-->>C: 200 profile data",
+            "  Note over C,S: On 401, client calls /refresh to get a new access token"
+          ]}
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "What is CORS and how do you configure it correctly?",
+        "level": "intermediate",
+        "header": "Full-Stack Integration",
+        "blocks": [
+          { "kind": "text", "text": "CORS (Cross-Origin Resource Sharing) is a browser security mechanism that blocks JS from reading responses from a different origin unless the server opts in with Access-Control-Allow-* headers. The browser sends a preflight OPTIONS request for non-simple requests. Configure the server to allow specific origins (never '*' when using credentials) and set credentials: true so cookies are sent." },
+          { "kind": "code", "lines": [
+            "const cors = require('cors');",
+            "app.use(cors({",
+            "  origin: 'https://app.example.com', // exact origin, not *",
+            "  credentials: true,                 // allow cookies",
+            "  methods: ['GET', 'POST', 'PUT', 'DELETE']",
+            "}));"
+          ]}
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Where should you store the JWT: cookies or localStorage?",
+        "level": "advanced",
+        "header": "Full-Stack Integration",
+        "blocks": [
+          { "kind": "text", "text": "localStorage is accessible to any JavaScript on the page, so a single XSS bug leaks the token. httpOnly cookies are not readable by JS (mitigating XSS token theft) but are automatically sent, which exposes them to CSRF - counter that with SameSite=Strict/Lax and CSRF tokens. The common recommendation: store the token in a Secure, httpOnly, SameSite cookie. Regardless, sanitize output to prevent XSS in the first place." },
+          { "kind": "code", "lines": [
+            "res.cookie('token', jwtToken, {",
+            "  httpOnly: true,",
+            "  secure: true,      // HTTPS only",
+            "  sameSite: 'strict',",
+            "  maxAge: 15 * 60 * 1000",
+            "});"
+          ]}
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "How do access tokens and refresh tokens work together?",
+        "level": "advanced",
+        "header": "Full-Stack Integration",
+        "blocks": [
+          { "kind": "text", "text": "A short-lived access token (e.g. 15 min) authorizes API calls; a long-lived refresh token (days) is used only to obtain new access tokens. This limits the damage of a leaked access token while avoiding frequent logins. Refresh tokens are stored securely (httpOnly cookie) and can be revoked server-side (rotation + a stored token id/denylist). On a 401, the client silently calls /refresh and retries." },
+          { "kind": "code", "lines": [
+            "// refresh endpoint",
+            "app.post('/refresh', (req, res) => {",
+            "  const rt = req.cookies.refresh;",
+            "  const payload = jwt.verify(rt, process.env.REFRESH_SECRET);",
+            "  if (isRevoked(payload.jti)) return res.sendStatus(401);",
+            "  const access = jwt.sign({ sub: payload.sub },",
+            "    process.env.JWT_SECRET, { expiresIn: '15m' });",
+            "  res.json({ access });",
+            "});"
+          ]}
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "How do you implement file uploads in a MERN app?",
+        "level": "intermediate",
+        "header": "Full-Stack Integration",
+        "blocks": [
+          { "kind": "text", "text": "The client sends multipart/form-data. On the server, multer parses the file, and you validate type/size, then store it - ideally in object storage (S3) rather than the app server, saving only the URL/key in MongoDB. For large files or scale, generate a pre-signed URL so the client uploads directly to S3, bypassing your server." },
+          { "kind": "code", "lines": [
+            "const multer = require('multer');",
+            "const upload = multer({ limits: { fileSize: 5 * 1024 * 1024 } });",
+            "",
+            "app.post('/avatar', upload.single('file'), async (req, res) => {",
+            "  const { key } = await s3Upload(req.file.buffer);",
+            "  await User.updateOne({ _id: req.user.sub }, { avatar: key });",
+            "  res.json({ key });",
+            "});"
+          ]}
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "How do WebSockets work and when would you use them over REST?",
+        "level": "intermediate",
+        "header": "Full-Stack Integration",
+        "blocks": [
+          { "kind": "text", "text": "WebSockets provide a persistent, full-duplex connection so the server can push data to the client without polling. Use them for real-time features: chat, live notifications, dashboards, collaborative editing, presence. REST is request/response and better for standard CRUD. Socket.IO adds rooms, auto-reconnect, and fallbacks on top of raw WebSockets." },
+          { "kind": "code", "lines": [
+            "// server (socket.io)",
+            "io.on('connection', socket => {",
+            "  socket.join('room-' + socket.userId);",
+            "  socket.on('message', msg => {",
+            "    io.to('room-' + msg.to).emit('message', msg);",
+            "  });",
+            "});",
+            "",
+            "// client",
+            "const socket = io('/', { withCredentials: true });",
+            "socket.on('message', addToChat);"
+          ]}
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "Compare Redux and Zustand for state management. When do you need a store at all?",
+        "level": "intermediate",
+        "header": "Full-Stack Integration",
+        "blocks": [
+          { "kind": "text", "text": "Reach for a global store only for shared CLIENT state that many distant components need (auth, theme, cart). Redux Toolkit is structured, predictable, has great DevTools/middleware, but more boilerplate. Zustand is a minimal hook-based store with almost no boilerplate and selective subscriptions. Note: SERVER state (fetched data) is usually better handled by React Query than a global store." },
+          { "kind": "code", "lines": [
+            "// zustand",
+            "const useCart = create((set) => ({",
+            "  items: [],",
+            "  add: (item) => set(s => ({ items: [...s.items, item] })),",
+            "  clear: () => set({ items: [] })",
+            "}));",
+            "",
+            "const items = useCart(s => s.items); // selective subscription"
+          ]}
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "How do you prevent XSS and CSRF in a MERN application?",
+        "level": "advanced",
+        "header": "Full-Stack Integration",
+        "blocks": [
+          { "kind": "text", "text": "XSS: React escapes rendered content by default; the danger is dangerouslySetInnerHTML - sanitize any HTML (DOMPurify), set a Content-Security-Policy, and validate input. CSRF: an attacker makes the browser send a request with the user's cookie. Mitigate with SameSite cookies, CSRF tokens (double-submit), and by checking the Origin/Referer header. Storing the token in a non-cookie header for APIs also sidesteps CSRF." }
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "How do you handle API errors and loading states consistently on the frontend?",
+        "level": "beginner",
+        "header": "Full-Stack Integration",
+        "blocks": [
+          { "kind": "text", "text": "Adopt a consistent error contract from the backend ({ error, code }) and a consistent HTTP status usage. On the frontend, centralize fetch logic (an axios instance with interceptors or React Query), surface loading/error/empty states explicitly in the UI, and handle 401 globally (redirect to login or refresh). Never leave a spinner spinning forever - always resolve to success, empty, or error." },
+          { "kind": "code", "lines": [
+            "const api = axios.create({ baseURL: '/api', withCredentials: true });",
+            "api.interceptors.response.use(",
+            "  r => r,",
+            "  err => {",
+            "    if (err.response?.status === 401) redirectToLogin();",
+            "    return Promise.reject(err);",
+            "  }",
+            ");"
+          ]}
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "What is server-side rendering (SSR) and how does Next.js relate to MERN?",
+        "level": "intermediate",
+        "header": "Full-Stack Integration",
+        "blocks": [
+          { "kind": "text", "text": "SSR renders React to HTML on the server per request so the user gets meaningful content immediately (better first paint and SEO) before hydration attaches interactivity. A plain CRA/Vite SPA renders client-side only. Next.js provides SSR, static generation (SSG), incremental regeneration, and API routes, and can replace a separate Express layer for many apps - a common evolution of the MERN stack." }
+        ]
+      },
+      {
+        "qNum": 11,
+        "qText": "How do you validate and sanitize data on both client and server?",
+        "level": "intermediate",
+        "header": "Full-Stack Integration",
+        "blocks": [
+          { "kind": "text", "text": "Validate on the client for fast UX feedback, but ALWAYS validate again on the server because the client can be bypassed. Use a schema validator (Zod, Joi, express-validator) as middleware, reject invalid requests with 400 and a clear message, and share the schema between client and server when possible (Zod works in both). Sanitize strings to strip injection payloads." },
+          { "kind": "code", "lines": [
+            "const schema = z.object({",
+            "  email: z.string().email(),",
+            "  age: z.number().int().min(0)",
+            "});",
+            "",
+            "app.post('/users', (req, res, next) => {",
+            "  const parsed = schema.safeParse(req.body);",
+            "  if (!parsed.success)",
+            "    return res.status(400).json({ error: parsed.error.issues });",
+            "  next();",
+            "});"
+          ]}
+        ]
+      },
+      {
+        "qNum": 12,
+        "qText": "How do you deploy a MERN app and configure environments for production?",
+        "level": "advanced",
+        "header": "Full-Stack Integration",
+        "blocks": [
+          { "kind": "text", "text": "Build the React app to static assets served via a CDN or the same origin; run the Node/Express API behind a reverse proxy (Nginx) with HTTPS; use MongoDB Atlas managed clusters. Externalize config via env vars, enable gzip/compression, set secure headers, use PM2/containers with health checks, add logging/monitoring, and set up CI/CD. Keep secrets out of the image and use least-privilege DB users." }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "System Design (HLD)",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "How would you design a URL shortener (like bit.ly)?",
+        "level": "intermediate",
+        "header": "System Design (HLD)",
+        "blocks": [
+          { "kind": "text", "text": "Core need: map a long URL to a short code and redirect. Generate a unique short code (base62 of an auto-increment id, or a hash with collision check). Store code -> longUrl in a key-value/DB and cache hot entries in Redis. Reads (redirects) vastly outnumber writes, so optimize for read: cache heavily, use a 301/302 redirect. Scale reads with replicas/CDN; scale writes and storage by sharding on the code. Add analytics via async event logging." },
+          { "kind": "mermaid", "lines": [
+            "flowchart LR",
+            "  U[User] --> LB[Load Balancer]",
+            "  LB --> API[App Servers]",
+            "  API --> Cache[(Redis cache)]",
+            "  API --> DB[(Key-Value Store)]",
+            "  Cache -. miss .-> DB"
+          ]}
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Design a scalable chat application. What are the key components?",
+        "level": "advanced",
+        "header": "System Design (HLD)",
+        "blocks": [
+          { "kind": "text", "text": "Use WebSockets for real-time bidirectional messaging. Components: a gateway layer holding socket connections (stateful, scaled horizontally), a pub/sub bus (Redis pub/sub or Kafka) so messages reach the right socket server regardless of which node holds the recipient, a message store (Cassandra/Mongo for high write throughput), and presence tracking. Handle offline delivery with a queue and push notifications. Partition by conversation/room id." },
+          { "kind": "mermaid", "lines": [
+            "flowchart LR",
+            "  A[Client A] <--> GW1[WS Gateway 1]",
+            "  B[Client B] <--> GW2[WS Gateway 2]",
+            "  GW1 --> PS[(Redis Pub/Sub)]",
+            "  GW2 --> PS",
+            "  GW1 --> MS[(Message Store)]",
+            "  GW2 --> MS"
+          ]}
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "What are horizontal vs vertical scaling and how do you make a Node service stateless?",
+        "level": "intermediate",
+        "header": "System Design (HLD)",
+        "blocks": [
+          { "kind": "text", "text": "Vertical scaling adds more CPU/RAM to one machine (simple, but has a ceiling and a single point of failure). Horizontal scaling adds more machines behind a load balancer (near-unlimited, resilient). To scale horizontally, each instance must be stateless: no in-memory sessions or local file storage. Move session/cache to Redis, files to object storage, and use sticky sessions only when unavoidable (WebSockets)." }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "How and where do you add caching in a web application?",
+        "level": "intermediate",
+        "header": "System Design (HLD)",
+        "blocks": [
+          { "kind": "text", "text": "Cache at multiple layers: browser/CDN for static assets, an application cache (Redis) for hot query results and sessions, and DB-level query caching. Common strategy is cache-aside: check cache, on miss read the DB and populate the cache with a TTL. Key concerns are invalidation (write-through or event-based eviction) and avoiding stampedes (locking or request coalescing). Cache only when reads dominate and staleness is acceptable." },
+          { "kind": "code", "lines": [
+            "async function getUser(id) {",
+            "  const cached = await redis.get('user:' + id);",
+            "  if (cached) return JSON.parse(cached);",
+            "  const user = await User.findById(id);",
+            "  await redis.set('user:' + id, JSON.stringify(user), 'EX', 300);",
+            "  return user;",
+            "}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "How do you design a REST API? What makes it RESTful?",
+        "level": "beginner",
+        "header": "System Design (HLD)",
+        "blocks": [
+          { "kind": "text", "text": "REST models resources addressed by URLs, manipulated with HTTP verbs (GET read, POST create, PUT/PATCH update, DELETE remove) and standard status codes. It is stateless (each request carries its own auth/context), uses nouns not verbs in paths, supports filtering/pagination via query params, and versions the API (/v1). Good design is consistent, predictable, and returns meaningful errors." },
+          { "kind": "code", "lines": [
+            "GET    /api/v1/users          # list (with ?page=&limit=)",
+            "GET    /api/v1/users/42      # one",
+            "POST   /api/v1/users         # create -> 201",
+            "PATCH  /api/v1/users/42      # partial update",
+            "DELETE /api/v1/users/42      # -> 204"
+          ]}
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "REST vs GraphQL - what are the tradeoffs?",
+        "level": "intermediate",
+        "header": "System Design (HLD)",
+        "blocks": [
+          { "kind": "text", "text": "REST exposes fixed endpoints; clients may over-fetch (extra fields) or under-fetch (need multiple calls). GraphQL exposes a single endpoint where the client requests exactly the fields it needs, reducing round trips and payload - great for varied clients and nested data. Costs: server complexity, harder HTTP caching, and the N+1/resolver problem (mitigated by DataLoader). Choose REST for simple, cacheable CRUD; GraphQL for complex, client-driven data needs." }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "How would you design a rate limiter for an API?",
+        "level": "advanced",
+        "header": "System Design (HLD)",
+        "blocks": [
+          { "kind": "text", "text": "Track requests per client (API key/IP) against a limit per window. Algorithms: fixed window (simple but bursty at edges), sliding window log/counter (smoother), token bucket (allows bursts up to capacity, refills at a steady rate - most common). In a distributed system store counters in Redis so all instances share state, using atomic INCR + EXPIRE or a Lua script for correctness." },
+          { "kind": "code", "lines": [
+            "-- Redis token-bucket-ish via fixed window (Lua-safe pattern)",
+            "local key = 'rl:' .. userId",
+            "local count = redis.call('INCR', key)",
+            "if count == 1 then redis.call('EXPIRE', key, window) end",
+            "if count > limit then return 0 else return 1 end"
+          ]}
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "When would you introduce a message queue, and what does it give you?",
+        "level": "advanced",
+        "header": "System Design (HLD)",
+        "blocks": [
+          { "kind": "text", "text": "Introduce a queue (RabbitMQ, Kafka, BullMQ/Redis) to decouple producers from consumers and handle work asynchronously: sending emails, image processing, generating reports, or smoothing traffic spikes. It gives durability (work is not lost if a worker crashes), retries/backoff, and independent scaling of workers. The request returns fast while the heavy work happens in the background." },
+          { "kind": "mermaid", "lines": [
+            "flowchart LR",
+            "  API[API Server] -->|enqueue job| Q[(Queue)]",
+            "  Q --> W1[Worker 1]",
+            "  Q --> W2[Worker 2]",
+            "  W1 --> DB[(DB / Email / S3)]"
+          ]}
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "What is the CAP theorem and how does it apply to MongoDB?",
+        "level": "advanced",
+        "header": "System Design (HLD)",
+        "blocks": [
+          { "kind": "text", "text": "CAP states that during a network Partition a distributed system can guarantee only Consistency OR Availability, not both. MongoDB is CP by default: during a partition, the side without a primary rejects writes to preserve consistency (elections favor consistency). You can tune toward availability (reading from secondaries with eventual consistency) via read preference and read/write concerns, trading freshness for uptime." }
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "How do you monitor, log, and observe a production MERN system?",
+        "level": "intermediate",
+        "header": "System Design (HLD)",
+        "blocks": [
+          { "kind": "text", "text": "Use structured logging (pino/winston) with correlation ids to trace a request across services, centralized in ELK/Loki. Collect metrics (latency, error rate, throughput, saturation - the RED/USE methods) in Prometheus/Grafana, and distributed traces via OpenTelemetry. Add health/readiness endpoints, alerting on SLO breaches, and capture unhandled errors in Sentry. Observability lets you answer why something is slow, not just that it is." }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "DSA & Coding (JS)",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "Reverse a string and check if a string is a palindrome in JavaScript.",
+        "level": "beginner",
+        "header": "DSA & Coding (JS)",
+        "blocks": [
+          { "kind": "text", "text": "Reversing: split into chars, reverse, join - O(n). Palindrome: compare with its reverse, or use two pointers from both ends for O(1) extra space. Normalize case and strip non-alphanumerics for real-world palindrome checks." },
+          { "kind": "code", "lines": [
+            "const reverse = s => [...s].reverse().join('');",
+            "",
+            "function isPalindrome(s) {",
+            "  s = s.toLowerCase().replace(/[^a-z0-9]/g, '');",
+            "  let i = 0, j = s.length - 1;",
+            "  while (i < j) if (s[i++] !== s[j--]) return false;",
+            "  return true;",
+            "}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Find the first non-repeating character in a string.",
+        "level": "beginner",
+        "header": "DSA & Coding (JS)",
+        "blocks": [
+          { "kind": "text", "text": "Count occurrences in one pass with a Map, then scan again for the first char with count 1. O(n) time, O(k) space where k is the alphabet size. Using a Map preserves insertion order for the second pass." },
+          { "kind": "code", "lines": [
+            "function firstUnique(s) {",
+            "  const count = new Map();",
+            "  for (const c of s) count.set(c, (count.get(c) || 0) + 1);",
+            "  for (const c of s) if (count.get(c) === 1) return c;",
+            "  return null;",
+            "}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Given an array of numbers, return indices of two numbers that add up to a target (Two Sum).",
+        "level": "beginner",
+        "header": "DSA & Coding (JS)",
+        "blocks": [
+          { "kind": "text", "text": "Brute force is O(n^2). The optimal is a single pass with a hash map: for each number, check if target - num was seen; if so return both indices, else store the number's index. O(n) time, O(n) space." },
+          { "kind": "code", "lines": [
+            "function twoSum(nums, target) {",
+            "  const seen = new Map();",
+            "  for (let i = 0; i < nums.length; i++) {",
+            "    const need = target - nums[i];",
+            "    if (seen.has(need)) return [seen.get(need), i];",
+            "    seen.set(nums[i], i);",
+            "  }",
+            "  return [];",
+            "}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Remove duplicates from an array. What are the tradeoffs of different approaches?",
+        "level": "beginner",
+        "header": "DSA & Coding (JS)",
+        "blocks": [
+          { "kind": "text", "text": "A Set gives the cleanest O(n) dedup for primitives. For arrays of objects you must dedup by a key. filter+indexOf is O(n^2) and should be avoided for large arrays. Set does not deduplicate objects by value since it uses reference identity." },
+          { "kind": "code", "lines": [
+            "const unique = [...new Set(arr)];",
+            "",
+            "// dedup objects by id",
+            "const map = new Map(objs.map(o => [o.id, o]));",
+            "const uniqueObjs = [...map.values()];"
+          ]}
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "Explain and implement binary search.",
+        "level": "intermediate",
+        "header": "DSA & Coding (JS)",
+        "blocks": [
+          { "kind": "text", "text": "Binary search finds a target in a SORTED array by repeatedly halving the search range - O(log n). Compare the middle; go left or right. The classic bug is integer overflow in mid (not an issue in JS) and off-by-one in the loop condition (use low <= high)." },
+          { "kind": "code", "lines": [
+            "function binarySearch(arr, target) {",
+            "  let lo = 0, hi = arr.length - 1;",
+            "  while (lo <= hi) {",
+            "    const mid = Math.floor((lo + hi) / 2);",
+            "    if (arr[mid] === target) return mid;",
+            "    if (arr[mid] < target) lo = mid + 1;",
+            "    else hi = mid - 1;",
+            "  }",
+            "  return -1;",
+            "}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "Find the maximum sum of a contiguous subarray (Kadane's algorithm).",
+        "level": "intermediate",
+        "header": "DSA & Coding (JS)",
+        "blocks": [
+          { "kind": "text", "text": "Kadane's runs in O(n): track the best sum ending at the current index (either extend the previous subarray or start fresh at the current element) and the global best. This is a classic dynamic-programming pattern." },
+          { "kind": "code", "lines": [
+            "function maxSubArray(nums) {",
+            "  let cur = nums[0], best = nums[0];",
+            "  for (let i = 1; i < nums.length; i++) {",
+            "    cur = Math.max(nums[i], cur + nums[i]);",
+            "    best = Math.max(best, cur);",
+            "  }",
+            "  return best;",
+            "}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "Detect whether a linked list has a cycle.",
+        "level": "intermediate",
+        "header": "DSA & Coding (JS)",
+        "blocks": [
+          { "kind": "text", "text": "Use Floyd's tortoise and hare: a slow pointer moves one step, a fast pointer two. If they ever meet, there is a cycle; if fast reaches null, there is none. O(n) time, O(1) space - better than a hash set of visited nodes." },
+          { "kind": "code", "lines": [
+            "function hasCycle(head) {",
+            "  let slow = head, fast = head;",
+            "  while (fast && fast.next) {",
+            "    slow = slow.next;",
+            "    fast = fast.next.next;",
+            "    if (slow === fast) return true;",
+            "  }",
+            "  return false;",
+            "}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "Group anagrams together from a list of strings.",
+        "level": "intermediate",
+        "header": "DSA & Coding (JS)",
+        "blocks": [
+          { "kind": "text", "text": "Anagrams share the same sorted letters, so use the sorted string as a hash-map key and push words into buckets. O(n * k log k) where k is word length. Sorting each word gives a canonical signature." },
+          { "kind": "code", "lines": [
+            "function groupAnagrams(words) {",
+            "  const map = new Map();",
+            "  for (const w of words) {",
+            "    const key = [...w].sort().join('');",
+            "    (map.get(key) || map.set(key, []).get(key)).push(w);",
+            "  }",
+            "  return [...map.values()];",
+            "}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "Implement a function to flatten a deeply nested array.",
+        "level": "intermediate",
+        "header": "DSA & Coding (JS)",
+        "blocks": [
+          { "kind": "text", "text": "Recursively iterate: if an element is an array, flatten and concat; otherwise push. Array.prototype.flat(Infinity) does this natively. Watch for very deep nesting causing stack overflow - an iterative stack-based version avoids that." },
+          { "kind": "code", "lines": [
+            "function flatten(arr) {",
+            "  return arr.reduce((acc, x) =>",
+            "    acc.concat(Array.isArray(x) ? flatten(x) : x), []);",
+            "}",
+            "",
+            "// native",
+            "arr.flat(Infinity);"
+          ]}
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "Find the length of the longest substring without repeating characters.",
+        "level": "advanced",
+        "header": "DSA & Coding (JS)",
+        "blocks": [
+          { "kind": "text", "text": "Use a sliding window with a set/map of the current window's characters. Expand the right pointer; when a duplicate appears, shrink from the left until the window is valid again. Track the max length. O(n) time." },
+          { "kind": "code", "lines": [
+            "function lengthOfLongest(s) {",
+            "  const seen = new Map();",
+            "  let start = 0, max = 0;",
+            "  for (let i = 0; i < s.length; i++) {",
+            "    if (seen.has(s[i]) && seen.get(s[i]) >= start)",
+            "      start = seen.get(s[i]) + 1;",
+            "    seen.set(s[i], i);",
+            "    max = Math.max(max, i - start + 1);",
+            "  }",
+            "  return max;",
+            "}"
+          ]}
+        ]
+      },
+      {
+        "qNum": 11,
+        "qText": "Explain Big-O and give the complexity of common operations.",
+        "level": "beginner",
+        "header": "DSA & Coding (JS)",
+        "blocks": [
+          { "kind": "text", "text": "Big-O describes how runtime/space grows with input size, ignoring constants. Common: O(1) constant (hash lookup, array index), O(log n) binary search, O(n) single pass, O(n log n) good sorts, O(n^2) nested loops, O(2^n) naive recursion. Array push/pop are amortized O(1); unshift/splice are O(n); object/Map lookup is O(1) average." }
+        ]
+      },
+      {
+        "qNum": 12,
+        "qText": "Implement memoization for an expensive pure function.",
+        "level": "advanced",
+        "header": "DSA & Coding (JS)",
+        "blocks": [
+          { "kind": "text", "text": "Memoization caches results by argument key so repeated calls with the same inputs return instantly - a space-for-time trade valid only for pure functions. Use a Map keyed by a serialization of the arguments. It turns exponential recursion (naive Fibonacci) into linear." },
+          { "kind": "code", "lines": [
+            "function memoize(fn) {",
+            "  const cache = new Map();",
+            "  return function (...args) {",
+            "    const key = JSON.stringify(args);",
+            "    if (cache.has(key)) return cache.get(key);",
+            "    const result = fn.apply(this, args);",
+            "    cache.set(key, result);",
+            "    return result;",
+            "  };",
+            "}"
+          ]}
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "Scenario / Debugging",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "A React component re-renders on every keystroke and the whole page feels laggy. How do you debug and fix it?",
+        "level": "intermediate",
+        "header": "Scenario / Debugging",
+        "blocks": [
+          { "kind": "text", "text": "Open the React DevTools Profiler and record a keystroke to see which components render and why. Common causes: state that should be local is held high in the tree, new object/function props breaking memoization, or a heavy child re-rendering. Fixes: move the input's state down into a small component, wrap expensive children in React.memo, stabilize callbacks with useCallback, debounce expensive side effects, and virtualize long lists." }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Your Node API works locally but returns 'CORS error' from the deployed React app. Walk through the fix.",
+        "level": "intermediate",
+        "header": "Scenario / Debugging",
+        "blocks": [
+          { "kind": "text", "text": "A CORS error is enforced by the browser, not the server - the request often reaches the server fine. Check the failing request in the Network tab: is there a preflight OPTIONS returning without the right headers? Fixes: configure cors middleware to allow the deployed origin (exact URL, not localhost), set credentials: true if using cookies (and matching withCredentials on the client), ensure the proxy forwards OPTIONS, and confirm you are calling the correct API base URL in production env vars." }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "A MongoDB query that was fast in development is very slow in production. How do you investigate?",
+        "level": "advanced",
+        "header": "Scenario / Debugging",
+        "blocks": [
+          { "kind": "text", "text": "Run explain('executionStats') on the query. If you see a COLLSCAN with a high totalDocsExamined, the query is not using an index - add a compound index matching the filter+sort (ESR order). Development is fast because the dataset is tiny. Also check: unbounded result sets (add pagination/limit), populate causing many round trips, missing projection returning huge documents, and connection pool exhaustion. Verify the fix shows IXSCAN and low docs examined." },
+          { "kind": "code", "lines": [
+            "db.orders.find({ userId: id }).sort({ createdAt: -1 })",
+            "  .explain('executionStats');",
+            "// look for stage: 'COLLSCAN' (bad) vs 'IXSCAN' (good)"
+          ]}
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Users report they get logged out randomly. How do you diagnose the auth issue?",
+        "level": "intermediate",
+        "header": "Scenario / Debugging",
+        "blocks": [
+          { "kind": "text", "text": "Check token expiry - if the access token is short-lived and there is no refresh flow, users drop when it expires. Verify cookie attributes: a missing Secure/SameSite/domain mismatch means the browser stops sending the cookie across pages or after HTTPS redirects. If running multiple stateless instances with in-memory sessions, requests hitting a different instance lose the session (move sessions to Redis). Also check clock skew affecting JWT exp validation and CORS credentials config." }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "A Node process crashes intermittently under load with no clear error. How do you approach it?",
+        "level": "advanced",
+        "header": "Scenario / Debugging",
+        "blocks": [
+          { "kind": "text", "text": "First, capture the crash: add handlers for uncaughtException and unhandledRejection to log the stack before exit, and ensure your process manager restarts and records exits. Likely causes under load: unhandled promise rejections, running out of memory (watch RSS, take heap snapshots for leaks), event-loop blocking causing timeouts, or exhausting DB connections. Add structured logging with correlation ids, reproduce with a load test, and fix the specific root cause rather than just auto-restarting." },
+          { "kind": "code", "lines": [
+            "process.on('unhandledRejection', (reason) => {",
+            "  logger.error('unhandledRejection', reason);",
+            "});",
+            "process.on('uncaughtException', (err) => {",
+            "  logger.error('uncaughtException', err);",
+            "  process.exit(1); // let the manager restart cleanly",
+            "});"
+          ]}
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "A useEffect is firing in an infinite loop. What are the likely causes and fixes?",
+        "level": "intermediate",
+        "header": "Scenario / Debugging",
+        "blocks": [
+          { "kind": "text", "text": "The effect updates state that is (directly or indirectly) in its dependency array, or a dependency is a new object/array/function created every render. Fixes: remove the setState-causing dependency or guard the update, memoize object/function deps with useMemo/useCallback, use a functional state update to avoid depending on the value, or move derived data out of state entirely (compute during render)." },
+          { "kind": "code", "lines": [
+            "// bug: options is a new object each render -> loop",
+            "useEffect(() => { fetchData(options); }, [options]);",
+            "",
+            "// fix: memoize the dependency",
+            "const options = useMemo(() => ({ page }), [page]);"
+          ]}
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "An API endpoint occasionally returns stale data even after an update. What could be wrong?",
+        "level": "intermediate",
+        "header": "Scenario / Debugging",
+        "blocks": [
+          { "kind": "text", "text": "Likely a caching layer not invalidated on write: a Redis cache entry, a CDN caching the GET response, HTTP cache headers/ETag, or React Query not invalidating its query key after the mutation. Trace which layer serves the stale value. Fixes: invalidate/evict the cache key on write (write-through or event-based), set correct Cache-Control, and call queryClient.invalidateQueries on the client after mutations." }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "A file upload endpoint works for small files but times out or crashes for large ones. Why?",
+        "level": "advanced",
+        "header": "Scenario / Debugging",
+        "blocks": [
+          { "kind": "text", "text": "Buffering the whole file in memory exhausts RAM and blocks the event loop; a proxy/body-size limit rejects it; or the request exceeds the server timeout. Fixes: stream the upload instead of buffering, enforce a size limit early, increase proxy/client_max_body_size, and offload large uploads to object storage via pre-signed URLs so bytes never pass through your Node server. Add progress and resumable uploads for very large files." }
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "The React app bundle is huge and initial load is slow. How do you reduce it?",
+        "level": "intermediate",
+        "header": "Scenario / Debugging",
+        "blocks": [
+          { "kind": "text", "text": "Analyze the bundle (source-map-explorer / rollup-plugin-visualizer) to find heavy dependencies. Techniques: route-based code splitting with React.lazy + Suspense, tree-shakeable imports (import only what you use, avoid whole-library imports like lodash), replace heavy libs with lighter ones (dayjs over moment), lazy-load below-the-fold components, enable gzip/brotli, and use a CDN. Defer non-critical scripts." },
+          { "kind": "code", "lines": [
+            "const Dashboard = React.lazy(() => import('./Dashboard'));",
+            "",
+            "<Suspense fallback={<Spinner />}>",
+            "  <Dashboard />",
+            "</Suspense>"
+          ]}
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "Two concurrent requests both decrement inventory and it goes negative. How do you fix the race condition?",
+        "level": "advanced",
+        "header": "Scenario / Debugging",
+        "blocks": [
+          { "kind": "text", "text": "The bug is a read-modify-write race: both requests read the same stock, both write a decrement. Fix with an atomic conditional update in the database so only one succeeds - use $inc guarded by a filter requiring sufficient stock, and check the modified count. For multi-document invariants use a transaction. This pushes the concurrency control to the DB where it is atomic." },
+          { "kind": "code", "lines": [
+            "const res = await Product.updateOne(",
+            "  { _id: id, stock: { $gte: qty } }, // only if enough",
+            "  { $inc: { stock: -qty } }",
+            ");",
+            "if (res.modifiedCount === 0) throw new Error('Out of stock');"
+          ]}
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "HR & Behavioral",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "Tell me about yourself.",
+        "level": "beginner",
+        "header": "HR & Behavioral",
+        "blocks": [
+          { "kind": "text", "text": "Give a tight 60-90 second arc: present (your current role and core stack), past (a relevant achievement that shows impact), and future (why this role fits). Keep it professional and tailored to a MERN full-stack role. Example structure: 'I am a full-stack developer with N years building React and Node applications. Most recently I owned [feature] that [measurable impact]. I enjoy [specific area], and I am looking for [what this role offers].'" }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Describe a challenging bug you fixed. What was your process?",
+        "level": "intermediate",
+        "header": "HR & Behavioral",
+        "blocks": [
+          { "kind": "text", "text": "Use STAR (Situation, Task, Action, Result). Pick a concrete bug, explain how you reproduced it, formed and tested hypotheses, used tools (profiler, logs, explain plans), found the root cause, and verified the fix. Emphasize systematic debugging over luck, and mention what you changed to prevent recurrence (a test, monitoring, or a guardrail)." }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "How do you handle disagreement with a teammate over a technical decision?",
+        "level": "intermediate",
+        "header": "HR & Behavioral",
+        "blocks": [
+          { "kind": "text", "text": "Show that you separate ego from ideas: seek to understand their reasoning, ground the discussion in shared goals and data (performance numbers, maintainability, deadlines), propose a small spike or POC when facts are unclear, and commit fully once the team decides even if it was not your preference. Give a specific example and the positive outcome." }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Tell me about a time you had to meet a tight deadline.",
+        "level": "beginner",
+        "header": "HR & Behavioral",
+        "blocks": [
+          { "kind": "text", "text": "With STAR, describe how you scoped ruthlessly (cut nice-to-haves, shipped an MVP), communicated risks early to stakeholders, and prioritized the critical path. Highlight collaboration and any tradeoffs you made consciously (e.g. deferred tech debt with a follow-up ticket). End with the delivered result and what you learned about estimation." }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "How do you keep your skills current in a fast-moving ecosystem?",
+        "level": "beginner",
+        "header": "HR & Behavioral",
+        "blocks": [
+          { "kind": "text", "text": "Mention concrete habits: reading release notes and docs, following key sources, building side projects to try new tools, reading others' code in PRs, and evaluating whether a new tool actually solves a real problem before adopting it. Show you balance curiosity with pragmatism rather than chasing every trend." }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "Describe a time you received critical feedback. How did you respond?",
+        "level": "intermediate",
+        "header": "HR & Behavioral",
+        "blocks": [
+          { "kind": "text", "text": "Pick real feedback, show you listened without defensiveness, asked clarifying questions, made a concrete change, and followed up to confirm improvement. This signals coachability and growth mindset. Avoid trivial examples; choose something that genuinely made you better." }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "How do you approach code reviews, both giving and receiving?",
+        "level": "intermediate",
+        "header": "HR & Behavioral",
+        "blocks": [
+          { "kind": "text", "text": "Giving: be kind and specific, focus on correctness, readability, and maintainability, distinguish blocking issues from nits, explain the why, and praise good work. Receiving: assume good intent, respond to every comment, and treat reviews as shared learning, not criticism. Mention automating style checks (linters/formatters) so reviews focus on logic." }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "Tell me about a project you are proud of and your specific contribution.",
+        "level": "beginner",
+        "header": "HR & Behavioral",
+        "blocks": [
+          { "kind": "text", "text": "Choose a project relevant to the role, state the problem and the business impact, and be precise about YOUR contribution (avoid 'we' for everything). Quantify results (latency reduced, users served, revenue/time saved) and mention a technical challenge you personally solved. Keep it honest and specific." }
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "How do you prioritize when everything seems urgent?",
+        "level": "intermediate",
+        "header": "HR & Behavioral",
+        "blocks": [
+          { "kind": "text", "text": "Explain a framework: assess impact vs effort, clarify true deadlines and dependencies with stakeholders, tackle the highest-impact/blocking items first, and communicate tradeoffs transparently. Mention distinguishing urgent from important, and that you proactively surface conflicts rather than silently missing something. Give an example." }
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "Where do you see yourself in a few years, and why this company?",
+        "level": "beginner",
+        "header": "HR & Behavioral",
+        "blocks": [
+          { "kind": "text", "text": "Show ambition aligned with a technical growth path (deeper expertise, mentoring, ownership of larger systems) rather than a vague title. Connect it to what this company offers - reference something specific about their product, scale, or engineering culture. Demonstrate you researched them and see a mutual fit." }
+        ]
+      }
+    ]
+  }
+]

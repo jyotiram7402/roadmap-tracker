@@ -1,0 +1,162 @@
+[
+  {
+    "sectionTitle": "Core Java & OOP",
+    "questions": [
+      { "qNum": 1, "qText": "What are the 4 pillars of OOP with a real example?", "level": "beginner", "header": "Core Java & OOP", "blocks": [
+        { "kind": "text", "text": "Encapsulation — hide state behind methods (private fields + validated setters). Inheritance — StripeGateway extends PaymentGateway. Polymorphism — gateway.charge() works for any implementation. Abstraction — expose an interface (what) and hide the implementation (how)." }
+      ]},
+      { "qNum": 2, "qText": "== vs equals(), and the Integer cache trap.", "level": "beginner", "header": "Core Java & OOP", "blocks": [
+        { "kind": "text", "text": "== compares references; equals() compares logical content when overridden. For objects/Strings use equals(). Trap: Integer a=127,b=127; a==b is true (cache −128..127) but 128==128 is false." }
+      ]},
+      { "qNum": 3, "qText": "Why is String immutable?", "level": "beginner", "header": "Core Java & OOP", "blocks": [
+        { "kind": "text", "text": "Security (holds paths/credentials), thread-safety without locks, safe HashMap keys (cached hashCode), and the string pool sharing literals to save memory. Any modification creates a new object; use StringBuilder for loops." }
+      ]},
+      { "qNum": 4, "qText": "How does HashMap work internally (Java 8+)?", "level": "intermediate", "header": "Core Java & OOP", "blocks": [
+        { "kind": "text", "text": "Array of buckets; index = spread(hashCode) & (capacity-1). Collisions form a linked list that treeifies to a red-black tree past 8 entries. Resizes (doubles) when size > capacity × 0.75, then rehashes. Average O(1) get/put." }
+      ]},
+      { "qNum": 5, "qText": "Explain Java 8 Streams: intermediate vs terminal, map vs flatMap.", "level": "intermediate", "header": "Core Java & OOP", "blocks": [
+        { "kind": "text", "text": "Intermediate ops (map, filter, sorted) are lazy and build a pipeline; terminal ops (collect, reduce, count) trigger execution. map is 1→1; flatMap is 1→many and flattens nested streams." },
+        { "kind": "code", "lines": ["Map<String,Double> avg = employees.stream()", "  .collect(Collectors.groupingBy(Employee::getDept,", "           Collectors.averagingDouble(Employee::getSalary)));"] }
+      ]},
+      { "qNum": 6, "qText": "Checked vs unchecked exceptions?", "level": "beginner", "header": "Core Java & OOP", "blocks": [
+        { "kind": "text", "text": "Checked (extends Exception) are compiler-enforced, for recoverable external failures. Unchecked (extends RuntimeException) are programming errors, not forced. Modern practice: favor unchecked + a global @RestControllerAdvice handler at the API boundary." }
+      ]},
+      { "qNum": 7, "qText": "What are the concurrency basics you'd mention (volatile, synchronized, Atomic)?", "level": "advanced", "header": "Core Java & OOP", "blocks": [
+        { "kind": "text", "text": "synchronized gives mutual exclusion + visibility (happens-before). volatile gives visibility only (good for flags, not count++). AtomicInteger uses lock-free CAS for correct fast counters. For pooled executors prefer ExecutorService over raw threads; virtual threads (Java 21) scale blocking I/O code." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "Spring Boot Backend",
+    "questions": [
+      { "qNum": 1, "qText": "What are IoC and Dependency Injection, and which injection type is best?", "level": "beginner", "header": "Spring Boot Backend", "blocks": [
+        { "kind": "text", "text": "IoC means the framework controls object creation/wiring; DI supplies dependencies to a class instead of it constructing them. Prefer constructor injection: immutable, required deps explicit, easy to unit-test with mocks." }
+      ]},
+      { "qNum": 2, "qText": "What does @SpringBootApplication do and how does auto-configuration work?", "level": "intermediate", "header": "Spring Boot Backend", "blocks": [
+        { "kind": "text", "text": "It combines @Configuration + @EnableAutoConfiguration + @ComponentScan. Auto-config applies @Conditional-guarded configs based on the classpath and your beans (@ConditionalOnClass/OnMissingBean), so your own beans win. Debug with --debug conditions report." }
+      ]},
+      { "qNum": 3, "qText": "Explain how @Transactional works internally.", "level": "advanced", "header": "Spring Boot Backend", "blocks": [
+        { "kind": "text", "text": "Spring wraps the bean in a proxy that begins a transaction, runs the method, and commits on success / rolls back on RuntimeException. Consequences: self-invocation bypasses the proxy (no transaction), only public methods are advised, checked exceptions don't roll back unless rollbackFor is set, and long transactions during external calls exhaust the connection pool." }
+      ]},
+      { "qNum": 4, "qText": "How do you secure REST APIs with JWT in Spring Security?", "level": "intermediate", "header": "Spring Boot Backend", "blocks": [
+        { "kind": "text", "text": "A OncePerRequestFilter extracts the Bearer token, validates signature/expiry, builds an Authentication, and stores it in SecurityContextHolder; route rules / @PreAuthorize enforce access. Set SessionCreationPolicy.STATELESS. Login issues a short access token + refresh token." }
+      ]},
+      { "qNum": 5, "qText": "How do you handle exceptions globally?", "level": "intermediate", "header": "Spring Boot Backend", "blocks": [
+        { "kind": "text", "text": "@RestControllerAdvice with @ExceptionHandler methods maps exceptions to a consistent error body (code, message, traceId) and status. @Valid failures produce MethodArgumentNotValidException → 400 with field errors. Never leak stack traces." },
+        { "kind": "code", "lines": ["@RestControllerAdvice", "class ApiErrors {", "  @ExceptionHandler(NotFoundException.class)", "  ResponseEntity<?> nf(NotFoundException e) {", "    return ResponseEntity.status(404).body(Map.of(\"error\", e.getMessage()));", "  }", "}"] }
+      ]},
+      { "qNum": 6, "qText": "How do you configure CORS for a Spring API + React frontend?", "level": "intermediate", "header": "Spring Boot Backend", "blocks": [
+        { "kind": "text", "text": "Define allowed origins/methods/headers globally via a CorsConfigurationSource bean (or WebMvcConfigurer). Restrict origins to your frontend domains, allow credentials only if using cookies, and remember the browser sends a preflight OPTIONS for non-simple requests." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "Frontend (React)",
+    "questions": [
+      { "qNum": 1, "qText": "useState vs useEffect — and the useEffect cleanup?", "level": "beginner", "header": "Frontend (React)", "blocks": [
+        { "kind": "text", "text": "useState holds component state and re-renders on change. useEffect runs side effects after render, controlled by a dependency array; return a cleanup function to cancel subscriptions/timers before the next run or unmount." },
+        { "kind": "code", "lines": ["useEffect(() => {", "  const id = setInterval(tick, 1000);", "  return () => clearInterval(id);   // cleanup", "}, []);"] }
+      ]},
+      { "qNum": 2, "qText": "How do you call a Spring Boot API from React and handle loading/errors?", "level": "intermediate", "header": "Frontend (React)", "blocks": [
+        { "kind": "text", "text": "Fetch in an effect (or better, use TanStack Query for caching, retries, and loading/error states). Track loading and error, send the JWT in the Authorization header, and handle 401 by redirecting to login or refreshing the token." },
+        { "kind": "code", "lines": ["const { data, isLoading, error } = useQuery({", "  queryKey: ['orders'],", "  queryFn: () => fetch('/api/orders', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json())", "});"] }
+      ]},
+      { "qNum": 3, "qText": "What are keys in React lists and why do they matter?", "level": "beginner", "header": "Frontend (React)", "blocks": [
+        { "kind": "text", "text": "Keys give list items stable identity so React can match elements between renders and update efficiently. Use a stable unique id, never the array index for dynamic lists (it causes wrong state reuse and bugs on reorder/insert)." }
+      ]},
+      { "qNum": 4, "qText": "useMemo vs useCallback vs React.memo?", "level": "intermediate", "header": "Frontend (React)", "blocks": [
+        { "kind": "text", "text": "useMemo caches a computed value; useCallback caches a function identity; React.memo skips re-rendering a child if its props are shallow-equal. Use them to fix measured re-render problems (especially stable callbacks passed to memoized children) — don't sprinkle prematurely." }
+      ]},
+      { "qNum": 5, "qText": "Controlled vs uncontrolled components?", "level": "beginner", "header": "Frontend (React)", "blocks": [
+        { "kind": "text", "text": "Controlled: form value lives in React state (value + onChange) — single source of truth, easy validation. Uncontrolled: the DOM holds the value, read via a ref. Controlled is the default; libraries like React Hook Form reduce re-renders for big forms." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "Databases & SQL",
+    "questions": [
+      { "qNum": 1, "qText": "What is the N+1 problem in JPA and how do you fix it?", "level": "intermediate", "header": "Databases & SQL", "blocks": [
+        { "kind": "text", "text": "Fetching N entities then lazily accessing an association fires 1+N queries. Fix with JOIN FETCH (JPQL), @EntityGraph, or batch fetching; detect by logging SQL and counting queries in tests." }
+      ]},
+      { "qNum": 2, "qText": "LAZY vs EAGER fetching — what's the rule?", "level": "intermediate", "header": "Databases & SQL", "blocks": [
+        { "kind": "text", "text": "LAZY loads an association only when accessed; EAGER always loads it. @ManyToOne defaults EAGER (usually change it), @OneToMany defaults LAZY. Rule: make everything LAZY and fetch exactly what a query needs with JOIN FETCH/EntityGraph to avoid over-fetching and LazyInitializationException." }
+      ]},
+      { "qNum": 3, "qText": "Explain ACID and isolation levels briefly.", "level": "intermediate", "header": "Databases & SQL", "blocks": [
+        { "kind": "text", "text": "ACID = Atomicity, Consistency, Isolation, Durability. Isolation levels trade correctness for concurrency: READ COMMITTED (no dirty reads) → REPEATABLE READ (MySQL default, stable rows) → SERIALIZABLE (full isolation, lowest concurrency). Use versioning/locking where money is involved." }
+      ]},
+      { "qNum": 4, "qText": "Write a query for the second highest salary.", "level": "intermediate", "header": "Databases & SQL", "blocks": [
+        { "kind": "text", "text": "Use a subquery or a window function (DENSE_RANK) to handle ties." },
+        { "kind": "code", "lines": ["SELECT MAX(salary) FROM emp", "WHERE salary < (SELECT MAX(salary) FROM emp);", "-- or", "SELECT salary FROM (", "  SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) rnk FROM emp", ") t WHERE rnk = 2;"] }
+      ]},
+      { "qNum": 5, "qText": "Optimistic vs pessimistic locking?", "level": "advanced", "header": "Databases & SQL", "blocks": [
+        { "kind": "text", "text": "Optimistic (@Version) fails the update if the row changed since read — great for low contention, retry on conflict. Pessimistic (SELECT ... FOR UPDATE) blocks other writers — for hot rows like a wallet balance. Choose by contention and cost of a retry." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "System Design (HLD)",
+    "questions": [
+      { "qNum": 1, "qText": "Design a URL shortener.", "level": "advanced", "header": "System Design (HLD)", "blocks": [
+        { "kind": "text", "text": "POST long→short, GET short→301 redirect. Generate keys as base62 of a unique id (or random + collision check). Read-heavy, so front the DB with a Redis cache and read replicas. Discuss QPS/storage estimates and 301 vs 302 (caching vs analytics)." },
+        { "kind": "mermaid", "lines": ["flowchart TD", "  U[User] --> LB[Load Balancer]", "  LB --> API[URL Service]", "  API --> C[(Redis cache)]", "  C -. miss .-> DB[(Key→URL DB)]", "  DB --> RR[(Read replicas)]"] }
+      ]},
+      { "qNum": 2, "qText": "Monolith vs microservices — the honest trade-off?", "level": "intermediate", "header": "System Design (HLD)", "blocks": [
+        { "kind": "text", "text": "Microservices give independent deploy/scale and fault isolation at the cost of network complexity, distributed transactions, and observability overhead. A modular monolith is the right starting point for most teams; split out services when team size or scaling pain justifies it." }
+      ]},
+      { "qNum": 3, "qText": "Where would you add caching in a full-stack app, and what would you never cache?", "level": "intermediate", "header": "System Design (HLD)", "blocks": [
+        { "kind": "text", "text": "Cache read-heavy, slow-changing data: product catalog, config, sessions, computed views (short TTL). Never cache (or key carefully by user): cart, inventory at checkout, payment status, or anything personalized. Prefer delete-on-write + TTL to bound staleness." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "DSA & Coding (Java)",
+    "questions": [
+      { "qNum": 1, "qText": "Two Sum in Java.", "level": "beginner", "header": "DSA & Coding (Java)", "blocks": [
+        { "kind": "text", "text": "HashMap of value→index, check complement in one pass. O(n) time and space." },
+        { "kind": "code", "lines": ["int[] twoSum(int[] nums, int target) {", "  Map<Integer,Integer> m = new HashMap<>();", "  for (int i = 0; i < nums.length; i++) {", "    int need = target - nums[i];", "    if (m.containsKey(need)) return new int[]{ m.get(need), i };", "    m.put(nums[i], i);", "  }", "  return new int[]{};", "}"] }
+      ]},
+      { "qNum": 2, "qText": "Reverse a linked list (iterative).", "level": "intermediate", "header": "DSA & Coding (Java)", "blocks": [
+        { "kind": "text", "text": "Walk the list re-pointing next to the previous node. O(n) time, O(1) space." },
+        { "kind": "code", "lines": ["ListNode reverse(ListNode head) {", "  ListNode prev = null;", "  while (head != null) {", "    ListNode next = head.next;", "    head.next = prev; prev = head; head = next;", "  }", "  return prev;", "}"] }
+      ]},
+      { "qNum": 3, "qText": "Valid parentheses.", "level": "beginner", "header": "DSA & Coding (Java)", "blocks": [
+        { "kind": "text", "text": "Push openers on a stack; on a closer pop and match; valid iff the stack is empty at the end. O(n)." }
+      ]},
+      { "qNum": 4, "qText": "Implement an LRU cache in Java.", "level": "advanced", "header": "DSA & Coding (Java)", "blocks": [
+        { "kind": "text", "text": "Quickest: extend LinkedHashMap with access order and removeEldestEntry. In an interview, also explain the manual HashMap + doubly-linked-list design giving O(1) get/put." },
+        { "kind": "code", "lines": ["class LRU<K,V> extends LinkedHashMap<K,V> {", "  private final int cap;", "  LRU(int cap){ super(cap, 0.75f, true); this.cap = cap; }", "  protected boolean removeEldestEntry(Map.Entry<K,V> e){ return size() > cap; }", "}"] }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "Scenario / Debugging",
+    "questions": [
+      { "qNum": 1, "qText": "You get LazyInitializationException in production. What happened and how do you fix it?", "level": "intermediate", "header": "Scenario / Debugging", "blocks": [
+        { "kind": "text", "text": "You accessed a LAZY association after the persistence context (transaction/session) closed — e.g., in the controller or during JSON serialization. Fix by fetching what you need inside the transaction (JOIN FETCH/@EntityGraph) and returning a DTO, not the entity. Avoid Open-Session-In-View as a crutch." }
+      ]},
+      { "qNum": 2, "qText": "A CORS error blocks the React app from calling the API. Diagnose it.", "level": "beginner", "header": "Scenario / Debugging", "blocks": [
+        { "kind": "text", "text": "The browser blocks the response because the server didn't return the right Access-Control-Allow-Origin (and preflight) headers. Configure CORS on the backend for the frontend origin, allow the needed methods/headers, and set allow-credentials only if using cookies. It's a server-config issue, not a frontend bug." }
+      ]},
+      { "qNum": 3, "qText": "An endpoint's p99 latency spiked after a deploy. Steps?", "level": "advanced", "header": "Scenario / Debugging", "blocks": [
+        { "kind": "text", "text": "Roll back if impact is high, then diff the deploy. Check traces for where time goes (DB? external call? GC?). Common causes: an introduced N+1, a missing index on a new query, connection-pool shrink, or GC pauses from a heap change. Show a method, not guesses." }
+      ]}
+    ]
+  },
+  {
+    "sectionTitle": "HR & Behavioral",
+    "questions": [
+      { "qNum": 1, "qText": "Tell me about yourself (Java full-stack).", "level": "beginner", "header": "HR & Behavioral", "blocks": [
+        { "kind": "text", "text": "Lead with years + domain, then both sides you own (Spring Boot APIs + React UI), a measurable win, and why this role. Keep it 45–60 seconds and end pointed at the job." }
+      ]},
+      { "qNum": 2, "qText": "How do you keep frontend and backend in sync as a full-stack dev?", "level": "intermediate", "header": "HR & Behavioral", "blocks": [
+        { "kind": "text", "text": "Share a contract: OpenAPI/Swagger for the API, generate types for the frontend, version endpoints, and keep changes backward-compatible. Talk about how you coordinate DTO changes and test both layers (MockMvc on backend, React Testing Library on frontend)." }
+      ]},
+      { "qNum": 3, "qText": "Describe a challenging bug you fixed end-to-end.", "level": "intermediate", "header": "HR & Behavioral", "blocks": [
+        { "kind": "text", "text": "STAR: the symptom, how you traced it across the stack (browser network tab → API logs → DB query), the root cause, the fix, and the prevention you added. Full-stack roles value the ability to follow a problem across boundaries." }
+      ]},
+      { "qNum": 4, "qText": "Do you have questions for us?", "level": "beginner", "header": "HR & Behavioral", "blocks": [
+        { "kind": "text", "text": "Yes: 'How is work split between frontend and backend on this team?', 'What does the first 90 days look like?', 'How do you handle incidents and on-call?' Shows ownership and curiosity." }
+      ]}
+    ]
+  }
+]
