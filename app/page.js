@@ -130,8 +130,29 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* CONNECT */}
+      <section className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pb-16 text-center">
+        <div className="rounded-2xl bg-slate-800/40 border border-slate-700/60 p-8 backdrop-blur">
+          <h3 className="text-xl font-bold">Built by a developer, for developers</h3>
+          <p className="mt-2 text-sm text-slate-400 max-w-xl mx-auto">
+            Have feedback, found a bug, or want to contribute questions? Let's connect.
+          </p>
+          <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a href="https://github.com/jyotiram7402" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-500 font-medium transition">
+              🐙 GitHub
+            </a>
+            <a href="mailto:jyotiramkamble7402@gmail.com" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-500 font-medium transition">
+              ✉️ jyotiramkamble7402@gmail.com
+            </a>
+          </div>
+        </div>
+      </section>
+
       <footer className="relative z-10 border-t border-slate-800 py-8 text-center text-xs text-slate-500">
-        <div className="font-bold text-slate-300 mb-1">Crack Any Job</div>
+        <div className="font-bold text-slate-300 mb-1">Crack <span className="gradient-text">Any Job</span></div>
+        <p className="max-w-xl mx-auto text-slate-400 mb-2">
+          Curated from real candidates' interview experiences and the most-repeated questions asked across the internet.
+        </p>
         Roadmaps · Interview Q&A · Diagrams · DSA · Role prep · Free forever
       </footer>
     </div>

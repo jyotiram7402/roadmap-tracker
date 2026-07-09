@@ -46,6 +46,7 @@ export default function Dashboard() {
   const [filters, setFilters] = useState({ unchecked: false, bookmarked: false, withCode: false });
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const stageRefs = useRef({});
 
   // restore track choice on mount
@@ -297,58 +298,81 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100">
-      <header className="sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800 no-print">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-xl font-bold truncate">{trackMeta.icon} {trackMeta.name}</h1>
-              <StreakBadge streak={streak} />
-            </div>
-            <p className="text-xs text-slate-400 truncate">{user?.email}</p>
-          </div>
-          <div className="flex items-center gap-1.5 flex-shrink-0">
-            <TrackSwitcher activeTrack={activeTrack} onSelect={selectTrack} />
-            <Link href="/roles" title="Prepare for a job role" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 bg-indigo-700/40 hover:bg-indigo-700/60 border border-indigo-800 rounded-lg">💼<span className="hidden sm:inline"> Roles</span></Link>
-            <Link href="/flashcards" title="Flashcard mode" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 bg-pink-700/40 hover:bg-pink-700/60 border border-pink-800 rounded-lg">🎯<span className="hidden sm:inline"> Quiz</span></Link>
-            <Link href="/bookmarks" title="Bookmarks" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 bg-amber-700/30 hover:bg-amber-700/50 border border-amber-800 rounded-lg">★<span className="hidden sm:inline"> {bookmarkCount}</span></Link>
-            <button onClick={signOut} className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg"><span className="sm:hidden">↩</span><span className="hidden sm:inline">Sign out</span></button>
-          </div>
-        </div>
+      <div className="lg:flex">
+        {/* mobile backdrop */}
+        {sidebarOpen && <div onClick={() => setSidebarOpen(false)} className="fixed inset-0 bg-black/60 z-30 lg:hidden no-print" />}
 
-        <div className="max-w-5xl mx-auto px-4 pb-2 grid grid-cols-2 gap-3">
-          <div>
-            <div className="flex justify-between text-xs mb-1">
-              <span className="text-slate-300">Checklist</span>
-              <span className="text-blue-400 font-semibold">{stats.done}/{stats.total} · {stats.pct}%</span>
-            </div>
-            <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all" style={{ width: `${stats.pct}%` }} />
-            </div>
-          </div>
-          <div>
-            <div className="flex justify-between text-xs mb-1">
-              <span className="text-slate-300">Q&A Mastered</span>
-              <span className="text-emerald-400 font-semibold">{qaStats.done}/{qaStats.total} · {qaStats.pct}%</span>
-            </div>
-            <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all" style={{ width: `${qaStats.pct}%` }} />
-            </div>
-          </div>
-        </div>
+        {/* SIDEBAR */}
+        <aside className={`fixed z-40 inset-y-0 left-0 w-64 bg-slate-950/95 backdrop-blur border-r border-slate-800 p-4 flex flex-col transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 no-print ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+          <Link href="/" className="flex items-center gap-2 mb-6">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center font-black text-sm">C</div>
+            <span className="font-extrabold">Crack <span className="gradient-text">Any Job</span></span>
+          </Link>
 
-        <div className="max-w-5xl mx-auto px-4 pb-3 space-y-2">
-          <input
-            type="text"
-            placeholder={`Search ${trackMeta.short} topics, Q&A, code...`}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500"
-          />
-          <FilterChips filters={filters} onChange={setFilters} />
-        </div>
-      </header>
+          <div className="text-[11px] uppercase tracking-wide text-slate-500 mb-1.5 px-1">Career track</div>
+          <div className="mb-5"><TrackSwitcher activeTrack={activeTrack} onSelect={(id) => { selectTrack(id); setSidebarOpen(false); }} /></div>
 
-      <main className="max-w-5xl mx-auto px-4 py-4 space-y-3">
+          <div className="text-[11px] uppercase tracking-wide text-slate-500 mb-1.5 px-1">Menu</div>
+          <nav className="space-y-1 flex-1">
+            <SideLink href="/dashboard" icon="📋" label="Roadmap" active onNav={() => setSidebarOpen(false)} />
+            <SideLink href="/roles" icon="💼" label="Prepare by Role" onNav={() => setSidebarOpen(false)} />
+            <SideLink href="/flashcards" icon="🎯" label="Flashcard Quiz" onNav={() => setSidebarOpen(false)} />
+            <SideLink href="/bookmarks" icon="★" label={`Bookmarks · ${bookmarkCount}`} onNav={() => setSidebarOpen(false)} />
+          </nav>
+
+          <div className="mt-4 pt-4 border-t border-slate-800 space-y-2">
+            <StreakBadge streak={streak} />
+            <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
+            <button onClick={signOut} className="w-full text-sm px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-left transition">↩ Sign out</button>
+          </div>
+        </aside>
+
+        {/* MAIN COLUMN */}
+        <div className="flex-1 min-w-0">
+          <header className="sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800 no-print">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
+              <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-xl leading-none px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700" aria-label="Open menu">☰</button>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-base sm:text-xl font-bold truncate">{trackMeta.icon} {trackMeta.name}</h1>
+                <p className="text-xs text-slate-400 truncate hidden sm:block">{trackMeta.tagline}</p>
+              </div>
+              <span className="lg:hidden"><StreakBadge streak={streak} /></span>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-2 grid grid-cols-2 gap-3">
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-slate-300">Checklist</span>
+                  <span className="text-blue-400 font-semibold">{stats.done}/{stats.total} · {stats.pct}%</span>
+                </div>
+                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all" style={{ width: `${stats.pct}%` }} />
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-slate-300">Q&A Mastered</span>
+                  <span className="text-emerald-400 font-semibold">{qaStats.done}/{qaStats.total} · {qaStats.pct}%</span>
+                </div>
+                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all" style={{ width: `${qaStats.pct}%` }} />
+                </div>
+              </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-3 space-y-2">
+              <input
+                type="text"
+                placeholder={`Search ${trackMeta.short} topics, Q&A, code...`}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500"
+              />
+              <FilterChips filters={filters} onChange={setFilters} />
+            </div>
+          </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-3">
         {dataLoading || !roadmap ? (
           <div className="text-center text-slate-400 py-16 animate-pulse">Loading {trackMeta.name}…</div>
         ) : (
@@ -458,10 +482,42 @@ export default function Dashboard() {
 
       {roadmap && <StageTOC stages={roadmap} stageStats={stageStats} onJump={jumpToStage} />}
 
-      <footer className="text-center text-xs text-slate-500 py-6 no-print">
-        Your data is saved automatically · {TRACKS.length} career tracks · Built with Next.js + Supabase.
+      <footer className="border-t border-slate-800 mt-6 py-8 no-print">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+          <p className="text-sm text-slate-300 max-w-2xl mx-auto">
+            📌 Curated from real candidates' interview experiences and the most-repeated questions asked across the internet.
+          </p>
+          <div className="mt-4 flex items-center justify-center gap-3 text-xs">
+            <a href="https://github.com/jyotiram7402" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white transition">
+              <span>🐙</span> GitHub
+            </a>
+            <a href="mailto:jyotiramkamble7402@gmail.com" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white transition">
+              <span>✉️</span> Connect with me
+            </a>
+          </div>
+          <p className="mt-4 text-xs text-slate-500">Your progress saves automatically · {TRACKS.length} career tracks · Crack Any Job</p>
+        </div>
       </footer>
+        </div>
+      </div>
     </div>
+  );
+}
+
+function SideLink({ href, icon, label, active, onNav }) {
+  return (
+    <Link
+      href={href}
+      onClick={onNav}
+      className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition ${
+        active
+          ? "bg-blue-600/20 text-blue-300 border border-blue-500/40"
+          : "text-slate-300 hover:bg-slate-800 border border-transparent"
+      }`}
+    >
+      <span className="w-5 text-center">{icon}</span>
+      {label}
+    </Link>
   );
 }
 

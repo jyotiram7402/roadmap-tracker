@@ -138,6 +138,7 @@ export default function StudyMaterial({
                   {isOpen && (
                     <div className="px-3 pb-3 space-y-2 border-t border-slate-700/50 pt-2">
                       {q.blocks.map((b, bIdx) => <Block key={bIdx} block={b} highlight={lowerSearch} />)}
+                      <QuestionLinks qText={q.qText} sectionTitle={section.sectionTitle} />
                     </div>
                   )}
                 </div>
@@ -155,7 +156,7 @@ function Block({ block, highlight }) {
     return <h5 className="text-sm font-semibold text-cyan-400 mt-2">{block.text}</h5>;
   }
   if (block.kind === "text") {
-    return <p className="text-sm text-slate-300 leading-relaxed">{highlightText(block.text, highlight)}</p>;
+    return <p className="text-sm text-slate-300 leading-relaxed">{renderText(block.text, highlight)}</p>;
   }
   if (block.kind === "code") {
     return <CodeBlock lines={block.lines} />;
@@ -189,5 +190,40 @@ function highlightText(text, q) {
       <mark className="bg-yellow-500/30 text-yellow-100 px-0.5 rounded">{text.slice(idx, idx + q.length)}</mark>
       {text.slice(idx + q.length)}
     </>
+  );
+}
+
+const URL_RE = /(https?:\/\/[^\s]+)/g;
+// Render a text block: turn any URLs into clickable links, highlight search hits elsewhere.
+function renderText(text, q) {
+  const parts = text.split(URL_RE);
+  return parts.map((part, i) =>
+    /^https?:\/\//.test(part) ? (
+      <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline break-all hover:text-blue-300">{part}</a>
+    ) : (
+      <span key={i}>{highlightText(part, q)}</span>
+    )
+  );
+}
+
+// "Learn more on Google" + (for DSA/coding) a LeetCode link under each answer.
+function QuestionLinks({ qText, sectionTitle }) {
+  const clean = (qText || "").replace(/[.?]+$/, "");
+  const google = `https://www.google.com/search?q=${encodeURIComponent(clean + " interview question answer")}`;
+  const isDSA = /dsa|coding|algorithm|leetcode|arrays|linked list|tree|graph|dynamic programming/i.test(sectionTitle || "");
+  const leetcode = `https://leetcode.com/problemset/?search=${encodeURIComponent(clean.replace(/[^a-zA-Z0-9 ]/g, "").trim())}`;
+  return (
+    <div className="flex flex-wrap items-center gap-2 pt-1.5 no-print">
+      <a href={google} target="_blank" rel="noopener noreferrer" title="Search this topic on Google"
+         className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:border-blue-500 hover:text-blue-300 transition">
+        🔍 Learn more
+      </a>
+      {isDSA && (
+        <a href={leetcode} target="_blank" rel="noopener noreferrer" title="Practice on LeetCode"
+           className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-700/50 text-amber-300 hover:bg-amber-500/20 transition">
+          🟠 LeetCode
+        </a>
+      )}
+    </div>
   );
 }
