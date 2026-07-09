@@ -1,0 +1,434 @@
+{
+  "ip-1": [
+    { "sectionTitle": "DSA · Array", "questions": [
+      { "qNum": 1, "qText": "Reverse an array in place", "level": "beginner", "header": "DSA · Array", "blocks": [
+        { "kind": "text", "text": "Two pointers from both ends, swap and move inward until they cross. O(n) time, O(1) space." },
+        { "kind": "code", "lines": ["void reverse(int[] a){", "  int i=0, j=a.length-1;", "  while(i<j){ int t=a[i]; a[i++]=a[j]; a[j--]=t; }", "}"] }
+      ]},
+      { "qNum": 2, "qText": "Two Sum — indices of two numbers adding to target", "level": "beginner", "header": "DSA · Array", "blocks": [
+        { "kind": "text", "text": "One pass with a HashMap of value to index; for each x check if target minus x was already seen. O(n) time and space." },
+        { "kind": "code", "lines": ["int[] twoSum(int[] a, int t){", "  Map<Integer,Integer> m=new HashMap<>();", "  for(int i=0;i<a.length;i++){", "    if(m.containsKey(t-a[i])) return new int[]{m.get(t-a[i]), i};", "    m.put(a[i], i);", "  }", "  return new int[]{};", "}"] }
+      ]},
+      { "qNum": 3, "qText": "Maximum subarray sum (Kadane's algorithm)", "level": "intermediate", "header": "DSA · Array", "blocks": [
+        { "kind": "text", "text": "At each index, either extend the running sum or restart from the current element; track the best. O(n) time, O(1) space." },
+        { "kind": "code", "lines": ["int maxSub(int[] a){", "  int cur=a[0], best=a[0];", "  for(int i=1;i<a.length;i++){ cur=Math.max(a[i], cur+a[i]); best=Math.max(best, cur); }", "  return best;", "}"] }
+      ]},
+      { "qNum": 4, "qText": "Trapping rain water", "level": "advanced", "header": "DSA · Array", "blocks": [
+        { "kind": "text", "text": "Two pointers with leftMax/rightMax: water above each bar is min(leftMax, rightMax) minus its height. Always move the smaller side inward. O(n) time, O(1) space." }
+      ]}
+    ]},
+    { "sectionTitle": "DSA · String", "questions": [
+      { "qNum": 1, "qText": "Check if a string is a palindrome", "level": "beginner", "header": "DSA · String", "blocks": [
+        { "kind": "text", "text": "Two pointers from both ends comparing characters, optionally skipping non-alphanumerics and ignoring case. O(n)." },
+        { "kind": "code", "lines": ["boolean isPal(String s){", "  int i=0, j=s.length()-1;", "  while(i<j) if(s.charAt(i++)!=s.charAt(j--)) return false;", "  return true;", "}"] }
+      ]},
+      { "qNum": 2, "qText": "Check if two strings are anagrams", "level": "beginner", "header": "DSA · String", "blocks": [
+        { "kind": "text", "text": "Count character frequencies (int[26] for lowercase) and compare, or sort both strings and compare. O(n)." }
+      ]},
+      { "qNum": 3, "qText": "Longest substring without repeating characters", "level": "intermediate", "header": "DSA · String", "blocks": [
+        { "kind": "text", "text": "Sliding window: expand the right pointer; on a duplicate, move left past its last index. Track max length with a lastIndex map. O(n)." }
+      ]}
+    ]},
+    { "sectionTitle": "DSA · Hashing", "questions": [
+      { "qNum": 1, "qText": "How does a HashMap work internally?", "level": "intermediate", "header": "DSA · Hashing", "blocks": [
+        { "kind": "text", "text": "An array of buckets; index = spread(hashCode) & (capacity minus 1). Collisions form a linked list that treeifies past 8 entries (Java 8). Resizes at load factor 0.75. Average O(1) get/put." }
+      ]},
+      { "qNum": 2, "qText": "Find the first non-repeating character", "level": "beginner", "header": "DSA · Hashing", "blocks": [
+        { "kind": "text", "text": "Count frequencies in one pass (a LinkedHashMap preserves order), then return the first key with count 1. O(n)." }
+      ]},
+      { "qNum": 3, "qText": "Group anagrams", "level": "intermediate", "header": "DSA · Hashing", "blocks": [
+        { "kind": "text", "text": "Use the sorted string (or a 26-length count signature) as a map key and group words under it. O(n·k log k)." }
+      ]}
+    ]},
+    { "sectionTitle": "DSA · Linked List", "questions": [
+      { "qNum": 1, "qText": "Reverse a linked list (iterative)", "level": "beginner", "header": "DSA · Linked List", "blocks": [
+        { "kind": "text", "text": "Walk the list re-pointing each node's next to the previous node. O(n) time, O(1) space." },
+        { "kind": "code", "lines": ["ListNode rev(ListNode h){", "  ListNode p=null;", "  while(h!=null){ ListNode n=h.next; h.next=p; p=h; h=n; }", "  return p;", "}"] }
+      ]},
+      { "qNum": 2, "qText": "Detect a cycle in a linked list (Floyd's)", "level": "intermediate", "header": "DSA · Linked List", "blocks": [
+        { "kind": "text", "text": "Slow moves 1, fast moves 2; if they meet there is a cycle. To find the start, reset one pointer to head and advance both by 1 until they meet. O(n) time, O(1) space." }
+      ]},
+      { "qNum": 3, "qText": "Merge two sorted linked lists", "level": "beginner", "header": "DSA · Linked List", "blocks": [
+        { "kind": "text", "text": "Dummy head plus a tail pointer; repeatedly attach the smaller head and advance. O(n+m)." }
+      ]}
+    ]},
+    { "sectionTitle": "DSA · Stack", "questions": [
+      { "qNum": 1, "qText": "Valid parentheses", "level": "beginner", "header": "DSA · Stack", "blocks": [
+        { "kind": "text", "text": "Push openers; on a closer, pop and verify the match. Valid iff the stack is empty at the end. O(n)." }
+      ]},
+      { "qNum": 2, "qText": "Implement a min-stack with O(1) getMin", "level": "intermediate", "header": "DSA · Stack", "blocks": [
+        { "kind": "text", "text": "Keep an auxiliary stack of running minimums (or store pairs of value and current-min). push/pop/top/getMin all O(1)." }
+      ]},
+      { "qNum": 3, "qText": "Next greater element (monotonic stack)", "level": "advanced", "header": "DSA · Stack", "blocks": [
+        { "kind": "text", "text": "Keep a decreasing stack of indices; when the current value is greater, pop and record the answer. Each index is pushed/popped once, so O(n)." }
+      ]}
+    ]},
+    { "sectionTitle": "DSA · Queue", "questions": [
+      { "qNum": 1, "qText": "Implement a queue using two stacks", "level": "intermediate", "header": "DSA · Queue", "blocks": [
+        { "kind": "text", "text": "An 'in' stack for enqueue and an 'out' stack for dequeue; move in to out only when out is empty. Amortized O(1)." }
+      ]},
+      { "qNum": 2, "qText": "Sliding window maximum", "level": "advanced", "header": "DSA · Queue", "blocks": [
+        { "kind": "text", "text": "Monotonic decreasing deque of indices; the front is the window max. Pop smaller values from the back and out-of-window indices from the front. O(n)." }
+      ]},
+      { "qNum": 3, "qText": "What is a circular queue and why use it?", "level": "beginner", "header": "DSA · Queue", "blocks": [
+        { "kind": "text", "text": "A fixed-size ring buffer where the tail wraps to the front, reusing freed slots and avoiding element shifting. Used in buffers, scheduling and streaming." }
+      ]}
+    ]},
+    { "sectionTitle": "DSA · Tree", "questions": [
+      { "qNum": 1, "qText": "The four binary tree traversals", "level": "beginner", "header": "DSA · Tree", "blocks": [
+        { "kind": "text", "text": "Preorder (root, left, right), inorder (left, root, right — sorted for a BST), postorder (left, right, root), and level-order (BFS with a queue). All O(n)." }
+      ]},
+      { "qNum": 2, "qText": "Validate a Binary Search Tree", "level": "intermediate", "header": "DSA · Tree", "blocks": [
+        { "kind": "text", "text": "Recurse with a (min, max) range each node must satisfy, tightening as you descend; or check that an inorder traversal is strictly increasing. O(n)." }
+      ]},
+      { "qNum": 3, "qText": "Lowest common ancestor in a binary tree", "level": "intermediate", "header": "DSA · Tree", "blocks": [
+        { "kind": "text", "text": "Recurse; if a node equals p or q return it; if both left and right recursions return non-null, the current node is the LCA. O(n)." }
+      ]}
+    ]},
+    { "sectionTitle": "DSA · Graph", "questions": [
+      { "qNum": 1, "qText": "BFS vs DFS — when to use which?", "level": "beginner", "header": "DSA · Graph", "blocks": [
+        { "kind": "text", "text": "BFS (queue) finds shortest paths in unweighted graphs and explores level by level. DFS (stack/recursion) suits path existence, connected components, topological sort and backtracking. Both O(V+E)." }
+      ]},
+      { "qNum": 2, "qText": "Number of islands", "level": "intermediate", "header": "DSA · Graph", "blocks": [
+        { "kind": "text", "text": "Scan the grid; on each unvisited land cell, increment the count and flood-fill (DFS/BFS) its connected land. O(rows times cols)." }
+      ]},
+      { "qNum": 3, "qText": "Detect a cycle in a directed graph", "level": "advanced", "header": "DSA · Graph", "blocks": [
+        { "kind": "text", "text": "DFS with three colors (white/gray/black): a back-edge to a gray in-progress node means a cycle. Or use Kahn's topological sort — leftover nodes imply a cycle. O(V+E)." }
+      ]}
+    ]}
+  ],
+  "ip-2": [
+    { "sectionTitle": "Algorithms · Searching", "questions": [
+      { "qNum": 1, "qText": "Binary search and its common variants", "level": "beginner", "header": "Algorithms · Searching", "blocks": [
+        { "kind": "text", "text": "On sorted data, compare with the middle and halve the range. O(log n). Variants: first/last occurrence, lower/upper bound, and search in a rotated array." },
+        { "kind": "code", "lines": ["int bs(int[] a, int x){", "  int lo=0, hi=a.length-1;", "  while(lo<=hi){ int m=(lo+hi)>>>1; if(a[m]==x) return m; if(a[m]<x) lo=m+1; else hi=m-1; }", "  return -1;", "}"] }
+      ]},
+      { "qNum": 2, "qText": "Search in a rotated sorted array", "level": "advanced", "header": "Algorithms · Searching", "blocks": [
+        { "kind": "text", "text": "Modified binary search: one half is always sorted — determine which, then check whether the target lies inside it to choose the side. O(log n)." }
+      ]}
+    ]},
+    { "sectionTitle": "Algorithms · Sorting", "questions": [
+      { "qNum": 1, "qText": "Compare merge sort, quick sort, and heap sort", "level": "intermediate", "header": "Algorithms · Sorting", "blocks": [
+        { "kind": "text", "text": "Merge sort: O(n log n) stable, O(n) space, good for linked lists/external sort. Quick sort: O(n log n) average, O(n squared) worst, in-place, cache-friendly. Heap sort: O(n log n), in-place, not stable." }
+      ]},
+      { "qNum": 2, "qText": "Explain quick sort partitioning", "level": "intermediate", "header": "Algorithms · Sorting", "blocks": [
+        { "kind": "text", "text": "Pick a pivot, partition so smaller elements go left and larger right, then recurse on both halves. Randomized or median-of-three pivots avoid the O(n squared) worst case on sorted input." }
+      ]}
+    ]},
+    { "sectionTitle": "Algorithms · Recursion", "questions": [
+      { "qNum": 1, "qText": "What is recursion and when does it overflow the stack?", "level": "beginner", "header": "Algorithms · Recursion", "blocks": [
+        { "kind": "text", "text": "A function calling itself on smaller input until a base case. Each call adds a stack frame; too-deep recursion or a missing base case causes a stack overflow. Tail recursion or converting to iteration helps." }
+      ]},
+      { "qNum": 2, "qText": "Generate subsets and permutations (backtracking)", "level": "intermediate", "header": "Algorithms · Recursion", "blocks": [
+        { "kind": "text", "text": "Backtracking is choose, recurse, un-choose. Build a partial solution, recurse deeper, then undo to explore alternatives. Powers subsets, permutations, N-Queens and word search." }
+      ]}
+    ]},
+    { "sectionTitle": "Algorithms · Greedy", "questions": [
+      { "qNum": 1, "qText": "What makes a problem solvable greedily?", "level": "intermediate", "header": "Algorithms · Greedy", "blocks": [
+        { "kind": "text", "text": "It has the greedy-choice property (a local optimum leads to a global optimum) and optimal substructure. Examples: activity selection, Huffman coding, interval scheduling, Dijkstra." }
+      ]},
+      { "qNum": 2, "qText": "Activity selection / non-overlapping intervals", "level": "intermediate", "header": "Algorithms · Greedy", "blocks": [
+        { "kind": "text", "text": "Sort by end time and greedily pick the earliest-finishing compatible interval; this maximizes the count. O(n log n)." }
+      ]}
+    ]},
+    { "sectionTitle": "Algorithms · Graph Algorithms", "questions": [
+      { "qNum": 1, "qText": "Dijkstra's shortest path — idea and limits", "level": "advanced", "header": "Algorithms · Graph Algorithms", "blocks": [
+        { "kind": "text", "text": "Greedy plus a min-heap: repeatedly settle the nearest unvisited node and relax its edges. O((V+E) log V). Fails with negative edges — use Bellman-Ford there." }
+      ]},
+      { "qNum": 2, "qText": "Topological sort (Kahn's algorithm)", "level": "intermediate", "header": "Algorithms · Graph Algorithms", "blocks": [
+        { "kind": "text", "text": "Repeatedly remove nodes with in-degree 0 and decrement their neighbors. Produces a valid DAG ordering; leftover nodes mean a cycle. O(V+E). Used for scheduling and dependencies." }
+      ]}
+    ]},
+    { "sectionTitle": "Algorithms · Dynamic Programming", "questions": [
+      { "qNum": 1, "qText": "Memoization vs tabulation", "level": "intermediate", "header": "Algorithms · Dynamic Programming", "blocks": [
+        { "kind": "text", "text": "Both cache subproblem results. Memoization is top-down recursion plus a cache (only needed states, recursion-depth risk). Tabulation is bottom-up iteration filling a table (no recursion, often space-optimizable)." }
+      ]},
+      { "qNum": 2, "qText": "Coin change (minimum coins)", "level": "intermediate", "header": "Algorithms · Dynamic Programming", "blocks": [
+        { "kind": "text", "text": "dp[a] = min over coins c of dp[a-c]+1, with dp[0]=0. O(amount times coins)." },
+        { "kind": "code", "lines": ["int coinChange(int[] coins, int amt){", "  int[] dp=new int[amt+1]; Arrays.fill(dp, amt+1); dp[0]=0;", "  for(int a=1;a<=amt;a++) for(int c:coins) if(c<=a) dp[a]=Math.min(dp[a], dp[a-c]+1);", "  return dp[amt]>amt?-1:dp[amt];", "}"] }
+      ]},
+      { "qNum": 3, "qText": "0/1 Knapsack", "level": "advanced", "header": "Algorithms · Dynamic Programming", "blocks": [
+        { "kind": "text", "text": "dp[i][w] = max(skip item i, take item i plus dp[i-1][w-wt]). Iterate weights descending for the 1D space-optimized version. O(n times W)." }
+      ]}
+    ]},
+    { "sectionTitle": "Algorithms · Bitwise", "questions": [
+      { "qNum": 1, "qText": "Single number (XOR trick)", "level": "beginner", "header": "Algorithms · Bitwise", "blocks": [
+        { "kind": "text", "text": "XOR all elements; pairs cancel (a xor a = 0), leaving the unique number. O(n) time, O(1) space." }
+      ]},
+      { "qNum": 2, "qText": "Common bit tricks worth knowing", "level": "intermediate", "header": "Algorithms · Bitwise", "blocks": [
+        { "kind": "text", "text": "x & (x-1) clears the lowest set bit (count bits / power-of-two check); x & -x isolates it; shifts multiply/divide by powers of two; masks enumerate subsets." }
+      ]}
+    ]}
+  ],
+  "ip-3": [
+    { "sectionTitle": "Database · SQL Queries", "questions": [
+      { "qNum": 1, "qText": "Find the Nth highest salary", "level": "intermediate", "header": "Database · SQL Queries", "blocks": [
+        { "kind": "text", "text": "Use DENSE_RANK() over salary descending and filter rank = N; or a correlated subquery counting distinct higher salaries." },
+        { "kind": "code", "lines": ["SELECT salary FROM (", "  SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) rnk FROM emp", ") t WHERE rnk = :n;"] }
+      ]},
+      { "qNum": 2, "qText": "WHERE vs HAVING; find employees with no orders", "level": "beginner", "header": "Database · SQL Queries", "blocks": [
+        { "kind": "text", "text": "WHERE filters rows before grouping; HAVING filters after aggregation. A LEFT JOIN with the right key IS NULL finds non-matching rows." },
+        { "kind": "code", "lines": ["SELECT e.* FROM employee e", "LEFT JOIN orders o ON o.emp_id = e.id", "WHERE o.id IS NULL;"] }
+      ]}
+    ]},
+    { "sectionTitle": "Database · DBMS Concepts", "questions": [
+      { "qNum": 1, "qText": "Explain ACID", "level": "beginner", "header": "Database · DBMS Concepts", "blocks": [
+        { "kind": "text", "text": "Atomicity (all-or-nothing), Consistency (constraints hold), Isolation (concurrent transactions do not corrupt each other), Durability (committed data survives crashes)." }
+      ]},
+      { "qNum": 2, "qText": "Normalization (1NF, 2NF, 3NF) and when to denormalize", "level": "intermediate", "header": "Database · DBMS Concepts", "blocks": [
+        { "kind": "text", "text": "1NF: atomic columns. 2NF: no partial dependency on part of a composite key. 3NF: no transitive dependency. Denormalize for read-heavy workloads to avoid expensive joins, accepting redundancy." }
+      ]}
+    ]},
+    { "sectionTitle": "Database · Transactions & Indexing", "questions": [
+      { "qNum": 1, "qText": "Transaction isolation levels and their anomalies", "level": "advanced", "header": "Database · Transactions & Indexing", "blocks": [
+        { "kind": "text", "text": "READ UNCOMMITTED (dirty reads), READ COMMITTED (no dirty; non-repeatable reads), REPEATABLE READ (phantoms; MySQL default), SERIALIZABLE (full isolation, lowest concurrency)." }
+      ]},
+      { "qNum": 2, "qText": "How do indexes work and when do they hurt?", "level": "intermediate", "header": "Database · Transactions & Indexing", "blocks": [
+        { "kind": "text", "text": "B-tree indexes give O(log n) lookups, range scans and sorted reads; composite indexes follow the leftmost-prefix rule. They cost write time and storage and help little on low-cardinality columns. Verify with EXPLAIN." }
+      ]}
+    ]}
+  ],
+  "ip-4": [
+    { "sectionTitle": "System Design · HLD", "questions": [
+      { "qNum": 1, "qText": "Design a URL shortener", "level": "advanced", "header": "System Design · HLD", "blocks": [
+        { "kind": "text", "text": "POST long to short, GET short to a 301 redirect. Keys: base62 of a unique/snowflake id, or random plus a collision check. Read-heavy, so front the DB with a Redis cache and read replicas. Discuss QPS/storage and 301 vs 302." }
+      ]},
+      { "qNum": 2, "qText": "Explain the CAP theorem and consistent hashing", "level": "advanced", "header": "System Design · HLD", "blocks": [
+        { "kind": "text", "text": "Under a network partition you choose Consistency or Availability. Consistent hashing places nodes and keys on a ring so adding/removing a node remaps only about 1/N keys; virtual nodes balance load." }
+      ]}
+    ]},
+    { "sectionTitle": "System Design · LLD & Patterns", "questions": [
+      { "qNum": 1, "qText": "Explain the SOLID principles", "level": "intermediate", "header": "System Design · LLD & Patterns", "blocks": [
+        { "kind": "text", "text": "SRP (one reason to change), OCP (extend, don't modify), LSP (subtypes substitutable), ISP (small interfaces), DIP (depend on abstractions). Together they yield loosely-coupled, testable code." }
+      ]},
+      { "qNum": 2, "qText": "Design an LRU cache (LLD)", "level": "advanced", "header": "System Design · LLD & Patterns", "blocks": [
+        { "kind": "text", "text": "HashMap for O(1) lookup plus a doubly-linked list ordered by recency; move a node on access and evict from the tail when full. In Java, LinkedHashMap with accessOrder does it." }
+      ]}
+    ]}
+  ],
+  "ip-5": [
+    { "sectionTitle": "Aptitude · Quantitative", "questions": [
+      { "qNum": 1, "qText": "Core quantitative topics to revise", "level": "beginner", "header": "Aptitude · Quantitative", "blocks": [
+        { "kind": "text", "text": "Percentages, ratio and proportion, averages, profit and loss, time-speed-distance, time and work, simple/compound interest, permutations and combinations, probability. Practice for speed and accuracy." }
+      ]}
+    ]},
+    { "sectionTitle": "Aptitude · Logical", "questions": [
+      { "qNum": 1, "qText": "Common logical reasoning question types", "level": "beginner", "header": "Aptitude · Logical", "blocks": [
+        { "kind": "text", "text": "Number/letter series, blood relations, directions, seating arrangement, syllogisms, coding-decoding, clocks and calendars. Draw diagrams to avoid mistakes." }
+      ]}
+    ]},
+    { "sectionTitle": "Aptitude · Puzzles", "questions": [
+      { "qNum": 1, "qText": "How to approach interview puzzles", "level": "intermediate", "header": "Aptitude · Puzzles", "blocks": [
+        { "kind": "text", "text": "Clarify assumptions, think aloud, start with brute force then optimize, and use invariants or parity. Classics: water jugs, egg drop, weighing with a balance, bridge crossing." }
+      ]}
+    ]}
+  ],
+  "ip-6": [
+    { "sectionTitle": "CS · Operating Systems", "questions": [
+      { "qNum": 1, "qText": "Process vs thread; what is a deadlock?", "level": "intermediate", "header": "CS · Operating Systems", "blocks": [
+        { "kind": "text", "text": "A process has its own memory; threads share process memory but each has its own stack. Deadlock needs four conditions (mutual exclusion, hold-and-wait, no preemption, circular wait); break any one to prevent it." }
+      ]},
+      { "qNum": 2, "qText": "Paging, virtual memory, and thrashing", "level": "advanced", "header": "CS · Operating Systems", "blocks": [
+        { "kind": "text", "text": "Virtual memory maps pages to frames via a page table; a miss causes a page fault (load from disk). Too little RAM for the working set causes constant paging, called thrashing." }
+      ]}
+    ]},
+    { "sectionTitle": "CS · Computer Networks", "questions": [
+      { "qNum": 1, "qText": "What happens when you type a URL and press Enter?", "level": "intermediate", "header": "CS · Computer Networks", "blocks": [
+        { "kind": "text", "text": "DNS resolves the domain, a TCP 3-way handshake opens on 443, TLS negotiates encryption, the browser sends an HTTP request, the server responds, and the browser parses the HTML, fetches assets and renders." }
+      ]},
+      { "qNum": 2, "qText": "TCP vs UDP", "level": "beginner", "header": "CS · Computer Networks", "blocks": [
+        { "kind": "text", "text": "TCP is connection-oriented, reliable and ordered (HTTP, email). UDP is connectionless and fast with no guarantees (streaming, gaming, DNS)." }
+      ]}
+    ]},
+    { "sectionTitle": "CS · OOP", "questions": [
+      { "qNum": 1, "qText": "The four pillars of OOP", "level": "beginner", "header": "CS · OOP", "blocks": [
+        { "kind": "text", "text": "Encapsulation (hide state behind methods), Inheritance (reuse via is-a), Polymorphism (one interface, many implementations), Abstraction (expose what, hide how)." }
+      ]}
+    ]},
+    { "sectionTitle": "CS · DBMS Theory", "questions": [
+      { "qNum": 1, "qText": "Primary key vs unique key vs foreign key", "level": "beginner", "header": "CS · DBMS Theory", "blocks": [
+        { "kind": "text", "text": "Primary key: unique and not null, one per table. Unique key: unique but allows one null, many per table. Foreign key: references another table's key, enforcing referential integrity." }
+      ]}
+    ]}
+  ],
+  "ip-7": [
+    { "sectionTitle": "Web · Frontend", "questions": [
+      { "qNum": 1, "qText": "Explain the browser event loop and async JS", "level": "intermediate", "header": "Web · Frontend", "blocks": [
+        { "kind": "text", "text": "JS is single-threaded; the event loop runs the call stack, then drains microtasks (promises) before the next macrotask (timers, events). This is why promise callbacks run before setTimeout(0)." }
+      ]},
+      { "qNum": 2, "qText": "What is the Virtual DOM and reconciliation?", "level": "intermediate", "header": "Web · Frontend", "blocks": [
+        { "kind": "text", "text": "React builds a lightweight tree, diffs it against the previous one, and applies the minimal real-DOM updates. Keys give list items stable identity for efficient diffing." }
+      ]}
+    ]},
+    { "sectionTitle": "Web · Backend", "questions": [
+      { "qNum": 1, "qText": "What makes an API RESTful; idempotency", "level": "intermediate", "header": "Web · Backend", "blocks": [
+        { "kind": "text", "text": "Resources via URIs, standard methods, stateless requests, correct status codes. GET/PUT/DELETE are idempotent; POST is not. Use idempotency keys for safe retries on writes." }
+      ]}
+    ]},
+    { "sectionTitle": "Web · HTTP & APIs", "questions": [
+      { "qNum": 1, "qText": "Cookies vs localStorage vs sessionStorage; JWT auth", "level": "intermediate", "header": "Web · HTTP & APIs", "blocks": [
+        { "kind": "text", "text": "Cookies are sent with every request (use httpOnly + secure + sameSite for auth). localStorage/sessionStorage are JS-accessible (XSS-exposed). A JWT is a stateless signed token (header.payload.signature); keep it short-lived with a refresh token." }
+      ]}
+    ]}
+  ],
+  "ip-8": [
+    { "sectionTitle": "DevOps · Docker & Kubernetes", "questions": [
+      { "qNum": 1, "qText": "Container vs VM; what problem does Docker solve?", "level": "beginner", "header": "DevOps · Docker & Kubernetes", "blocks": [
+        { "kind": "text", "text": "A VM virtualizes hardware (heavy, full guest OS); a container shares the host kernel and isolates processes (MBs, ms startup). Docker packages code and dependencies into a portable image, solving 'works on my machine'." }
+      ]},
+      { "qNum": 2, "qText": "Core Kubernetes objects", "level": "intermediate", "header": "DevOps · Docker & Kubernetes", "blocks": [
+        { "kind": "text", "text": "Pod (smallest unit), Deployment (replicas + rolling updates), Service (stable IP/load-balancing), Ingress (HTTP routing). ConfigMap/Secret for config, HPA for autoscaling, liveness/readiness probes for health." }
+      ]}
+    ]},
+    { "sectionTitle": "DevOps · CI/CD", "questions": [
+      { "qNum": 1, "qText": "Describe a CI/CD pipeline", "level": "intermediate", "header": "DevOps · CI/CD", "blocks": [
+        { "kind": "text", "text": "Push, then build plus unit tests plus static analysis, build and tag an image, deploy to staging, run integration/smoke tests, rolling deploy to prod, and monitor error rate/latency with auto-rollback." }
+      ]}
+    ]},
+    { "sectionTitle": "DevOps · Cloud & Monitoring", "questions": [
+      { "qNum": 1, "qText": "The three pillars of observability", "level": "intermediate", "header": "DevOps · Cloud & Monitoring", "blocks": [
+        { "kind": "text", "text": "Logs (structured, centralized), metrics (Prometheus/Grafana dashboards and alerts), and traces (OpenTelemetry, one traceId across services to find where latency is)." }
+      ]}
+    ]}
+  ],
+  "ip-9": [
+    { "sectionTitle": "ML · Fundamentals", "questions": [
+      { "qNum": 1, "qText": "Supervised vs unsupervised; the bias-variance tradeoff", "level": "intermediate", "header": "ML · Fundamentals", "blocks": [
+        { "kind": "text", "text": "Supervised learns from labeled data (classification/regression); unsupervised finds structure (clustering, PCA). High bias underfits; high variance overfits — balance with regularization, more data and the right model complexity." }
+      ]},
+      { "qNum": 2, "qText": "How do you prevent overfitting?", "level": "beginner", "header": "ML · Fundamentals", "blocks": [
+        { "kind": "text", "text": "More or augmented data, regularization (L1/L2, dropout), simpler models, cross-validation, and early stopping." }
+      ]}
+    ]},
+    { "sectionTitle": "ML · Models & Metrics", "questions": [
+      { "qNum": 1, "qText": "Precision vs recall vs F1 — when to optimize each", "level": "intermediate", "header": "ML · Models & Metrics", "blocks": [
+        { "kind": "text", "text": "Precision: of predicted positives, how many are correct. Recall: of actual positives, how many were found. F1 balances both. Optimize recall for fraud/disease detection, precision when false positives are costly." }
+      ]}
+    ]},
+    { "sectionTitle": "ML · GenAI & Practical", "questions": [
+      { "qNum": 1, "qText": "What is RAG and when do you use it over fine-tuning?", "level": "intermediate", "header": "ML · GenAI & Practical", "blocks": [
+        { "kind": "text", "text": "RAG retrieves relevant chunks from a vector store and injects them into the prompt so the LLM answers grounded in your data. Prefer it when knowledge changes or is private; fine-tune for consistent style or behavior." }
+      ]}
+    ]}
+  ],
+  "ip-10": [
+    { "sectionTitle": "Analytics · SQL & Excel", "questions": [
+      { "qNum": 1, "qText": "Window functions every analyst should know", "level": "intermediate", "header": "Analytics · SQL & Excel", "blocks": [
+        { "kind": "text", "text": "ROW_NUMBER/RANK/DENSE_RANK for ranking, running totals with SUM() OVER (ORDER BY ...), moving averages, LAG/LEAD for period-over-period, and PARTITION BY to reset per group." }
+      ]}
+    ]},
+    { "sectionTitle": "Analytics · Statistics", "questions": [
+      { "qNum": 1, "qText": "Mean vs median vs mode; when is the median better?", "level": "beginner", "header": "Analytics · Statistics", "blocks": [
+        { "kind": "text", "text": "The median resists outliers and skew (e.g., income), so it is often a better 'typical value' than the mean. The mode is the most frequent value, useful for categorical data." }
+      ]},
+      { "qNum": 2, "qText": "What is a p-value and A/B testing basics?", "level": "intermediate", "header": "Analytics · Statistics", "blocks": [
+        { "kind": "text", "text": "A p-value is the probability of a result at least this extreme if the null hypothesis were true; below the significance level you reject the null. A/B tests need a hypothesis, adequate sample size, and no peeking." }
+      ]}
+    ]},
+    { "sectionTitle": "Analytics · Visualization", "questions": [
+      { "qNum": 1, "qText": "How do you choose the right chart?", "level": "beginner", "header": "Analytics · Visualization", "blocks": [
+        { "kind": "text", "text": "Trend over time to a line; comparison across categories to a bar; part-to-whole to a stacked bar (avoid many-slice pies); correlation to a scatter; distribution to a histogram/box. Label clearly and don't distort axes." }
+      ]}
+    ]}
+  ],
+  "ip-11": [
+    { "sectionTitle": "Testing · Fundamentals", "questions": [
+      { "qNum": 1, "qText": "The test pyramid: unit vs integration vs e2e", "level": "beginner", "header": "Testing · Fundamentals", "blocks": [
+        { "kind": "text", "text": "Many fast unit tests at the base, fewer integration tests, and a few slow end-to-end tests at the top. This keeps feedback fast and the suite maintainable." }
+      ]},
+      { "qNum": 2, "qText": "Black-box vs white-box; boundary value analysis", "level": "intermediate", "header": "Testing · Fundamentals", "blocks": [
+        { "kind": "text", "text": "Black-box tests behavior via inputs/outputs; white-box uses internal structure (branch/path coverage). Boundary value analysis and equivalence partitioning focus tests at edges where bugs cluster." }
+      ]}
+    ]},
+    { "sectionTitle": "Testing · Automation & API", "questions": [
+      { "qNum": 1, "qText": "How do you structure UI automation reliably?", "level": "intermediate", "header": "Testing · Automation & API", "blocks": [
+        { "kind": "text", "text": "Page Object Model to isolate selectors, stable locators (data-testid), explicit waits instead of sleeps, independent/idempotent tests, and API setup for data rather than clicking through the UI." }
+      ]}
+    ]}
+  ],
+  "ip-12": [
+    { "sectionTitle": "Android · Basics", "questions": [
+      { "qNum": 1, "qText": "Activity lifecycle and configuration changes", "level": "intermediate", "header": "Android · Basics", "blocks": [
+        { "kind": "text", "text": "onCreate, onStart, onResume, then running, then onPause, onStop, onDestroy. A rotation destroys and recreates the Activity — persist state in a ViewModel or onSaveInstanceState." }
+      ]},
+      { "qNum": 2, "qText": "What is an Intent?", "level": "beginner", "header": "Android · Basics", "blocks": [
+        { "kind": "text", "text": "A message object to start components or pass data — explicit (a named target) or implicit (an action the system resolves, e.g., open a URL)." }
+      ]}
+    ]},
+    { "sectionTitle": "Android · Jetpack & Architecture", "questions": [
+      { "qNum": 1, "qText": "Why ViewModel with LiveData/StateFlow (MVVM)?", "level": "intermediate", "header": "Android · Jetpack & Architecture", "blocks": [
+        { "kind": "text", "text": "A ViewModel survives configuration changes and holds UI state off the Activity; LiveData/StateFlow expose observable state the UI reacts to. MVVM separates UI from logic and improves testability." }
+      ]}
+    ]}
+  ],
+  "ip-13": [
+    { "sectionTitle": "Language · C", "questions": [
+      { "qNum": 1, "qText": "Pointers, and stack vs heap in C", "level": "intermediate", "header": "Language · C", "blocks": [
+        { "kind": "text", "text": "A pointer stores an address; dereference with the star operator. Locals live on the stack (auto-freed); malloc/calloc allocate on the heap and you must free them or leak. Dangling pointers and double-free are common bugs." }
+      ]},
+      { "qNum": 2, "qText": "malloc vs calloc vs realloc", "level": "beginner", "header": "Language · C", "blocks": [
+        { "kind": "text", "text": "malloc leaves memory uninitialized; calloc zero-initializes; realloc resizes an existing block (may move it). Always check for NULL." }
+      ]}
+    ]},
+    { "sectionTitle": "Language · C++", "questions": [
+      { "qNum": 1, "qText": "RAII and smart pointers", "level": "intermediate", "header": "Language · C++", "blocks": [
+        { "kind": "text", "text": "RAII ties resource lifetime to object scope (released in the destructor). unique_ptr is sole ownership, shared_ptr is ref-counted, weak_ptr breaks cycles. Prefer them over raw new/delete." }
+      ]},
+      { "qNum": 2, "qText": "The STL containers you use most", "level": "beginner", "header": "Language · C++", "blocks": [
+        { "kind": "text", "text": "vector, map/unordered_map, set/unordered_set, stack, queue, priority_queue. Know complexity: unordered containers average O(1), tree-based ordered ones O(log n)." }
+      ]}
+    ]},
+    { "sectionTitle": "Language · Java", "questions": [
+      { "qNum": 1, "qText": "JDK vs JRE vs JVM; why platform independent?", "level": "beginner", "header": "Language · Java", "blocks": [
+        { "kind": "text", "text": "JVM runs bytecode; JRE is JVM plus libraries; JDK is JRE plus tools. Java compiles to bytecode (not machine code), so any JVM runs it — write once, run anywhere." }
+      ]},
+      { "qNum": 2, "qText": "Collections and exception-handling essentials", "level": "intermediate", "header": "Language · Java", "blocks": [
+        { "kind": "text", "text": "List/Set/Map via ArrayList, HashMap and friends. Checked exceptions are compiler-enforced (recoverable); unchecked extend RuntimeException. Prefer try-with-resources for cleanup." }
+      ]}
+    ]},
+    { "sectionTitle": "Language · Python", "questions": [
+      { "qNum": 1, "qText": "What is the GIL and its impact?", "level": "intermediate", "header": "Language · Python", "blocks": [
+        { "kind": "text", "text": "The Global Interpreter Lock lets only one thread execute Python bytecode at a time, so threads do not parallelize CPU work (use multiprocessing) but do help I/O-bound tasks." }
+      ]},
+      { "qNum": 2, "qText": "Generators, decorators, and comprehensions", "level": "intermediate", "header": "Language · Python", "blocks": [
+        { "kind": "text", "text": "Generators (yield) are lazy iterators saving memory; decorators wrap functions to add behavior; comprehensions build lists/dicts/sets concisely." }
+      ]}
+    ]},
+    { "sectionTitle": "Language · JavaScript", "questions": [
+      { "qNum": 1, "qText": "Closures, hoisting, and this", "level": "intermediate", "header": "Language · JavaScript", "blocks": [
+        { "kind": "text", "text": "A closure remembers its creation scope. var is hoisted and function-scoped; let/const are block-scoped with a temporal dead zone. this depends on call-site; arrow functions capture it lexically." }
+      ]},
+      { "qNum": 2, "qText": "Promises vs async/await; == vs ===", "level": "beginner", "header": "Language · JavaScript", "blocks": [
+        { "kind": "text", "text": "async/await is sugar over promises with try/catch. Prefer === (no coercion) over ==. Run independent async work in parallel with Promise.all." }
+      ]}
+    ]},
+    { "sectionTitle": "Language · TypeScript", "questions": [
+      { "qNum": 1, "qText": "interface vs type; generics", "level": "intermediate", "header": "Language · TypeScript", "blocks": [
+        { "kind": "text", "text": "interface supports declaration merging and object contracts; type supports unions, intersections and mapped/conditional types. Generics keep functions type-safe across many types while preserving inference." }
+      ]},
+      { "qNum": 2, "qText": "Useful utility types", "level": "beginner", "header": "Language · TypeScript", "blocks": [
+        { "kind": "text", "text": "Partial, Required, Pick, Omit, Record, ReturnType, Parameters — derive types from a single source of truth instead of duplicating." }
+      ]}
+    ]},
+    { "sectionTitle": "Language · PHP", "questions": [
+      { "qNum": 1, "qText": "== vs === and common gotchas", "level": "beginner", "header": "Language · PHP", "blocks": [
+        { "kind": "text", "text": "== does type juggling (surprising results); === compares value and type. Use prepared statements (PDO) to prevent SQL injection, and know the superglobals ($_GET, $_POST, $_SESSION)." }
+      ]}
+    ]},
+    { "sectionTitle": "Language · R", "questions": [
+      { "qNum": 1, "qText": "Vectors, data frames, and the apply family", "level": "beginner", "header": "Language · R", "blocks": [
+        { "kind": "text", "text": "R is vectorized — operate on whole vectors, not loops. Data frames hold tabular data; apply/sapply/lapply and the tidyverse (dplyr, ggplot2) drive analysis and plotting." }
+      ]}
+    ]},
+    { "sectionTitle": "Language · Ruby", "questions": [
+      { "qNum": 1, "qText": "Blocks, procs, and lambdas", "level": "intermediate", "header": "Language · Ruby", "blocks": [
+        { "kind": "text", "text": "Blocks are anonymous chunks passed to methods (each, map). Procs and lambdas are storable block objects; lambdas check argument count and return locally, procs do not." }
+      ]}
+    ]},
+    { "sectionTitle": "Language · CUDA", "questions": [
+      { "qNum": 1, "qText": "What is CUDA and the host/device model?", "level": "intermediate", "header": "Language · CUDA", "blocks": [
+        { "kind": "text", "text": "CUDA runs massively parallel kernels on the GPU (device) launched from the CPU (host). Threads group into blocks and grids; you manage host-device memory transfers and aim for high occupancy and coalesced memory access." }
+      ]}
+    ]}
+  ]
+}

@@ -64,6 +64,15 @@ export const TRACKS = [
     tagline: "FastAPI · Django · Async · REST APIs",
     stagePrefix: "pyb-",
   },
+  {
+    id: "interview-prep",
+    name: "Interview Preparation",
+    short: "Interview",
+    icon: "🧠",
+    accent: "purple",
+    tagline: "DSA · Algorithms · DBMS · HLD/LLD · CS subjects · Web · DevOps · Languages",
+    stagePrefix: "ip-",
+  },
 ];
 
 export const DEFAULT_TRACK = "java-fullstack";
@@ -81,6 +90,7 @@ export function trackIdForStage(stageId) {
   if (stageId.startsWith("fde-")) return "fde";
   if (stageId.startsWith("de-")) return "data-engineer";
   if (stageId.startsWith("pyb-")) return "python-backend";
+  if (stageId.startsWith("ip-")) return "interview-prep";
   return "java-fullstack"; // "stage-N"
 }
 
@@ -112,6 +122,11 @@ export async function loadTrackData(id) {
       return {
         roadmap: (await import("@/data/tracks/python-backend.roadmap.js")).ROADMAP,
         study: (await import("@/data/tracks/python-backend.study.json")).default,
+      };
+    case "interview-prep":
+      return {
+        roadmap: (await import("@/data/tracks/interview-prep.roadmap.js")).ROADMAP,
+        study: (await import("@/data/tracks/interview-prep.study.json")).default,
       };
     case "java-fullstack":
     default:
