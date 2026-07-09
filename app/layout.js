@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Java Full-Stack Roadmap",
-  description: "Track your journey from 1-year Java dev to senior full-stack + AI engineer",
+  title: "Crack Any Job — Tech Interview Prep",
+  description: "Roadmaps, 1,600+ interview Q&A, system-design diagrams, DSA & role-specific question banks to crack your next software engineering job.",
 };
 
 export const viewport = {

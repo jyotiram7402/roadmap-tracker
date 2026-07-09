@@ -2,184 +2,1233 @@
   {
     "sectionTitle": "DSA — Arrays & Strings",
     "questions": [
-      { "qNum": 1, "qText": "Two Sum.", "level": "beginner", "header": "DSA — Arrays & Strings", "blocks": [
-        { "kind": "text", "text": "HashMap of value→index; for each x check if target−x was seen. O(n) time, O(n) space." },
-        { "kind": "code", "lines": ["int[] twoSum(int[] a, int t){", "  Map<Integer,Integer> m=new HashMap<>();", "  for(int i=0;i<a.length;i++){", "    if(m.containsKey(t-a[i])) return new int[]{m.get(t-a[i]),i};", "    m.put(a[i],i);", "  }", "  return new int[]{};", "}"] }
-      ]},
-      { "qNum": 2, "qText": "Maximum subarray (Kadane's).", "level": "intermediate", "header": "DSA — Arrays & Strings", "blocks": [
-        { "kind": "text", "text": "At each index either extend the running sum or restart from the current element; track the max. O(n) time, O(1) space." },
-        { "kind": "code", "lines": ["int maxSub(int[] a){", "  int cur=a[0], best=a[0];", "  for(int i=1;i<a.length;i++){ cur=Math.max(a[i],cur+a[i]); best=Math.max(best,cur); }", "  return best;", "}"] }
-      ]},
-      { "qNum": 3, "qText": "Longest substring without repeating characters (sliding window).", "level": "intermediate", "header": "DSA — Arrays & Strings", "blocks": [
-        { "kind": "text", "text": "Expand a window with the right pointer; when a duplicate appears, move the left pointer past its last occurrence. Track max length with a lastIndex map. O(n)." }
-      ]},
-      { "qNum": 4, "qText": "Explain the two-pointer and sliding-window patterns and when to use them.", "level": "beginner", "header": "DSA — Arrays & Strings", "blocks": [
-        { "kind": "text", "text": "Two pointers: sorted arrays or comparing from both ends (pair sums, palindrome, container with most water). Sliding window: contiguous subarray/substring with a constraint (max sum of size k, longest with condition) — grow/shrink the window instead of re-scanning. Both turn O(n²) brute force into O(n)." }
-      ]}
+      {
+        "qNum": 1,
+        "qText": "Two Sum.",
+        "level": "beginner",
+        "header": "DSA — Arrays & Strings",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "HashMap of value→index; for each x check if target−x was seen. O(n) time, O(n) space."
+          },
+          {
+            "kind": "code",
+            "lines": [
+              "int[] twoSum(int[] a, int t){",
+              "  Map<Integer,Integer> m=new HashMap<>();",
+              "  for(int i=0;i<a.length;i++){",
+              "    if(m.containsKey(t-a[i])) return new int[]{m.get(t-a[i]),i};",
+              "    m.put(a[i],i);",
+              "  }",
+              "  return new int[]{};",
+              "}"
+            ]
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Maximum subarray (Kadane's).",
+        "level": "intermediate",
+        "header": "DSA — Arrays & Strings",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "At each index either extend the running sum or restart from the current element; track the max. O(n) time, O(1) space."
+          },
+          {
+            "kind": "code",
+            "lines": [
+              "int maxSub(int[] a){",
+              "  int cur=a[0], best=a[0];",
+              "  for(int i=1;i<a.length;i++){ cur=Math.max(a[i],cur+a[i]); best=Math.max(best,cur); }",
+              "  return best;",
+              "}"
+            ]
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Longest substring without repeating characters (sliding window).",
+        "level": "intermediate",
+        "header": "DSA — Arrays & Strings",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Expand a window with the right pointer; when a duplicate appears, move the left pointer past its last occurrence. Track max length with a lastIndex map. O(n)."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Explain the two-pointer and sliding-window patterns and when to use them.",
+        "level": "beginner",
+        "header": "DSA — Arrays & Strings",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Two pointers: sorted arrays or comparing from both ends (pair sums, palindrome, container with most water). Sliding window: contiguous subarray/substring with a constraint (max sum of size k, longest with condition) — grow/shrink the window instead of re-scanning. Both turn O(n²) brute force into O(n)."
+          }
+        ]
+      }
     ]
   },
   {
     "sectionTitle": "DSA — Linked Lists, Stacks & Queues",
     "questions": [
-      { "qNum": 1, "qText": "Reverse a linked list.", "level": "beginner", "header": "DSA — Linked Lists, Stacks & Queues", "blocks": [
-        { "kind": "text", "text": "Re-point each node's next to the previous node while walking forward. O(n) time, O(1) space." },
-        { "kind": "code", "lines": ["ListNode rev(ListNode h){", "  ListNode p=null;", "  while(h!=null){ ListNode n=h.next; h.next=p; p=h; h=n; }", "  return p;", "}"] }
-      ]},
-      { "qNum": 2, "qText": "Detect a cycle in a linked list (Floyd's).", "level": "intermediate", "header": "DSA — Linked Lists, Stacks & Queues", "blocks": [
-        { "kind": "text", "text": "Slow pointer moves 1, fast moves 2; if they meet there's a cycle. To find the start, reset one pointer to head and advance both by 1 until they meet. O(n) time, O(1) space." }
-      ]},
-      { "qNum": 3, "qText": "Valid parentheses.", "level": "beginner", "header": "DSA — Linked Lists, Stacks & Queues", "blocks": [
-        { "kind": "text", "text": "Push openers on a stack; on a closer pop and check the match; valid iff the stack is empty at the end. O(n)." }
-      ]},
-      { "qNum": 4, "qText": "Daily temperatures / next greater element (monotonic stack).", "level": "advanced", "header": "DSA — Linked Lists, Stacks & Queues", "blocks": [
-        { "kind": "text", "text": "Keep a stack of indices with decreasing values; when the current value is greater, pop and record the distance/next-greater. Each index is pushed/popped once → O(n). The monotonic-stack pattern solves 'next greater/smaller' families." }
-      ]}
+      {
+        "qNum": 1,
+        "qText": "Reverse a linked list.",
+        "level": "beginner",
+        "header": "DSA — Linked Lists, Stacks & Queues",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Re-point each node's next to the previous node while walking forward. O(n) time, O(1) space."
+          },
+          {
+            "kind": "code",
+            "lines": [
+              "ListNode rev(ListNode h){",
+              "  ListNode p=null;",
+              "  while(h!=null){ ListNode n=h.next; h.next=p; p=h; h=n; }",
+              "  return p;",
+              "}"
+            ]
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Detect a cycle in a linked list (Floyd's).",
+        "level": "intermediate",
+        "header": "DSA — Linked Lists, Stacks & Queues",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Slow pointer moves 1, fast moves 2; if they meet there's a cycle. To find the start, reset one pointer to head and advance both by 1 until they meet. O(n) time, O(1) space."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Valid parentheses.",
+        "level": "beginner",
+        "header": "DSA — Linked Lists, Stacks & Queues",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Push openers on a stack; on a closer pop and check the match; valid iff the stack is empty at the end. O(n)."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Daily temperatures / next greater element (monotonic stack).",
+        "level": "advanced",
+        "header": "DSA — Linked Lists, Stacks & Queues",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Keep a stack of indices with decreasing values; when the current value is greater, pop and record the distance/next-greater. Each index is pushed/popped once → O(n). The monotonic-stack pattern solves 'next greater/smaller' families."
+          }
+        ]
+      }
     ]
   },
   {
     "sectionTitle": "DSA — Trees & Graphs",
     "questions": [
-      { "qNum": 1, "qText": "Binary tree traversals — the four you must know.", "level": "beginner", "header": "DSA — Trees & Graphs", "blocks": [
-        { "kind": "text", "text": "Preorder (root, left, right), inorder (left, root, right — sorted for a BST), postorder (left, right, root), and level-order (BFS with a queue). Recursion for DFS; a queue for BFS. All O(n)." }
-      ]},
-      { "qNum": 2, "qText": "Validate a BST.", "level": "intermediate", "header": "DSA — Trees & Graphs", "blocks": [
-        { "kind": "text", "text": "Recurse carrying a (min, max) range; each node must lie strictly within it, tightening the range as you descend. An inorder traversal being strictly increasing is an equivalent check. O(n)." }
-      ]},
-      { "qNum": 3, "qText": "Number of islands (grid DFS/BFS).", "level": "intermediate", "header": "DSA — Trees & Graphs", "blocks": [
-        { "kind": "text", "text": "Scan the grid; on each unvisited '1' increment the count and flood-fill (DFS/BFS) its connected land to '0'. O(rows×cols). Classic connected-components problem." }
-      ]},
-      { "qNum": 4, "qText": "Explain topological sort and where it's used.", "level": "advanced", "header": "DSA — Trees & Graphs", "blocks": [
-        { "kind": "text", "text": "Ordering of a DAG so every edge u→v has u before v. Kahn's algorithm: repeatedly remove nodes with in-degree 0. Used for build/task scheduling, course prerequisites, dependency resolution. If a cycle exists, no valid ordering (detects cycles). O(V+E)." }
-      ]},
-      { "qNum": 5, "qText": "BFS vs DFS — when to use which?", "level": "beginner", "header": "DSA — Trees & Graphs", "blocks": [
-        { "kind": "text", "text": "BFS explores level by level (queue) — best for shortest path in unweighted graphs and level-order needs; space can be large (whole frontier). DFS goes deep (stack/recursion) — best for path existence, connected components, topological sort, backtracking; lower memory but not shortest-path." }
-      ]}
+      {
+        "qNum": 1,
+        "qText": "Binary tree traversals — the four you must know.",
+        "level": "beginner",
+        "header": "DSA — Trees & Graphs",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Preorder (root, left, right), inorder (left, root, right — sorted for a BST), postorder (left, right, root), and level-order (BFS with a queue). Recursion for DFS; a queue for BFS. All O(n)."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Validate a BST.",
+        "level": "intermediate",
+        "header": "DSA — Trees & Graphs",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Recurse carrying a (min, max) range; each node must lie strictly within it, tightening the range as you descend. An inorder traversal being strictly increasing is an equivalent check. O(n)."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Number of islands (grid DFS/BFS).",
+        "level": "intermediate",
+        "header": "DSA — Trees & Graphs",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Scan the grid; on each unvisited '1' increment the count and flood-fill (DFS/BFS) its connected land to '0'. O(rows×cols). Classic connected-components problem."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Explain topological sort and where it's used.",
+        "level": "advanced",
+        "header": "DSA — Trees & Graphs",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Ordering of a DAG so every edge u→v has u before v. Kahn's algorithm: repeatedly remove nodes with in-degree 0. Used for build/task scheduling, course prerequisites, dependency resolution. If a cycle exists, no valid ordering (detects cycles). O(V+E)."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "BFS vs DFS — when to use which?",
+        "level": "beginner",
+        "header": "DSA — Trees & Graphs",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "BFS explores level by level (queue) — best for shortest path in unweighted graphs and level-order needs; space can be large (whole frontier). DFS goes deep (stack/recursion) — best for path existence, connected components, topological sort, backtracking; lower memory but not shortest-path."
+          }
+        ]
+      }
     ]
   },
   {
     "sectionTitle": "DSA — Recursion, Backtracking & DP",
     "questions": [
-      { "qNum": 1, "qText": "Climbing stairs (intro DP).", "level": "beginner", "header": "DSA — Recursion, Backtracking & DP", "blocks": [
-        { "kind": "text", "text": "Ways(n) = ways(n−1) + ways(n−2) — Fibonacci. Use O(1) space with two rolling variables instead of an array." }
-      ]},
-      { "qNum": 2, "qText": "Coin change (min coins).", "level": "intermediate", "header": "DSA — Recursion, Backtracking & DP", "blocks": [
-        { "kind": "text", "text": "dp[a] = min coins to make amount a; dp[a] = min over coins c of dp[a−c]+1. O(amount × coins)." },
-        { "kind": "code", "lines": ["int coinChange(int[] coins, int amt){", "  int[] dp=new int[amt+1]; Arrays.fill(dp, amt+1); dp[0]=0;", "  for(int a=1;a<=amt;a++) for(int c:coins) if(c<=a) dp[a]=Math.min(dp[a],dp[a-c]+1);", "  return dp[amt]>amt?-1:dp[amt];", "}"] }
-      ]},
-      { "qNum": 3, "qText": "Explain memoization vs tabulation.", "level": "intermediate", "header": "DSA — Recursion, Backtracking & DP", "blocks": [
-        { "kind": "text", "text": "Both cache subproblem results. Memoization is top-down recursion with a cache (only computes needed states, risk of deep recursion). Tabulation is bottom-up iteration filling a table (no recursion overhead, sometimes space-optimizable). Same time complexity; pick by readability and stack constraints." }
-      ]},
-      { "qNum": 4, "qText": "Generate subsets/permutations (backtracking template).", "level": "advanced", "header": "DSA — Recursion, Backtracking & DP", "blocks": [
-        { "kind": "text", "text": "Backtracking = choose → recurse → un-choose. Build a partial solution, recurse deeper, then undo the choice to explore alternatives. Powers subsets, permutations, combinations, N-Queens, and word search. Complexity is exponential (that's the nature of enumerating all solutions)." }
-      ]}
+      {
+        "qNum": 1,
+        "qText": "Climbing stairs (intro DP).",
+        "level": "beginner",
+        "header": "DSA — Recursion, Backtracking & DP",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Ways(n) = ways(n−1) + ways(n−2) — Fibonacci. Use O(1) space with two rolling variables instead of an array."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Coin change (min coins).",
+        "level": "intermediate",
+        "header": "DSA — Recursion, Backtracking & DP",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "dp[a] = min coins to make amount a; dp[a] = min over coins c of dp[a−c]+1. O(amount × coins)."
+          },
+          {
+            "kind": "code",
+            "lines": [
+              "int coinChange(int[] coins, int amt){",
+              "  int[] dp=new int[amt+1]; Arrays.fill(dp, amt+1); dp[0]=0;",
+              "  for(int a=1;a<=amt;a++) for(int c:coins) if(c<=a) dp[a]=Math.min(dp[a],dp[a-c]+1);",
+              "  return dp[amt]>amt?-1:dp[amt];",
+              "}"
+            ]
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Explain memoization vs tabulation.",
+        "level": "intermediate",
+        "header": "DSA — Recursion, Backtracking & DP",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Both cache subproblem results. Memoization is top-down recursion with a cache (only computes needed states, risk of deep recursion). Tabulation is bottom-up iteration filling a table (no recursion overhead, sometimes space-optimizable). Same time complexity; pick by readability and stack constraints."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Generate subsets/permutations (backtracking template).",
+        "level": "advanced",
+        "header": "DSA — Recursion, Backtracking & DP",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Backtracking = choose → recurse → un-choose. Build a partial solution, recurse deeper, then undo the choice to explore alternatives. Powers subsets, permutations, combinations, N-Queens, and word search. Complexity is exponential (that's the nature of enumerating all solutions)."
+          }
+        ]
+      }
     ]
   },
   {
     "sectionTitle": "Computer Science Core",
     "questions": [
-      { "qNum": 1, "qText": "Process vs thread?", "level": "beginner", "header": "Computer Science Core", "blocks": [
-        { "kind": "text", "text": "A process is an independent program with its own memory and resources; a thread is a unit of execution inside a process sharing its memory but with its own stack. Processes are isolated (one crash doesn't kill others) but heavier; threads are lightweight but a bad thread can corrupt the process." }
-      ]},
-      { "qNum": 2, "qText": "TCP vs UDP?", "level": "beginner", "header": "Computer Science Core", "blocks": [
-        { "kind": "text", "text": "TCP is connection-oriented and reliable (handshake, ordering, retransmission, flow control) — HTTP, email. UDP is connectionless, unordered, no retransmission — faster and lighter, for streaming, gaming, DNS, VoIP where speed beats reliability." }
-      ]},
-      { "qNum": 3, "qText": "What happens when you type a URL and press Enter?", "level": "intermediate", "header": "Computer Science Core", "blocks": [
-        { "kind": "text", "text": "DNS resolves the domain to an IP; a TCP connection opens (3-way handshake) on 443; TLS handshake establishes encryption; the browser sends an HTTP GET; the server (via load balancers/app servers/DB) returns HTML; the browser parses it, fetches CSS/JS/images, builds the DOM, and renders." }
-      ]},
-      { "qNum": 4, "qText": "Explain Big-O and analyze a nested loop.", "level": "beginner", "header": "Computer Science Core", "blocks": [
-        { "kind": "text", "text": "Big-O describes how runtime/space grows with input size, ignoring constants. A single loop over n is O(n); a loop inside a loop over n is O(n²); halving each step (binary search) is O(log n); a loop that does a log-n operation each iteration is O(n log n). Always state best/average/worst where they differ (e.g., quicksort)." }
-      ]}
+      {
+        "qNum": 1,
+        "qText": "Process vs thread?",
+        "level": "beginner",
+        "header": "Computer Science Core",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "A process is an independent program with its own memory and resources; a thread is a unit of execution inside a process sharing its memory but with its own stack. Processes are isolated (one crash doesn't kill others) but heavier; threads are lightweight but a bad thread can corrupt the process."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "TCP vs UDP?",
+        "level": "beginner",
+        "header": "Computer Science Core",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "TCP is connection-oriented and reliable (handshake, ordering, retransmission, flow control) — HTTP, email. UDP is connectionless, unordered, no retransmission — faster and lighter, for streaming, gaming, DNS, VoIP where speed beats reliability."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "What happens when you type a URL and press Enter?",
+        "level": "intermediate",
+        "header": "Computer Science Core",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "DNS resolves the domain to an IP; a TCP connection opens (3-way handshake) on 443; TLS handshake establishes encryption; the browser sends an HTTP GET; the server (via load balancers/app servers/DB) returns HTML; the browser parses it, fetches CSS/JS/images, builds the DOM, and renders."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Explain Big-O and analyze a nested loop.",
+        "level": "beginner",
+        "header": "Computer Science Core",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Big-O describes how runtime/space grows with input size, ignoring constants. A single loop over n is O(n); a loop inside a loop over n is O(n²); halving each step (binary search) is O(log n); a loop that does a log-n operation each iteration is O(n log n). Always state best/average/worst where they differ (e.g., quicksort)."
+          }
+        ]
+      }
     ]
   },
   {
     "sectionTitle": "DBMS",
     "questions": [
-      { "qNum": 1, "qText": "Explain ACID.", "level": "beginner", "header": "DBMS", "blocks": [
-        { "kind": "text", "text": "Atomicity (all-or-nothing), Consistency (constraints hold), Isolation (concurrent txns don't corrupt each other), Durability (committed data survives crashes). Money transfer is the canonical example." }
-      ]},
-      { "qNum": 2, "qText": "How do indexes work and when do they hurt?", "level": "intermediate", "header": "DBMS", "blocks": [
-        { "kind": "text", "text": "A B-tree index gives O(log n) lookups, range scans, and sorted reads; composite indexes follow the leftmost-prefix rule. They cost write time + storage, help little on low-cardinality columns, and functions on the column (WHERE YEAR(col)) prevent index use. Verify with EXPLAIN." }
-      ]},
-      { "qNum": 3, "qText": "Explain the JOIN types; find employees with no orders.", "level": "intermediate", "header": "DBMS", "blocks": [
-        { "kind": "text", "text": "INNER returns matches only; LEFT returns all left rows + NULLs for missing right; RIGHT the reverse; FULL both. To find employees with no orders, LEFT JOIN and filter where the right key IS NULL." },
-        { "kind": "code", "lines": ["SELECT e.* FROM employee e", "LEFT JOIN orders o ON o.emp_id = e.id", "WHERE o.id IS NULL;"] }
-      ]},
-      { "qNum": 4, "qText": "Explain transaction isolation levels and their anomalies.", "level": "advanced", "header": "DBMS", "blocks": [
-        { "kind": "text", "text": "READ UNCOMMITTED (dirty reads) → READ COMMITTED (no dirty reads, but non-repeatable reads) → REPEATABLE READ (stable rows, phantoms possible; MySQL default) → SERIALIZABLE (full isolation, lowest concurrency). Pick the lowest level that preserves your invariants, adding locking/versioning where money is involved." }
-      ]},
-      { "qNum": 5, "qText": "SQL vs NoSQL — how do you choose?", "level": "beginner", "header": "DBMS", "blocks": [
-        { "kind": "text", "text": "Relational for transactions, joins, structured data, strong consistency (payments, orders). Document (MongoDB) for flexible schema and aggregate reads (catalogs, profiles). Key-value (Redis) for caching/sessions. Default to relational; adopt NoSQL for a specific access pattern, not fashion." }
-      ]}
+      {
+        "qNum": 1,
+        "qText": "Explain ACID.",
+        "level": "beginner",
+        "header": "DBMS",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Atomicity (all-or-nothing), Consistency (constraints hold), Isolation (concurrent txns don't corrupt each other), Durability (committed data survives crashes). Money transfer is the canonical example."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "How do indexes work and when do they hurt?",
+        "level": "intermediate",
+        "header": "DBMS",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "A B-tree index gives O(log n) lookups, range scans, and sorted reads; composite indexes follow the leftmost-prefix rule. They cost write time + storage, help little on low-cardinality columns, and functions on the column (WHERE YEAR(col)) prevent index use. Verify with EXPLAIN."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Explain the JOIN types; find employees with no orders.",
+        "level": "intermediate",
+        "header": "DBMS",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "INNER returns matches only; LEFT returns all left rows + NULLs for missing right; RIGHT the reverse; FULL both. To find employees with no orders, LEFT JOIN and filter where the right key IS NULL."
+          },
+          {
+            "kind": "code",
+            "lines": [
+              "SELECT e.* FROM employee e",
+              "LEFT JOIN orders o ON o.emp_id = e.id",
+              "WHERE o.id IS NULL;"
+            ]
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Explain transaction isolation levels and their anomalies.",
+        "level": "advanced",
+        "header": "DBMS",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "READ UNCOMMITTED (dirty reads) → READ COMMITTED (no dirty reads, but non-repeatable reads) → REPEATABLE READ (stable rows, phantoms possible; MySQL default) → SERIALIZABLE (full isolation, lowest concurrency). Pick the lowest level that preserves your invariants, adding locking/versioning where money is involved."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "SQL vs NoSQL — how do you choose?",
+        "level": "beginner",
+        "header": "DBMS",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Relational for transactions, joins, structured data, strong consistency (payments, orders). Document (MongoDB) for flexible schema and aggregate reads (catalogs, profiles). Key-value (Redis) for caching/sessions. Default to relational; adopt NoSQL for a specific access pattern, not fashion."
+          }
+        ]
+      }
     ]
   },
   {
     "sectionTitle": "Low-Level Design / OOP Design",
     "questions": [
-      { "qNum": 1, "qText": "Explain SOLID principles.", "level": "intermediate", "header": "Low-Level Design / OOP Design", "blocks": [
-        { "kind": "text", "text": "SRP (one reason to change), OCP (open for extension, closed for modification), LSP (subtypes substitutable for base types), ISP (small focused interfaces), DIP (depend on abstractions, not concretions). Together they yield loosely-coupled, testable, extensible code." }
-      ]},
-      { "qNum": 2, "qText": "Which design patterns do you actually use?", "level": "intermediate", "header": "Low-Level Design / OOP Design", "blocks": [
-        { "kind": "text", "text": "Creational: Singleton (one instance), Factory/Builder (construction). Structural: Adapter, Decorator, Facade, Proxy. Behavioral: Strategy (swap algorithms), Observer (event notification), Template Method. Name the problem each solves rather than reciting definitions." }
-      ]},
-      { "qNum": 3, "qText": "Design a parking lot (LLD).", "level": "advanced", "header": "Low-Level Design / OOP Design", "blocks": [
-        { "kind": "text", "text": "Entities: ParkingLot → Levels → Spots (typed: small/medium/large, EV). Vehicle hierarchy (Car/Bike/Truck). A ParkingStrategy assigns the nearest fitting spot (Strategy pattern); Ticket tracks entry/exit; a Payment component computes fees. Discuss concurrency (two cars, one spot → atomic allocation) and extensibility (new vehicle/spot types via OCP)." }
-      ]},
-      { "qNum": 4, "qText": "Design an LRU cache.", "level": "advanced", "header": "Low-Level Design / OOP Design", "blocks": [
-        { "kind": "text", "text": "HashMap for O(1) lookup + a doubly-linked list ordered by recency; on access move the node to the front, evict from the tail when full. In Java, LinkedHashMap(accessOrder=true) with removeEldestEntry does it in a few lines." }
-      ]}
+      {
+        "qNum": 1,
+        "qText": "Explain SOLID principles.",
+        "level": "intermediate",
+        "header": "Low-Level Design / OOP Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "SRP (one reason to change), OCP (open for extension, closed for modification), LSP (subtypes substitutable for base types), ISP (small focused interfaces), DIP (depend on abstractions, not concretions). Together they yield loosely-coupled, testable, extensible code."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Which design patterns do you actually use?",
+        "level": "intermediate",
+        "header": "Low-Level Design / OOP Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Creational: Singleton (one instance), Factory/Builder (construction). Structural: Adapter, Decorator, Facade, Proxy. Behavioral: Strategy (swap algorithms), Observer (event notification), Template Method. Name the problem each solves rather than reciting definitions."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Design a parking lot (LLD).",
+        "level": "advanced",
+        "header": "Low-Level Design / OOP Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Entities: ParkingLot → Levels → Spots (typed: small/medium/large, EV). Vehicle hierarchy (Car/Bike/Truck). A ParkingStrategy assigns the nearest fitting spot (Strategy pattern); Ticket tracks entry/exit; a Payment component computes fees. Discuss concurrency (two cars, one spot → atomic allocation) and extensibility (new vehicle/spot types via OCP)."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Design an LRU cache.",
+        "level": "advanced",
+        "header": "Low-Level Design / OOP Design",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "HashMap for O(1) lookup + a doubly-linked list ordered by recency; on access move the node to the front, evict from the tail when full. In Java, LinkedHashMap(accessOrder=true) with removeEldestEntry does it in a few lines."
+          }
+        ]
+      }
     ]
   },
   {
     "sectionTitle": "System Design / HLD",
     "questions": [
-      { "qNum": 1, "qText": "Design a URL shortener.", "level": "advanced", "header": "System Design / HLD", "blocks": [
-        { "kind": "text", "text": "POST long→short, GET short→301. Keys: base62 of a unique/snowflake id (or random + collision check). Read-heavy → Redis cache + DB read replicas. Estimate QPS/storage; discuss 301 vs 302 (caching vs analytics) and custom aliases/expiry." },
-        { "kind": "mermaid", "lines": ["flowchart TD", "  U[User] --> LB[Load Balancer]", "  LB --> S[URL Service]", "  S --> C[(Redis)]", "  C -. miss .-> DB[(Key→URL DB)]", "  DB --> RR[(Replicas)]"] }
-      ]},
-      { "qNum": 2, "qText": "Design a chat application (WhatsApp-style).", "level": "advanced", "header": "System Design / HLD", "blocks": [
-        { "kind": "text", "text": "Clients hold a persistent WebSocket to stateful chat servers behind a session-aware LB; a pub/sub layer (Redis/Kafka) delivers messages across servers; messages persist in a wide-column store (Cassandra) partitioned by chatId; presence in Redis; media in S3; push via FCM/APNs for offline users." },
-        { "kind": "mermaid", "lines": ["flowchart TD", "  C[Client] -- WebSocket --> CS[Chat servers]", "  CS <--> PS[(Redis/Kafka pub-sub)]", "  CS --> DB[(Cassandra messages)]", "  CS --> PR[(Redis presence)]", "  CS --> PUSH[FCM/APNs]"] }
-      ]},
-      { "qNum": 3, "qText": "Explain CAP theorem and consistent hashing.", "level": "advanced", "header": "System Design / HLD", "blocks": [
-        { "kind": "text", "text": "CAP: under a network partition you choose Consistency or Availability (partitions are unavoidable). Consistent hashing places nodes and keys on a ring so adding/removing a node remaps only ~1/N keys (not all) — used by distributed caches, DynamoDB, Cassandra; virtual nodes even out distribution." }
-      ]},
-      { "qNum": 4, "qText": "How do you scale reads and writes on a database?", "level": "intermediate", "header": "System Design / HLD", "blocks": [
-        { "kind": "text", "text": "Reads: caching (Redis), read replicas, denormalized read models/CQRS, and covering indexes. Writes: sharding by a good key, batching, write-optimized stores, and async processing via queues. Always measure the real bottleneck before scaling." }
-      ]}
+      {
+        "qNum": 1,
+        "qText": "Design a URL shortener.",
+        "level": "advanced",
+        "header": "System Design / HLD",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "POST long→short, GET short→301. Keys: base62 of a unique/snowflake id (or random + collision check). Read-heavy → Redis cache + DB read replicas. Estimate QPS/storage; discuss 301 vs 302 (caching vs analytics) and custom aliases/expiry."
+          },
+          {
+            "kind": "mermaid",
+            "lines": [
+              "flowchart TD",
+              "  U[User] --> LB[Load Balancer]",
+              "  LB --> S[URL Service]",
+              "  S --> C[(Redis)]",
+              "  C -. miss .-> DB[(Key→URL DB)]",
+              "  DB --> RR[(Replicas)]"
+            ]
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Design a chat application (WhatsApp-style).",
+        "level": "advanced",
+        "header": "System Design / HLD",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Clients hold a persistent WebSocket to stateful chat servers behind a session-aware LB; a pub/sub layer (Redis/Kafka) delivers messages across servers; messages persist in a wide-column store (Cassandra) partitioned by chatId; presence in Redis; media in S3; push via FCM/APNs for offline users."
+          },
+          {
+            "kind": "mermaid",
+            "lines": [
+              "flowchart TD",
+              "  C[Client] -- WebSocket --> CS[Chat servers]",
+              "  CS <--> PS[(Redis/Kafka pub-sub)]",
+              "  CS --> DB[(Cassandra messages)]",
+              "  CS --> PR[(Redis presence)]",
+              "  CS --> PUSH[FCM/APNs]"
+            ]
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Explain CAP theorem and consistent hashing.",
+        "level": "advanced",
+        "header": "System Design / HLD",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "CAP: under a network partition you choose Consistency or Availability (partitions are unavoidable). Consistent hashing places nodes and keys on a ring so adding/removing a node remaps only ~1/N keys (not all) — used by distributed caches, DynamoDB, Cassandra; virtual nodes even out distribution."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "How do you scale reads and writes on a database?",
+        "level": "intermediate",
+        "header": "System Design / HLD",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Reads: caching (Redis), read replicas, denormalized read models/CQRS, and covering indexes. Writes: sharding by a good key, batching, write-optimized stores, and async processing via queues. Always measure the real bottleneck before scaling."
+          }
+        ]
+      }
     ]
   },
   {
     "sectionTitle": "Scenario / Debugging",
     "questions": [
-      { "qNum": 1, "qText": "A production API's latency spiked after a deploy. Walk me through it.", "level": "advanced", "header": "Scenario / Debugging", "blocks": [
-        { "kind": "text", "text": "Roll back if impact is high, then diff the deploy (code/config/deps). Use traces to find where time goes (DB, external call, GC). Common causes: an introduced N+1, missing index on a new query, connection-pool shrink, GC pauses, or a retry storm. Present a method, not guesses." }
-      ]},
-      { "qNum": 2, "qText": "Users report intermittent wrong data. How do you approach it?", "level": "advanced", "header": "Scenario / Debugging", "blocks": [
-        { "kind": "text", "text": "Reproduce with specific inputs, add correlation-id logging to follow one request across services, check for race conditions (shared mutable state, missing locks/idempotency), cache staleness, and read-after-write on replicas. Form a hypothesis, verify with data, fix, then add a regression test." }
-      ]},
-      { "qNum": 3, "qText": "How do you take a feature from dev to production safely?", "level": "intermediate", "header": "Scenario / Debugging", "blocks": [
-        { "kind": "text", "text": "Feature flag → code review → tests (unit + integration) → staging with prod-like data → canary/percentage rollout while watching error rate/latency/business metrics → full rollout → flag cleanup, with a rollback path throughout." }
-      ]}
+      {
+        "qNum": 1,
+        "qText": "A production API's latency spiked after a deploy. Walk me through it.",
+        "level": "advanced",
+        "header": "Scenario / Debugging",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Roll back if impact is high, then diff the deploy (code/config/deps). Use traces to find where time goes (DB, external call, GC). Common causes: an introduced N+1, missing index on a new query, connection-pool shrink, GC pauses, or a retry storm. Present a method, not guesses."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Users report intermittent wrong data. How do you approach it?",
+        "level": "advanced",
+        "header": "Scenario / Debugging",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Reproduce with specific inputs, add correlation-id logging to follow one request across services, check for race conditions (shared mutable state, missing locks/idempotency), cache staleness, and read-after-write on replicas. Form a hypothesis, verify with data, fix, then add a regression test."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "How do you take a feature from dev to production safely?",
+        "level": "intermediate",
+        "header": "Scenario / Debugging",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Feature flag → code review → tests (unit + integration) → staging with prod-like data → canary/percentage rollout while watching error rate/latency/business metrics → full rollout → flag cleanup, with a rollback path throughout."
+          }
+        ]
+      }
     ]
   },
   {
     "sectionTitle": "HR & Behavioral / Manager Round",
     "questions": [
-      { "qNum": 1, "qText": "Tell me about yourself.", "level": "beginner", "header": "HR & Behavioral / Manager Round", "blocks": [
-        { "kind": "text", "text": "60 seconds: who you are (years, domain), the impact you've had (a measurable win), your strengths relevant to this role, and why you're excited about THIS team. End pointed at the job, not a life story." }
-      ]},
-      { "qNum": 2, "qText": "Tell me about your most challenging project.", "level": "intermediate", "header": "HR & Behavioral / Manager Round", "blocks": [
-        { "kind": "text", "text": "STAR: the hard problem, your specific role, the technical decisions and trade-offs you made, obstacles overcome, and the measurable outcome. Emphasize YOUR contribution and what you learned." }
-      ]},
-      { "qNum": 3, "qText": "Tell me about a disagreement with a teammate or manager.", "level": "intermediate", "header": "HR & Behavioral / Manager Round", "blocks": [
-        { "kind": "text", "text": "Show you attack ideas, not people: listen first, restate their concern, bring data/a prototype instead of opinion, agree on a decision + criteria, and keep the relationship intact. End with the outcome and what you'd do again." }
-      ]},
-      { "qNum": 4, "qText": "Manager round: how do you handle ambiguity and prioritize under pressure?", "level": "advanced", "header": "HR & Behavioral / Manager Round", "blocks": [
-        { "kind": "text", "text": "Clarify the goal and constraints, break work into the smallest valuable slice, identify the riskiest assumption and de-risk it first, communicate trade-offs and timelines early, and prioritize by impact vs effort. Give a concrete example where you shipped despite unclear requirements." }
-      ]},
-      { "qNum": 5, "qText": "Where do you see yourself in 5 years / why this company?", "level": "beginner", "header": "HR & Behavioral / Manager Round", "blocks": [
-        { "kind": "text", "text": "Growth: strong engineer now → senior owning design and mentoring later. For 'why this company', do 15 minutes of research and connect ONE real thing (product, scale, engineering culture) to your experience. Have 3 thoughtful questions ready for them." }
-      ]}
+      {
+        "qNum": 1,
+        "qText": "Tell me about yourself.",
+        "level": "beginner",
+        "header": "HR & Behavioral / Manager Round",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "60 seconds: who you are (years, domain), the impact you've had (a measurable win), your strengths relevant to this role, and why you're excited about THIS team. End pointed at the job, not a life story."
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Tell me about your most challenging project.",
+        "level": "intermediate",
+        "header": "HR & Behavioral / Manager Round",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "STAR: the hard problem, your specific role, the technical decisions and trade-offs you made, obstacles overcome, and the measurable outcome. Emphasize YOUR contribution and what you learned."
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Tell me about a disagreement with a teammate or manager.",
+        "level": "intermediate",
+        "header": "HR & Behavioral / Manager Round",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Show you attack ideas, not people: listen first, restate their concern, bring data/a prototype instead of opinion, agree on a decision + criteria, and keep the relationship intact. End with the outcome and what you'd do again."
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Manager round: how do you handle ambiguity and prioritize under pressure?",
+        "level": "advanced",
+        "header": "HR & Behavioral / Manager Round",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Clarify the goal and constraints, break work into the smallest valuable slice, identify the riskiest assumption and de-risk it first, communicate trade-offs and timelines early, and prioritize by impact vs effort. Give a concrete example where you shipped despite unclear requirements."
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "Where do you see yourself in 5 years / why this company?",
+        "level": "beginner",
+        "header": "HR & Behavioral / Manager Round",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Growth: strong engineer now → senior owning design and mentoring later. For 'why this company', do 15 minutes of research and connect ONE real thing (product, scale, engineering culture) to your experience. Have 3 thoughtful questions ready for them."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "sectionTitle": "30-Day DSA Sheet — Patterns & Links",
+    "questions": [
+      {
+        "qNum": 1,
+        "qText": "Reverse String",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Two Pointers · Type: Strings · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Two-pointer swap from ends (in-place)"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/reverse-string/"
+          }
+        ]
+      },
+      {
+        "qNum": 2,
+        "qText": "Two Sum",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Hashmaps · Type: Arrays · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Hash map (one-pass lookup for complement)"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/two-sum/"
+          }
+        ]
+      },
+      {
+        "qNum": 3,
+        "qText": "Valid Anagram",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Hashmaps / String Manipulation/ Frequency Array · Type: Strings · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Count frequencies or sort and compare"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/valid-anagram/"
+          }
+        ]
+      },
+      {
+        "qNum": 4,
+        "qText": "Contains Duplicate",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Hashmaps · Type: Arrays · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Use HashSet to check duplicates while scanning"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/contains-duplicate/"
+          }
+        ]
+      },
+      {
+        "qNum": 5,
+        "qText": "Move Zeroes",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Two Pointers · Type: Arrays · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Two-pointer in-place shifting non-zero elements"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/move-zeroes/"
+          }
+        ]
+      },
+      {
+        "qNum": 6,
+        "qText": "Remove Element",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Two Pointers · Type: Arrays · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Two-pointer overwrite to remove target in-place"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/remove-element/"
+          }
+        ]
+      },
+      {
+        "qNum": 7,
+        "qText": "Remove Duplicates from Sorted Array",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Two Pointers / Sorting · Type: Arrays · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Slow/fast pointers to keep unique elements"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/remove-duplicates-from-sorted-array/"
+          }
+        ]
+      },
+      {
+        "qNum": 8,
+        "qText": "Merge Sorted Array",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Merge Intervals / Two Pointers · Type: Arrays · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Two-pointer merge from the end to utilize buffer"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/merge-sorted-array/"
+          }
+        ]
+      },
+      {
+        "qNum": 9,
+        "qText": "Valid Palindrome",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Two Pointers / String Manipulation · Type: Strings · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Two-pointer compare skipping non-alphanum"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/valid-palindrome/"
+          }
+        ]
+      },
+      {
+        "qNum": 10,
+        "qText": "First Unique Character in a String",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Hashmaps · Type: Strings · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Frequency count then scan for first count==1"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/first-unique-character-in-a-string/"
+          }
+        ]
+      },
+      {
+        "qNum": 11,
+        "qText": "Rotate Array",
+        "level": "intermediate",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Two Pointers · Type: Arrays · Leetcode Medium"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Reverse parts of array (in-place) or cyclic replacements"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/rotate-array/"
+          }
+        ]
+      },
+      {
+        "qNum": 12,
+        "qText": "Majority Element",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Hashmaps · Type: Arrays · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Boyer-Moore Voting or hashmap counts"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/majority-element/"
+          }
+        ]
+      },
+      {
+        "qNum": 13,
+        "qText": "Maximum Subarray",
+        "level": "intermediate",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Kadane'sAlgo/ Prefix Sum · Type: Arrays · Leetcode Medium"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Kadane's algorithm (running max / carryforward)"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/maximum-subarray/"
+          }
+        ]
+      },
+      {
+        "qNum": 14,
+        "qText": "Squares of a Sorted Array",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Two Pointers / Sorting · Type: Arrays · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Two-pointer from ends to place largest squares"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/squares-of-a-sorted-array/"
+          }
+        ]
+      },
+      {
+        "qNum": 15,
+        "qText": "Intersection of Two Arrays II",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Hashmaps / Two Pointers · Type: Arrays · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Hashmap counts or sort + two-pointer"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/intersection-of-two-arrays-ii/"
+          }
+        ]
+      },
+      {
+        "qNum": 16,
+        "qText": "Find All Numbers Disappeared in an Array",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: In-Place Manipulation / Counting Problems (Array) · Type: Arrays · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Index-marking (negation) to mark seen numbers in-place"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/"
+          }
+        ]
+      },
+      {
+        "qNum": 17,
+        "qText": "Missing Number",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Bit Manipulation / Prefix Sums (Array) · Type: Arrays · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: XOR or arithmetic sum formula to find missing"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/missing-number/"
+          }
+        ]
+      },
+      {
+        "qNum": 18,
+        "qText": "Roman to Integer",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: String Manipulation · Type: Strings · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Map chars to values and apply subtractive rule"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/roman-to-integer/"
+          }
+        ]
+      },
+      {
+        "qNum": 19,
+        "qText": "Longest Common Prefix",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: String Manipulation / Sorting · Type: Strings · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Horizontal/vertical scanning across strings"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/longest-common-prefix/"
+          }
+        ]
+      },
+      {
+        "qNum": 20,
+        "qText": "Substrings of Size Three with Distinct Characters",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Sliding Window · Type: Strings · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Fixed-length sliding window with set check"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/substrings-of-size-three-with-distinct-characters/"
+          }
+        ]
+      },
+      {
+        "qNum": 21,
+        "qText": "Linked List Cycle",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Fast and Slow Pointers (Linked List) · Type: LinkedList · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Floyd’s slow/fast pointer detection"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/linked-list-cycle/"
+          }
+        ]
+      },
+      {
+        "qNum": 22,
+        "qText": "Reverse Linked List",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: In-Place Reversal Technique (Linked List) · Type: LinkedList · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Iterative prev/curr pointer reversal"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/reverse-linked-list/"
+          }
+        ]
+      },
+      {
+        "qNum": 23,
+        "qText": "Merge Two Sorted Lists",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Dummy Node Technique (Linked List) · Type: LinkedList · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Dummy head + pointer merge of two lists"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/merge-two-sorted-lists/"
+          }
+        ]
+      },
+      {
+        "qNum": 24,
+        "qText": "Valid Parentheses",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Expression Evaluation / Two Stacks (Stack & String) · Type: Stacks · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Stack push/pop for matching brackets"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/valid-parentheses/description/"
+          }
+        ]
+      },
+      {
+        "qNum": 25,
+        "qText": "Min Stack",
+        "level": "intermediate",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Design Problems / Two Stacks (Stack) · Type: Stacks · Leetcode Medium"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Auxiliary stack to keep track of current minimum"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/valid-parentheses/"
+          }
+        ]
+      },
+      {
+        "qNum": 26,
+        "qText": "Symmetric Tree",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Mirror & Symmetry / Recursion Technique (Tree) · Type: Trees · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Recursive mirror check between subtrees"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/min-stack/"
+          }
+        ]
+      },
+      {
+        "qNum": 27,
+        "qText": "Binary Tree Inorder Traversal",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Traversal (Tree) · Type: Trees · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Recursive DFS or iterative stack for inorder"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/binary-tree-inorder-traversal/"
+          }
+        ]
+      },
+      {
+        "qNum": 28,
+        "qText": "Binary Search",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Basic Binary Search (Array) · Type: Arrays · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: Classic mid comparison"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/binary-search/"
+          }
+        ]
+      },
+      {
+        "qNum": 29,
+        "qText": "Climbing Stairs",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Basic Dynamic Programming (DP) · Type: Integer · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: DP: ways[n] = ways[n-1] + ways[n-2]"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/climbing-stairs/"
+          }
+        ]
+      },
+      {
+        "qNum": 30,
+        "qText": "Single Number",
+        "level": "beginner",
+        "header": "30-Day DSA Sheet — Patterns & Links",
+        "blocks": [
+          {
+            "kind": "text",
+            "text": "Pattern: Bit Manipulation / Counting Problems (Array) · Type: Arrays · Leetcode Easy"
+          },
+          {
+            "kind": "text",
+            "text": "Approach: XOR all elements; duplicates cancel out"
+          },
+          {
+            "kind": "text",
+            "text": "🔗 https://leetcode.com/problems/single-number/"
+          }
+        ]
+      }
     ]
   }
 ]

@@ -111,7 +111,7 @@ export default function FlashcardsPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100">
       <header className="sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
-          <Link href="/" className="text-sm text-blue-400 hover:underline">← Back</Link>
+          <Link href="/dashboard" className="text-sm text-blue-400 hover:underline">← Back</Link>
           <h1 className="text-base sm:text-lg font-bold text-pink-300">🎯 Flashcard Mode</h1>
           <button onClick={reshuffle} title="Re-shuffle" className="text-xs px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded">🔀</button>
         </div>

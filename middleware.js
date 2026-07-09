@@ -41,8 +41,11 @@ export async function middleware(request) {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const publicPaths = ["/login", "/signup", "/auth"];
-    const isPublic = publicPaths.some((p) => request.nextUrl.pathname.startsWith(p));
+    const path = request.nextUrl.pathname;
+    const publicPrefixes = ["/login", "/signup", "/auth"];
+    // "/" (landing) is public; everything else (dashboard, roles, flashcards,
+    // bookmarks) requires auth.
+    const isPublic = path === "/" || publicPrefixes.some((p) => path.startsWith(p));
 
     if (!user && !isPublic) {
       const url = request.nextUrl.clone();
@@ -50,9 +53,9 @@ export async function middleware(request) {
       return NextResponse.redirect(url);
     }
 
-    if (user && (request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/signup")) {
+    if (user && (path === "/login" || path === "/signup")) {
       const url = request.nextUrl.clone();
-      url.pathname = "/";
+      url.pathname = "/dashboard";
       return NextResponse.redirect(url);
     }
   } catch {

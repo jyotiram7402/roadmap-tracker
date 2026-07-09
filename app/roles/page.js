@@ -141,7 +141,7 @@ export default function RolesPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100">
         <header className="sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800">
           <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
-            <Link href="/" className="text-sm text-blue-400 hover:underline">← Roadmap</Link>
+            <Link href="/dashboard" className="text-sm text-blue-400 hover:underline">← Roadmap</Link>
             <h1 className="text-base sm:text-lg font-bold">💼 Prepare for a Job Role</h1>
             <Link href="/bookmarks" className="text-xs sm:text-sm px-2 py-1.5 bg-amber-700/30 border border-amber-800 rounded-lg">★</Link>
           </div>
