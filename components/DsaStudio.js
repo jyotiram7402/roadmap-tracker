@@ -1,6 +1,6 @@
 "use client";
-import { useMemo, useState } from "react";
-import { DSA_PROBLEMS, PHASES, ALL_COMPANIES } from "@/data/dsa-problems";
+import { useEffect, useMemo, useState } from "react";
+import { DSA_PROBLEMS, PHASES, ALL_COMPANIES, loadPhaseDetails } from "@/data/dsa-problems";
 import CodeBlock from "@/components/CodeBlock";
 
 const DIFF = {
@@ -85,7 +85,6 @@ export default function DsaStudio() {
                 <span className="text-sm text-slate-100 flex items-center gap-1.5">
                   {p.hot && <span title="Frequently asked" className="text-amber-400">★</span>}
                   <span className="truncate">{p.title}</span>
-                  {p.details && <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-700/40 flex-shrink-0">solved</span>}
                 </span>
                 <span className="text-[11px] text-slate-500">{p.phase}{p.companies.length ? ` · ${p.companies.slice(0, 2).join(", ")}${p.companies.length > 2 ? ` +${p.companies.length - 2}` : ""}` : ""}</span>
               </span>
@@ -100,9 +99,21 @@ export default function DsaStudio() {
 
 function ProblemView({ problem, onBack }) {
   const d = DIFF[problem.difficulty];
-  const approaches = problem.details?.approaches || [];
+  const [details, setDetails] = useState(undefined); // undefined = loading, null = none yet
   const [ai, setAi] = useState(0);
-  const ap = approaches[ai];
+
+  useEffect(() => {
+    let mounted = true;
+    setDetails(undefined);
+    setAi(0);
+    loadPhaseDetails(problem.phase).then((map) => {
+      if (mounted) setDetails(map[problem.id] || null);
+    });
+    return () => { mounted = false; };
+  }, [problem]);
+
+  const approaches = details?.approaches || [];
+  const ap = approaches[Math.min(ai, Math.max(0, approaches.length - 1))];
 
   return (
     <div>
@@ -126,10 +137,12 @@ function ProblemView({ problem, onBack }) {
             </div>
           )}
 
-          {problem.details ? (
+          {details === undefined ? (
+            <div className="mt-4 text-sm text-slate-500 animate-pulse">Loading problem…</div>
+          ) : details ? (
             <>
-              <p className="mt-4 text-sm text-slate-200 leading-relaxed">{problem.details.statement}</p>
-              {problem.details.examples?.map((ex, i) => (
+              <p className="mt-4 text-sm text-slate-200 leading-relaxed">{details.statement}</p>
+              {details.examples?.map((ex, i) => (
                 <div key={i} className="mt-3 bg-slate-950/60 border border-slate-700 rounded-lg p-3 text-sm">
                   <div className="text-xs font-semibold text-slate-400 mb-1">Example {i + 1}</div>
                   <div><span className="text-slate-400">Input: </span><span className="font-mono text-slate-200">{ex.input}</span></div>
@@ -137,11 +150,11 @@ function ProblemView({ problem, onBack }) {
                   {ex.explanation && <div className="text-slate-400 mt-1">{ex.explanation}</div>}
                 </div>
               ))}
-              {problem.details.similar && (
+              {details.similar && (
                 <div className="mt-4">
                   <div className="text-xs font-semibold text-slate-400 mb-1">Similar problems</div>
                   <ul className="text-xs text-slate-400 space-y-0.5">
-                    {problem.details.similar.map((s, i) => <li key={i}>· {s[0]} — {s[1]} <span className="text-slate-600">({s[2]})</span></li>)}
+                    {details.similar.map((s, i) => <li key={i}>· {s[0]} — {s[1]} <span className="text-slate-600">({s[2]})</span></li>)}
                   </ul>
                 </div>
               )}
@@ -198,17 +211,19 @@ function ProblemView({ problem, onBack }) {
                 )}
               </div>
 
-              {problem.details.oneLiner && (
+              {details.oneLiner && (
                 <div className="mt-4 bg-slate-950/60 border border-slate-700 rounded-lg p-3">
                   <div className="text-xs font-semibold text-slate-400 mb-1">🎤 Interview one-liner</div>
-                  <p className="text-sm text-slate-300 italic">{problem.details.oneLiner}</p>
+                  <p className="text-sm text-slate-300 italic">{details.oneLiner}</p>
                 </div>
               )}
             </>
+          ) : details === undefined ? (
+            <div className="text-sm text-slate-500 animate-pulse">Loading approaches…</div>
           ) : (
             <div className="text-sm text-slate-400">
               <p className="font-semibold text-slate-300 mb-2">Approaches coming soon</p>
-              <p>The Brute → Better → Optimal solutions with Java code and dry-run tables are being filled in phase by phase (Arrays first). For now, practice this one directly on LeetCode using the button on the left, and use the search links elsewhere in the app.</p>
+              <p>The Brute → Better → Optimal solutions with Java code and dry-run tables are being filled in phase by phase. For now, practice this one directly on LeetCode using the button on the left.</p>
             </div>
           )}
         </div>
