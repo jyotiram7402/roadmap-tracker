@@ -4,6 +4,42 @@
 // and are LAZY-LOADED when a question is opened.
 
 const RAW = {
+  "⭐ Must-Know (Most Asked)": {
+    theory: [
+      { n: 1, q: "Difference between DELETE, DROP, and TRUNCATE?", d: "easy", hot: true },
+      { n: 2, q: "Primary Key vs Unique Key?", d: "easy", hot: true },
+      { n: 3, q: "Explain all the types of JOINs (INNER, LEFT, RIGHT, FULL, CROSS, SELF).", d: "easy", hot: true },
+      { n: 11, q: "GROUP BY vs HAVING?", d: "easy", hot: true },
+      { n: 12, q: "ROW_NUMBER() vs RANK() vs DENSE_RANK()?", d: "medium", hot: true },
+      { n: 13, q: "What are window functions (and how do they differ from aggregates)?", d: "medium", hot: true },
+      { n: 14, q: "CTE vs Subquery — differences and when to use each?", d: "medium", hot: true },
+      { n: 15, q: "IN vs EXISTS — which to use and when?", d: "medium", hot: true },
+      { n: 16, q: "Clustered vs Non-clustered index?", d: "medium", hot: true },
+      { n: 17, q: "What are the ACID properties?", d: "medium", hot: true },
+      { n: 18, q: "Transaction isolation levels and their anomalies?", d: "hard", hot: true },
+      { n: 19, q: "What is a deadlock and how do you prevent it?", d: "hard", hot: true },
+      { n: 20, q: "Optimistic vs Pessimistic locking?", d: "hard", hot: true },
+      { n: 21, q: "How do you read EXPLAIN / an execution plan?", d: "hard", hot: true },
+      { n: 22, q: "Query optimization techniques?", d: "hard", hot: true },
+      { n: 23, q: "Normalization vs Denormalization?", d: "medium", hot: true },
+      { n: 24, q: "InnoDB vs MyISAM?", d: "medium", hot: true },
+      { n: 25, q: "What is a B+ Tree index and why do databases use it?", d: "hard", hot: true },
+      { n: 26, q: "N+1 query problem and how do you fix it?", d: "medium", hot: true },
+      { n: 27, q: "Lazy vs Eager loading (ORM)?", d: "medium", hot: true },
+      { n: 28, q: "JPA vs Hibernate?", d: "medium", hot: true },
+      { n: 29, q: "@Transactional — propagation and isolation (Spring)?", d: "hard", hot: true },
+      { n: 30, q: "Design a Payment / E-commerce database schema.", d: "hard", hot: true }
+    ],
+    coding: [
+      { n: 4, q: "Find the 2nd highest salary.", d: "medium", hot: true },
+      { n: 5, q: "Find the 3rd highest salary.", d: "medium", hot: true },
+      { n: 6, q: "Find the Nth highest salary.", d: "medium", hot: true },
+      { n: 7, q: "Find duplicate records in a table.", d: "medium", hot: true },
+      { n: 8, q: "Remove duplicate records, keeping one.", d: "hard", hot: true },
+      { n: 9, q: "Find employees earning more than their manager.", d: "medium", hot: true },
+      { n: 10, q: "Find the highest salary in each department.", d: "medium", hot: true }
+    ]
+  },
   "Level 1 · Junior (1–2 yrs)": {
     theory: [
       { n: 1, q: "What is SQL, and what are DDL, DML, DCL, and TCL commands?", d: "easy", hot: true },
@@ -134,7 +170,7 @@ const RAW = {
 export const LEVELS = Object.keys(RAW);
 export const TYPES = ["theory", "coding"];
 
-const LEVEL_KEY = { "Level 1 · Junior (1–2 yrs)": "l1", "Level 2 · Mid (3 yrs)": "l2", "Level 3 · Senior (4+ yrs)": "l3" };
+const LEVEL_KEY = { "⭐ Must-Know (Most Asked)": "fav", "Level 1 · Junior (1–2 yrs)": "l1", "Level 2 · Mid (3 yrs)": "l2", "Level 3 · Senior (4+ yrs)": "l3" };
 
 export const SQL_PROBLEMS = [];
 for (const level of LEVELS) {
@@ -156,6 +192,7 @@ for (const level of LEVELS) {
 }
 
 const LEVEL_LOADERS = {
+  "⭐ Must-Know (Most Asked)": () => import("./sql/details-fav.js"),
   "Level 1 · Junior (1–2 yrs)": () => import("./sql/details-l1.js"),
   "Level 2 · Mid (3 yrs)": () => import("./sql/details-l2.js"),
   "Level 3 · Senior (4+ yrs)": () => import("./sql/details-l3.js"),
