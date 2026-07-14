@@ -316,6 +316,7 @@ export default function Dashboard() {
           <nav className="space-y-1 flex-1">
             <SideLink href="/dashboard" icon="📋" label="Roadmap" active onNav={() => setSidebarOpen(false)} />
             <SideLink href="/dsa" icon="🧩" label="Prepare DSA" onNav={() => setSidebarOpen(false)} />
+            <SideLink href="/sql" icon="🗄️" label="Prepare SQL" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/roles" icon="💼" label="Prepare by Role" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/flashcards" icon="🎯" label="Flashcard Quiz" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/bookmarks" icon="★" label={`Bookmarks · ${bookmarkCount}`} onNav={() => setSidebarOpen(false)} />
