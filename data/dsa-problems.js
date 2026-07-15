@@ -12,7 +12,7 @@ const RAW = {
     hard: ["Trapping Rain Water", "First Missing Positive", "Median of Two Sorted Arrays", "Sliding Window Maximum", "Count of Smaller Numbers After Self", "Reverse Pairs"]
   },
   Strings: {
-    easy: ["Reverse String", "Valid Anagram", "Valid Palindrome", "Roman to Integer", "Longest Common Prefix", "First Unique Character in a String", "Isomorphic Strings", "Ransom Note", "Implement strStr()", "Detect Capital", "Reverse Words in a String III", "Length of Last Word"],
+    easy: ["Reverse String", "Valid Anagram", "Valid Palindrome", "Roman to Integer", "Longest Common Prefix", "Substrings of Size Three with Distinct Characters", "First Unique Character in a String", "Isomorphic Strings", "Ransom Note", "Implement strStr()", "Detect Capital", "Reverse Words in a String III", "Length of Last Word"],
     medium: ["Longest Substring Without Repeating Characters", "Longest Palindromic Substring", "Group Anagrams", "String Compression", "Decode String", "Minimum Window Substring", "Longest Repeating Character Replacement", "Partition Labels", "Zigzag Conversion", "Multiply Strings"],
     hard: ["Regular Expression Matching", "Wildcard Matching", "Edit Distance", "Text Justification"]
   },

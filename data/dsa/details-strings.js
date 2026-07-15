@@ -61,6 +61,20 @@ export const DETAILS = {
     oneLiner: "Keep a candidate prefix and shrink it until every string starts with it. O(sum of lengths)."
   },
 
+  "substrings-of-size-three-with-distinct-characters": {
+    statement: "Count how many length-3 substrings contain three distinct characters (no repeats). Overlapping substrings are counted separately.",
+    examples: [
+      { input: "s = \"xyzzaz\"", output: "1", explanation: "Of xyz, yzz, zza, zaz only \"xyz\" has all-distinct characters." },
+      { input: "s = \"aababcabc\"", output: "4", explanation: "abc, bca, cab, abc are the good windows." }
+    ],
+    approaches: [
+      { name: "Brute", pattern: "Fixed window + HashSet", theory: "Slide a window of exactly three characters across the string. Drop each window's characters into a set — if the set holds three distinct characters the window is good, so increment the count.", code: ["public int countGoodSubstrings(String s) {", "    int count = 0;", "    for (int i = 0; i + 2 < s.length(); i++) {", "        Set<Character> set = new HashSet<>();", "        set.add(s.charAt(i));", "        set.add(s.charAt(i + 1));", "        set.add(s.charAt(i + 2));", "        if (set.size() == 3) count++;", "    }", "    return count;", "}"], time: "O(n)", space: "O(1)" },
+      { name: "Optimal", pattern: "Fixed window (direct compare)", theory: "The window is only three characters wide, so a set is overkill: a window is good exactly when no two of its three characters are equal. Compare the three pairs directly for O(1) work per window and no allocation.", code: ["public int countGoodSubstrings(String s) {", "    int count = 0;", "    for (int i = 0; i + 2 < s.length(); i++) {", "        char a = s.charAt(i), b = s.charAt(i + 1), c = s.charAt(i + 2);", "        if (a != b && b != c && a != c) count++;", "    }", "    return count;", "}"], time: "O(n)", space: "O(1)", dryRun: { title: "s = \"xyzzaz\"", headers: ["window", "chars", "all distinct?", "count"], rows: [["[0..2]", "x y z", "yes", "1"], ["[1..3]", "y z z", "no (z=z)", "1"], ["[2..4]", "z z a", "no (z=z)", "1"], ["[3..5]", "z a z", "no (z=z)", "1"]] } }
+    ],
+    oneLiner: "Fixed window of 3: a window is good when its three chars are pairwise different. O(n), O(1).",
+    similar: [["1876", "Substrings of Size Three with Distinct Characters", "Fixed Window"], ["3", "Longest Substring Without Repeating Characters", "Sliding Window"], ["438", "Find All Anagrams", "Sliding Window"]]
+  },
+
   "first-unique-character-in-a-string": {
     statement: "Return the index of the first character in the string that occurs exactly once, or −1 if every character repeats.",
     examples: [{ input: "s = \"swiss\"", output: "1", explanation: "'w' is the first letter that appears only once." }],

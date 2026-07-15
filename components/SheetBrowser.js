@@ -186,7 +186,7 @@ export default function SheetBrowser() {
   );
 }
 
-function SheetProblemView({ problem, sheetName, onBack }) {
+export function SheetProblemView({ problem, sheetName, onBack }) {
   const d = problem._diff ? DIFF[problem._diff] : null;
   const [sol, setSol] = useState(undefined); // undefined = loading, null = none
   const [ai, setAi] = useState(0);
