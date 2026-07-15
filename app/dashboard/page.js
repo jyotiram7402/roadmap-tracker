@@ -13,7 +13,10 @@ import StageTOC from "@/components/StageTOC";
 import FilterChips from "@/components/FilterChips";
 import ExportMenu from "@/components/ExportMenu";
 import TrackSwitcher from "@/components/TrackSwitcher";
+import LiveClock from "@/components/LiveClock";
 import { computeStreak, todayLocalDate } from "@/lib/study-helpers";
+import { loadQuizStats, totalCorrect, totalAttempted, accuracy } from "@/lib/quiz-stats";
+import { DSA_PROBLEMS } from "@/data/dsa-problems";
 
 const TRACK_LS_KEY = "roadmap.activeTrack";
 
@@ -39,6 +42,7 @@ export default function Dashboard() {
   const [activityDates, setActivityDates] = useState([]);
 
   // ui state
+  const [view, setView] = useState("hub"); // "hub" | "roadmap"
   const [openStage, setOpenStage] = useState(null);
   const [openSection, setOpenSection] = useState(null);
   const [openNote, setOpenNote] = useState(null);
@@ -47,7 +51,11 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [quizStats, setQuizStats] = useState({});
   const stageRefs = useRef({});
+
+  // load Quick Practice stats (per-device) for the hub
+  useEffect(() => { setQuizStats(loadQuizStats()); }, [view]);
 
   // restore track choice on mount
   useEffect(() => {
@@ -314,10 +322,12 @@ export default function Dashboard() {
 
           <div className="text-[11px] uppercase tracking-wide text-slate-500 mb-1.5 px-1">Menu</div>
           <nav className="space-y-1 flex-1">
-            <SideLink href="/dashboard" icon="📋" label="Roadmap" active onNav={() => setSidebarOpen(false)} />
+            <SideLink icon="🏠" label="Dashboard" active={view === "hub"} onClick={() => { setView("hub"); setSidebarOpen(false); }} />
+            <SideLink icon="📋" label="Roadmap" active={view === "roadmap"} onClick={() => { setView("roadmap"); setSidebarOpen(false); }} />
             <SideLink href="/dsa" icon="🧩" label="Prepare DSA" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/sql" icon="🗄️" label="Prepare SQL" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/roles" icon="💼" label="Prepare by Role" onNav={() => setSidebarOpen(false)} />
+            <SideLink href="/quick" icon="⚡" label="Quick Practice" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/flashcards" icon="🎯" label="Flashcard Quiz" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/bookmarks" icon="★" label={`Bookmarks · ${bookmarkCount}`} onNav={() => setSidebarOpen(false)} />
           </nav>
@@ -335,45 +345,64 @@ export default function Dashboard() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
               <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-xl leading-none px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700" aria-label="Open menu">☰</button>
               <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-xl font-bold truncate">{trackMeta.icon} {trackMeta.name}</h1>
-                <p className="text-xs text-slate-400 truncate hidden sm:block">{trackMeta.tagline}</p>
+                <h1 className="text-base sm:text-xl font-bold truncate">{view === "hub" ? "🏠 Dashboard" : `${trackMeta.icon} ${trackMeta.name}`}</h1>
+                <p className="text-xs text-slate-400 truncate hidden sm:block">{view === "hub" ? "Your interview-prep command center" : trackMeta.tagline}</p>
               </div>
-              <span className="lg:hidden"><StreakBadge streak={streak} /></span>
+              <LiveClock className="hidden md:flex" />
+              <span className="hidden lg:block"><StreakBadge streak={streak} /></span>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-2 grid grid-cols-2 gap-3">
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-slate-300">Checklist</span>
-                  <span className="text-blue-400 font-semibold">{stats.done}/{stats.total} · {stats.pct}%</span>
+            {view === "roadmap" && (
+              <>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-2 grid grid-cols-2 gap-3">
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-slate-300">Checklist</span>
+                      <span className="text-blue-400 font-semibold">{stats.done}/{stats.total} · {stats.pct}%</span>
+                    </div>
+                    <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all" style={{ width: `${stats.pct}%` }} />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-slate-300">Q&A Mastered</span>
+                      <span className="text-emerald-400 font-semibold">{qaStats.done}/{qaStats.total} · {qaStats.pct}%</span>
+                    </div>
+                    <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all" style={{ width: `${qaStats.pct}%` }} />
+                    </div>
+                  </div>
                 </div>
-                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all" style={{ width: `${stats.pct}%` }} />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-slate-300">Q&A Mastered</span>
-                  <span className="text-emerald-400 font-semibold">{qaStats.done}/{qaStats.total} · {qaStats.pct}%</span>
-                </div>
-                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all" style={{ width: `${qaStats.pct}%` }} />
-                </div>
-              </div>
-            </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-3 space-y-2">
-              <input
-                type="text"
-                placeholder={`Search ${trackMeta.short} topics, Q&A, code...`}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500"
-              />
-              <FilterChips filters={filters} onChange={setFilters} />
-            </div>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-3 space-y-2">
+                  <input
+                    type="text"
+                    placeholder={`Search ${trackMeta.short} topics, Q&A, code...`}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500"
+                  />
+                  <FilterChips filters={filters} onChange={setFilters} />
+                </div>
+              </>
+            )}
           </header>
 
+      {view === "hub" && (
+        <Hub
+          trackMeta={trackMeta}
+          stats={stats}
+          qaStats={qaStats}
+          streak={streak}
+          bookmarkCount={bookmarkCount}
+          quizStats={quizStats}
+          user={user}
+          onOpenRoadmap={() => setView("roadmap")}
+        />
+      )}
+
+      {view === "roadmap" && (
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-3">
         {dataLoading || !roadmap ? (
           <div className="text-center text-slate-400 py-16 animate-pulse">Loading {trackMeta.name}…</div>
@@ -481,8 +510,9 @@ export default function Dashboard() {
           </>
         )}
       </main>
+      )}
 
-      {roadmap && <StageTOC stages={roadmap} stageStats={stageStats} onJump={jumpToStage} />}
+      {view === "roadmap" && roadmap && <StageTOC stages={roadmap} stageStats={stageStats} onJump={jumpToStage} />}
 
       <footer className="border-t border-slate-800 mt-6 py-8 no-print">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
@@ -506,20 +536,113 @@ export default function Dashboard() {
   );
 }
 
-function SideLink({ href, icon, label, active, onNav }) {
+function SideLink({ href, icon, label, active, onNav, onClick }) {
+  const cls = `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition ${
+    active
+      ? "bg-blue-600/20 text-blue-300 border border-blue-500/40"
+      : "text-slate-300 hover:bg-slate-800 border border-transparent"
+  }`;
+  if (href) {
+    return (
+      <Link href={href} onClick={onNav} className={cls}>
+        <span className="w-5 text-center">{icon}</span>
+        {label}
+      </Link>
+    );
+  }
   return (
-    <Link
-      href={href}
-      onClick={onNav}
-      className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition ${
-        active
-          ? "bg-blue-600/20 text-blue-300 border border-blue-500/40"
-          : "text-slate-300 hover:bg-slate-800 border border-transparent"
-      }`}
-    >
+    <button onClick={onClick} className={`${cls} w-full text-left`}>
       <span className="w-5 text-center">{icon}</span>
       {label}
-    </Link>
+    </button>
+  );
+}
+
+function Hub({ trackMeta, stats, qaStats, streak, bookmarkCount, quizStats, user, onOpenRoadmap }) {
+  const quizCorrect = totalCorrect(quizStats);
+  const quizAttempted = totalAttempted(quizStats);
+  const quizAcc = accuracy(quizStats);
+
+  const cards = [
+    { key: "roadmap", icon: "📋", title: "Roadmap", desc: `${trackMeta.name} — step-by-step checklist & Q&A`, stat: `${stats.pct}% complete`, grad: "from-blue-500 to-cyan-500", onClick: onOpenRoadmap },
+    { key: "dsa", icon: "🧩", title: "Prepare DSA", desc: "Brute → better → optimal in Java · sheets · Crackify", stat: `${DSA_PROBLEMS.length}+ problems`, grad: "from-indigo-500 to-blue-500", href: "/dsa" },
+    { key: "sql", icon: "🗄️", title: "Prepare SQL", desc: "Queries by experience level + must-know set", stat: "137 questions", grad: "from-emerald-500 to-teal-500", href: "/sql" },
+    { key: "roles", icon: "💼", title: "Prepare by Role", desc: "Role-specific banks, filtered by experience level", stat: "6 job roles", grad: "from-purple-500 to-fuchsia-500", href: "/roles" },
+    { key: "quick", icon: "⚡", title: "Quick Practice", desc: "Rapid-fire MCQs with instant feedback", stat: `${quizCorrect} solved`, grad: "from-amber-500 to-orange-500", href: "/quick" },
+    { key: "flash", icon: "🎯", title: "Flashcards", desc: "Flip-card revision across every track", stat: `${qaStats.pct}% mastered`, grad: "from-pink-500 to-rose-500", href: "/flashcards" },
+    { key: "bm", icon: "★", title: "Bookmarks", desc: "Questions you saved to revisit later", stat: `${bookmarkCount} saved`, grad: "from-slate-500 to-slate-600", href: "/bookmarks" },
+  ];
+
+  return (
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-5">
+      {/* welcome */}
+      <div className="rounded-2xl bg-gradient-to-r from-blue-600/20 via-purple-600/15 to-pink-600/10 border border-slate-700 p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black text-white">Welcome back 👋</h2>
+            <p className="text-sm text-slate-300 mt-1 truncate max-w-[70vw]">{user?.email}</p>
+          </div>
+          <div className="lg:hidden"><StreakBadge streak={streak} /></div>
+        </div>
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <HubStat label="Roadmap" value={`${stats.pct}%`} sub={`${stats.done}/${stats.total}`} accent="text-blue-400" />
+          <HubStat label="Q&A mastered" value={`${qaStats.pct}%`} sub={`${qaStats.done}/${qaStats.total}`} accent="text-emerald-400" />
+          <HubStat label="Quiz solved" value={quizCorrect} sub={`${quizAcc}% acc`} accent="text-amber-400" />
+          <HubStat label="Bookmarks" value={bookmarkCount} sub="saved" accent="text-pink-400" />
+        </div>
+      </div>
+
+      {/* section cards — PrepInsta-style grid */}
+      <h3 className="mt-6 mb-3 text-sm font-bold uppercase tracking-wide text-slate-400">Jump back in</h3>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {cards.map((c) => {
+          const inner = (
+            <>
+              <div className="flex items-center gap-3">
+                <span className={`w-12 h-12 rounded-xl bg-gradient-to-br ${c.grad} flex items-center justify-center text-2xl shadow-lg`}>{c.icon}</span>
+                <div className="min-w-0">
+                  <div className="text-white font-bold">{c.title}</div>
+                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-900/70 border border-slate-700 text-slate-300">{c.stat}</span>
+                </div>
+                <span className="ml-auto text-slate-500 group-hover:translate-x-0.5 group-hover:text-white transition">›</span>
+              </div>
+              <p className="mt-3 text-sm text-slate-400 leading-relaxed">{c.desc}</p>
+            </>
+          );
+          const cls = "group text-left rounded-2xl border border-slate-700 bg-slate-800/50 hover:bg-slate-800 hover:border-slate-500 hover:-translate-y-0.5 transition p-4 block";
+          return c.href
+            ? <Link key={c.key} href={c.href} className={cls}>{inner}</Link>
+            : <button key={c.key} onClick={c.onClick} className={`${cls} w-full`}>{inner}</button>;
+        })}
+      </div>
+
+      {/* quick practice breakdown */}
+      {quizAttempted > 0 && (
+        <div className="mt-6 rounded-2xl border border-slate-700 bg-slate-800/50 p-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-white">⚡ Quick Practice progress</h3>
+            <Link href="/quick" className="text-xs text-blue-400 hover:underline">Practice more →</Link>
+          </div>
+          <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {Object.entries(quizStats).map(([sid, s]) => (
+              <div key={sid} className="rounded-xl bg-slate-900/60 border border-slate-700 p-3">
+                <div className="text-lg font-black text-white">{s.correct}<span className="text-slate-500 text-sm font-medium">/{s.attempted}</span></div>
+                <div className="text-[11px] text-slate-400 mt-0.5 capitalize">{sid === "java" ? "Java" : sid === "mern" ? "MERN" : sid === "sql" ? "SQL" : sid} correct</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </main>
+  );
+}
+
+function HubStat({ label, value, sub, accent }) {
+  return (
+    <div className="rounded-xl bg-slate-900/50 border border-slate-700 p-3">
+      <div className={`text-xl sm:text-2xl font-black ${accent}`}>{value}</div>
+      <div className="text-[11px] text-slate-400 mt-0.5">{label} · {sub}</div>
+    </div>
   );
 }
 

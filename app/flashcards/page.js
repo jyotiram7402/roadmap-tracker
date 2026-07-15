@@ -7,6 +7,7 @@ import { TRACKS, DEFAULT_TRACK, loadTrackData, qaKey } from "@/data/tracks";
 import { getAllQuestions } from "@/lib/study-helpers";
 import MermaidDiagram from "@/components/MermaidDiagram";
 import CodeBlock from "@/components/CodeBlock";
+import LiveClock from "@/components/LiveClock";
 
 export default function FlashcardsPage() {
   const router = useRouter();
@@ -14,7 +15,6 @@ export default function FlashcardsPage() {
   const [user, setUser] = useState(null);
   const [trackId, setTrackId] = useState(DEFAULT_TRACK);
   const [study, setStudy] = useState(null);
-  const [stageId, setStageId] = useState("all");
   const [pool, setPool] = useState([]);
   const [order, setOrder] = useState([]);
   const [pos, setPos] = useState(0);
@@ -49,31 +49,20 @@ export default function FlashcardsPage() {
       const { study } = await loadTrackData(trackId);
       if (!mounted) return;
       setStudy(study);
-      setStageId("all");
       setDataLoading(false);
     })();
     return () => { mounted = false; };
   }, [trackId]);
 
-  const stageOptions = useMemo(() => {
-    if (!study) return [];
-    return Object.keys(study).map((sid) => ({
-      id: sid,
-      label: study[sid][0]?.sectionTitle?.replace(/ - .*/, "") || sid,
-      count: study[sid].reduce((a, s) => a + s.questions.length, 0),
-    }));
-  }, [study]);
-
+  // rebuild the shuffled pool whenever the chosen subject's questions load
   useEffect(() => {
     if (!study) return;
-    const raw = stageId === "all"
-      ? getAllQuestions(study)
-      : getAllQuestions({ [stageId]: study[stageId] });
+    const raw = getAllQuestions(study);
     setPool(raw);
     setOrder(shuffle(raw.length));
     setPos(0);
     setFlipped(false);
-  }, [stageId, study]);
+  }, [study]);
 
   const current = pool[order[pos]];
 
@@ -113,20 +102,20 @@ export default function FlashcardsPage() {
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
           <Link href="/dashboard" className="text-sm text-blue-400 hover:underline">← Back</Link>
           <h1 className="text-base sm:text-lg font-bold text-pink-300">🎯 Flashcard Mode</h1>
-          <button onClick={reshuffle} title="Re-shuffle" className="text-xs px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded">🔀</button>
+          <div className="flex items-center gap-2">
+            <LiveClock className="hidden sm:flex" />
+            <button onClick={reshuffle} title="Re-shuffle" className="text-xs px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded">🔀</button>
+          </div>
         </div>
-        <div className="max-w-3xl mx-auto px-4 pb-3 grid grid-cols-2 gap-2">
-          <select value={trackId} onChange={(e) => setTrackId(e.target.value)} className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm focus:outline-none focus:border-pink-500">
+        <div className="max-w-3xl mx-auto px-4 pb-3">
+          <label className="block text-[11px] uppercase tracking-wide text-slate-500 mb-1">Subject</label>
+          <select value={trackId} onChange={(e) => setTrackId(e.target.value)} className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm focus:outline-none focus:border-pink-500">
             {TRACKS.map((t) => <option key={t.id} value={t.id}>{t.icon} {t.name}</option>)}
-          </select>
-          <select value={stageId} onChange={(e) => setStageId(e.target.value)} disabled={dataLoading} className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm focus:outline-none focus:border-pink-500">
-            <option value="all">All stages (random)</option>
-            {stageOptions.map((s) => <option key={s.id} value={s.id}>{s.label} ({s.count})</option>)}
           </select>
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-4">
+      <main key={trackId} className="max-w-3xl mx-auto px-4 py-4">
         {dataLoading ? (
           <div className="text-center py-12 text-slate-500 animate-pulse">Loading questions…</div>
         ) : !current ? (
