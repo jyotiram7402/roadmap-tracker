@@ -174,3 +174,39 @@ export async function loadPhaseDetails(phase) {
     return {};
   }
 }
+
+// ---- cross-reference index (used by the DSA "Sheets" browser) -------------
+// Maps a problem slug -> which worked solution / difficulty it corresponds to,
+// so a sheet's problem list can surface full brute/better/optimal solutions
+// (and real difficulty tags) for the problems we've already worked out.
+export const SOLUTION_INDEX = {};
+for (const p of DSA_PROBLEMS) {
+  if (!SOLUTION_INDEX[p.id]) {
+    SOLUTION_INDEX[p.id] = { phase: p.phase, difficulty: p.difficulty, title: p.title, companies: p.companies, hot: p.hot };
+  }
+}
+
+// True if we have a full worked solution for this slug.
+export function hasSolution(slug) {
+  return !!SOLUTION_INDEX[slug];
+}
+
+// Best-known difficulty for a slug (from our worked catalog), or null.
+export function difficultyForSlug(slug) {
+  return SOLUTION_INDEX[slug] ? SOLUTION_INDEX[slug].difficulty : null;
+}
+
+// Load the full worked solution for a slug regardless of phase. Tries the
+// primary slug first, then any provided fallbacks (e.g. a LeetCode slug).
+export async function loadSolutionBySlug(...slugs) {
+  for (const s of slugs) {
+    if (!s) continue;
+    const e = SOLUTION_INDEX[s];
+    if (!e) continue;
+    const details = await loadPhaseDetails(e.phase);
+    if (details[s]) {
+      return { ...details[s], _phase: e.phase, _difficulty: e.difficulty, _title: e.title, _slug: s };
+    }
+  }
+  return null;
+}
