@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { DSA_PROBLEMS, PHASES, ALL_COMPANIES, loadPhaseDetails } from "@/data/dsa-problems";
 import CodeBlock from "@/components/CodeBlock";
+import MySolution from "@/components/MySolution";
 
 const DIFF = {
   easy: { label: "Easy", cls: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-700/40" },
@@ -228,6 +229,8 @@ function ProblemView({ problem, onBack }) {
           )}
         </div>
       </div>
+
+      <MySolution slug={problem.id} />
     </div>
   );
 }
