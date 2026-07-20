@@ -1,4 +1,5 @@
 import "./globals.css";
+import PwaInstaller from "@/components/PwaInstaller";
 
 export const metadata = {
   title: "Crack Any Job — Tech Interview Prep",
@@ -29,7 +30,10 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {children}
+        <PwaInstaller />
+      </body>
     </html>
   );
 }
