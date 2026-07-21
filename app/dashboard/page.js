@@ -126,6 +126,7 @@ export default function Dashboard() {
     setActiveTrack(id);
     setSearch("");
     setFilters({ unchecked: false, bookmarked: false, withCode: false });
+    setView("roadmap"); // choosing a track shows that track's topics
     try { localStorage.setItem(TRACK_LS_KEY, id); } catch {}
   }
 
@@ -320,9 +321,9 @@ export default function Dashboard() {
           <div className="text-[11px] uppercase tracking-wide text-slate-500 mb-1.5 px-1">Menu</div>
           <nav className="space-y-1">
             <SideLink icon="🏠" label="Dashboard" active={view === "hub"} onClick={() => { setView("hub"); setSidebarOpen(false); }} />
-            <SideLink icon="📋" label="Roadmap" active={view === "roadmap"} onClick={() => { setView("roadmap"); setSidebarOpen(false); }} />
             <SideLink href="/dsa" icon="🧩" label="Prepare DSA" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/sql" icon="🗄️" label="Prepare SQL" onNav={() => setSidebarOpen(false)} />
+            <SideLink href="/java-qa" icon="📘" label="Java Interview Q&A" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/roles" icon="💼" label="Prepare by Role" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/quick" icon="⚡" label="Quick Practice" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/flashcards" icon="🎯" label="Flashcard Quiz" onNav={() => setSidebarOpen(false)} />
