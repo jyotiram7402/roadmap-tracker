@@ -324,6 +324,7 @@ export default function Dashboard() {
             <SideLink href="/dsa" icon="🧩" label="Prepare DSA" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/sql" icon="🗄️" label="Prepare SQL" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/java-qa" icon="📘" label="Java Interview Q&A" onNav={() => setSidebarOpen(false)} />
+            <SideLink href="/springboot-qa" icon="🍃" label="Spring Boot Q&A" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/roles" icon="💼" label="Prepare by Role" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/quick" icon="⚡" label="Quick Practice" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/flashcards" icon="🎯" label="Flashcard Quiz" onNav={() => setSidebarOpen(false)} />
