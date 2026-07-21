@@ -2,6 +2,14 @@
 // Original explanations + Java implementations of standard algorithms.
 
 export const DETAILS = {
+  "cheapest-flights-within-k-stops": {
+    statement: "There are n cities connected by flights [from, to, price]. Return the cheapest price to get from src to dst using at most k stops, or -1 if there is no such route.",
+    examples: [{ input: "n = 4, flights = [[0,1,100],[1,2,100],[2,3,100],[0,3,500]], src = 0, dst = 3, k = 1", output: "500", explanation: "0->3 directly costs 500; the 3-hop path needs 2 stops (> k)." }],
+    approaches: [
+      { name: "Optimal", pattern: "Bellman-Ford (bounded relaxations)", theory: "At most k stops means at most k+1 edges. Run k+1 rounds of edge relaxation. Crucially, each round relaxes from a SNAPSHOT of the previous round's distances (clone the array), so a single round can extend a path by at most one edge — preventing paths that use more than the allowed number of hops.", code: ["public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {", "    int[] dist = new int[n];", "    Arrays.fill(dist, Integer.MAX_VALUE);", "    dist[src] = 0;", "    for (int i = 0; i <= k; i++) {", "        int[] tmp = dist.clone();", "        for (int[] f : flights) {", "            int u = f[0], v = f[1], w = f[2];", "            if (dist[u] != Integer.MAX_VALUE && dist[u] + w < tmp[v])", "                tmp[v] = dist[u] + w;", "        }", "        dist = tmp;", "    }", "    return dist[dst] == Integer.MAX_VALUE ? -1 : dist[dst];", "}"], time: "O(k * E)", space: "O(n)" }
+    ],
+    oneLiner: "Bellman-Ford limited to k+1 rounds, relaxing from a per-round snapshot so no path uses more than k+1 edges."
+  },
   "find-if-path-exists-in-graph": {
     statement: "Given an undirected graph with n nodes and edges, return true if there is a path between a source and a destination.",
     approaches: [

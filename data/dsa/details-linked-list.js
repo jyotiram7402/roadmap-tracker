@@ -4,6 +4,22 @@
 // Shape: { [problemId]: { statement, examples?, approaches[], oneLiner?, similar? } }
 
 export const DETAILS = {
+  "reverse-linked-list-ii": {
+    statement: "Reverse the nodes of the list from position left to right (1-indexed) and return the modified list.",
+    examples: [{ input: "1->2->3->4->5, left = 2, right = 4", output: "1->4->3->2->5" }],
+    approaches: [
+      { name: "Optimal", pattern: "Head-insertion in place", theory: "Use a dummy node. Advance prev to the node just before position left. Then repeatedly take the node after cur and splice it to the front of the sublist (right after prev). Doing this (right - left) times reverses exactly that segment without touching the rest.", code: ["public ListNode reverseBetween(ListNode head, int left, int right) {", "    ListNode dummy = new ListNode(0, head), prev = dummy;", "    for (int i = 1; i < left; i++) prev = prev.next;", "    ListNode cur = prev.next;", "    for (int i = 0; i < right - left; i++) {", "        ListNode move = cur.next;", "        cur.next = move.next;", "        move.next = prev.next;", "        prev.next = move;", "    }", "    return dummy.next;", "}"], time: "O(n)", space: "O(1)" }
+    ],
+    oneLiner: "Walk to the node before `left`, then head-insert the next node (right-left) times to reverse the segment. O(n), O(1)."
+  },
+  "sort-list": {
+    statement: "Sort a linked list in ascending order and return the head. Aim for O(n log n) time.",
+    examples: [{ input: "4->2->1->3", output: "1->2->3->4" }],
+    approaches: [
+      { name: "Optimal", pattern: "Merge sort on a list", theory: "Merge sort suits linked lists (no random access needed). Split the list in half with slow/fast pointers, recursively sort each half, then merge the two sorted halves with a dummy-headed merge.", code: ["public ListNode sortList(ListNode head) {", "    if (head == null || head.next == null) return head;", "    ListNode slow = head, fast = head.next;", "    while (fast != null && fast.next != null) { slow = slow.next; fast = fast.next.next; }", "    ListNode mid = slow.next; slow.next = null;", "    return merge(sortList(head), sortList(mid));", "}", "private ListNode merge(ListNode a, ListNode b) {", "    ListNode dummy = new ListNode(0), tail = dummy;", "    while (a != null && b != null) {", "        if (a.val <= b.val) { tail.next = a; a = a.next; }", "        else { tail.next = b; b = b.next; }", "        tail = tail.next;", "    }", "    tail.next = (a != null) ? a : b;", "    return dummy.next;", "}"], time: "O(n log n)", space: "O(log n)" }
+    ],
+    oneLiner: "Merge sort: split via slow/fast, sort halves recursively, merge. O(n log n), O(log n) stack."
+  },
   "reverse-linked-list": {
     statement: "Reverse a singly linked list so every next pointer points to the previous node, and return the new head.",
     examples: [

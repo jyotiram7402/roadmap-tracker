@@ -3,6 +3,22 @@
 // Shape: { [problemId]: { statement, examples?, approaches[], oneLiner?, similar? } }
 
 export const DETAILS = {
+  "counting-bits": {
+    statement: "For every number i from 0 to n, return the count of set bits (1s) in its binary representation, as an array of length n+1.",
+    examples: [{ input: "n = 5", output: "[0,1,1,2,1,2]" }],
+    approaches: [
+      { name: "Optimal", pattern: "DP on bits (i >> 1)", theory: "The bit count of i equals the bit count of i/2 (i.e. i >> 1) plus the lowest bit (i & 1). Dropping the last bit is a number we've already solved, so each answer is O(1) from a previous one.", code: ["public int[] countBits(int n) {", "    int[] bits = new int[n + 1];", "    for (int i = 1; i <= n; i++)", "        bits[i] = bits[i >> 1] + (i & 1);", "    return bits;", "}"], time: "O(n)", space: "O(n)", dryRun: { title: "n = 5", headers: ["i", "i>>1", "bits[i>>1]", "i&1", "bits[i]"], rows: [["1", "0", "0", "1", "1"], ["2", "1", "1", "0", "1"], ["3", "1", "1", "1", "2"], ["4", "2", "1", "0", "1"], ["5", "2", "1", "1", "2"]] } }
+    ],
+    oneLiner: "bits[i] = bits[i>>1] + (i&1) — reuse the answer for i with its last bit removed. O(n)."
+  },
+  "range-sum-query-immutable": {
+    statement: "Design NumArray(nums) supporting sumRange(i, j) = the sum of nums[i..j] inclusive. The array never changes and there can be many queries.",
+    examples: [{ input: "nums = [-2,0,3,-5,2,-1]; sumRange(0,2); sumRange(2,5)", output: "1; -1" }],
+    approaches: [
+      { name: "Optimal", pattern: "Prefix sums", theory: "Precompute prefix[i] = sum of the first i elements (prefix[0] = 0). Then any range sum is prefix[right+1] - prefix[left] in O(1). Building the prefix array is a single O(n) pass in the constructor.", code: ["class NumArray {", "    private int[] prefix;", "    public NumArray(int[] nums) {", "        prefix = new int[nums.length + 1];", "        for (int i = 0; i < nums.length; i++)", "            prefix[i + 1] = prefix[i] + nums[i];", "    }", "    public int sumRange(int left, int right) {", "        return prefix[right + 1] - prefix[left];", "    }", "}"], time: "O(n) build, O(1) query", space: "O(n)" }
+    ],
+    oneLiner: "Precompute prefix sums; sumRange(l,r) = prefix[r+1] - prefix[l] in O(1)."
+  },
   "climbing-stairs": {
     statement: "You climb a staircase of n steps, moving up 1 or 2 steps at a time. Count how many distinct step sequences reach the top.",
     examples: [

@@ -2,6 +2,86 @@
 // Original explanations + Java implementations. class TreeNode { int val; TreeNode left, right; }
 
 export const DETAILS = {
+  "average-of-levels-in-binary-tree": {
+    statement: "Return the average value of the nodes on each level of a binary tree, from top to bottom.",
+    examples: [{ input: "root = [3,9,20,null,null,15,7]", output: "[3.0, 14.5, 11.0]" }],
+    approaches: [
+      { name: "Optimal", pattern: "BFS level order", theory: "Process the tree level by level with a queue. For each level, snapshot its size, sum the values of exactly that many nodes while enqueueing their children, then divide by the count.", code: ["public List<Double> averageOfLevels(TreeNode root) {", "    List<Double> res = new ArrayList<>();", "    Queue<TreeNode> q = new LinkedList<>();", "    q.offer(root);", "    while (!q.isEmpty()) {", "        int size = q.size();", "        double sum = 0;", "        for (int i = 0; i < size; i++) {", "            TreeNode n = q.poll();", "            sum += n.val;", "            if (n.left != null) q.offer(n.left);", "            if (n.right != null) q.offer(n.right);", "        }", "        res.add(sum / size);", "    }", "    return res;", "}"], time: "O(n)", space: "O(w)" }
+    ],
+    oneLiner: "BFS a level at a time; average the values of each level's snapshot. O(n)."
+  },
+  "diameter-of-binary-tree": {
+    statement: "Return the length of the longest path between any two nodes, measured in edges. The path may or may not pass through the root.",
+    examples: [{ input: "root = [1,2,3,4,5]", output: "3", explanation: "Longest path 4->2->1->3 (or 5->2->1->3) has 3 edges." }],
+    approaches: [
+      { name: "Optimal", pattern: "DFS height + global max", theory: "For each node the longest path through it equals leftHeight + rightHeight. Compute heights bottom-up and, at every node, update a global maximum with left+right. Return the diameter (in edges).", code: ["private int diameter = 0;", "public int diameterOfBinaryTree(TreeNode root) {", "    height(root);", "    return diameter;", "}", "private int height(TreeNode node) {", "    if (node == null) return 0;", "    int l = height(node.left), r = height(node.right);", "    diameter = Math.max(diameter, l + r);", "    return 1 + Math.max(l, r);", "}"], time: "O(n)", space: "O(h)" }
+    ],
+    oneLiner: "At each node the path through it is leftHeight + rightHeight; take the max while computing heights. O(n)."
+  },
+  "convert-sorted-array-to-binary-search-tree": {
+    statement: "Given an integer array sorted in ascending order, build a height-balanced binary search tree.",
+    examples: [{ input: "nums = [-10,-3,0,5,9]", output: "a balanced BST rooted at 0" }],
+    approaches: [
+      { name: "Optimal", pattern: "Divide & conquer", theory: "Pick the middle element as the root so the left and right halves have (nearly) equal size, guaranteeing balance. Recursively build the left subtree from the left half and the right subtree from the right half.", code: ["public TreeNode sortedArrayToBST(int[] nums) {", "    return build(nums, 0, nums.length - 1);", "}", "private TreeNode build(int[] nums, int lo, int hi) {", "    if (lo > hi) return null;", "    int mid = (lo + hi) / 2;", "    TreeNode node = new TreeNode(nums[mid]);", "    node.left = build(nums, lo, mid - 1);", "    node.right = build(nums, mid + 1, hi);", "    return node;", "}"], time: "O(n)", space: "O(log n)" }
+    ],
+    oneLiner: "Recursively take the middle as root so both halves stay equal in size — that keeps the BST balanced. O(n)."
+  },
+  "two-sum-iv-input-is-a-bst": {
+    statement: "Given the root of a BST and an integer k, return true if there exist two distinct nodes whose values sum to k.",
+    examples: [{ input: "root = [5,3,6,2,4,null,7], k = 9", output: "true", explanation: "2 + 7 = 9." }],
+    approaches: [
+      { name: "Optimal", pattern: "DFS + HashSet", theory: "Traverse the tree; for each node check whether its complement (k - node.val) has already been seen. If yes, a valid pair exists; otherwise remember this value and continue. Works on any tree, not just a BST.", code: ["public boolean findTarget(TreeNode root, int k) {", "    return dfs(root, k, new HashSet<>());", "}", "private boolean dfs(TreeNode node, int k, Set<Integer> seen) {", "    if (node == null) return false;", "    if (seen.contains(k - node.val)) return true;", "    seen.add(node.val);", "    return dfs(node.left, k, seen) || dfs(node.right, k, seen);", "}"], time: "O(n)", space: "O(n)" }
+    ],
+    oneLiner: "Same idea as Two Sum: walk the tree and check each node's complement in a HashSet. O(n)."
+  },
+  "lowest-common-ancestor-of-a-binary-search-tree": {
+    statement: "Given a BST, find the lowest common ancestor (LCA) of two given nodes p and q.",
+    examples: [{ input: "root = [6,2,8,0,4,7,9], p = 2, q = 8", output: "6" }],
+    approaches: [
+      { name: "Optimal", pattern: "BST walk", theory: "Use the BST ordering: if both p and q are smaller than the current node, the LCA is in the left subtree; if both are larger, it is in the right. The first node where they diverge (one on each side, or equal to the node) is the LCA.", code: ["public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {", "    while (root != null) {", "        if (p.val < root.val && q.val < root.val) root = root.left;", "        else if (p.val > root.val && q.val > root.val) root = root.right;", "        else return root;", "    }", "    return null;", "}"], time: "O(h)", space: "O(1)" }
+    ],
+    oneLiner: "Descend the BST; the first node that sits between p and q (or equals one) is the LCA. O(h)."
+  },
+  "minimum-and-maximum-value-in-a-binary-tree": {
+    statement: "Find the minimum and maximum node values in a binary tree (an ordinary binary tree, not necessarily a BST).",
+    examples: [{ input: "root = [7,3,9,1]", output: "min = 1, max = 9" }],
+    approaches: [
+      { name: "Optimal", pattern: "DFS traversal", theory: "In a plain binary tree the values are unordered, so you must visit every node. Carry a running min and max as you traverse. (If it were a BST instead, the min is the leftmost node and the max is the rightmost.)", code: ["public int[] minMax(TreeNode root) {", "    int[] res = {Integer.MAX_VALUE, Integer.MIN_VALUE};", "    dfs(root, res);", "    return res; // [min, max]", "}", "private void dfs(TreeNode node, int[] res) {", "    if (node == null) return;", "    res[0] = Math.min(res[0], node.val);", "    res[1] = Math.max(res[1], node.val);", "    dfs(node.left, res);", "    dfs(node.right, res);", "}"], time: "O(n)", space: "O(h)" }
+    ],
+    oneLiner: "Visit every node, tracking a running min and max. (BST shortcut: leftmost = min, rightmost = max.)"
+  },
+  "insert-into-a-binary-search-tree": {
+    statement: "Insert a value into a BST and return the root. The value is guaranteed not to already exist; any valid BST result is accepted.",
+    examples: [{ input: "root = [4,2,7,1,3], val = 5", output: "5 inserted as the left child of 7" }],
+    approaches: [
+      { name: "Optimal", pattern: "Iterative BST walk", theory: "Walk down the tree comparing val to each node: go left if smaller, right if larger. When the chosen child is null, attach a new node there. Empty tree returns a fresh node.", code: ["public TreeNode insertIntoBST(TreeNode root, int val) {", "    if (root == null) return new TreeNode(val);", "    TreeNode cur = root;", "    while (true) {", "        if (val < cur.val) {", "            if (cur.left == null) { cur.left = new TreeNode(val); break; }", "            cur = cur.left;", "        } else {", "            if (cur.right == null) { cur.right = new TreeNode(val); break; }", "            cur = cur.right;", "        }", "    }", "    return root;", "}"], time: "O(h)", space: "O(1)" }
+    ],
+    oneLiner: "Walk down comparing values; attach the new node at the first empty spot. O(h)."
+  },
+  "binary-tree-zigzag-level-order-traversal": {
+    statement: "Return the level-order traversal of a binary tree, but alternate direction per level: left-to-right, then right-to-left, and so on.",
+    examples: [{ input: "root = [3,9,20,null,null,15,7]", output: "[[3],[20,9],[15,7]]" }],
+    approaches: [
+      { name: "Optimal", pattern: "BFS + alternating insert", theory: "Do a normal BFS but keep a direction flag. For left-to-right levels append values to the end of the row; for right-to-left levels insert at the front (addFirst). Flip the flag after each level.", code: ["public List<List<Integer>> zigzagLevelOrder(TreeNode root) {", "    List<List<Integer>> res = new ArrayList<>();", "    if (root == null) return res;", "    Queue<TreeNode> q = new LinkedList<>();", "    q.offer(root);", "    boolean leftToRight = true;", "    while (!q.isEmpty()) {", "        int size = q.size();", "        LinkedList<Integer> level = new LinkedList<>();", "        for (int i = 0; i < size; i++) {", "            TreeNode n = q.poll();", "            if (leftToRight) level.addLast(n.val); else level.addFirst(n.val);", "            if (n.left != null) q.offer(n.left);", "            if (n.right != null) q.offer(n.right);", "        }", "        res.add(level);", "        leftToRight = !leftToRight;", "    }", "    return res;", "}"], time: "O(n)", space: "O(w)" }
+    ],
+    oneLiner: "Standard BFS, but append vs. prepend each level based on an alternating direction flag. O(n)."
+  },
+  "delete-node-in-a-bst": {
+    statement: "Delete the node with the given key from a BST and return the (possibly new) root, keeping it a valid BST.",
+    examples: [{ input: "root = [5,3,6,2,4,null,7], key = 3", output: "a valid BST with 3 removed (e.g. 4 takes its place)" }],
+    approaches: [
+      { name: "Optimal", pattern: "Recursive delete + successor", theory: "Recurse to find the node. If it has 0 or 1 child, replace it with that child. If it has two children, copy in its inorder successor (the smallest value in the right subtree), then delete that successor from the right subtree.", code: ["public TreeNode deleteNode(TreeNode root, int key) {", "    if (root == null) return null;", "    if (key < root.val) root.left = deleteNode(root.left, key);", "    else if (key > root.val) root.right = deleteNode(root.right, key);", "    else {", "        if (root.left == null) return root.right;", "        if (root.right == null) return root.left;", "        TreeNode succ = root.right;", "        while (succ.left != null) succ = succ.left;", "        root.val = succ.val;", "        root.right = deleteNode(root.right, succ.val);", "    }", "    return root;", "}"], time: "O(h)", space: "O(h)" }
+    ],
+    oneLiner: "Find the node; splice past it if it has <2 children, else swap in the inorder successor and delete that. O(h)."
+  },
+  "balance-a-binary-search-tree": {
+    statement: "Given a BST, return a height-balanced BST containing the same node values.",
+    examples: [{ input: "root = [1,null,2,null,3,null,4] (a right-leaning chain)", output: "a balanced BST such as [3,2,4,1] shape" }],
+    approaches: [
+      { name: "Optimal", pattern: "Inorder + rebuild", theory: "An inorder traversal of a BST yields the values in sorted order. Collect them, then rebuild a balanced BST by repeatedly choosing the middle element as the root of each subtree (same as 'sorted array to BST').", code: ["public TreeNode balanceBST(TreeNode root) {", "    List<Integer> vals = new ArrayList<>();", "    inorder(root, vals);", "    return build(vals, 0, vals.size() - 1);", "}", "private void inorder(TreeNode node, List<Integer> out) {", "    if (node == null) return;", "    inorder(node.left, out); out.add(node.val); inorder(node.right, out);", "}", "private TreeNode build(List<Integer> v, int lo, int hi) {", "    if (lo > hi) return null;", "    int mid = (lo + hi) / 2;", "    TreeNode node = new TreeNode(v.get(mid));", "    node.left = build(v, lo, mid - 1);", "    node.right = build(v, mid + 1, hi);", "    return node;", "}"], time: "O(n)", space: "O(n)" }
+    ],
+    oneLiner: "Inorder to a sorted list, then rebuild picking the middle as each subtree's root. O(n)."
+  },
   "binary-tree-inorder-traversal": {
     statement: "Return the values of a binary tree visited in inorder (left, node, right).",
     approaches: [

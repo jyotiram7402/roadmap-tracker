@@ -2,6 +2,14 @@
 // Original explanations + Java implementations of standard algorithms.
 
 export const DETAILS = {
+  "k-closest-points-to-origin": {
+    statement: "Given an array of points on a plane and an integer k, return the k points closest to the origin (0, 0) by Euclidean distance. The answer may be in any order.",
+    examples: [{ input: "points = [[1,3],[-2,2]], k = 1", output: "[[-2,2]]", explanation: "Distance^2: 10 vs 8, so [-2,2] is closer." }],
+    approaches: [
+      { name: "Optimal", pattern: "Max-heap of size k", theory: "Keep a max-heap ordered by squared distance (no need for sqrt — it preserves ordering). Push each point; whenever the heap exceeds size k, pop the farthest. The k points that remain are the closest.", code: ["public int[][] kClosest(int[][] points, int k) {", "    PriorityQueue<int[]> heap = new PriorityQueue<>(", "        (a, b) -> (b[0]*b[0] + b[1]*b[1]) - (a[0]*a[0] + a[1]*a[1]));", "    for (int[] p : points) {", "        heap.offer(p);", "        if (heap.size() > k) heap.poll();", "    }", "    int[][] res = new int[k][2];", "    for (int i = 0; i < k; i++) res[i] = heap.poll();", "    return res;", "}"], time: "O(n log k)", space: "O(k)" }
+    ],
+    oneLiner: "Max-heap of size k keyed by squared distance; evict the farthest whenever size exceeds k. O(n log k)."
+  },
   "last-stone-weight": {
     statement: "Repeatedly smash the two heaviest stones; if unequal, the difference returns to the pile. Return the weight of the last remaining stone (or 0).",
     approaches: [

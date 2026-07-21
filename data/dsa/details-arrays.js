@@ -3,6 +3,41 @@
 // Shape: { [problemId]: { statement, examples?, approaches[], oneLiner?, similar? } }
 
 export const DETAILS = {
+  "how-many-numbers-are-smaller-than-the-current-number": {
+    statement: "For each element, return how many other elements in the array are strictly smaller than it.",
+    examples: [{ input: "nums = [8,1,2,2,3]", output: "[4,0,1,1,3]" }],
+    approaches: [
+      { name: "Brute", pattern: "Nested loop", theory: "For every element, scan the whole array and count values strictly smaller than it.", code: ["public int[] smallerNumbersThanCurrent(int[] nums) {", "    int n = nums.length; int[] res = new int[n];", "    for (int i = 0; i < n; i++)", "        for (int j = 0; j < n; j++)", "            if (nums[j] < nums[i]) res[i]++;", "    return res;", "}"], time: "O(n^2)", space: "O(1)" },
+      { name: "Optimal", pattern: "Counting sort + prefix", theory: "Values are bounded (0..100). Count how many times each value appears, turn that into a prefix count, then the answer for value v is the number of elements with value < v, i.e. prefix[v-1].", code: ["public int[] smallerNumbersThanCurrent(int[] nums) {", "    int[] count = new int[101];", "    for (int v : nums) count[v]++;", "    for (int i = 1; i <= 100; i++) count[i] += count[i - 1];", "    int[] res = new int[nums.length];", "    for (int i = 0; i < nums.length; i++)", "        res[i] = nums[i] == 0 ? 0 : count[nums[i] - 1];", "    return res;", "}"], time: "O(n + K)", space: "O(K)" }
+    ],
+    oneLiner: "Bucket-count the values, prefix-sum the buckets, then each answer is prefix[value-1]. O(n).",
+    similar: [["1365", "How Many Numbers Are Smaller Than the Current Number", "Counting"], ["315", "Count of Smaller Numbers After Self", "BIT"]]
+  },
+  "minimum-time-visiting-all-points": {
+    statement: "You are given points to visit in order on a 2D grid. Each second you can move one unit in any of the 8 directions (including diagonally). Return the minimum time to visit all points in the given order.",
+    examples: [{ input: "points = [[1,1],[3,4],[-1,0]]", output: "7" }],
+    approaches: [
+      { name: "Optimal", pattern: "Chebyshev distance", theory: "A diagonal step shrinks both the x and y gap by 1 at once, so the time between two points is max(|dx|, |dy|): move diagonally until one axis is aligned, then straight. Sum this over consecutive points.", code: ["public int minTimeToVisitAllPoints(int[][] points) {", "    int time = 0;", "    for (int i = 1; i < points.length; i++) {", "        int dx = Math.abs(points[i][0] - points[i - 1][0]);", "        int dy = Math.abs(points[i][1] - points[i - 1][1]);", "        time += Math.max(dx, dy);", "    }", "    return time;", "}"], time: "O(n)", space: "O(1)" }
+    ],
+    oneLiner: "Cost between two points = max(|dx|, |dy|) because diagonals cover x and y together; sum over the path."
+  },
+  "minimum-absolute-difference": {
+    statement: "Return all pairs [a, b] with a < b whose absolute difference equals the smallest absolute difference between any two elements, listed in ascending order.",
+    examples: [{ input: "arr = [4,2,1,3]", output: "[[1,2],[2,3],[3,4]]" }],
+    approaches: [
+      { name: "Optimal", pattern: "Sort + adjacent scan", theory: "After sorting, the minimum difference of any pair is always between two adjacent elements. One pass finds that minimum; a second pass collects every adjacent pair whose gap equals it.", code: ["public List<List<Integer>> minimumAbsDifference(int[] arr) {", "    Arrays.sort(arr);", "    int min = Integer.MAX_VALUE;", "    for (int i = 1; i < arr.length; i++) min = Math.min(min, arr[i] - arr[i - 1]);", "    List<List<Integer>> res = new ArrayList<>();", "    for (int i = 1; i < arr.length; i++)", "        if (arr[i] - arr[i - 1] == min) res.add(Arrays.asList(arr[i - 1], arr[i]));", "    return res;", "}"], time: "O(n log n)", space: "O(1)" }
+    ],
+    oneLiner: "Sort, then the min difference is between neighbors; collect all adjacent pairs sharing that gap."
+  },
+  "minimum-size-subarray-sum": {
+    statement: "Given an array of positive integers and a target, return the minimal length of a contiguous subarray whose sum is >= target. Return 0 if none exists.",
+    examples: [{ input: "target = 7, nums = [2,3,1,2,4,3]", output: "2", explanation: "[4,3] has sum 7 and length 2." }],
+    approaches: [
+      { name: "Brute", pattern: "All subarrays", theory: "Try every start, extend the end until the running sum reaches target, and track the shortest qualifying length.", code: ["public int minSubArrayLen(int target, int[] nums) {", "    int best = Integer.MAX_VALUE;", "    for (int i = 0; i < nums.length; i++) {", "        int sum = 0;", "        for (int j = i; j < nums.length; j++) {", "            sum += nums[j];", "            if (sum >= target) { best = Math.min(best, j - i + 1); break; }", "        }", "    }", "    return best == Integer.MAX_VALUE ? 0 : best;", "}"], time: "O(n^2)", space: "O(1)" },
+      { name: "Optimal", pattern: "Sliding window", theory: "Grow the window by moving right and adding to the sum. Whenever the sum reaches target, record the window length and shrink from the left while it still qualifies. Each index enters and leaves the window once.", code: ["public int minSubArrayLen(int target, int[] nums) {", "    int left = 0, sum = 0, best = Integer.MAX_VALUE;", "    for (int right = 0; right < nums.length; right++) {", "        sum += nums[right];", "        while (sum >= target) {", "            best = Math.min(best, right - left + 1);", "            sum -= nums[left++];", "        }", "    }", "    return best == Integer.MAX_VALUE ? 0 : best;", "}"], time: "O(n)", space: "O(1)", dryRun: { title: "target = 7, nums = [2,3,1,2,4,3]", headers: ["step", "window", "sum", "best"], rows: [["right=3", "[2,3,1,2]", "8", "4"], ["shrink", "[3,1,2]", "6", "4"], ["right=4", "[3,1,2,4]", "10", "4"], ["shrink", "[2,4]", "6", "3"], ["right=5", "[2,4,3]", "9", "3"], ["shrink", "[4,3]", "7", "2"]] } }
+    ],
+    oneLiner: "Expand a window to the right; while the sum reaches target, shrink from the left and track the shortest. O(n)."
+  },
   "two-sum": {
     statement: "Given an integer array nums and an integer target, return the indices of the two numbers that add up to target. Exactly one solution exists and you may not use the same element twice.",
     examples: [

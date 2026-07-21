@@ -2,6 +2,22 @@
 // Original explanations + Java implementations of standard algorithms.
 
 export const DETAILS = {
+  "letter-case-permutation": {
+    statement: "Given a string of letters and digits, return every string you can make by toggling the case of each letter. Digits stay unchanged. Order does not matter.",
+    examples: [{ input: "s = \"a1b2\"", output: "[\"a1b2\",\"a1B2\",\"A1b2\",\"A1B2\"]" }],
+    approaches: [
+      { name: "Optimal", pattern: "Backtracking", theory: "Recurse position by position. At a digit there is a single branch (keep it). At a letter there are two branches: lowercase and uppercase. When the index reaches the end, record the current string.", code: ["public List<String> letterCasePermutation(String s) {", "    List<String> res = new ArrayList<>();", "    backtrack(s.toCharArray(), 0, res);", "    return res;", "}", "private void backtrack(char[] arr, int i, List<String> res) {", "    if (i == arr.length) { res.add(new String(arr)); return; }", "    if (Character.isDigit(arr[i])) {", "        backtrack(arr, i + 1, res);", "    } else {", "        arr[i] = Character.toLowerCase(arr[i]);", "        backtrack(arr, i + 1, res);", "        arr[i] = Character.toUpperCase(arr[i]);", "        backtrack(arr, i + 1, res);", "    }", "}"], time: "O(2^L * n)", space: "O(n)" }
+    ],
+    oneLiner: "Branch two ways on each letter (lower/upper), one way on each digit; collect at the end. O(2^L)."
+  },
+  "combinations": {
+    statement: "Return all possible combinations of k numbers chosen from the range 1..n (order within a combination does not matter).",
+    examples: [{ input: "n = 4, k = 2", output: "[[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]" }],
+    approaches: [
+      { name: "Optimal", pattern: "Backtracking with start index", theory: "Build combinations by always choosing the next number greater than the last picked one (via a start index), which avoids duplicates and reordered repeats. When the current list reaches size k, record a copy; otherwise keep extending.", code: ["public List<List<Integer>> combine(int n, int k) {", "    List<List<Integer>> res = new ArrayList<>();", "    backtrack(1, n, k, new ArrayList<>(), res);", "    return res;", "}", "private void backtrack(int start, int n, int k, List<Integer> cur, List<List<Integer>> res) {", "    if (cur.size() == k) { res.add(new ArrayList<>(cur)); return; }", "    for (int i = start; i <= n; i++) {", "        cur.add(i);", "        backtrack(i + 1, n, k, cur, res);", "        cur.remove(cur.size() - 1);", "    }", "}"], time: "O(C(n,k) * k)", space: "O(k)" }
+    ],
+    oneLiner: "Backtrack picking only numbers after the last chosen (start index) until the list hits size k. "
+  },
   "subsets": {
     statement: "Return all subsets (the power set) of an array of distinct integers.",
     examples: [{ input: "nums = [1,2,3]", output: "[[],[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]" }],

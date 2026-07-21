@@ -3,6 +3,31 @@
 // Shape: { [problemId]: { statement, examples?, approaches[], oneLiner?, similar? } }
 
 export const DETAILS = {
+  "time-needed-to-buy-tickets": {
+    statement: "n people stand in a queue; tickets[i] is how many tickets person i wants. Each second the front person buys one ticket, then rejoins the back unless they are done. Return the seconds until person at index k finishes.",
+    examples: [{ input: "tickets = [2,3,2], k = 2", output: "6" }],
+    approaches: [
+      { name: "Brute", pattern: "Queue simulation", theory: "Literally simulate: loop over indices in a circle, decrement a ticket and count a second whenever the current person still needs tickets, and stop the moment person k reaches zero.", code: ["public int timeRequiredToBuy(int[] tickets, int k) {", "    int time = 0, n = tickets.length, i = 0;", "    while (tickets[k] > 0) {", "        if (tickets[i] > 0) { tickets[i]--; time++; }", "        if (i == k && tickets[k] == 0) break;", "        i = (i + 1) % n;", "    }", "    return time;", "}"], time: "O(n * tickets[k])", space: "O(1)" },
+      { name: "Optimal", pattern: "Counting", theory: "Person k finishes after buying tickets[k] rounds. Anyone at or before k contributes up to tickets[k] seconds; anyone after k gets one fewer round (they stop once k is done), so they contribute up to tickets[k]-1. Sum the min of each person's demand and that cap.", code: ["public int timeRequiredToBuy(int[] tickets, int k) {", "    int time = 0;", "    for (int i = 0; i < tickets.length; i++) {", "        if (i <= k) time += Math.min(tickets[i], tickets[k]);", "        else time += Math.min(tickets[i], tickets[k] - 1);", "    }", "    return time;", "}"], time: "O(n)", space: "O(1)" }
+    ],
+    oneLiner: "Each person before/at k gives min(t[i], t[k]) seconds; after k, min(t[i], t[k]-1). Sum them. O(n)."
+  },
+  "sort-a-stack": {
+    statement: "Sort a stack in ascending order (largest element on top) using only stack operations / recursion — no other explicit data structure.",
+    examples: [{ input: "stack (top -> bottom) = [34, 3, 31, 98, 92, 23]", output: "[98, 92, 34, 31, 23, 3] (top -> bottom)" }],
+    approaches: [
+      { name: "Optimal", pattern: "Recursion (insert in order)", theory: "Pop the top and recursively sort the remaining stack. Then insert the popped value back into its sorted position: if the top is larger than the value, pop it aside, insert recursively, and push it back.", code: ["public void sortStack(Stack<Integer> st) {", "    if (st.isEmpty()) return;", "    int top = st.pop();", "    sortStack(st);", "    insert(st, top);", "}", "private void insert(Stack<Integer> st, int val) {", "    if (st.isEmpty() || st.peek() <= val) { st.push(val); return; }", "    int top = st.pop();", "    insert(st, val);", "    st.push(top);", "}"], time: "O(n^2)", space: "O(n)" }
+    ],
+    oneLiner: "Recursively empty the stack, then insert each value back into its sorted place. O(n^2), O(n) recursion."
+  },
+  "reverse-first-k-elements-of-a-queue": {
+    statement: "Given a queue and a number k, reverse the order of the first k elements while keeping the remaining elements in their original order.",
+    examples: [{ input: "queue = [1,2,3,4,5], k = 3", output: "[3,2,1,4,5]" }],
+    approaches: [
+      { name: "Optimal", pattern: "Stack + rotate", theory: "Dequeue the first k elements into a stack, then enqueue them back — the stack reverses their order but places them behind the rest. Finally rotate the remaining (n-k) elements from front to back so the reversed block returns to the front.", code: ["public Queue<Integer> reverseFirstK(Queue<Integer> q, int k) {", "    Stack<Integer> st = new Stack<>();", "    for (int i = 0; i < k; i++) st.push(q.poll());", "    while (!st.isEmpty()) q.offer(st.pop());", "    int rest = q.size() - k;", "    for (int i = 0; i < rest; i++) q.offer(q.poll());", "    return q;", "}"], time: "O(n)", space: "O(k)" }
+    ],
+    oneLiner: "Stack-reverse the first k, re-enqueue them, then rotate the other n-k to the back. O(n)."
+  },
   "valid-parentheses": {
     statement: "Given a string made up only of the characters ()[]{}  decide whether it is well-formed: every opener must be closed by the matching bracket type, and brackets must close in the reverse order they were opened.",
     examples: [

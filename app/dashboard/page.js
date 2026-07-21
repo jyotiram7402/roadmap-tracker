@@ -317,11 +317,8 @@ export default function Dashboard() {
             <span className="font-extrabold">Crack <span className="gradient-text">Any Job</span></span>
           </Link>
 
-          <div className="text-[11px] uppercase tracking-wide text-slate-500 mb-1.5 px-1">Career track</div>
-          <div className="mb-5"><TrackSwitcher activeTrack={activeTrack} onSelect={(id) => { selectTrack(id); setSidebarOpen(false); }} /></div>
-
           <div className="text-[11px] uppercase tracking-wide text-slate-500 mb-1.5 px-1">Menu</div>
-          <nav className="space-y-1 flex-1">
+          <nav className="space-y-1">
             <SideLink icon="🏠" label="Dashboard" active={view === "hub"} onClick={() => { setView("hub"); setSidebarOpen(false); }} />
             <SideLink icon="📋" label="Roadmap" active={view === "roadmap"} onClick={() => { setView("roadmap"); setSidebarOpen(false); }} />
             <SideLink href="/dsa" icon="🧩" label="Prepare DSA" onNav={() => setSidebarOpen(false)} />
@@ -332,8 +329,10 @@ export default function Dashboard() {
             <SideLink href="/bookmarks" icon="★" label={`Bookmarks · ${bookmarkCount}`} onNav={() => setSidebarOpen(false)} />
           </nav>
 
-          <div className="mt-4 pt-4 border-t border-slate-800 space-y-2">
-            <StreakBadge streak={streak} />
+          <div className="mt-5 text-[11px] uppercase tracking-wide text-slate-500 mb-1.5 px-1">Career track</div>
+          <TrackSwitcher activeTrack={activeTrack} onSelect={(id) => { selectTrack(id); setSidebarOpen(false); }} />
+
+          <div className="mt-auto pt-4 border-t border-slate-800 space-y-2">
             <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
             <button onClick={signOut} className="w-full text-sm px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-left transition">↩ Sign out</button>
           </div>

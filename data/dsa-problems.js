@@ -7,8 +7,8 @@
 
 const RAW = {
   Arrays: {
-    easy: ["Two Sum", "Contains Duplicate", "Remove Duplicates from Sorted Array", "Remove Element", "Move Zeroes", "Merge Sorted Array", "Best Time to Buy and Sell Stock", "Majority Element", "Missing Number", "Single Number", "Find All Numbers Disappeared in an Array", "Squares of a Sorted Array", "Intersection of Two Arrays II", "Binary Search", "Search Insert Position", "Height Checker", "Find Pivot Index", "Running Sum of 1D Array", "Richest Customer Wealth", "Kids With Greatest Number of Candies", "Find the Highest Altitude", "Shuffle the Array", "Concatenation of Array", "Build Array from Permutation", "Replace Elements with Greatest Element on Right Side", "Remove Duplicates from Sorted Array II"],
-    medium: ["3Sum", "3Sum Closest", "4Sum", "Product of Array Except Self", "Maximum Product Subarray", "Maximum Subarray", "Container With Most Water", "Sort Colors", "Rotate Array", "Merge Intervals", "Insert Interval", "Spiral Matrix", "Set Matrix Zeroes", "Next Permutation", "Find the Duplicate Number", "Kth Largest Element in an Array", "Top K Frequent Elements", "Find Peak Element", "Search in Rotated Sorted Array", "Find Minimum in Rotated Sorted Array", "Gas Station", "Jump Game", "Jump Game II", "Candy", "Subarray Sum Equals K", "Continuous Subarray Sum", "Maximum Sum Circular Subarray"],
+    easy: ["Two Sum", "Contains Duplicate", "Remove Duplicates from Sorted Array", "Remove Element", "Move Zeroes", "Merge Sorted Array", "Best Time to Buy and Sell Stock", "Majority Element", "Missing Number", "Single Number", "Find All Numbers Disappeared in an Array", "Squares of a Sorted Array", "Intersection of Two Arrays II", "Binary Search", "Search Insert Position", "Height Checker", "Find Pivot Index", "Running Sum of 1D Array", "Richest Customer Wealth", "Kids With Greatest Number of Candies", "Find the Highest Altitude", "Shuffle the Array", "Concatenation of Array", "Build Array from Permutation", "Replace Elements with Greatest Element on Right Side", "Remove Duplicates from Sorted Array II", "How Many Numbers Are Smaller Than the Current Number", "Minimum Time Visiting All Points", "Minimum Absolute Difference"],
+    medium: ["3Sum", "3Sum Closest", "4Sum", "Product of Array Except Self", "Maximum Product Subarray", "Maximum Subarray", "Container With Most Water", "Sort Colors", "Rotate Array", "Merge Intervals", "Insert Interval", "Spiral Matrix", "Set Matrix Zeroes", "Next Permutation", "Find the Duplicate Number", "Kth Largest Element in an Array", "Top K Frequent Elements", "Find Peak Element", "Search in Rotated Sorted Array", "Find Minimum in Rotated Sorted Array", "Gas Station", "Jump Game", "Jump Game II", "Candy", "Subarray Sum Equals K", "Continuous Subarray Sum", "Maximum Sum Circular Subarray", "Minimum Size Subarray Sum"],
     hard: ["Trapping Rain Water", "First Missing Positive", "Median of Two Sorted Arrays", "Sliding Window Maximum", "Count of Smaller Numbers After Self", "Reverse Pairs"]
   },
   Strings: {
@@ -18,17 +18,17 @@ const RAW = {
   },
   "Linked List": {
     easy: ["Reverse Linked List", "Linked List Cycle", "Merge Two Sorted Lists", "Middle of the Linked List", "Palindrome Linked List", "Remove Linked List Elements", "Delete Node in a Linked List", "Intersection of Two Linked Lists"],
-    medium: ["Add Two Numbers", "Remove Nth Node From End of List", "Reorder List", "Odd Even Linked List", "Swap Nodes in Pairs", "Rotate List", "Partition List", "Copy List with Random Pointer", "LRU Cache"],
+    medium: ["Add Two Numbers", "Remove Nth Node From End of List", "Reorder List", "Odd Even Linked List", "Swap Nodes in Pairs", "Rotate List", "Partition List", "Copy List with Random Pointer", "LRU Cache", "Reverse Linked List II", "Sort List"],
     hard: ["Merge k Sorted Lists", "Reverse Nodes in k-Group"]
   },
   "Stack & Queue": {
-    easy: ["Valid Parentheses", "Implement Queue using Stacks", "Implement Stack using Queues", "Next Greater Element I", "Baseball Game"],
-    medium: ["Min Stack", "Daily Temperatures", "Evaluate Reverse Polish Notation", "Decode String", "Asteroid Collision", "Online Stock Span", "Simplify Path"],
+    easy: ["Valid Parentheses", "Implement Queue using Stacks", "Implement Stack using Queues", "Next Greater Element I", "Baseball Game", "Time Needed to Buy Tickets"],
+    medium: ["Min Stack", "Daily Temperatures", "Evaluate Reverse Polish Notation", "Decode String", "Asteroid Collision", "Online Stock Span", "Simplify Path", "Sort a Stack", "Reverse First K Elements of a Queue"],
     hard: ["Largest Rectangle in Histogram", "Basic Calculator", "Maximal Rectangle"]
   },
   Trees: {
-    easy: ["Binary Tree Inorder Traversal", "Binary Tree Preorder Traversal", "Binary Tree Postorder Traversal", "Maximum Depth of Binary Tree", "Same Tree", "Symmetric Tree", "Invert Binary Tree", "Path Sum", "Balanced Binary Tree", "Minimum Depth of Binary Tree"],
-    medium: ["Binary Tree Level Order Traversal", "Validate Binary Search Tree", "Kth Smallest Element in a BST", "Lowest Common Ancestor of a Binary Tree", "Construct Binary Tree from Preorder and Inorder Traversal", "Flatten Binary Tree to Linked List", "Binary Tree Right Side View", "Count Good Nodes in Binary Tree", "Path Sum II"],
+    easy: ["Binary Tree Inorder Traversal", "Binary Tree Preorder Traversal", "Binary Tree Postorder Traversal", "Maximum Depth of Binary Tree", "Same Tree", "Symmetric Tree", "Invert Binary Tree", "Path Sum", "Balanced Binary Tree", "Minimum Depth of Binary Tree", "Average of Levels in Binary Tree", "Diameter of Binary Tree", "Convert Sorted Array to Binary Search Tree", "Two Sum IV - Input is a BST", "Lowest Common Ancestor of a Binary Search Tree", "Minimum and Maximum Value in a Binary Tree"],
+    medium: ["Binary Tree Level Order Traversal", "Validate Binary Search Tree", "Kth Smallest Element in a BST", "Lowest Common Ancestor of a Binary Tree", "Construct Binary Tree from Preorder and Inorder Traversal", "Flatten Binary Tree to Linked List", "Binary Tree Right Side View", "Count Good Nodes in Binary Tree", "Path Sum II", "Insert into a Binary Search Tree", "Binary Tree Zigzag Level Order Traversal", "Delete Node in a BST", "Balance a Binary Search Tree"],
     hard: ["Serialize and Deserialize Binary Tree", "Binary Tree Maximum Path Sum", "Recover Binary Search Tree"]
   },
   "Binary Search": {
@@ -37,23 +37,23 @@ const RAW = {
     hard: ["Median of Two Sorted Arrays", "Split Array Largest Sum"]
   },
   "Dynamic Programming": {
-    easy: ["Climbing Stairs", "Min Cost Climbing Stairs", "House Robber"],
+    easy: ["Climbing Stairs", "Min Cost Climbing Stairs", "House Robber", "Counting Bits", "Range Sum Query - Immutable"],
     medium: ["House Robber II", "Coin Change", "Longest Increasing Subsequence", "Longest Common Subsequence", "Decode Ways", "Partition Equal Subset Sum", "Unique Paths", "Target Sum", "Word Break"],
     hard: ["Edit Distance", "Burst Balloons", "Regular Expression Matching"]
   },
   Graphs: {
     easy: ["Find if Path Exists in Graph"],
-    medium: ["Number of Islands", "Clone Graph", "Course Schedule", "Pacific Atlantic Water Flow", "Rotting Oranges", "Network Delay Time"],
+    medium: ["Number of Islands", "Clone Graph", "Course Schedule", "Pacific Atlantic Water Flow", "Rotting Oranges", "Network Delay Time", "Cheapest Flights Within K Stops"],
     hard: ["Word Ladder", "Alien Dictionary", "Critical Connections in a Network"]
   },
   "Heap / Priority Queue": {
     easy: ["Last Stone Weight"],
-    medium: ["Kth Largest Element in an Array", "Top K Frequent Elements", "Merge k Sorted Lists", "Task Scheduler", "Find Median from Data Stream"],
+    medium: ["Kth Largest Element in an Array", "Top K Frequent Elements", "Merge k Sorted Lists", "Task Scheduler", "Find Median from Data Stream", "K Closest Points to Origin"],
     hard: ["Sliding Window Median"]
   },
   Backtracking: {
     easy: [],
-    medium: ["Subsets", "Permutations", "Combination Sum", "Letter Combinations of a Phone Number", "Generate Parentheses", "Word Search"],
+    medium: ["Subsets", "Permutations", "Combination Sum", "Letter Combinations of a Phone Number", "Generate Parentheses", "Word Search", "Letter Case Permutation", "Combinations"],
     hard: ["N-Queens", "Sudoku Solver"]
   },
   Greedy: {
