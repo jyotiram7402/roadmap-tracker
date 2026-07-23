@@ -324,7 +324,10 @@ export default function Dashboard() {
             <SideLink href="/dsa" icon="🧩" label="Prepare DSA" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/sql" icon="🗄️" label="Prepare SQL" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/java-qa" icon="📘" label="Java Interview Q&A" onNav={() => setSidebarOpen(false)} />
-            <SideLink href="/springboot-qa" icon="🍃" label="Spring Boot Q&A" onNav={() => setSidebarOpen(false)} />
+            <SideGroup icon="🍃" label="Spring Boot & Spring">
+              <SideLink href="/springboot-qa" icon="❓" label="Interview Q&A" onNav={() => setSidebarOpen(false)} />
+              <SideLink href="/maven" icon="🧰" label="Maven" onNav={() => setSidebarOpen(false)} />
+            </SideGroup>
             <SideLink href="/roles" icon="💼" label="Prepare by Role" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/quick" icon="⚡" label="Quick Practice" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/flashcards" icon="🎯" label="Flashcard Quiz" onNav={() => setSidebarOpen(false)} />
@@ -533,6 +536,21 @@ export default function Dashboard() {
       </footer>
         </div>
       </div>
+    </div>
+  );
+}
+
+function SideGroup({ icon, label, children, defaultOpen = true }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div>
+      <button onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 border border-transparent transition">
+        <span className="w-5 text-center">{icon}</span>
+        <span className="flex-1 text-left">{label}</span>
+        <span className={`text-slate-500 text-xs transition-transform ${open ? "rotate-90" : ""}`}>›</span>
+      </button>
+      {open && <div className="ml-3.5 mt-1 space-y-1 border-l border-slate-800 pl-2">{children}</div>}
     </div>
   );
 }

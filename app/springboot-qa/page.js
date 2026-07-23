@@ -5,7 +5,7 @@ import { SPRINGBOOT_QA_CATEGORIES, loadSpringbootQa } from "@/data/springboot-qa
 export default function SpringbootQaPage() {
   return (
     <QaStudio
-      title="🍃 Spring Boot Interview Q&A"
+      title="🍃 Spring & Spring Boot Interview Q&A"
       categories={SPRINGBOOT_QA_CATEGORIES}
       load={loadSpringbootQa}
       storagePrefix="springboot-qa"
