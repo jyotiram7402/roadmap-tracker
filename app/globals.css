@@ -2,22 +2,98 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  background: #0f172a;
-  color: #e2e8f0;
-  -webkit-tap-highlight-color: transparent;
+/* ===================== Design tokens ===================== */
+:root {
+  --bg: #09090b;
+  --bg-elevated: #0e0e11;
+  --sidebar: #0c0d12;
+  --card: #18181b;
+  --card-2: #1c1c20;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.10);
+  --text: #fafafa;
+  --text-2: #a1a1aa;
+  --muted: #71717a;
+  --blue: #3b82f6;
+  --green: #22c55e;
+  --purple: #8b5cf6;
+  --orange: #f97316;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --shadow: 0 4px 24px -8px rgba(0,0,0,.6);
+  --shadow-glow: 0 0 0 1px rgba(59,130,246,.25), 0 8px 30px -8px rgba(59,130,246,.25);
+  --radius: 14px;
 }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+  font-feature-settings: "cv11", "ss01";
+  text-rendering: optimizeLegibility;
+}
+body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
 * { box-sizing: border-box; }
 
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: #1e293b; }
-::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #64748b; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.16); background-clip: padding-box; }
 
 /* Smooth transitions */
-button, input, textarea, details { transition: all 0.15s ease; }
+button, input, textarea, details, a { transition: all 0.16s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* focus-visible ring (a11y) */
+:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px rgba(59,130,246,.6); border-radius: 8px; }
+
+/* ===================== UI primitives ===================== */
+.ui-card {
+  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)) , var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: transform .18s cubic-bezier(.4,0,.2,1), border-color .18s, box-shadow .18s, background .18s;
+}
+.ui-card-hover:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+.ui-glow:hover { box-shadow: var(--shadow-glow); border-color: rgba(59,130,246,.35); }
+.ui-glass { background: rgba(24,24,27,.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+
+/* sidebar links */
+.nav-link {
+  position: relative; display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 10px; font-size: 13.5px; font-weight: 500;
+  color: var(--text-2); border: 1px solid transparent;
+}
+.nav-link:hover { color: var(--text); background: rgba(255,255,255,.04); }
+.nav-link[data-active="true"] { color: #fff; background: rgba(59,130,246,.12); }
+.nav-link[data-active="true"]::before {
+  content: ""; position: absolute; left: 3px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 16px; border-radius: 3px; background: var(--blue);
+}
+
+/* buttons */
+.ui-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; font-weight: 600; font-size: 13.5px; padding: 8px 14px; border: 1px solid var(--border); color: var(--text-2); background: var(--card-2); }
+.ui-btn:hover { color: var(--text); border-color: var(--border-strong); }
+.ui-btn:disabled { opacity: .5; cursor: not-allowed; }
+.ui-btn-primary { background: var(--blue); border-color: transparent; color: #fff; box-shadow: 0 4px 14px -6px rgba(59,130,246,.6); }
+.ui-btn-primary:hover { background: #2f6fe0; color: #fff; }
+
+/* animations (all <= 250ms feel) */
+@keyframes uiFadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes uiFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes uiScaleIn { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: scale(1); } }
+.anim-fade-up { animation: uiFadeUp .28s cubic-bezier(.4,0,.2,1) both; }
+.anim-fade-in { animation: uiFadeIn .2s ease both; }
+.anim-scale-in { animation: uiScaleIn .2s cubic-bezier(.4,0,.2,1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade-up, .anim-fade-in, .anim-scale-in { animation: none !important; }
+  .ui-card-hover:hover { transform: none; }
+}
 
 /* Custom checkbox bigger touch target on mobile */
 @media (max-width: 640px) {

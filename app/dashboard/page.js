@@ -8,13 +8,17 @@ import {
   itemKey, qaKey, roadmapTotalItems, studyTotalQa,
 } from "@/data/tracks";
 import StudyMaterial from "@/components/StudyMaterial";
-import StreakBadge from "@/components/StreakBadge";
 import StageTOC from "@/components/StageTOC";
 import FilterChips from "@/components/FilterChips";
 import ExportMenu from "@/components/ExportMenu";
 import TrackSwitcher from "@/components/TrackSwitcher";
 import LiveClock from "@/components/LiveClock";
 import ProgressView from "@/components/ProgressView";
+import {
+  LayoutDashboard, BarChart3, Code2, Database, Coffee, Leaf, Bookmark, Layers,
+  Zap, Briefcase, MessageSquare, Wrench, ChevronRight, ChevronDown, Flame, Menu,
+  LogOut, ArrowRight, CheckCircle2, Target, Sparkles, Map as MapIcon,
+} from "@/components/icons";
 import * as Activity from "@/lib/activity";
 import { todayLocalDate } from "@/lib/study-helpers";
 import { loadQuizStats, totalCorrect, totalAttempted, accuracy } from "@/lib/quiz-stats";
@@ -309,62 +313,88 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <div className="text-slate-400">Loading your roadmap...</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg)" }}>
+        <div className="flex items-center gap-2.5 text-zinc-400 text-sm">
+          <span className="w-4 h-4 rounded-full border-2 border-zinc-600 border-t-blue-500 animate-spin" />
+          Loading your workspace…
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100">
+    <div className="min-h-screen text-zinc-100" style={{ background: "var(--bg)" }}>
       <div className="lg:flex">
         {/* mobile backdrop */}
         {sidebarOpen && <div onClick={() => setSidebarOpen(false)} className="fixed inset-0 bg-black/60 z-30 lg:hidden no-print" />}
 
         {/* SIDEBAR */}
-        <aside className={`fixed z-40 inset-y-0 left-0 w-64 bg-slate-950/95 backdrop-blur border-r border-slate-800 p-4 flex flex-col transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 no-print ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
-          <Link href="/" className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center font-black text-sm">C</div>
-            <span className="font-extrabold">Crack <span className="gradient-text">Any Job</span></span>
-          </Link>
+        <aside className={`fixed z-40 inset-y-0 left-0 w-64 backdrop-blur-xl border-r flex flex-col transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 no-print ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+          style={{ background: "var(--sidebar)", borderColor: "var(--border)" }}>
+          <div className="px-4 h-14 flex items-center border-b" style={{ borderColor: "var(--border)" }}>
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center font-black text-sm text-white shadow-lg shadow-blue-500/25">C</div>
+              <span className="font-semibold tracking-tight text-[15px] text-white">Crack Any Job</span>
+            </Link>
+          </div>
 
-          <div className="text-[11px] uppercase tracking-wide text-slate-500 mb-1.5 px-1">Menu</div>
-          <nav className="space-y-1">
-            <SideLink icon="🏠" label="Dashboard" active={view === "hub"} onClick={() => { setView("hub"); setSidebarOpen(false); }} />
-            <SideLink icon="📊" label="Progress" active={view === "progress"} onClick={() => { setView("progress"); setSidebarOpen(false); }} />
-            <SideLink href="/dsa" icon="🧩" label="Prepare DSA" onNav={() => setSidebarOpen(false)} />
-            <SideLink href="/sql" icon="🗄️" label="Prepare SQL" onNav={() => setSidebarOpen(false)} />
-            <SideLink href="/java-qa" icon="📘" label="Java Interview Q&A" onNav={() => setSidebarOpen(false)} />
-            <SideGroup icon="🍃" label="Spring Boot & Spring">
-              <SideLink href="/springboot-qa" icon="❓" label="Interview Q&A" onNav={() => setSidebarOpen(false)} />
-              <SideLink href="/maven" icon="🧰" label="Maven" onNav={() => setSidebarOpen(false)} />
-            </SideGroup>
-            <SideLink href="/roles" icon="💼" label="Prepare by Role" onNav={() => setSidebarOpen(false)} />
-            <SideLink href="/quick" icon="⚡" label="Quick Practice" onNav={() => setSidebarOpen(false)} />
-            <SideLink href="/flashcards" icon="🎯" label="Flashcard Quiz" onNav={() => setSidebarOpen(false)} />
-            <SideLink href="/bookmarks" icon="★" label={`Bookmarks · ${bookmarkCount}`} onNav={() => setSidebarOpen(false)} />
-          </nav>
+          <div className="flex-1 overflow-y-auto px-3 py-4">
+            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-zinc-500 mb-2 px-2">Menu</div>
+            <nav className="space-y-0.5">
+              <SideLink Icon={LayoutDashboard} label="Dashboard" active={view === "hub"} onClick={() => { setView("hub"); setSidebarOpen(false); }} />
+              <SideLink Icon={BarChart3} label="Progress" active={view === "progress"} onClick={() => { setView("progress"); setSidebarOpen(false); }} />
+              <SideLink Icon={MapIcon} label="Roadmap" active={view === "roadmap"} onClick={() => { setView("roadmap"); setSidebarOpen(false); }} />
+              <SideLink href="/dsa" Icon={Code2} label="Prepare DSA" onNav={() => setSidebarOpen(false)} />
+              <SideLink href="/sql" Icon={Database} label="Prepare SQL" onNav={() => setSidebarOpen(false)} />
+              <SideLink href="/java-qa" Icon={Coffee} label="Java Interview Q&A" onNav={() => setSidebarOpen(false)} />
+              <SideGroup Icon={Leaf} label="Spring Boot & Spring">
+                <SideLink href="/springboot-qa" Icon={MessageSquare} label="Interview Q&A" nested onNav={() => setSidebarOpen(false)} />
+                <SideLink href="/maven" Icon={Wrench} label="Maven" nested onNav={() => setSidebarOpen(false)} />
+              </SideGroup>
+              <SideLink href="/roles" Icon={Briefcase} label="Prepare by Role" onNav={() => setSidebarOpen(false)} />
+              <SideLink href="/quick" Icon={Zap} label="Quick Practice" onNav={() => setSidebarOpen(false)} />
+              <SideLink href="/flashcards" Icon={Layers} label="Flashcards" onNav={() => setSidebarOpen(false)} />
+              <SideLink href="/bookmarks" Icon={Bookmark} label="Bookmarks" badge={bookmarkCount} onNav={() => setSidebarOpen(false)} />
+            </nav>
 
-          <div className="mt-5 text-[11px] uppercase tracking-wide text-slate-500 mb-1.5 px-1">Career track</div>
-          <TrackSwitcher activeTrack={activeTrack} onSelect={(id) => { selectTrack(id); setSidebarOpen(false); }} />
+            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-zinc-500 mt-6 mb-2 px-2">Career track</div>
+            <TrackSwitcher activeTrack={activeTrack} onSelect={(id) => { selectTrack(id); setSidebarOpen(false); }} />
+          </div>
 
-          <div className="mt-auto pt-4 border-t border-slate-800 space-y-2">
-            <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
-            <button onClick={signOut} className="w-full text-sm px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-left transition">↩ Sign out</button>
+          <div className="p-3 border-t" style={{ borderColor: "var(--border)" }}>
+            <div className="flex items-center gap-2.5 px-2 py-1.5">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-zinc-600 to-zinc-800 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+                {(user?.email || "?").charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[12.5px] font-medium text-zinc-200 truncate">{(user?.email || "").split("@")[0]}</p>
+                <p className="text-[11px] text-zinc-500 truncate">{user?.email}</p>
+              </div>
+              <button onClick={signOut} title="Sign out" aria-label="Sign out" className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-200 hover:bg-white/5 transition flex-shrink-0">
+                <LogOut size={16} />
+              </button>
+            </div>
           </div>
         </aside>
 
         {/* MAIN COLUMN */}
         <div className="flex-1 min-w-0">
-          <header className="sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800 no-print">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
-              <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-xl leading-none px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700" aria-label="Open menu">☰</button>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-xl font-bold truncate">{view === "hub" ? "🏠 Dashboard" : view === "progress" ? "📊 Progress" : `${trackMeta.icon} ${trackMeta.name}`}</h1>
-                <p className="text-xs text-slate-400 truncate hidden sm:block">{view === "hub" ? "Your interview-prep command center" : view === "progress" ? "Streak, time & what you've solved" : trackMeta.tagline}</p>
+          <header className="sticky top-0 z-20 backdrop-blur-xl border-b no-print" style={{ background: "rgba(9,9,11,.8)", borderColor: "var(--border)" }}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
+              <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 -ml-1 rounded-lg text-zinc-300 hover:bg-white/5 transition" aria-label="Open menu"><Menu size={18} /></button>
+              <div className="min-w-0 flex-1 flex items-center gap-2">
+                <span className="hidden sm:inline text-[13px] text-zinc-500">Crack Any Job</span>
+                <ChevronRight size={13} className="hidden sm:inline text-zinc-600 flex-shrink-0" />
+                <h1 className="text-[14px] sm:text-[15px] font-semibold text-white truncate">
+                  {view === "hub" ? "Dashboard" : view === "progress" ? "Progress" : trackMeta.name}
+                </h1>
               </div>
               <LiveClock className="hidden md:flex" />
-              <span className="hidden lg:block"><StreakBadge streak={localStreak} /></span>
+              <div className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
+                <Flame size={14} className="text-orange-400" />
+                <span className="text-zinc-100">{localStreak}</span>
+                <span className="text-zinc-500 font-normal">day{localStreak === 1 ? "" : "s"}</span>
+              </div>
             </div>
 
             {view === "roadmap" && (
@@ -554,41 +584,39 @@ export default function Dashboard() {
   );
 }
 
-function SideGroup({ icon, label, children, defaultOpen = true }) {
+function SideGroup({ Icon, label, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div>
-      <button onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 border border-transparent transition">
-        <span className="w-5 text-center">{icon}</span>
-        <span className="flex-1 text-left">{label}</span>
-        <span className={`text-slate-500 text-xs transition-transform ${open ? "rotate-90" : ""}`}>›</span>
+      <button onClick={() => setOpen((o) => !o)} className="nav-link w-full" aria-expanded={open}>
+        {Icon && <Icon size={17} className="flex-shrink-0" />}
+        <span className="flex-1 text-left truncate">{label}</span>
+        <ChevronDown size={14} className={`text-zinc-500 transition-transform duration-200 ${open ? "" : "-rotate-90"}`} />
       </button>
-      {open && <div className="ml-3.5 mt-1 space-y-1 border-l border-slate-800 pl-2">{children}</div>}
+      {open && (
+        <div className="mt-0.5 ml-4 pl-2 space-y-0.5 border-l anim-fade-in" style={{ borderColor: "var(--border)" }}>
+          {children}
+        </div>
+      )}
     </div>
   );
 }
 
-function SideLink({ href, icon, label, active, onNav, onClick }) {
-  const cls = `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition ${
-    active
-      ? "bg-blue-600/20 text-blue-300 border border-blue-500/40"
-      : "text-slate-300 hover:bg-slate-800 border border-transparent"
-  }`;
-  if (href) {
-    return (
-      <Link href={href} onClick={onNav} className={cls}>
-        <span className="w-5 text-center">{icon}</span>
-        {label}
-      </Link>
-    );
-  }
-  return (
-    <button onClick={onClick} className={`${cls} w-full text-left`}>
-      <span className="w-5 text-center">{icon}</span>
-      {label}
-    </button>
+function SideLink({ href, Icon, label, active, onNav, onClick, badge, nested }) {
+  const inner = (
+    <>
+      {Icon && <Icon size={nested ? 15 : 17} className="flex-shrink-0" />}
+      <span className="flex-1 truncate">{label}</span>
+      {badge != null && (
+        <span className="text-[10.5px] font-semibold px-1.5 py-0.5 rounded-md text-zinc-400" style={{ background: "rgba(255,255,255,.05)" }}>{badge}</span>
+      )}
+    </>
   );
+  const cls = `nav-link ${nested ? "!text-[13px]" : ""}`;
+  if (href) {
+    return <Link href={href} onClick={onNav} className={cls} data-active={active ? "true" : undefined}>{inner}</Link>;
+  }
+  return <button onClick={onClick} className={`${cls} w-full`} data-active={active ? "true" : undefined}>{inner}</button>;
 }
 
 function Hub({ trackMeta, stats, qaStats, streak, bookmarkCount, quizStats, user, onOpenRoadmap, onOpenProgress }) {
@@ -596,72 +624,97 @@ function Hub({ trackMeta, stats, qaStats, streak, bookmarkCount, quizStats, user
   const quizAttempted = totalAttempted(quizStats);
   const quizAcc = accuracy(quizStats);
 
+  const [greeting, setGreeting] = useState("Welcome back");
+  useEffect(() => { const h = new Date().getHours(); setGreeting(h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening"); }, []);
+  const name = (user?.email || "there").split("@")[0];
+
+  const COLOR = {
+    blue: "text-blue-400 bg-blue-500/10", indigo: "text-indigo-400 bg-indigo-500/10",
+    emerald: "text-emerald-400 bg-emerald-500/10", violet: "text-violet-400 bg-violet-500/10",
+    amber: "text-amber-400 bg-amber-500/10", pink: "text-pink-400 bg-pink-500/10",
+    orange: "text-orange-400 bg-orange-500/10", rose: "text-rose-400 bg-rose-500/10",
+    green: "text-green-400 bg-green-500/10", zinc: "text-zinc-300 bg-white/5",
+  };
   const cards = [
-    { key: "roadmap", icon: "📋", title: "Roadmap", desc: `${trackMeta.name} — step-by-step checklist & Q&A`, stat: `${stats.pct}% complete`, grad: "from-blue-500 to-cyan-500", onClick: onOpenRoadmap },
-    { key: "progress", icon: "📊", title: "Progress", desc: "Streak, time spent & solved-by-category report", stat: `${streak}-day streak`, grad: "from-orange-500 to-amber-500", onClick: onOpenProgress },
-    { key: "dsa", icon: "🧩", title: "Prepare DSA", desc: "Brute → better → optimal in Java · sheets · Crackify", stat: `${DSA_PROBLEMS.length}+ problems`, grad: "from-indigo-500 to-blue-500", href: "/dsa" },
-    { key: "sql", icon: "🗄️", title: "Prepare SQL", desc: "Queries by experience level + must-know set", stat: "137 questions", grad: "from-emerald-500 to-teal-500", href: "/sql" },
-    { key: "roles", icon: "💼", title: "Prepare by Role", desc: "Role-specific banks, filtered by experience level", stat: "6 job roles", grad: "from-purple-500 to-fuchsia-500", href: "/roles" },
-    { key: "quick", icon: "⚡", title: "Quick Practice", desc: "Rapid-fire MCQs with instant feedback", stat: `${quizCorrect} solved`, grad: "from-amber-500 to-orange-500", href: "/quick" },
-    { key: "flash", icon: "🎯", title: "Flashcards", desc: "Flip-card revision across every track", stat: `${qaStats.pct}% mastered`, grad: "from-pink-500 to-rose-500", href: "/flashcards" },
-    { key: "bm", icon: "★", title: "Bookmarks", desc: "Questions you saved to revisit later", stat: `${bookmarkCount} saved`, grad: "from-slate-500 to-slate-600", href: "/bookmarks" },
+    { key: "roadmap", Icon: MapIcon, title: "Roadmap", desc: `${trackMeta.name} — checklist & Q&A, stage by stage.`, stat: `${stats.pct}% complete`, color: "blue", onClick: onOpenRoadmap },
+    { key: "progress", Icon: BarChart3, title: "Progress", desc: "Streak, time spent & solved-by-category report.", stat: `${streak}-day streak`, color: "orange", onClick: onOpenProgress },
+    { key: "dsa", Icon: Code2, title: "Prepare DSA", desc: "Brute → better → optimal in Java · sheets · Crackify.", stat: `${DSA_PROBLEMS.length}+ problems`, color: "indigo", href: "/dsa" },
+    { key: "sql", Icon: Database, title: "Prepare SQL", desc: "Queries by experience level + a must-know set.", stat: "137 questions", color: "emerald", href: "/sql" },
+    { key: "java", Icon: Coffee, title: "Java Interview Q&A", desc: "OOP, core Java, and Java 8 & Streams.", stat: "100 Q&A", color: "rose", href: "/java-qa" },
+    { key: "spring", Icon: Leaf, title: "Spring Boot & Spring", desc: "Interview Q&A plus Maven notes.", stat: "101 Q&A", color: "green", href: "/springboot-qa" },
+    { key: "roles", Icon: Briefcase, title: "Prepare by Role", desc: "Role-specific banks, filtered by level.", stat: "6 job roles", color: "violet", href: "/roles" },
+    { key: "quick", Icon: Zap, title: "Quick Practice", desc: "Rapid-fire MCQs with instant feedback.", stat: `${quizCorrect} solved`, color: "amber", href: "/quick" },
+    { key: "flash", Icon: Layers, title: "Flashcards", desc: "Flip-card revision across every track.", stat: `${qaStats.pct}% mastered`, color: "pink", href: "/flashcards" },
+    { key: "bm", Icon: Bookmark, title: "Bookmarks", desc: "Questions you saved to revisit later.", stat: `${bookmarkCount} saved`, color: "zinc", href: "/bookmarks" },
   ];
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-5">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6 anim-fade-up">
       {/* welcome */}
-      <div className="rounded-2xl bg-gradient-to-r from-blue-600/20 via-purple-600/15 to-pink-600/10 border border-slate-700 p-5 sm:p-6">
-        <div className="flex items-start justify-between gap-3 flex-wrap">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-black text-white">Welcome back 👋</h2>
-            <p className="text-sm text-slate-300 mt-1 truncate max-w-[70vw]">{user?.email}</p>
+      <section className="relative overflow-hidden ui-card p-5 sm:p-7">
+        <div className="pointer-events-none absolute -top-24 -right-10 w-72 h-72 rounded-full bg-blue-600/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-28 left-1/3 w-72 h-72 rounded-full bg-violet-600/10 blur-3xl" />
+        <div className="relative flex items-center justify-between gap-5 flex-wrap">
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-500 grid place-items-center text-xl font-bold text-white shadow-lg shadow-blue-500/20 flex-shrink-0">{name.charAt(0).toUpperCase()}</div>
+            <div className="min-w-0">
+              <p className="text-[13px] text-zinc-500">{greeting},</p>
+              <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-white capitalize truncate">{name}</h2>
+              <div className="mt-2 flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1 rounded-lg text-zinc-300" style={{ background: "var(--card-2)", border: "1px solid var(--border)" }}><Sparkles size={13} className="text-violet-400" />{trackMeta.name}</span>
+                <span className="inline-flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1 rounded-lg text-zinc-300" style={{ background: "var(--card-2)", border: "1px solid var(--border)" }}><Flame size={13} className="text-orange-400" />{streak} day streak</span>
+              </div>
+            </div>
           </div>
-          <div className="lg:hidden"><StreakBadge streak={streak} /></div>
+          <Ring pct={stats.pct} />
         </div>
-        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <HubStat label="Roadmap" value={`${stats.pct}%`} sub={`${stats.done}/${stats.total}`} accent="text-blue-400" />
-          <HubStat label="Q&A mastered" value={`${qaStats.pct}%`} sub={`${qaStats.done}/${qaStats.total}`} accent="text-emerald-400" />
-          <HubStat label="Quiz solved" value={quizCorrect} sub={`${quizAcc}% acc`} accent="text-amber-400" />
-          <HubStat label="Bookmarks" value={bookmarkCount} sub="saved" accent="text-pink-400" />
-        </div>
+        <p className="relative mt-5 text-[13px] text-zinc-400">Small daily reps beat cramming — keep the streak alive and let momentum do the work.</p>
+      </section>
+
+      {/* stat cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <HubStat Icon={MapIcon} label="Roadmap" value={`${stats.pct}%`} sub={`${stats.done}/${stats.total} done`} color="blue" />
+        <HubStat Icon={CheckCircle2} label="Q&A mastered" value={`${qaStats.pct}%`} sub={`${qaStats.done}/${qaStats.total}`} color="emerald" />
+        <HubStat Icon={Target} label="Quiz solved" value={quizCorrect} sub={`${quizAcc}% accuracy`} color="amber" />
+        <HubStat Icon={Bookmark} label="Bookmarks" value={bookmarkCount} sub="saved" color="pink" />
       </div>
 
-      {/* section cards — PrepInsta-style grid */}
-      <h3 className="mt-6 mb-3 text-sm font-bold uppercase tracking-wide text-slate-400">Jump back in</h3>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {cards.map((c) => {
-          const inner = (
-            <>
-              <div className="flex items-center gap-3">
-                <span className={`w-12 h-12 rounded-xl bg-gradient-to-br ${c.grad} flex items-center justify-center text-2xl shadow-lg`}>{c.icon}</span>
-                <div className="min-w-0">
-                  <div className="text-white font-bold">{c.title}</div>
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-900/70 border border-slate-700 text-slate-300">{c.stat}</span>
+      {/* section cards */}
+      <div>
+        <h3 className="text-[13px] font-semibold text-zinc-400 mb-3">Jump back in</h3>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          {cards.map((c) => {
+            const inner = (
+              <>
+                <div className="flex items-center gap-3">
+                  <span className={`w-10 h-10 rounded-xl grid place-items-center ${COLOR[c.color]}`}><c.Icon size={20} /></span>
+                  <div className="min-w-0 flex-1"><div className="text-[14.5px] font-semibold text-zinc-100 truncate">{c.title}</div></div>
+                  <ArrowRight size={16} className="text-zinc-600 group-hover:text-zinc-200 group-hover:translate-x-0.5 transition flex-shrink-0" />
                 </div>
-                <span className="ml-auto text-slate-500 group-hover:translate-x-0.5 group-hover:text-white transition">›</span>
-              </div>
-              <p className="mt-3 text-sm text-slate-400 leading-relaxed">{c.desc}</p>
-            </>
-          );
-          const cls = "group text-left rounded-2xl border border-slate-700 bg-slate-800/50 hover:bg-slate-800 hover:border-slate-500 hover:-translate-y-0.5 transition p-4 block";
-          return c.href
-            ? <Link key={c.key} href={c.href} className={cls}>{inner}</Link>
-            : <button key={c.key} onClick={c.onClick} className={`${cls} w-full`}>{inner}</button>;
-        })}
+                <p className="mt-2.5 text-[13px] leading-relaxed text-zinc-400 flex-1">{c.desc}</p>
+                <div className="mt-3"><span className="inline-flex text-[11px] font-medium px-2 py-1 rounded-md text-zinc-300" style={{ background: "rgba(255,255,255,.04)", border: "1px solid var(--border)" }}>{c.stat}</span></div>
+              </>
+            );
+            const cls = "ui-card ui-card-hover ui-glow group p-4 sm:p-5 flex flex-col text-left h-full";
+            return c.href
+              ? <Link key={c.key} href={c.href} className={cls}>{inner}</Link>
+              : <button key={c.key} onClick={c.onClick} className={`${cls} w-full`}>{inner}</button>;
+          })}
+        </div>
       </div>
 
       {/* quick practice breakdown */}
       {quizAttempted > 0 && (
-        <div className="mt-6 rounded-2xl border border-slate-700 bg-slate-800/50 p-4">
+        <div className="ui-card p-4 sm:p-5">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white">⚡ Quick Practice progress</h3>
-            <Link href="/quick" className="text-xs text-blue-400 hover:underline">Practice more →</Link>
+            <h3 className="text-[14px] font-semibold text-white flex items-center gap-2"><Zap size={16} className="text-amber-400" /> Quick Practice</h3>
+            <Link href="/quick" className="text-[12px] font-medium text-blue-400 hover:text-blue-300 inline-flex items-center gap-1">Practice more <ArrowRight size={13} /></Link>
           </div>
-          <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
             {Object.entries(quizStats).map(([sid, s]) => (
-              <div key={sid} className="rounded-xl bg-slate-900/60 border border-slate-700 p-3">
-                <div className="text-lg font-black text-white">{s.correct}<span className="text-slate-500 text-sm font-medium">/{s.attempted}</span></div>
-                <div className="text-[11px] text-slate-400 mt-0.5 capitalize">{sid === "java" ? "Java" : sid === "mern" ? "MERN" : sid === "sql" ? "SQL" : sid} correct</div>
+              <div key={sid} className="rounded-xl p-3" style={{ background: "var(--card-2)", border: "1px solid var(--border)" }}>
+                <div className="text-lg font-bold text-white">{s.correct}<span className="text-zinc-500 text-sm font-medium">/{s.attempted}</span></div>
+                <div className="text-[11px] text-zinc-400 mt-0.5 capitalize">{sid === "java" ? "Java" : sid === "mern" ? "MERN" : sid === "sql" ? "SQL" : sid} correct</div>
               </div>
             ))}
           </div>
@@ -671,11 +724,33 @@ function Hub({ trackMeta, stats, qaStats, streak, bookmarkCount, quizStats, user
   );
 }
 
-function HubStat({ label, value, sub, accent }) {
+function Ring({ pct = 0, size = 76, stroke = 7 }) {
+  const p = Math.max(0, Math.min(100, pct));
+  const r = (size - stroke) / 2, c = 2 * Math.PI * r, off = c - (p / 100) * c;
   return (
-    <div className="rounded-xl bg-slate-900/50 border border-slate-700 p-3">
-      <div className={`text-xl sm:text-2xl font-black ${accent}`}>{value}</div>
-      <div className="text-[11px] text-slate-400 mt-0.5">{label} · {sub}</div>
+    <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="-rotate-90">
+        <circle cx={size / 2} cy={size / 2} r={r} stroke="rgba(255,255,255,.08)" strokeWidth={stroke} fill="none" />
+        <circle cx={size / 2} cy={size / 2} r={r} stroke="url(#ringg)" strokeWidth={stroke} fill="none" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={off} style={{ transition: "stroke-dashoffset .7s cubic-bezier(.4,0,.2,1)" }} />
+        <defs><linearGradient id="ringg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#3b82f6" /><stop offset="1" stopColor="#8b5cf6" /></linearGradient></defs>
+      </svg>
+      <div className="absolute inset-0 grid place-items-center text-center">
+        <div><div className="text-[15px] font-bold text-white leading-none">{p}%</div><div className="text-[9px] text-zinc-500 mt-0.5">done</div></div>
+      </div>
+    </div>
+  );
+}
+
+function HubStat({ Icon, label, value, sub, color }) {
+  const C = { blue: "text-blue-400", emerald: "text-emerald-400", amber: "text-amber-400", pink: "text-pink-400" };
+  return (
+    <div className="ui-card ui-card-hover p-3.5 sm:p-4">
+      <div className="flex items-center gap-2 mb-2">
+        {Icon && <Icon size={15} className={C[color] || "text-zinc-400"} />}
+        <span className="text-[11.5px] font-medium text-zinc-500">{label}</span>
+      </div>
+      <div className="text-xl sm:text-2xl font-bold text-white tracking-tight">{value}</div>
+      <div className="text-[11px] text-zinc-500 mt-0.5">{sub}</div>
     </div>
   );
 }
