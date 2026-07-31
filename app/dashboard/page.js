@@ -14,7 +14,9 @@ import FilterChips from "@/components/FilterChips";
 import ExportMenu from "@/components/ExportMenu";
 import TrackSwitcher from "@/components/TrackSwitcher";
 import LiveClock from "@/components/LiveClock";
-import { computeStreak, todayLocalDate } from "@/lib/study-helpers";
+import ProgressView from "@/components/ProgressView";
+import * as Activity from "@/lib/activity";
+import { todayLocalDate } from "@/lib/study-helpers";
 import { loadQuizStats, totalCorrect, totalAttempted, accuracy } from "@/lib/quiz-stats";
 import { DSA_PROBLEMS } from "@/data/dsa-problems";
 
@@ -52,10 +54,20 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [quizStats, setQuizStats] = useState({});
+  const [localStreak, setLocalStreak] = useState(0);
   const stageRefs = useRef({});
 
   // load Quick Practice stats (per-device) for the hub
   useEffect(() => { setQuizStats(loadQuizStats()); }, [view]);
+
+  // local activity streak (works without Supabase) — keeps the header badge live
+  useEffect(() => {
+    const upd = () => setLocalStreak(Activity.computeStreak());
+    upd();
+    window.addEventListener("activity-change", upd);
+    const t = setInterval(upd, 60000);
+    return () => { window.removeEventListener("activity-change", upd); clearInterval(t); };
+  }, []);
 
   // restore track choice on mount
   useEffect(() => {
@@ -239,8 +251,6 @@ export default function Dashboard() {
     return { done, total, pct: total ? Math.round((done / total) * 100) : 0 };
   }, [qaProgress, study]);
 
-  const streak = useMemo(() => computeStreak(activityDates), [activityDates]);
-
   function stageStats(stage) {
     let done = 0, total = 0;
     for (const section of stage.sections)
@@ -321,6 +331,7 @@ export default function Dashboard() {
           <div className="text-[11px] uppercase tracking-wide text-slate-500 mb-1.5 px-1">Menu</div>
           <nav className="space-y-1">
             <SideLink icon="🏠" label="Dashboard" active={view === "hub"} onClick={() => { setView("hub"); setSidebarOpen(false); }} />
+            <SideLink icon="📊" label="Progress" active={view === "progress"} onClick={() => { setView("progress"); setSidebarOpen(false); }} />
             <SideLink href="/dsa" icon="🧩" label="Prepare DSA" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/sql" icon="🗄️" label="Prepare SQL" onNav={() => setSidebarOpen(false)} />
             <SideLink href="/java-qa" icon="📘" label="Java Interview Q&A" onNav={() => setSidebarOpen(false)} />
@@ -349,11 +360,11 @@ export default function Dashboard() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
               <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-xl leading-none px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700" aria-label="Open menu">☰</button>
               <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-xl font-bold truncate">{view === "hub" ? "🏠 Dashboard" : `${trackMeta.icon} ${trackMeta.name}`}</h1>
-                <p className="text-xs text-slate-400 truncate hidden sm:block">{view === "hub" ? "Your interview-prep command center" : trackMeta.tagline}</p>
+                <h1 className="text-base sm:text-xl font-bold truncate">{view === "hub" ? "🏠 Dashboard" : view === "progress" ? "📊 Progress" : `${trackMeta.icon} ${trackMeta.name}`}</h1>
+                <p className="text-xs text-slate-400 truncate hidden sm:block">{view === "hub" ? "Your interview-prep command center" : view === "progress" ? "Streak, time & what you've solved" : trackMeta.tagline}</p>
               </div>
               <LiveClock className="hidden md:flex" />
-              <span className="hidden lg:block"><StreakBadge streak={streak} /></span>
+              <span className="hidden lg:block"><StreakBadge streak={localStreak} /></span>
             </div>
 
             {view === "roadmap" && (
@@ -398,13 +409,16 @@ export default function Dashboard() {
           trackMeta={trackMeta}
           stats={stats}
           qaStats={qaStats}
-          streak={streak}
+          streak={localStreak}
           bookmarkCount={bookmarkCount}
           quizStats={quizStats}
           user={user}
           onOpenRoadmap={() => setView("roadmap")}
+          onOpenProgress={() => setView("progress")}
         />
       )}
+
+      {view === "progress" && <ProgressView />}
 
       {view === "roadmap" && (
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-3">
@@ -577,13 +591,14 @@ function SideLink({ href, icon, label, active, onNav, onClick }) {
   );
 }
 
-function Hub({ trackMeta, stats, qaStats, streak, bookmarkCount, quizStats, user, onOpenRoadmap }) {
+function Hub({ trackMeta, stats, qaStats, streak, bookmarkCount, quizStats, user, onOpenRoadmap, onOpenProgress }) {
   const quizCorrect = totalCorrect(quizStats);
   const quizAttempted = totalAttempted(quizStats);
   const quizAcc = accuracy(quizStats);
 
   const cards = [
     { key: "roadmap", icon: "📋", title: "Roadmap", desc: `${trackMeta.name} — step-by-step checklist & Q&A`, stat: `${stats.pct}% complete`, grad: "from-blue-500 to-cyan-500", onClick: onOpenRoadmap },
+    { key: "progress", icon: "📊", title: "Progress", desc: "Streak, time spent & solved-by-category report", stat: `${streak}-day streak`, grad: "from-orange-500 to-amber-500", onClick: onOpenProgress },
     { key: "dsa", icon: "🧩", title: "Prepare DSA", desc: "Brute → better → optimal in Java · sheets · Crackify", stat: `${DSA_PROBLEMS.length}+ problems`, grad: "from-indigo-500 to-blue-500", href: "/dsa" },
     { key: "sql", icon: "🗄️", title: "Prepare SQL", desc: "Queries by experience level + must-know set", stat: "137 questions", grad: "from-emerald-500 to-teal-500", href: "/sql" },
     { key: "roles", icon: "💼", title: "Prepare by Role", desc: "Role-specific banks, filtered by experience level", stat: "6 job roles", grad: "from-purple-500 to-fuchsia-500", href: "/roles" },

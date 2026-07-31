@@ -1,5 +1,6 @@
 import "./globals.css";
 import PwaInstaller from "@/components/PwaInstaller";
+import ActivityTracker from "@/components/ActivityTracker";
 
 export const metadata = {
   title: "Crack Any Job — Tech Interview Prep",
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
       <body className="antialiased">
         {children}
         <PwaInstaller />
+        <ActivityTracker />
       </body>
     </html>
   );

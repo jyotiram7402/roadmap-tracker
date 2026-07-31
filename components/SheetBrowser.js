@@ -299,7 +299,7 @@ export function SheetProblemView({ problem, sheetName, onBack }) {
         </div>
       </div>
 
-      <MySolution slug={problem.slug} />
+      <MySolution slug={problem.slug} category="dsa" title={problem.name} />
     </div>
   );
 }

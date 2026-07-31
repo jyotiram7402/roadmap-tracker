@@ -132,7 +132,7 @@ function QuestionView({ cat, item, storagePrefix, onBack }) {
           🔎 Learn more on Google
         </a>
       </div>
-      <MySolution slug={`${storagePrefix}:${cat}:${item.slug}`} />
+      <MySolution slug={`${storagePrefix}:${cat}:${item.slug}`} category={storagePrefix.replace("-qa", "")} title={item.q} />
     </div>
   );
 }

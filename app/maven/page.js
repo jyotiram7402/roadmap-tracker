@@ -159,7 +159,7 @@ function InterviewTab() {
             🔎 Learn more on Google
           </a>
         </div>
-        <MySolution slug={`maven-interview:${selected.slug}`} />
+        <MySolution slug={`maven-interview:${selected.slug}`} category="maven" title={selected.q} />
       </div>
     );
   }

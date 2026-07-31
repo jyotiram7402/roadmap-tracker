@@ -230,7 +230,7 @@ function ProblemView({ problem, onBack }) {
         </div>
       </div>
 
-      <MySolution slug={problem.id} />
+      <MySolution slug={problem.id} category="dsa" title={problem.title} />
     </div>
   );
 }
