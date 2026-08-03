@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import PwaInstaller from "@/components/PwaInstaller";
 import ActivityTracker from "@/components/ActivityTracker";
 
@@ -35,6 +36,22 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={inter.variable}>
       <body className={`${inter.className} antialiased`}>
+        {/* Capture the install prompt as early as possible — Chrome fires
+            beforeinstallprompt during load, before React hydrates. */}
+        <Script id="pwa-bip-capture" strategy="beforeInteractive">{`
+          (function () {
+            window.__bipEvent = null;
+            window.addEventListener('beforeinstallprompt', function (e) {
+              e.preventDefault();
+              window.__bipEvent = e;
+              try { window.dispatchEvent(new Event('bip-available')); } catch (_) {}
+            });
+            window.addEventListener('appinstalled', function () {
+              window.__bipEvent = null;
+              try { window.dispatchEvent(new Event('bip-installed')); } catch (_) {}
+            });
+          })();
+        `}</Script>
         {children}
         <PwaInstaller />
         <ActivityTracker />
