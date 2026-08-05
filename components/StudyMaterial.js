@@ -59,14 +59,14 @@ export default function StudyMaterial({
       : filters.bookmarked ? "No bookmarks in this stage yet"
       : filters.withCode ? "No code-bearing questions in this stage"
       : "No study material for this stage yet.";
-    return <div className="text-center text-slate-500 py-6 text-sm">{reason}</div>;
+    return <div className="text-center text-zinc-500 py-6 text-sm">{reason}</div>;
   }
 
   return (
     <div className="space-y-4">
       {filtered.map((section) => (
         <div key={section.sectionIdx} className="space-y-2">
-          <h4 className="text-sm font-semibold text-pink-400 sticky top-32 sm:top-36 bg-slate-900/90 backdrop-blur py-2 -mx-3 px-3 border-y border-slate-800 no-print">
+          <h4 className="text-sm font-semibold text-pink-400 sticky top-32 sm:top-36 bg-[#141417]/90 backdrop-blur py-2 -mx-3 px-3 border-y border-white/[0.08] no-print">
             {section.sectionTitle}
           </h4>
           <h4 className="text-sm font-semibold text-pink-700 print-only mt-3 mb-1">
@@ -81,8 +81,8 @@ export default function StudyMaterial({
               return (
                 <div
                   key={key}
-                  className={`bg-slate-900/60 border rounded-lg overflow-hidden ${
-                    known ? "border-emerald-700/50" : "border-slate-700"
+                  className={`bg-[#141417]/60 border rounded-lg overflow-hidden ${
+                    known ? "border-emerald-700/50" : "border-white/[0.06]"
                   }`}
                 >
                   <div className="flex items-stretch">
@@ -95,14 +95,14 @@ export default function StudyMaterial({
                       className={`flex-shrink-0 w-9 flex items-center justify-center border-r ${
                         known
                           ? "bg-emerald-700/30 border-emerald-800 text-emerald-300"
-                          : "border-slate-700 text-slate-500 hover:text-emerald-400"
+                          : "border-white/[0.06] text-zinc-500 hover:text-emerald-400"
                       }`}
                     >
                       {known ? "✓" : "○"}
                     </button>
                     <button
                       onClick={() => setOpenQ(isOpen ? null : key)}
-                      className="flex-1 text-left px-3 py-2.5 hover:bg-slate-800/60 transition flex items-start gap-2 min-w-0"
+                      className="flex-1 text-left px-3 py-2.5 hover:bg-[#1c1c20]/60 transition flex items-start gap-2 min-w-0"
                     >
                       <span className="flex items-center gap-1 mt-0.5 flex-shrink-0">
                         {q.level && LEVEL_DOT[q.level] && (
@@ -110,10 +110,10 @@ export default function StudyMaterial({
                         )}
                         <span className="text-blue-400 font-mono text-xs">Q{q.qNum}</span>
                       </span>
-                      <span className={`flex-1 text-sm font-medium min-w-0 break-words ${known ? "text-slate-400" : "text-slate-100"}`}>
+                      <span className={`flex-1 text-sm font-medium min-w-0 break-words ${known ? "text-zinc-400" : "text-zinc-100"}`}>
                         {q.qText}
                       </span>
-                      <span className="text-slate-500 text-sm flex-shrink-0">{isOpen ? "−" : "+"}</span>
+                      <span className="text-zinc-500 text-sm flex-shrink-0">{isOpen ? "−" : "+"}</span>
                     </button>
                     <button
                       onClick={(e) => {
@@ -129,14 +129,14 @@ export default function StudyMaterial({
                       className={`flex-shrink-0 w-9 flex items-center justify-center border-l ${
                         bookmarked
                           ? "text-amber-400 bg-amber-400/10 border-amber-800/50"
-                          : "border-slate-700 text-slate-500 hover:text-amber-400"
+                          : "border-white/[0.06] text-zinc-500 hover:text-amber-400"
                       }`}
                     >
                       {bookmarked ? "★" : "☆"}
                     </button>
                   </div>
                   {isOpen && (
-                    <div className="px-3 pb-3 space-y-2 border-t border-slate-700/50 pt-2">
+                    <div className="px-3 pb-3 space-y-2 border-t border-white/[0.06]/50 pt-2">
                       {q.blocks.map((b, bIdx) => <Block key={bIdx} block={b} highlight={lowerSearch} />)}
                       <QuestionLinks qText={q.qText} sectionTitle={section.sectionTitle} />
                     </div>
@@ -156,7 +156,7 @@ function Block({ block, highlight }) {
     return <h5 className="text-sm font-semibold text-cyan-400 mt-2">{block.text}</h5>;
   }
   if (block.kind === "text") {
-    return <p className="text-sm text-slate-300 leading-relaxed">{renderText(block.text, highlight)}</p>;
+    return <p className="text-sm text-zinc-300 leading-relaxed">{renderText(block.text, highlight)}</p>;
   }
   if (block.kind === "code") {
     return <CodeBlock lines={block.lines} />;
@@ -173,7 +173,7 @@ function Block({ block, highlight }) {
 function DiagramBlock({ lines }) {
   const text = lines.join("\n");
   return (
-    <pre className="bg-slate-950 border border-blue-900/50 rounded p-3 overflow-x-auto text-xs leading-tight">
+    <pre className="bg-[#0c0d12] border border-blue-900/50 rounded p-3 overflow-x-auto text-xs leading-tight">
       <code className="text-blue-300 font-mono whitespace-pre">{text}</code>
     </pre>
   );
@@ -215,7 +215,7 @@ function QuestionLinks({ qText, sectionTitle }) {
   return (
     <div className="flex flex-wrap items-center gap-2 pt-1.5 no-print">
       <a href={google} target="_blank" rel="noopener noreferrer" title="Search this topic on Google"
-         className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:border-blue-500 hover:text-blue-300 transition">
+         className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-[#1c1c20] border border-white/[0.06] text-zinc-300 hover:border-blue-500 hover:text-blue-300 transition">
         🔍 Learn more
       </a>
       {isDSA && (

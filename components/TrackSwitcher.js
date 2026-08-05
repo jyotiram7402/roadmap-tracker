@@ -33,12 +33,12 @@ export default function TrackSwitcher({ activeTrack, onSelect }) {
       onClick={() => setOpen(false)}
     >
       <div
-        className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl"
+        className="bg-[#141417] border border-white/[0.06] rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex-shrink-0 bg-slate-900 border-b border-slate-700 px-4 py-3 flex justify-between items-center rounded-t-2xl">
+        <div className="flex-shrink-0 bg-[#141417] border-b border-white/[0.06] px-4 py-3 flex justify-between items-center rounded-t-2xl">
           <h3 className="font-bold text-white">Choose your track</h3>
-          <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-white text-xl leading-none w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-800">✕</button>
+          <button onClick={() => setOpen(false)} className="text-zinc-400 hover:text-white text-xl leading-none w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#1c1c20]">✕</button>
         </div>
         {/* scrollable list */}
         <div className="p-3 grid gap-2 overflow-y-auto">
@@ -49,7 +49,7 @@ export default function TrackSwitcher({ activeTrack, onSelect }) {
                 key={t.id}
                 onClick={() => { onSelect(t.id); setOpen(false); }}
                 className={`text-left p-3 rounded-xl border transition flex items-center gap-3 ${
-                  isActive ? "border-blue-500 bg-blue-500/10" : "border-slate-700 hover:border-slate-500 bg-slate-800/40"
+                  isActive ? "border-blue-500 bg-blue-500/10" : "border-white/[0.06] hover:border-white/[0.14] bg-[#1c1c20]/40"
                 }`}
               >
                 <div className={`w-11 h-11 rounded-lg bg-gradient-to-br ${ACCENT[t.accent] || ACCENT.amber} flex items-center justify-center text-xl flex-shrink-0`}>
@@ -60,7 +60,7 @@ export default function TrackSwitcher({ activeTrack, onSelect }) {
                     <span className="font-semibold text-white">{t.name}</span>
                     {isActive && <span className="text-[10px] px-1.5 py-0.5 bg-blue-600 rounded-full text-white flex-shrink-0">current</span>}
                   </div>
-                  <p className="text-xs text-slate-400 mt-0.5">{t.tagline}</p>
+                  <p className="text-xs text-zinc-400 mt-0.5">{t.tagline}</p>
                 </div>
               </button>
             );
@@ -75,11 +75,11 @@ export default function TrackSwitcher({ activeTrack, onSelect }) {
       <button
         onClick={() => setOpen(true)}
         title="Switch career track"
-        className="w-full flex items-center gap-2 text-sm px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg"
+        className="w-full flex items-center gap-2 text-sm px-3 py-2 bg-[#1c1c20] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg"
       >
         <span className="text-base leading-none">{active.icon}</span>
         <span className="font-medium truncate flex-1 text-left">{active.short}</span>
-        <span className="text-slate-500">▾</span>
+        <span className="text-zinc-500">▾</span>
       </button>
 
       {open && mounted && createPortal(modal, document.body)}

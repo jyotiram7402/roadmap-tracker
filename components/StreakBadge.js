@@ -5,7 +5,7 @@ export default function StreakBadge({ streak }) {
     return (
       <span
         title="Tick any item today to start a streak"
-        className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700"
+        className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-[#1c1c20] text-zinc-400 border border-white/[0.06]"
       >
         🔥 0
       </span>

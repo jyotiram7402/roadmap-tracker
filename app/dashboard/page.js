@@ -402,19 +402,19 @@ export default function Dashboard() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-2 grid grid-cols-2 gap-3">
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-slate-300">Checklist</span>
+                      <span className="text-zinc-300">Checklist</span>
                       <span className="text-blue-400 font-semibold">{stats.done}/{stats.total} · {stats.pct}%</span>
                     </div>
-                    <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-2 bg-[#1c1c20] rounded-full overflow-hidden">
                       <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all" style={{ width: `${stats.pct}%` }} />
                     </div>
                   </div>
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-slate-300">Q&A Mastered</span>
+                      <span className="text-zinc-300">Q&A Mastered</span>
                       <span className="text-emerald-400 font-semibold">{qaStats.done}/{qaStats.total} · {qaStats.pct}%</span>
                     </div>
-                    <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-2 bg-[#1c1c20] rounded-full overflow-hidden">
                       <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all" style={{ width: `${qaStats.pct}%` }} />
                     </div>
                   </div>
@@ -426,7 +426,7 @@ export default function Dashboard() {
                     placeholder={`Search ${trackMeta.short} topics, Q&A, code...`}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-[#141417] border border-white/[0.08] rounded-lg text-sm text-white focus:outline-none focus:border-blue-500/60"
                   />
                   <FilterChips filters={filters} onChange={setFilters} />
                 </div>
@@ -453,11 +453,11 @@ export default function Dashboard() {
       {view === "roadmap" && (
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-3">
         {dataLoading || !roadmap ? (
-          <div className="text-center text-slate-400 py-16 animate-pulse">Loading {trackMeta.name}…</div>
+          <div className="text-center text-zinc-400 py-16 animate-pulse">Loading {trackMeta.name}…</div>
         ) : (
           <>
             {filteredRoadmap.length === 0 && (
-              <p className="text-center text-slate-400 py-8">No topics match "{search}"</p>
+              <p className="text-center text-zinc-400 py-8">No topics match "{search}"</p>
             )}
             {filteredRoadmap.map((stage) => {
               const st = stageStats(stage);
@@ -468,34 +468,34 @@ export default function Dashboard() {
                 <div
                   key={stage.id}
                   ref={(el) => { if (el) stageRefs.current[stage.id] = el; }}
-                  className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden scroll-mt-48"
+                  className="bg-[#18181b] border border-white/[0.06] rounded-xl overflow-hidden scroll-mt-48"
                 >
-                  <button onClick={() => setOpenStage(isOpen ? null : stage.id)} className="w-full text-left p-4 hover:bg-slate-800 transition flex items-center gap-3">
+                  <button onClick={() => setOpenStage(isOpen ? null : stage.id)} className="w-full text-left p-4 hover:bg-[#1c1c20] transition flex items-center gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h2 className="font-bold text-white">{stage.title}</h2>
-                        {stage.duration && <span className="text-xs text-slate-400">· {stage.duration}</span>}
+                        {stage.duration && <span className="text-xs text-zinc-400">· {stage.duration}</span>}
                       </div>
-                      <p className="text-sm text-slate-400 mt-0.5">{stage.description}</p>
+                      <p className="text-sm text-zinc-400 mt-0.5">{stage.description}</p>
                       <div className="mt-2 flex items-center gap-2 flex-wrap">
-                        <div className="h-1.5 flex-1 bg-slate-700 rounded-full overflow-hidden max-w-xs">
+                        <div className="h-1.5 flex-1 bg-white/[0.08] rounded-full overflow-hidden max-w-xs">
                           <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400" style={{ width: `${st.pct}%` }} />
                         </div>
-                        <span className="text-xs text-slate-400 whitespace-nowrap">
+                        <span className="text-xs text-zinc-400 whitespace-nowrap">
                           {st.done}/{st.total}
                           {qst.total > 0 && <span className="text-pink-400 ml-2">· {qst.done}/{qst.total} Q&A</span>}
                         </span>
                       </div>
                     </div>
-                    <span className="text-slate-400 text-xl">{isOpen ? "−" : "+"}</span>
+                    <span className="text-zinc-400 text-xl">{isOpen ? "−" : "+"}</span>
                   </button>
 
                   {isOpen && (
-                    <div className="border-t border-slate-700">
+                    <div className="border-t border-white/[0.06]">
                       {qst.total > 0 && (
-                        <div className="flex items-center border-b border-slate-700 bg-slate-900/40">
-                          <button onClick={() => setStageTab((s) => ({ ...s, [stage.id]: "checklist" }))} className={`flex-1 px-4 py-2.5 text-sm font-medium transition ${tab === "checklist" ? "text-blue-400 border-b-2 border-blue-400 bg-slate-800/50" : "text-slate-400 hover:text-slate-200"}`}>📋 Checklist</button>
-                          <button onClick={() => setStageTab((s) => ({ ...s, [stage.id]: "study" }))} className={`flex-1 px-4 py-2.5 text-sm font-medium transition ${tab === "study" ? "text-pink-400 border-b-2 border-pink-400 bg-slate-800/50" : "text-slate-400 hover:text-slate-200"}`}>📚 Q&A ({qst.total})</button>
+                        <div className="flex items-center border-b border-white/[0.06] bg-[#141417]">
+                          <button onClick={() => setStageTab((s) => ({ ...s, [stage.id]: "checklist" }))} className={`flex-1 px-4 py-2.5 text-sm font-medium transition ${tab === "checklist" ? "text-blue-400 border-b-2 border-blue-400 bg-[#18181b]" : "text-zinc-400 hover:text-zinc-200"}`}>📋 Checklist</button>
+                          <button onClick={() => setStageTab((s) => ({ ...s, [stage.id]: "study" }))} className={`flex-1 px-4 py-2.5 text-sm font-medium transition ${tab === "study" ? "text-pink-400 border-b-2 border-pink-400 bg-[#18181b]" : "text-zinc-400 hover:text-zinc-200"}`}>📚 Q&A ({qst.total})</button>
                           <div className="px-3 flex-shrink-0">
                             <ExportMenu stage={stage} studySections={study[stage.id]} stageTitle={stage.title} />
                           </div>
@@ -516,7 +516,7 @@ export default function Dashboard() {
                           />
                         ) : (
                           <>
-                            <div className="bg-slate-900/50 rounded-lg p-3 border border-slate-700">
+                            <div className="bg-[#141417] rounded-lg p-3 border border-white/[0.06]">
                               <details>
                                 <summary className="cursor-pointer text-sm font-medium text-amber-400">📝 Stage notes</summary>
                                 <textarea
@@ -524,7 +524,7 @@ export default function Dashboard() {
                                   onChange={(e) => saveNote(stage.id, e.target.value, "stage")}
                                   placeholder="Your notes for this stage..."
                                   rows={4}
-                                  className="w-full mt-2 px-2 py-1.5 bg-slate-800 border border-slate-700 rounded text-sm text-white focus:outline-none focus:border-blue-500"
+                                  className="w-full mt-2 px-2 py-1.5 bg-[#1c1c20] border border-white/[0.06] rounded text-sm text-white focus:outline-none focus:border-blue-500"
                                 />
                               </details>
                             </div>
@@ -562,20 +562,20 @@ export default function Dashboard() {
 
       {view === "roadmap" && roadmap && <StageTOC stages={roadmap} stageStats={stageStats} onJump={jumpToStage} />}
 
-      <footer className="border-t border-slate-800 mt-6 py-8 no-print">
+      <footer className="border-t border-white/[0.08] mt-6 py-8 no-print">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <p className="text-sm text-slate-300 max-w-2xl mx-auto">
+          <p className="text-sm text-zinc-300 max-w-2xl mx-auto">
             📌 Curated from real candidates' interview experiences and the most-repeated questions asked across the internet.
           </p>
           <div className="mt-4 flex items-center justify-center gap-3 text-xs">
-            <a href="https://github.com/jyotiram7402" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white transition">
+            <a href="https://github.com/jyotiram7402" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1c1c20] border border-white/[0.06] text-zinc-300 hover:border-white/[0.14] hover:text-white transition">
               <span>🐙</span> GitHub
             </a>
-            <a href="mailto:jyotiramkamble7402@gmail.com" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white transition">
+            <a href="mailto:jyotiramkamble7402@gmail.com" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1c1c20] border border-white/[0.06] text-zinc-300 hover:border-white/[0.14] hover:text-white transition">
               <span>✉️</span> Connect with me
             </a>
           </div>
-          <p className="mt-4 text-xs text-slate-500">Your progress saves automatically · {TRACKS.length} career tracks · Crack Any Job</p>
+          <p className="mt-4 text-xs text-zinc-500">Your progress saves automatically · {TRACKS.length} career tracks · Crack Any Job</p>
         </div>
       </footer>
         </div>
@@ -767,13 +767,13 @@ function Section({
   const totalDone = done + customDone;
 
   return (
-    <div className="bg-slate-900/50 rounded-lg border border-slate-700 overflow-hidden">
-      <button onClick={onToggleSection} className="w-full text-left p-3 hover:bg-slate-800 transition flex items-center justify-between gap-2">
+    <div className="bg-[#141417] rounded-lg border border-white/[0.06] overflow-hidden">
+      <button onClick={onToggleSection} className="w-full text-left p-3 hover:bg-[#1c1c20] transition flex items-center justify-between gap-2">
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-cyan-400 text-sm">{section.title}</h3>
-          <span className="text-xs text-slate-500">{totalDone} / {total} complete</span>
+          <span className="text-xs text-zinc-500">{totalDone} / {total} complete</span>
         </div>
-        <span className="text-slate-400">{isOpen ? "−" : "+"}</span>
+        <span className="text-zinc-400">{isOpen ? "−" : "+"}</span>
       </button>
 
       {isOpen && (
@@ -787,31 +787,31 @@ function Section({
               <div key={key} className="text-sm">
                 <div className="flex items-start gap-2 group">
                   <input type="checkbox" checked={done} onChange={() => onToggleItem(stage.id, section.id, idx)} className="mt-1 w-4 h-4 cursor-pointer accent-blue-500 flex-shrink-0" />
-                  <span className={`flex-1 ${done ? "line-through text-slate-500" : "text-slate-200"}`}>{item}</span>
-                  <button onClick={() => setOpenNote(isNoteOpen ? null : key)} title="Add/edit note" className={`flex-shrink-0 text-xs px-1.5 py-0.5 rounded transition ${hasNote ? "text-amber-400 bg-amber-400/10" : "text-slate-500 hover:text-amber-400 opacity-0 group-hover:opacity-100"}`}>📝</button>
+                  <span className={`flex-1 ${done ? "line-through text-zinc-500" : "text-zinc-200"}`}>{item}</span>
+                  <button onClick={() => setOpenNote(isNoteOpen ? null : key)} title="Add/edit note" className={`flex-shrink-0 text-xs px-1.5 py-0.5 rounded transition ${hasNote ? "text-amber-400 bg-amber-400/10" : "text-zinc-500 hover:text-amber-400 opacity-0 group-hover:opacity-100"}`}>📝</button>
                 </div>
                 {isNoteOpen && (
-                  <textarea value={notes[key] || ""} onChange={(e) => onSaveNote(key, e.target.value, "item")} placeholder="Your note for this topic..." rows={2} autoFocus className="w-full mt-1 ml-6 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white focus:outline-none focus:border-blue-500" style={{ width: "calc(100% - 24px)" }} />
+                  <textarea value={notes[key] || ""} onChange={(e) => onSaveNote(key, e.target.value, "item")} placeholder="Your note for this topic..." rows={2} autoFocus className="w-full mt-1 ml-6 px-2 py-1 bg-[#1c1c20] border border-white/[0.06] rounded text-xs text-white focus:outline-none focus:border-blue-500" style={{ width: "calc(100% - 24px)" }} />
                 )}
               </div>
             );
           })}
 
           {customItems.length > 0 && (
-            <div className="pt-2 mt-2 border-t border-slate-700">
+            <div className="pt-2 mt-2 border-t border-white/[0.06]">
               <p className="text-xs text-purple-400 mb-1">My custom items:</p>
               {customItems.map((c) => (
                 <div key={c.id} className="flex items-start gap-2 text-sm group">
                   <input type="checkbox" checked={c.done} onChange={() => onToggleCustom(stage.id, section.id, c.id, c.done)} className="mt-1 w-4 h-4 cursor-pointer accent-purple-500 flex-shrink-0" />
-                  <span className={`flex-1 ${c.done ? "line-through text-slate-500" : "text-slate-200"}`}>{c.text}</span>
+                  <span className={`flex-1 ${c.done ? "line-through text-zinc-500" : "text-zinc-200"}`}>{c.text}</span>
                   <button onClick={() => onDeleteCustom(stage.id, section.id, c.id)} className="text-xs text-red-400 hover:text-red-300 opacity-0 group-hover:opacity-100 transition" title="Delete">✕</button>
                 </div>
               ))}
             </div>
           )}
 
-          <form onSubmit={(e) => { e.preventDefault(); onAddCustom(stage.id, section.id, customText); setCustomText(""); }} className="pt-2 mt-2 border-t border-slate-700 flex gap-2">
-            <input type="text" value={customText} onChange={(e) => setCustomText(e.target.value)} placeholder="+ Add your own item..." className="flex-1 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white focus:outline-none focus:border-purple-500" />
+          <form onSubmit={(e) => { e.preventDefault(); onAddCustom(stage.id, section.id, customText); setCustomText(""); }} className="pt-2 mt-2 border-t border-white/[0.06] flex gap-2">
+            <input type="text" value={customText} onChange={(e) => setCustomText(e.target.value)} placeholder="+ Add your own item..." className="flex-1 px-2 py-1 bg-[#1c1c20] border border-white/[0.06] rounded text-xs text-white focus:outline-none focus:border-purple-500" />
             <button type="submit" className="text-xs px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded transition">Add</button>
           </form>
         </div>

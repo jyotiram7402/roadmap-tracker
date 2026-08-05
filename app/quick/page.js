@@ -58,9 +58,9 @@ export default function QuickPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col">
       {/* header */}
-      <header className="sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800">
+      <header className="sticky top-0 z-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
           <Link href="/dashboard" className="text-sm text-blue-400 hover:underline whitespace-nowrap">← Dashboard</Link>
           <h1 className="text-base sm:text-lg font-bold flex-1 min-w-0 truncate">⚡ Quick Practice</h1>
@@ -77,12 +77,12 @@ export default function QuickPage() {
         ) : (
           <div className="mt-5">
             <div className="flex items-center justify-between gap-2 mb-3">
-              <button onClick={() => setSubject(null)} className="text-sm text-slate-300 hover:text-white">← Change subject</button>
-              <span className="text-xs text-slate-400">This session: <span className="text-emerald-400 font-semibold">{session.correct}</span> / {session.attempted} correct</span>
+              <button onClick={() => setSubject(null)} className="text-sm text-zinc-300 hover:text-white">← Change subject</button>
+              <span className="text-xs text-zinc-400">This session: <span className="text-emerald-400 font-semibold">{session.correct}</span> / {session.attempted} correct</span>
             </div>
 
             {!current ? (
-              <div className="text-center py-16 text-slate-500">No questions here yet.</div>
+              <div className="text-center py-16 text-zinc-500">No questions here yet.</div>
             ) : (
               <QuestionCard current={current} answered={answered} onChoose={choose} onNext={nextQ} />
             )}
@@ -90,8 +90,8 @@ export default function QuickPage() {
         )}
       </main>
 
-      <footer className="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-        <div className="font-extrabold text-slate-300 mb-1">Crack <span className="gradient-text">Any Job</span></div>
+      <footer className="border-t border-white/[0.08] py-6 text-center text-xs text-zinc-500">
+        <div className="font-extrabold text-zinc-300 mb-1">Crack <span className="gradient-text">Any Job</span></div>
         Quick Practice · your score is saved on this device
       </footer>
     </div>
@@ -107,8 +107,8 @@ function QuickStats({ stats, onReset }) {
       <StatTile label="Solved" value={correct} accent="text-emerald-400" />
       <StatTile label="Attempted" value={attempted} accent="text-blue-400" />
       <StatTile label="Accuracy" value={`${acc}%`} accent="text-purple-400" />
-      <div className="rounded-xl bg-slate-800/50 border border-slate-700 p-3 flex flex-col justify-center">
-        <button onClick={onReset} className="text-xs px-2 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-400 hover:text-rose-300 hover:border-rose-700/50 transition">↺ Reset stats</button>
+      <div className="rounded-xl bg-[#18181b] border border-white/[0.06] p-3 flex flex-col justify-center">
+        <button onClick={onReset} className="text-xs px-2 py-1.5 rounded-lg bg-[#141417] border border-white/[0.06] text-zinc-400 hover:text-rose-300 hover:border-rose-700/50 transition">↺ Reset stats</button>
       </div>
     </div>
   );
@@ -116,9 +116,9 @@ function QuickStats({ stats, onReset }) {
 
 function StatTile({ label, value, accent }) {
   return (
-    <div className="rounded-xl bg-slate-800/50 border border-slate-700 p-3">
+    <div className="rounded-xl bg-[#18181b] border border-white/[0.06] p-3">
       <div className={`text-2xl font-black ${accent}`}>{value}</div>
-      <div className="text-[11px] text-slate-400 mt-0.5">{label}</div>
+      <div className="text-[11px] text-zinc-400 mt-0.5">{label}</div>
     </div>
   );
 }
@@ -127,20 +127,20 @@ function SubjectPicker({ onPick, stats }) {
   return (
     <div className="mt-6">
       <h2 className="text-lg font-bold text-white">Pick what to practice</h2>
-      <p className="text-sm text-slate-400 mt-1">Random MCQs with instant feedback. Get it right and your score goes up; get it wrong and we show the correct answer with a short explanation.</p>
+      <p className="text-sm text-zinc-400 mt-1">Random MCQs with instant feedback. Get it right and your score goes up; get it wrong and we show the correct answer with a short explanation.</p>
       <div className="mt-4 grid sm:grid-cols-2 gap-3">
         {QUIZ_SUBJECTS.map((s) => {
           const st = stats[s.id] || { attempted: 0, correct: 0 };
           return (
             <button key={s.id} onClick={() => onPick(s.id)}
-              className="text-left rounded-xl border border-slate-700 bg-slate-800/50 hover:border-slate-500 hover:bg-slate-800 transition p-4 group">
+              className="text-left rounded-xl border border-white/[0.06] bg-[#1c1c20]/50 hover:border-white/[0.14] hover:bg-[#1c1c20] transition p-4 group">
               <div className="flex items-center gap-3">
                 <span className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.accent} flex items-center justify-center text-2xl shadow-md`}>{s.icon}</span>
                 <div className="min-w-0">
                   <div className="text-white font-semibold">{s.name}</div>
-                  <div className="text-[11px] text-slate-400">{QUIZ[s.id].length} questions · {st.correct}/{st.attempted} solved</div>
+                  <div className="text-[11px] text-zinc-400">{QUIZ[s.id].length} questions · {st.correct}/{st.attempted} solved</div>
                 </div>
-                <span className="ml-auto text-slate-500 group-hover:text-white transition">›</span>
+                <span className="ml-auto text-zinc-500 group-hover:text-white transition">›</span>
               </div>
             </button>
           );
@@ -151,7 +151,7 @@ function SubjectPicker({ onPick, stats }) {
             <span className="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-2xl shadow-md">🎲</span>
             <div>
               <div className="text-white font-semibold">Mixed — all subjects</div>
-              <div className="text-[11px] text-slate-400">A shuffle of DSA, SQL, Java &amp; MERN questions</div>
+              <div className="text-[11px] text-zinc-400">A shuffle of DSA, SQL, Java &amp; MERN questions</div>
             </div>
           </div>
         </button>
@@ -164,10 +164,10 @@ function QuestionCard({ current, answered, onChoose, onNext }) {
   const meta = subjectMeta(current.subject);
   const isCorrect = answered !== null && answered === current.answer;
   return (
-    <div className="rounded-2xl bg-slate-800/50 border border-slate-700 p-4 sm:p-6">
+    <div className="rounded-2xl bg-[#18181b] border border-white/[0.06] p-4 sm:p-6">
       <div className="flex items-center gap-2 flex-wrap mb-3">
         <span className={`text-[11px] px-2 py-0.5 rounded-full bg-gradient-to-r ${meta.accent} text-white font-semibold`}>{meta.icon} {meta.name}</span>
-        {current.tag && <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300">{current.tag}</span>}
+        {current.tag && <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#141417] border border-white/[0.06] text-zinc-300">{current.tag}</span>}
       </div>
 
       <h2 className="text-base sm:text-lg font-semibold text-white leading-snug">{current.q}</h2>
@@ -175,11 +175,11 @@ function QuestionCard({ current, answered, onChoose, onNext }) {
 
       <div className="mt-4 space-y-2">
         {current.options.map((opt, i) => {
-          let cls = "bg-slate-900/60 border-slate-700 hover:border-slate-500 text-slate-200";
+          let cls = "bg-[#141417]/60 border-white/[0.06] hover:border-white/[0.14] text-zinc-200";
           if (answered !== null) {
             if (i === current.answer) cls = "bg-emerald-500/15 border-emerald-600 text-emerald-200";
             else if (i === answered) cls = "bg-rose-500/15 border-rose-600 text-rose-200";
-            else cls = "bg-slate-900/40 border-slate-800 text-slate-400";
+            else cls = "bg-[#141417]/40 border-white/[0.08] text-zinc-400";
           }
           return (
             <button key={i} onClick={() => onChoose(i)} disabled={answered !== null}
@@ -199,11 +199,11 @@ function QuestionCard({ current, answered, onChoose, onNext }) {
             {isCorrect ? "✓ Correct!" : "✗ Not quite"}
           </div>
           {!isCorrect && (
-            <div className="text-sm text-slate-200 mt-1">
+            <div className="text-sm text-zinc-200 mt-1">
               Correct answer: <span className="font-semibold text-emerald-300">{String.fromCharCode(65 + current.answer)}. {current.options[current.answer]}</span>
             </div>
           )}
-          <p className="text-sm text-slate-300 mt-2 leading-relaxed">{current.explain}</p>
+          <p className="text-sm text-zinc-300 mt-2 leading-relaxed">{current.explain}</p>
           <button onClick={onNext} className="mt-3 px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition">Next question →</button>
         </div>
       )}

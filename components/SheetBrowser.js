@@ -80,19 +80,19 @@ export default function SheetBrowser() {
   if (selected) return <SheetProblemView problem={selected} sheetName={sheet?.name} onBack={() => setSelected(null)} />;
 
   // ---- loading ----
-  if (sheets === undefined) return <div className="text-sm text-slate-500 animate-pulse py-8 text-center">Loading DSA sheets…</div>;
+  if (sheets === undefined) return <div className="text-sm text-zinc-500 animate-pulse py-8 text-center">Loading DSA sheets…</div>;
 
   // ---- sheet picker ----
   if (!sheet) {
     return (
       <div>
-        <p className="text-sm text-slate-400 mb-4">
+        <p className="text-sm text-zinc-400 mb-4">
           Pick a famous DSA sheet. Each is grouped by topic with difficulty filters — click any problem for a full
-          <span className="text-slate-200"> brute → better → optimal</span> Java walkthrough where we&apos;ve worked it out.
+          <span className="text-zinc-200"> brute → better → optimal</span> Java walkthrough where we&apos;ve worked it out.
         </p>
         <div className="grid sm:grid-cols-2 gap-3">
           {sheets.map((s) => {
-            const st = SHEET_STYLE[s.id] || { emoji: "📄", grad: "from-slate-700/30 to-slate-800/10", ring: "border-slate-700" };
+            const st = SHEET_STYLE[s.id] || { emoji: "📄", grad: "from-white/[0.05] to-transparent", ring: "border-white/[0.06]" };
             const solved = s.topics.reduce((n, t) => n + t.problems.filter((p) => hasSolution(p.slug) || (p.lcSlug && hasSolution(p.lcSlug))).length, 0);
             return (
               <button key={s.id} onClick={() => openSheet(s.id)}
@@ -101,20 +101,20 @@ export default function SheetBrowser() {
                   <span className="text-2xl">{st.emoji}</span>
                   <div className="min-w-0">
                     <div className="text-white font-semibold truncate">{s.name}</div>
-                    <div className="text-[11px] text-slate-400">by {s.author}</div>
+                    <div className="text-[11px] text-zinc-400">by {s.author}</div>
                   </div>
                 </div>
                 <div className="mt-3 flex items-center gap-2 flex-wrap text-[11px]">
-                  <span className="px-2 py-0.5 rounded-full bg-slate-900/70 border border-slate-700 text-slate-300">{s.count} problems</span>
-                  <span className="px-2 py-0.5 rounded-full bg-slate-900/70 border border-slate-700 text-slate-300">{s.topics.length} topics</span>
+                  <span className="px-2 py-0.5 rounded-full bg-[#141417]/70 border border-white/[0.06] text-zinc-300">{s.count} problems</span>
+                  <span className="px-2 py-0.5 rounded-full bg-[#141417]/70 border border-white/[0.06] text-zinc-300">{s.topics.length} topics</span>
                   {solved > 0 && <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-700/40 text-emerald-300">✓ {solved} full solutions</span>}
                 </div>
               </button>
             );
           })}
         </div>
-        <p className="text-[11px] text-slate-500 mt-4">
-          Problem lists are compiled from the public <span className="text-slate-400">All-DSA-Sheets</span> collection; solutions &amp; explanations are original.
+        <p className="text-[11px] text-zinc-500 mt-4">
+          Problem lists are compiled from the public <span className="text-zinc-400">All-DSA-Sheets</span> collection; solutions &amp; explanations are original.
         </p>
       </div>
     );
@@ -128,54 +128,54 @@ export default function SheetBrowser() {
         <span className="text-2xl">{(SHEET_STYLE[sheet.id] || {}).emoji || "📄"}</span>
         <div>
           <h2 className="text-lg font-bold text-white leading-tight">{sheet.name}</h2>
-          <div className="text-[11px] text-slate-400">by {sheet.author} · {sheet.count} problems · {sheet.topics.length} topics</div>
+          <div className="text-[11px] text-zinc-400">by {sheet.author} · {sheet.count} problems · {sheet.topics.length} topics</div>
         </div>
       </div>
 
       <div className="space-y-3">
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search this sheet…"
-          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500" />
+          className="w-full px-3 py-2 bg-[#141417] border border-white/[0.08] rounded-lg text-sm text-white focus:outline-none focus:border-blue-500/60" />
         <div className="flex flex-wrap gap-2">
           {[["all", "All"], ["easy", `Easy · ${counts.easy}`], ["medium", `Medium · ${counts.medium}`], ["hard", `Hard · ${counts.hard}`]].map(([v, label]) => (
             <button key={v} onClick={() => setDiff(v)}
-              className={`text-xs px-3 py-1.5 rounded-full border transition ${diff === v ? "bg-blue-600 border-blue-500 text-white" : "bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500"}`}>{label}</button>
+              className={`text-xs px-3 py-1.5 rounded-full border transition ${diff === v ? "bg-blue-600 border-blue-500 text-white" : "bg-[#18181b] border-white/[0.06] text-zinc-400 hover:border-white/[0.14] hover:text-zinc-200"}`}>{label}</button>
           ))}
         </div>
         <div className="flex flex-wrap gap-2 items-center">
           <select value={topic} onChange={(e) => setTopic(e.target.value)}
-            className="text-xs px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-blue-500">
+            className="text-xs px-3 py-2 bg-[#141417] border border-white/[0.08] rounded-lg text-zinc-200 focus:outline-none focus:border-blue-500/60">
             <option value="All">All topics</option>
             {topicNames.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
-          <span className="text-xs text-slate-400 ml-auto">{filtered.length} shown · <span className="text-emerald-400">✓ {counts.solved} solved</span></span>
+          <span className="text-xs text-zinc-400 ml-auto">{filtered.length} shown · <span className="text-emerald-400">✓ {counts.solved} solved</span></span>
         </div>
       </div>
 
       <div className="mt-4 space-y-5">
-        {grouped.length === 0 && <p className="text-center text-slate-500 py-8 text-sm">No problems match these filters.</p>}
+        {grouped.length === 0 && <p className="text-center text-zinc-500 py-8 text-sm">No problems match these filters.</p>}
         {grouped.map(([tname, probs]) => (
           <div key={tname}>
             <div className="flex items-center gap-2 mb-1.5">
-              <h3 className="text-sm font-semibold text-slate-200">{tname}</h3>
-              <span className="text-[11px] text-slate-500">{probs.length}</span>
-              <div className="flex-1 h-px bg-slate-800" />
+              <h3 className="text-sm font-semibold text-zinc-200">{tname}</h3>
+              <span className="text-[11px] text-zinc-500">{probs.length}</span>
+              <div className="flex-1 h-px bg-[#1c1c20]" />
             </div>
             <div className="space-y-1.5">
               {probs.map((p, i) => {
                 const d = p._diff ? DIFF[p._diff] : null;
                 return (
                   <button key={p.slug + i} onClick={() => setSelected(p)}
-                    className="w-full text-left bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-500 rounded-lg px-3 py-2.5 flex items-center gap-3 transition">
-                    <span className={`text-[11px] font-semibold w-14 flex-shrink-0 ${d ? d.cls : "text-slate-500"}`}>{d ? d.label : "—"}</span>
+                    className="w-full text-left bg-[#18181b] hover:bg-[#1f1f23] border border-white/[0.06] hover:border-white/[0.14] rounded-lg px-3 py-2.5 flex items-center gap-3 transition">
+                    <span className={`text-[11px] font-semibold w-14 flex-shrink-0 ${d ? d.cls : "text-zinc-500"}`}>{d ? d.label : "—"}</span>
                     <span className="flex-1 min-w-0">
-                      <span className="text-sm text-slate-100 truncate block">{p.name}</span>
+                      <span className="text-sm text-zinc-100 truncate block">{p.name}</span>
                       {p.companies && p.companies.length > 0 && (
-                        <span className="text-[11px] text-slate-500 truncate block">🏢 {Array.isArray(p.companies) ? p.companies.slice(0, 3).join(", ") : p.companies}</span>
+                        <span className="text-[11px] text-zinc-500 truncate block">🏢 {Array.isArray(p.companies) ? p.companies.slice(0, 3).join(", ") : p.companies}</span>
                       )}
                     </span>
                     {p._solved
                       ? <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-700/40 text-emerald-300 flex-shrink-0">✓ solution</span>
-                      : <span className="text-slate-600 text-sm flex-shrink-0">›</span>}
+                      : <span className="text-zinc-600 text-sm flex-shrink-0">›</span>}
                   </button>
                 );
               })}
@@ -210,38 +210,38 @@ export function SheetProblemView({ problem, sheetName, onBack }) {
 
       <div className="grid lg:grid-cols-2 gap-4">
         {/* LEFT: statement */}
-        <div className="bg-slate-800/40 border border-slate-700 rounded-xl p-4 lg:max-h-[75vh] lg:overflow-y-auto">
+        <div className="bg-[#18181b] border border-white/[0.06] rounded-xl p-4 lg:max-h-[75vh] lg:overflow-y-auto">
           <div className="flex items-center gap-2 flex-wrap">
             <h2 className="text-lg font-bold text-white">{title}</h2>
             {d && <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${d.bg} ${d.cls}`}>{d.label}</span>}
           </div>
-          <div className="mt-1 text-xs text-slate-400">{problem.topic}{sheetName ? ` · ${sheetName}` : ""}</div>
+          <div className="mt-1 text-xs text-zinc-400">{problem.topic}{sheetName ? ` · ${sheetName}` : ""}</div>
 
           {companies.length > 0 && (
-            <div className="mt-3 text-[11px] text-slate-400">
-              <span className="text-slate-500">🏢 Asked at:</span> {companies.join(", ")}
+            <div className="mt-3 text-[11px] text-zinc-400">
+              <span className="text-zinc-500">🏢 Asked at:</span> {companies.join(", ")}
             </div>
           )}
 
           {sol === undefined ? (
-            <div className="mt-4 text-sm text-slate-500 animate-pulse">Loading solution…</div>
+            <div className="mt-4 text-sm text-zinc-500 animate-pulse">Loading solution…</div>
           ) : sol ? (
             <>
-              <p className="mt-4 text-sm text-slate-200 leading-relaxed">{sol.statement}</p>
+              <p className="mt-4 text-sm text-zinc-200 leading-relaxed">{sol.statement}</p>
               {sol.examples?.map((ex, i) => (
-                <div key={i} className="mt-3 bg-slate-950/60 border border-slate-700 rounded-lg p-3 text-sm">
-                  <div className="text-xs font-semibold text-slate-400 mb-1">Example {i + 1}</div>
-                  <div><span className="text-slate-400">Input: </span><span className="font-mono text-slate-200">{ex.input}</span></div>
-                  <div><span className="text-slate-400">Output: </span><span className="font-mono text-emerald-300">{ex.output}</span></div>
-                  {ex.explanation && <div className="text-slate-400 mt-1">{ex.explanation}</div>}
+                <div key={i} className="mt-3 bg-[#141417] border border-white/[0.06] rounded-lg p-3 text-sm">
+                  <div className="text-xs font-semibold text-zinc-400 mb-1">Example {i + 1}</div>
+                  <div><span className="text-zinc-400">Input: </span><span className="font-mono text-zinc-200">{ex.input}</span></div>
+                  <div><span className="text-zinc-400">Output: </span><span className="font-mono text-emerald-300">{ex.output}</span></div>
+                  {ex.explanation && <div className="text-zinc-400 mt-1">{ex.explanation}</div>}
                 </div>
               ))}
             </>
           ) : (
-            <div className="mt-4 text-sm text-slate-400 leading-relaxed">
-              <p>This problem is part of the <span className="text-slate-200">{sheetName}</span> sheet. A full brute → better → optimal
+            <div className="mt-4 text-sm text-zinc-400 leading-relaxed">
+              <p>This problem is part of the <span className="text-zinc-200">{sheetName}</span> sheet. A full brute → better → optimal
               Java breakdown with dry-run tables is being added. In the meantime, open it on the practice site and solve it there.</p>
-              <p className="mt-2 text-slate-500">Tip: many classic problems already have complete solutions under the <span className="text-slate-300">“Problems”</span> tab.</p>
+              <p className="mt-2 text-zinc-500">Tip: many classic problems already have complete solutions under the <span className="text-zinc-300">“Problems”</span> tab.</p>
             </div>
           )}
 
@@ -252,47 +252,47 @@ export function SheetProblemView({ problem, sheetName, onBack }) {
         </div>
 
         {/* RIGHT: approaches */}
-        <div className="bg-slate-800/40 border border-slate-700 rounded-xl p-4 lg:max-h-[75vh] lg:overflow-y-auto">
+        <div className="bg-[#18181b] border border-white/[0.06] rounded-xl p-4 lg:max-h-[75vh] lg:overflow-y-auto">
           {approaches.length > 0 ? (
             <>
-              <div className="flex gap-2 flex-wrap sticky top-0 bg-slate-800/40 pb-2 -mt-1">
+              <div className="flex gap-2 flex-wrap sticky top-0 bg-[#1c1c20]/40 pb-2 -mt-1">
                 {approaches.map((a, i) => (
                   <button key={i} onClick={() => setAi(i)}
-                    className={`text-xs px-3 py-1.5 rounded-full border transition ${ai === i ? "bg-blue-600 border-blue-500 text-white" : "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500"}`}>{a.name}</button>
+                    className={`text-xs px-3 py-1.5 rounded-full border transition ${ai === i ? "bg-blue-600 border-blue-500 text-white" : "bg-[#141417] border-white/[0.06] text-zinc-400 hover:border-white/[0.14] hover:text-zinc-200"}`}>{a.name}</button>
                 ))}
               </div>
               <div className="mt-3">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/15 border border-purple-700/40 text-purple-300">Pattern: {ap.pattern}</span>
-                  <span className="text-xs text-slate-400">⏱ {ap.time}</span>
-                  <span className="text-xs text-slate-400">🗄 {ap.space}</span>
+                  <span className="text-xs text-zinc-400">⏱ {ap.time}</span>
+                  <span className="text-xs text-zinc-400">🗄 {ap.space}</span>
                 </div>
-                <p className="mt-3 text-sm text-slate-300 leading-relaxed">{ap.theory}</p>
+                <p className="mt-3 text-sm text-zinc-300 leading-relaxed">{ap.theory}</p>
                 <div className="mt-3"><CodeBlock lines={ap.code} /></div>
                 {ap.dryRun && (
                   <div className="mt-4">
                     <div className="text-xs font-semibold text-cyan-400 mb-1">Dry run{ap.dryRun.title ? ` — ${ap.dryRun.title}` : ""}</div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-xs border-collapse">
-                        <thead><tr>{ap.dryRun.headers.map((h, i) => <th key={i} className="text-left font-semibold text-slate-300 border border-slate-700 px-2 py-1 bg-slate-900/60">{h}</th>)}</tr></thead>
-                        <tbody>{ap.dryRun.rows.map((row, ri) => (<tr key={ri}>{row.map((cell, ci) => <td key={ci} className="border border-slate-700 px-2 py-1 text-slate-300 font-mono">{cell}</td>)}</tr>))}</tbody>
+                        <thead><tr>{ap.dryRun.headers.map((h, i) => <th key={i} className="text-left font-semibold text-zinc-300 border border-white/[0.06] px-2 py-1 bg-[#141417]/60">{h}</th>)}</tr></thead>
+                        <tbody>{ap.dryRun.rows.map((row, ri) => (<tr key={ri}>{row.map((cell, ci) => <td key={ci} className="border border-white/[0.06] px-2 py-1 text-zinc-300 font-mono">{cell}</td>)}</tr>))}</tbody>
                       </table>
                     </div>
                   </div>
                 )}
               </div>
               {sol.oneLiner && (
-                <div className="mt-4 bg-slate-950/60 border border-slate-700 rounded-lg p-3">
-                  <div className="text-xs font-semibold text-slate-400 mb-1">🎤 Interview one-liner</div>
-                  <p className="text-sm text-slate-300 italic">{sol.oneLiner}</p>
+                <div className="mt-4 bg-[#141417] border border-white/[0.06] rounded-lg p-3">
+                  <div className="text-xs font-semibold text-zinc-400 mb-1">🎤 Interview one-liner</div>
+                  <p className="text-sm text-zinc-300 italic">{sol.oneLiner}</p>
                 </div>
               )}
             </>
           ) : sol === undefined ? (
-            <div className="text-sm text-slate-500 animate-pulse">Loading approaches…</div>
+            <div className="text-sm text-zinc-500 animate-pulse">Loading approaches…</div>
           ) : (
-            <div className="text-sm text-slate-400">
-              <p className="font-semibold text-slate-300 mb-2">Approaches coming soon</p>
+            <div className="text-sm text-zinc-400">
+              <p className="font-semibold text-zinc-300 mb-2">Approaches coming soon</p>
               <p>We&apos;re filling in Brute → Better → Optimal Java solutions with dry-run tables across all sheet problems. Practice this one on the site linked on the left for now.</p>
             </div>
           )}

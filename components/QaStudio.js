@@ -37,8 +37,8 @@ export default function QaStudio({ title, categories, load, storagePrefix }) {
   }, [questions, q]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100 flex flex-col">
-      <header className="sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800">
+    <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col">
+      <header className="sticky top-0 z-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
           <Link href="/dashboard" className="text-sm text-blue-400 hover:underline whitespace-nowrap">← Dashboard</Link>
           <h1 className="text-base sm:text-lg font-bold flex-1 min-w-0 truncate">{title}</h1>
@@ -47,7 +47,7 @@ export default function QaStudio({ title, categories, load, storagePrefix }) {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-3 flex gap-2 overflow-x-auto">
           {categories.map((c) => (
             <button key={c.id} onClick={() => setCat(c.id)}
-              className={`text-sm px-3 py-1.5 rounded-lg font-medium whitespace-nowrap border transition ${cat === c.id ? "bg-blue-600 border-blue-500 text-white" : "bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500"}`}>
+              className={`text-sm px-3 py-1.5 rounded-lg font-medium whitespace-nowrap border transition ${cat === c.id ? "bg-blue-600 border-blue-500 text-white" : "bg-[#18181b] border-white/[0.06] text-zinc-400 hover:border-white/[0.14] hover:text-zinc-200"}`}>
               {c.icon} {c.name}
             </button>
           ))}
@@ -59,27 +59,27 @@ export default function QaStudio({ title, categories, load, storagePrefix }) {
           <QuestionView cat={cat} item={selected} storagePrefix={storagePrefix} onBack={() => setSelected(null)} />
         ) : (
           <>
-            <p className="text-sm text-slate-400 mb-3">{meta?.desc}</p>
+            <p className="text-sm text-zinc-400 mb-3">{meta?.desc}</p>
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Search ${meta?.short || ""} questions…`}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500 mb-4" />
+              className="w-full px-3 py-2 bg-[#141417] border border-white/[0.08] rounded-lg text-sm text-white focus:outline-none focus:border-blue-500/60 mb-4" />
 
             {questions === undefined ? (
-              <div className="text-center py-16 text-slate-500 animate-pulse">Loading questions…</div>
+              <div className="text-center py-16 text-zinc-500 animate-pulse">Loading questions…</div>
             ) : questions.length === 0 ? (
-              <div className="text-center py-16 text-slate-400">
-                <p className="font-semibold text-slate-300">Answers for {meta?.name} are being added.</p>
+              <div className="text-center py-16 text-zinc-400">
+                <p className="font-semibold text-zinc-300">Answers for {meta?.name} are being added.</p>
                 <p className="text-sm mt-1">Check back shortly — this set is being generated.</p>
               </div>
             ) : (
               <>
-                <div className="text-xs text-slate-500 mb-2">{filtered.length} question{filtered.length !== 1 ? "s" : ""}</div>
+                <div className="text-xs text-zinc-500 mb-2">{filtered.length} question{filtered.length !== 1 ? "s" : ""}</div>
                 <div className="space-y-1.5">
                   {filtered.map((item, i) => (
                     <button key={item.slug} onClick={() => setSelected(item)}
-                      className="w-full text-left bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-500 rounded-lg px-3 py-3 flex items-center gap-3 transition">
-                      <span className="text-xs font-mono text-slate-500 w-6 flex-shrink-0">{i + 1}</span>
-                      <span className="flex-1 text-sm text-slate-100">{item.q}</span>
-                      <span className="text-slate-500 flex-shrink-0">›</span>
+                      className="w-full text-left bg-[#18181b] hover:bg-[#1f1f23] border border-white/[0.06] hover:border-white/[0.14] rounded-lg px-3 py-3 flex items-center gap-3 transition">
+                      <span className="text-xs font-mono text-zinc-500 w-6 flex-shrink-0">{i + 1}</span>
+                      <span className="flex-1 text-sm text-zinc-100">{item.q}</span>
+                      <span className="text-zinc-500 flex-shrink-0">›</span>
                     </button>
                   ))}
                 </div>
@@ -89,8 +89,8 @@ export default function QaStudio({ title, categories, load, storagePrefix }) {
         )}
       </main>
 
-      <footer className="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-        <div className="font-extrabold text-slate-300 mb-1">Crack <span className="gradient-text">Any Job</span></div>
+      <footer className="border-t border-white/[0.08] py-6 text-center text-xs text-zinc-500">
+        <div className="font-extrabold text-zinc-300 mb-1">Crack <span className="gradient-text">Any Job</span></div>
         Interview Q&amp;A · written for interviews, with examples &amp; code
       </footer>
     </div>
@@ -103,7 +103,7 @@ function AnswerBlock({ block }) {
     return (
       <div className="my-3 rounded-lg border border-emerald-700/40 bg-emerald-500/10 p-3">
         <div className="text-[11px] font-semibold text-emerald-300 mb-1">💡 Real-life example</div>
-        <p className="text-sm text-slate-200 leading-relaxed">{block.text}</p>
+        <p className="text-sm text-zinc-200 leading-relaxed">{block.text}</p>
       </div>
     );
   }
@@ -111,18 +111,18 @@ function AnswerBlock({ block }) {
     return (
       <div className="my-3 rounded-lg border border-amber-700/40 bg-amber-500/10 p-3">
         <div className="text-[11px] font-semibold text-amber-300 mb-1">📌 Interview note</div>
-        <p className="text-sm text-slate-200 leading-relaxed">{block.text}</p>
+        <p className="text-sm text-zinc-200 leading-relaxed">{block.text}</p>
       </div>
     );
   }
-  return <p className="my-2 text-sm text-slate-200 leading-relaxed">{block.text}</p>;
+  return <p className="my-2 text-sm text-zinc-200 leading-relaxed">{block.text}</p>;
 }
 
 function QuestionView({ cat, item, storagePrefix, onBack }) {
   return (
     <div>
       <button onClick={onBack} className="text-sm text-blue-400 hover:underline mb-3">← All questions</button>
-      <div className="bg-slate-800/40 border border-slate-700 rounded-xl p-4 sm:p-6">
+      <div className="bg-[#18181b] border border-white/[0.06] rounded-xl p-4 sm:p-6">
         <h2 className="text-lg sm:text-xl font-bold text-white">{item.q}</h2>
         <div className="mt-3">
           {item.answer.map((b, i) => <AnswerBlock key={i} block={b} />)}

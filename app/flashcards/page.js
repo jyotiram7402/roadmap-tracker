@@ -94,22 +94,22 @@ export default function FlashcardsPage() {
     return () => document.removeEventListener("keydown", onKey);
   });
 
-  if (!ready) return <div className="min-h-screen flex items-center justify-center text-slate-400">Loading…</div>;
+  if (!ready) return <div className="min-h-screen flex items-center justify-center text-zinc-400">Loading…</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100">
-      <header className="sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800">
+    <div className="min-h-screen bg-[#09090b] text-zinc-100">
+      <header className="sticky top-0 z-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
           <Link href="/dashboard" className="text-sm text-blue-400 hover:underline">← Back</Link>
           <h1 className="text-base sm:text-lg font-bold text-pink-300">🎯 Flashcard Mode</h1>
           <div className="flex items-center gap-2">
             <LiveClock className="hidden sm:flex" />
-            <button onClick={reshuffle} title="Re-shuffle" className="text-xs px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded">🔀</button>
+            <button onClick={reshuffle} title="Re-shuffle" className="text-xs px-2 py-1 bg-[#1c1c20] hover:bg-white/[0.08] rounded">🔀</button>
           </div>
         </div>
         <div className="max-w-3xl mx-auto px-4 pb-3">
-          <label className="block text-[11px] uppercase tracking-wide text-slate-500 mb-1">Subject</label>
-          <select value={trackId} onChange={(e) => setTrackId(e.target.value)} className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm focus:outline-none focus:border-pink-500">
+          <label className="block text-[11px] uppercase tracking-wide text-zinc-500 mb-1">Subject</label>
+          <select value={trackId} onChange={(e) => setTrackId(e.target.value)} className="w-full px-3 py-2 bg-[#1c1c20] border border-white/[0.06] rounded-lg text-sm focus:outline-none focus:border-pink-500">
             {TRACKS.map((t) => <option key={t.id} value={t.id}>{t.icon} {t.name}</option>)}
           </select>
         </div>
@@ -117,32 +117,32 @@ export default function FlashcardsPage() {
 
       <main key={trackId} className="max-w-3xl mx-auto px-4 py-4">
         {dataLoading ? (
-          <div className="text-center py-12 text-slate-500 animate-pulse">Loading questions…</div>
+          <div className="text-center py-12 text-zinc-500 animate-pulse">Loading questions…</div>
         ) : !current ? (
-          <div className="text-center py-12 text-slate-500">No Q&A here yet.</div>
+          <div className="text-center py-12 text-zinc-500">No Q&A here yet.</div>
         ) : (
           <>
-            <div className="flex justify-between items-center mb-2 text-xs text-slate-400">
+            <div className="flex justify-between items-center mb-2 text-xs text-zinc-400">
               <span>Card {pos + 1} / {pool.length}</span>
-              <span className="text-slate-500 hidden sm:inline">Space = flip · ←/→ = nav · K/U = known/unknown</span>
+              <span className="text-zinc-500 hidden sm:inline">Space = flip · ←/→ = nav · K/U = known/unknown</span>
             </div>
 
             <div onClick={() => setFlipped((f) => !f)} className={`card-flip cursor-pointer ${flipped ? "flipped" : ""}`} style={{ minHeight: "60vh" }}>
               <div className="card-flip-inner h-full">
-                <div className="card-face bg-slate-800/60 border border-slate-700 rounded-2xl p-6 sm:p-10 min-h-[60vh] flex flex-col items-center justify-center text-center">
-                  <span className="text-xs text-slate-500 mb-2">Q{current.qNum} · {current.sectionTitle}</span>
+                <div className="card-face bg-[#18181b] border border-white/[0.06] rounded-2xl p-6 sm:p-10 min-h-[60vh] flex flex-col items-center justify-center text-center">
+                  <span className="text-xs text-zinc-500 mb-2">Q{current.qNum} · {current.sectionTitle}</span>
                   <h2 className="text-xl sm:text-2xl font-bold text-white leading-snug max-w-2xl">{current.qText}</h2>
-                  <p className="text-xs text-slate-500 mt-6">Tap or press Space to reveal answer</p>
+                  <p className="text-xs text-zinc-500 mt-6">Tap or press Space to reveal answer</p>
                 </div>
-                <div className="card-face card-back bg-slate-900/80 border border-pink-700/50 rounded-2xl p-4 sm:p-6 min-h-[60vh] overflow-y-auto">
+                <div className="card-face card-back bg-[#141417]/80 border border-pink-700/50 rounded-2xl p-4 sm:p-6 min-h-[60vh] overflow-y-auto">
                   <div className="mb-3 text-xs text-pink-300">A. Q{current.qNum}</div>
                   <div className="space-y-3" onClick={(e) => e.stopPropagation()}>
                     {current.blocks.map((b, i) => {
-                      if (b.kind === "text") return <p key={i} className="text-sm text-slate-200 leading-relaxed">{b.text}</p>;
+                      if (b.kind === "text") return <p key={i} className="text-sm text-zinc-200 leading-relaxed">{b.text}</p>;
                       if (b.kind === "subheader") return <h5 key={i} className="text-sm font-semibold text-cyan-400 mt-2">{b.text}</h5>;
                       if (b.kind === "code") return <CodeBlock key={i} lines={b.lines} />;
                       if (b.kind === "mermaid") return <MermaidDiagram key={i} code={b.lines.join("\n")} />;
-                      if (b.kind === "diagram") return <pre key={i} className="bg-slate-950 border border-blue-900/50 rounded p-3 overflow-x-auto text-xs"><code className="text-blue-300 font-mono whitespace-pre">{b.lines.join("\n")}</code></pre>;
+                      if (b.kind === "diagram") return <pre key={i} className="bg-[#0c0d12] border border-blue-900/50 rounded p-3 overflow-x-auto text-xs"><code className="text-blue-300 font-mono whitespace-pre">{b.lines.join("\n")}</code></pre>;
                       return null;
                     })}
                   </div>
@@ -155,8 +155,8 @@ export default function FlashcardsPage() {
               <button onClick={() => markKnown(true)} className="px-3 py-2.5 bg-emerald-900/40 hover:bg-emerald-900/60 border border-emerald-800 rounded-lg text-sm text-emerald-200">✓ Got it (K)</button>
             </div>
             <div className="grid grid-cols-2 gap-2 mt-2">
-              <button onClick={prev} className="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm">← Previous</button>
-              <button onClick={next} className="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm">Next →</button>
+              <button onClick={prev} className="px-3 py-2 bg-[#1c1c20] hover:bg-white/[0.08] rounded-lg text-sm">← Previous</button>
+              <button onClick={next} className="px-3 py-2 bg-[#1c1c20] hover:bg-white/[0.08] rounded-lg text-sm">Next →</button>
             </div>
           </>
         )}

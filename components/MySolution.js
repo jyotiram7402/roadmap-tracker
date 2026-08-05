@@ -201,13 +201,13 @@ export default function MySolution({ slug, category, title, className = "" }) {
   const done = !!item?.done;
 
   return (
-    <div className={`mt-4 bg-slate-800/40 border border-slate-700 rounded-xl p-4 ${className}`}>
+    <div className={`mt-4 bg-[#18181b] border border-white/[0.06] rounded-xl p-4 ${className}`}>
       {/* activity row */}
       {category && (
-        <div className="flex items-center justify-between gap-2 flex-wrap pb-3 mb-3 border-b border-slate-700">
-          <span className="text-xs text-slate-400">👁 Viewed <span className="text-slate-200 font-semibold">{visits}</span> time{visits === 1 ? "" : "s"}{item?.lastVisit ? ` · last ${item.lastVisit}` : ""}</span>
+        <div className="flex items-center justify-between gap-2 flex-wrap pb-3 mb-3 border-b border-white/[0.06]">
+          <span className="text-xs text-zinc-400">👁 Viewed <span className="text-zinc-200 font-semibold">{visits}</span> time{visits === 1 ? "" : "s"}{item?.lastVisit ? ` · last ${item.lastVisit}` : ""}</span>
           <button onClick={onDone}
-            className={`text-xs font-semibold px-3 py-1.5 rounded-lg border transition ${done ? "bg-emerald-600 border-emerald-500 text-white" : "bg-slate-900 border-slate-600 text-slate-300 hover:border-emerald-600"}`}>
+            className={`text-xs font-semibold px-3 py-1.5 rounded-lg border transition ${done ? "bg-emerald-600 border-emerald-500 text-white" : "bg-[#141417] border-white/[0.1] text-zinc-300 hover:border-emerald-600"}`}>
             {done ? "✓ Done" : "Mark as done"}
           </button>
         </div>
@@ -216,12 +216,12 @@ export default function MySolution({ slug, category, title, className = "" }) {
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div>
           <h3 className="text-sm font-bold text-white">🖊️ My Solution</h3>
-          <p className="text-[11px] text-slate-400">Screenshots ({images.length}/{MAX}) &amp; your own code snippets</p>
+          <p className="text-[11px] text-zinc-400">Screenshots ({images.length}/{MAX}) &amp; your own code snippets</p>
         </div>
         {canAdd && (
           <div className="flex items-center gap-1.5">
             <select value={uploadCat} onChange={(e) => setUploadCat(e.target.value)}
-              className="text-xs px-2 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-blue-500">
+              className="text-xs px-2 py-1.5 bg-[#141417] border border-white/[0.06] rounded-lg text-zinc-200 focus:outline-none focus:border-blue-500">
               {CATS.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
             </select>
             <button onClick={() => inputRef.current?.click()} disabled={busy}
@@ -236,10 +236,10 @@ export default function MySolution({ slug, category, title, className = "" }) {
 
       {/* images grouped by approach */}
       {loading ? (
-        <p className="mt-3 text-xs text-slate-500 animate-pulse">Loading…</p>
+        <p className="mt-3 text-xs text-zinc-500 animate-pulse">Loading…</p>
       ) : images.length === 0 ? (
         <button onClick={() => inputRef.current?.click()} disabled={busy}
-          className="mt-3 w-full py-5 rounded-lg border border-dashed border-slate-600 text-slate-400 hover:border-blue-500 hover:text-blue-300 transition text-sm">
+          className="mt-3 w-full py-5 rounded-lg border border-dashed border-white/[0.1] text-zinc-400 hover:border-blue-500 hover:text-blue-300 transition text-sm">
           {busy ? "…" : "＋ Upload a screenshot of your solution — tag it Brute / Better / Optimal"}
         </button>
       ) : (
@@ -253,7 +253,7 @@ export default function MySolution({ slug, category, title, className = "" }) {
                   return (
                     <div key={img.path || img.url} className="relative group">
                       <button onClick={() => { setZoom(flatIdx); setZoomLevel(1); }} title="Click to view / zoom"
-                        className="block w-full aspect-video rounded-lg overflow-hidden border border-slate-700 hover:border-blue-500 transition">
+                        className="block w-full aspect-video rounded-lg overflow-hidden border border-white/[0.06] hover:border-blue-500 transition">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={img.url} alt={`${g.label} ${i + 1}`} className="w-full h-full object-cover" />
                       </button>
@@ -269,26 +269,26 @@ export default function MySolution({ slug, category, title, className = "" }) {
       )}
 
       {/* code snippets */}
-      <div className="mt-4 pt-3 border-t border-slate-700">
+      <div className="mt-4 pt-3 border-t border-white/[0.06]">
         <div className="flex items-center justify-between gap-2">
-          <h4 className="text-sm font-bold text-white">💻 My Code Snippets <span className="text-slate-500 font-normal">({snippets.length})</span></h4>
-          {!snipOpen && <button onClick={() => setSnipOpen(true)} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-600 text-slate-200 hover:border-blue-500 transition">＋ Add code</button>}
+          <h4 className="text-sm font-bold text-white">💻 My Code Snippets <span className="text-zinc-500 font-normal">({snippets.length})</span></h4>
+          {!snipOpen && <button onClick={() => setSnipOpen(true)} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#141417] border border-white/[0.1] text-zinc-200 hover:border-blue-500 transition">＋ Add code</button>}
         </div>
 
         {snipOpen && (
-          <div className="mt-2 rounded-lg border border-slate-700 bg-slate-900/50 p-3">
+          <div className="mt-2 rounded-lg border border-white/[0.06] bg-[#141417]/50 p-3">
             <div className="flex items-center gap-2 mb-2">
               <select value={snipCat} onChange={(e) => setSnipCat(e.target.value)}
-                className="text-xs px-2 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-blue-500">
+                className="text-xs px-2 py-1.5 bg-[#141417] border border-white/[0.08] rounded-lg text-zinc-200 focus:outline-none focus:border-blue-500/60">
                 {CATS.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
               </select>
-              <span className="text-[11px] text-slate-500">Paste your code below</span>
+              <span className="text-[11px] text-zinc-500">Paste your code below</span>
             </div>
             <textarea value={snipCode} onChange={(e) => setSnipCode(e.target.value)} rows={8} placeholder="// paste your solution code…" spellCheck={false}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs font-mono text-slate-100 focus:outline-none focus:border-blue-500" />
+              className="w-full px-3 py-2 bg-[#0c0d12] border border-white/[0.06] rounded-lg text-xs font-mono text-zinc-100 focus:outline-none focus:border-blue-500" />
             <div className="mt-2 flex gap-2">
               <button onClick={saveSnippet} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition">Save snippet</button>
-              <button onClick={() => { setSnipOpen(false); setSnipCode(""); }} className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-500 transition">Cancel</button>
+              <button onClick={() => { setSnipOpen(false); setSnipCode(""); }} className="text-xs px-3 py-1.5 rounded-lg bg-[#1c1c20] border border-white/[0.06] text-zinc-300 hover:border-white/[0.14] transition">Cancel</button>
             </div>
           </div>
         )}
@@ -299,7 +299,7 @@ export default function MySolution({ slug, category, title, className = "" }) {
               <div key={s.id}>
                 <div className="flex items-center justify-between mb-1">
                   <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${CAT_CLS[s.cat] || CAT_CLS.other}`}>{CAT_LABEL[s.cat] || "Other"}</span>
-                  <button onClick={() => removeSnippet(s.id)} className="text-[11px] text-slate-500 hover:text-rose-400">✕ remove</button>
+                  <button onClick={() => removeSnippet(s.id)} className="text-[11px] text-zinc-500 hover:text-rose-400">✕ remove</button>
                 </div>
                 <CodeBlock lines={s.code.split("\n")} />
               </div>

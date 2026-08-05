@@ -131,15 +131,15 @@ export default function RolesPage() {
     return { total, done };
   }, [sections, qaProgress, activeRole]);
 
-  if (!ready) return <div className="min-h-screen flex items-center justify-center bg-slate-900 text-slate-400">Loading…</div>;
+  if (!ready) return <div className="min-h-screen flex items-center justify-center bg-[#141417] text-zinc-400">Loading…</div>;
 
   const meta = getRoleMeta(activeRole);
 
   // ---- Role picker grid ----
   if (picking) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100">
-        <header className="sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800">
+      <div className="min-h-screen bg-[#09090b] text-zinc-100">
+        <header className="sticky top-0 z-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/[0.06]">
           <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
             <Link href="/dashboard" className="text-sm text-blue-400 hover:underline">← Roadmap</Link>
             <h1 className="text-base sm:text-lg font-bold">💼 Prepare for a Job Role</h1>
@@ -147,16 +147,16 @@ export default function RolesPage() {
           </div>
         </header>
         <main className="max-w-5xl mx-auto px-4 py-6">
-          <p className="text-sm text-slate-400 mb-4">Pick a target role. Each bank groups the most-asked questions by category (Core, System Design, DSA, DBMS, Scenario, AI, HR, Manager) and level.</p>
+          <p className="text-sm text-zinc-400 mb-4">Pick a target role. Each bank groups the most-asked questions by category (Core, System Design, DSA, DBMS, Scenario, AI, HR, Manager) and level.</p>
           <div className="grid sm:grid-cols-2 gap-3">
             {ROLES.map((r) => (
-              <button key={r.id} onClick={() => openRole(r.id)} className="text-left p-4 rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-800/40 transition flex items-start gap-3">
+              <button key={r.id} onClick={() => openRole(r.id)} className="text-left p-4 rounded-xl border border-white/[0.06] hover:border-white/[0.14] bg-[#1c1c20]/40 transition flex items-start gap-3">
                 <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${ACCENT[r.accent] || ACCENT.blue} flex items-center justify-center text-2xl flex-shrink-0`}>{r.icon}</div>
                 <div className="min-w-0">
                   <h2 className="font-semibold text-white">{r.name}</h2>
-                  <p className="text-xs text-slate-400 mt-0.5">{r.tagline}</p>
+                  <p className="text-xs text-zinc-400 mt-0.5">{r.tagline}</p>
                   {r.covers?.length > 1 && (
-                    <p className="text-[11px] text-slate-500 mt-1">Covers: {r.covers.join(" · ")}</p>
+                    <p className="text-[11px] text-zinc-500 mt-1">Covers: {r.covers.join(" · ")}</p>
                   )}
                 </div>
               </button>
@@ -169,8 +169,8 @@ export default function RolesPage() {
 
   // ---- Role detail (question bank) ----
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100">
-      <header className="sticky top-0 z-20 bg-slate-900/95 backdrop-blur border-b border-slate-800 no-print">
+    <div className="min-h-screen bg-[#09090b] text-zinc-100">
+      <header className="sticky top-0 z-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/[0.06] no-print">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
           <button onClick={() => setPicking(true)} className="text-sm text-blue-400 hover:underline">← All roles</button>
           <h1 className="text-sm sm:text-lg font-bold truncate">{meta.icon} {meta.name}</h1>
@@ -179,23 +179,23 @@ export default function RolesPage() {
         <div className="max-w-5xl mx-auto px-4 pb-2">
           <div className="flex gap-1.5 overflow-x-auto pb-1">
             {ROLE_LEVELS.map((l) => (
-              <button key={l.id} onClick={() => setLevel(l.id)} className={`text-xs px-2.5 py-1 rounded-full border whitespace-nowrap transition ${level === l.id ? "bg-blue-500/20 border-blue-500 text-blue-300" : "bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600"}`}>
+              <button key={l.id} onClick={() => setLevel(l.id)} className={`text-xs px-2.5 py-1 rounded-full border whitespace-nowrap transition ${level === l.id ? "bg-blue-500/20 border-blue-500 text-blue-300" : "bg-[#1c1c20] border-white/[0.06] text-zinc-400 hover:border-white/[0.1]"}`}>
                 {l.tag ? `${l.tag} ` : ""}{l.label}
               </button>
             ))}
           </div>
         </div>
         <div className="max-w-5xl mx-auto px-4 pb-3 space-y-2">
-          <input type="text" placeholder={`Search ${meta.name} questions...`} value={search} onChange={(e) => setSearch(e.target.value)} className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500" />
+          <input type="text" placeholder={`Search ${meta.name} questions...`} value={search} onChange={(e) => setSearch(e.target.value)} className="w-full px-3 py-2 bg-[#141417] border border-white/[0.08] rounded-lg text-sm text-white focus:outline-none focus:border-blue-500/60" />
           <FilterChips filters={filters} onChange={setFilters} />
         </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-4">
         {dataLoading || !levelSections ? (
-          <div className="text-center text-slate-400 py-16 animate-pulse">Loading {meta.name} questions…</div>
+          <div className="text-center text-zinc-400 py-16 animate-pulse">Loading {meta.name} questions…</div>
         ) : levelSections.length === 0 ? (
-          <div className="text-center text-slate-500 py-12">No questions at this level yet — try “All levels”.</div>
+          <div className="text-center text-zinc-500 py-12">No questions at this level yet — try “All levels”.</div>
         ) : (
           <StudyMaterial
             stageId={roleStageId(activeRole)}

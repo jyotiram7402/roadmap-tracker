@@ -28,14 +28,14 @@ export default function ExportMenu({ stage, studySections, stageTitle }) {
 
   return (
     <div className="relative inline-block no-print">
-      <button onClick={(e) => { e.stopPropagation(); setOpen(!open); }} className="text-xs px-2 py-1 bg-slate-700 hover:bg-slate-600 rounded text-slate-200" title="Export this stage">⤓ Export</button>
+      <button onClick={(e) => { e.stopPropagation(); setOpen(!open); }} className="text-xs px-2 py-1 bg-white/[0.08] hover:bg-white/[0.14] rounded text-zinc-200" title="Export this stage">⤓ Export</button>
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full mt-1 z-40 bg-slate-800 border border-slate-700 rounded-lg shadow-lg w-44 overflow-hidden">
-            <button onClick={(e) => { e.stopPropagation(); copyMarkdown(); setOpen(false); }} className="w-full text-left text-xs px-3 py-2 hover:bg-slate-700 text-slate-200">📋 Copy as Markdown</button>
-            <button onClick={(e) => { e.stopPropagation(); downloadMd(); setOpen(false); }} className="w-full text-left text-xs px-3 py-2 hover:bg-slate-700 text-slate-200">⬇ Download .md file</button>
-            <button onClick={(e) => { e.stopPropagation(); window.print(); setOpen(false); }} className="w-full text-left text-xs px-3 py-2 hover:bg-slate-700 text-slate-200">🖨 Print / Save as PDF</button>
+          <div className="absolute right-0 top-full mt-1 z-40 bg-[#1c1c20] border border-white/[0.06] rounded-lg shadow-lg w-44 overflow-hidden">
+            <button onClick={(e) => { e.stopPropagation(); copyMarkdown(); setOpen(false); }} className="w-full text-left text-xs px-3 py-2 hover:bg-white/[0.08] text-zinc-200">📋 Copy as Markdown</button>
+            <button onClick={(e) => { e.stopPropagation(); downloadMd(); setOpen(false); }} className="w-full text-left text-xs px-3 py-2 hover:bg-white/[0.08] text-zinc-200">⬇ Download .md file</button>
+            <button onClick={(e) => { e.stopPropagation(); window.print(); setOpen(false); }} className="w-full text-left text-xs px-3 py-2 hover:bg-white/[0.08] text-zinc-200">🖨 Print / Save as PDF</button>
           </div>
         </>
       )}

@@ -66,14 +66,14 @@ export default function MermaidDiagram({ code }) {
   }
   if (!svg) {
     return (
-      <div className="bg-slate-950 border border-blue-900/50 rounded p-4 text-xs text-slate-500 animate-pulse">
+      <div className="bg-[#0c0d12] border border-blue-900/50 rounded p-4 text-xs text-zinc-500 animate-pulse">
         Rendering diagram…
       </div>
     );
   }
   return (
     <div
-      className="mermaid-wrap bg-slate-950 border border-blue-900/50 rounded p-3 overflow-x-auto flex justify-center"
+      className="mermaid-wrap bg-[#0c0d12] border border-blue-900/50 rounded p-3 overflow-x-auto flex justify-center"
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   );

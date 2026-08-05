@@ -20,7 +20,7 @@ export default function FilterChips({ filters, onChange }) {
                 ? c.color === "amber" ? "bg-amber-500/20 border-amber-500 text-amber-300"
                   : c.color === "emerald" ? "bg-emerald-500/20 border-emerald-500 text-emerald-300"
                   : "bg-blue-500/20 border-blue-500 text-blue-300"
-                : "bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600"
+                : "bg-[#1c1c20] border-white/[0.06] text-zinc-400 hover:border-white/[0.1]"
             }`}
           >
             {c.label}

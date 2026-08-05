@@ -15,8 +15,8 @@ export default function LiveClock({ className = "" }) {
   const time = now.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
   return (
     <div className={`flex items-center gap-2 text-xs font-medium ${className}`}>
-      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-300">🗓 {date}</span>
-      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800/80 border border-slate-700 text-cyan-300 tabular-nums">⏱ {time}</span>
+      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[#1c1c20]/80 border border-white/[0.06] text-zinc-300">🗓 {date}</span>
+      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[#1c1c20]/80 border border-white/[0.06] text-cyan-300 tabular-nums">⏱ {time}</span>
     </div>
   );
 }

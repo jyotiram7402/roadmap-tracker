@@ -27,12 +27,12 @@ export default function StageTOC({ stages, stageStats, onJump }) {
           onClick={() => setOpen(false)}
         >
           <div
-            className="bg-slate-900 border border-slate-700 rounded-xl w-full max-w-md max-h-[80vh] overflow-y-auto"
+            className="bg-[#141417] border border-white/[0.06] rounded-xl w-full max-w-md max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="sticky top-0 bg-slate-900 border-b border-slate-700 px-4 py-3 flex justify-between items-center">
+            <div className="sticky top-0 bg-[#141417] border-b border-white/[0.06] px-4 py-3 flex justify-between items-center">
               <h3 className="font-bold text-white">Jump to stage</h3>
-              <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-white text-lg">✕</button>
+              <button onClick={() => setOpen(false)} className="text-zinc-400 hover:text-white text-lg">✕</button>
             </div>
             <div className="p-2 space-y-1">
               {stages.map((stage) => {
@@ -41,13 +41,13 @@ export default function StageTOC({ stages, stageStats, onJump }) {
                   <button
                     key={stage.id}
                     onClick={() => { onJump(stage.id); setOpen(false); }}
-                    className="w-full text-left p-3 rounded-lg hover:bg-slate-800 transition"
+                    className="w-full text-left p-3 rounded-lg hover:bg-[#1c1c20] transition"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-medium text-white text-sm">{stage.title}</span>
                       <span className="text-xs text-blue-400 font-mono whitespace-nowrap">{st.pct}%</span>
                     </div>
-                    <div className="h-1 bg-slate-700 rounded-full overflow-hidden mt-1.5">
+                    <div className="h-1 bg-white/[0.08] rounded-full overflow-hidden mt-1.5">
                       <div className="h-full bg-blue-500" style={{ width: `${st.pct}%` }} />
                     </div>
                   </button>
