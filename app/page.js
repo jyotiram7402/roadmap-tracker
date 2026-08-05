@@ -9,15 +9,26 @@ import {
   SiSpring, SiPostgresql, SiMongodb, SiRedis, SiDocker, SiKubernetes,
   SiGraphql, SiTailwindcss, SiGit,
 } from "react-icons/si";
+import { Coffee, Code2, Sparkles, Database, Zap, MessageSquare } from "@/components/icons";
 
-const ACCENT = {
-  amber: "from-amber-400 to-orange-500",
-  green: "from-green-400 to-emerald-500",
-  purple: "from-purple-400 to-fuchsia-500",
-  cyan: "from-cyan-400 to-sky-500",
-  blue: "from-blue-500 to-indigo-500",
-  teal: "from-teal-400 to-cyan-500",
-  orange: "from-orange-400 to-red-500",
+// Recognizable icon + tinted tile per track / role.
+const DEFAULT_ICON = { Icon: Code2, color: "text-zinc-300", bg: "bg-white/5" };
+const ROLE_ICON = {
+  "java-backend": { Icon: Coffee, color: "text-amber-400", bg: "bg-amber-500/10" },
+  "node-backend": { Icon: SiNodedotjs, color: "text-green-400", bg: "bg-green-500/10" },
+  "mern-dev": { Icon: SiReact, color: "text-cyan-400", bg: "bg-cyan-500/10" },
+  "java-fullstack-role": { Icon: SiSpring, color: "text-emerald-400", bg: "bg-emerald-500/10" },
+  "genai-role": { Icon: Sparkles, color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
+  "sde": { Icon: Code2, color: "text-blue-400", bg: "bg-blue-500/10" },
+};
+const TRACK_ICON = {
+  "java-fullstack": { Icon: Coffee, color: "text-amber-400", bg: "bg-amber-500/10" },
+  "mern": { Icon: SiMongodb, color: "text-green-400", bg: "bg-green-500/10" },
+  "genai": { Icon: Sparkles, color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
+  "fde": { Icon: Zap, color: "text-cyan-400", bg: "bg-cyan-500/10" },
+  "data-engineer": { Icon: Database, color: "text-blue-400", bg: "bg-blue-500/10" },
+  "python-backend": { Icon: SiPython, color: "text-sky-400", bg: "bg-sky-500/10" },
+  "interview-prep": { Icon: MessageSquare, color: "text-violet-400", bg: "bg-violet-500/10" },
 };
 
 const LOGOS = [
@@ -161,16 +172,19 @@ export default function Landing() {
           <p className="text-zinc-400 mt-2 max-w-xl text-[15px]">Follow a structured path with checklists, Q&amp;A, and system-design diagrams for each stage.</p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-          {TRACKS.map((t) => (
-            <Link key={t.id} href={trackHref} className="ui-card ui-card-hover ui-glow group p-5 flex flex-col">
-              <div className="flex items-center gap-3">
-                <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${ACCENT[t.accent] || ACCENT.blue}`} />
-                <h3 className="font-semibold text-[15px] text-white">{t.name}</h3>
-              </div>
-              <p className="mt-3 text-[13px] text-zinc-400 leading-relaxed flex-1">{t.tagline}</p>
-              <span className="mt-4 inline-flex items-center gap-1 text-[13px] font-medium text-blue-400 group-hover:gap-2 transition-all">Explore <span aria-hidden="true">→</span></span>
-            </Link>
-          ))}
+          {TRACKS.map((t) => {
+            const ic = TRACK_ICON[t.id] || DEFAULT_ICON;
+            return (
+              <Link key={t.id} href={trackHref} className="ui-card ui-card-hover ui-glow group p-5 flex flex-col">
+                <div className="flex items-center gap-3">
+                  <span className={`w-10 h-10 rounded-xl grid place-items-center flex-shrink-0 ${ic.bg}`}><ic.Icon size={20} className={ic.color} /></span>
+                  <h3 className="font-semibold text-[15px] text-white">{t.name}</h3>
+                </div>
+                <p className="mt-3 text-[13px] text-zinc-400 leading-relaxed flex-1">{t.tagline}</p>
+                <span className="mt-4 inline-flex items-center gap-1 text-[13px] font-medium text-blue-400 group-hover:gap-2 transition-all">Explore <span aria-hidden="true">→</span></span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
@@ -183,16 +197,19 @@ export default function Landing() {
             <p className="text-zinc-400 mt-2 max-w-xl text-[15px]">Curated banks by role and experience level — core, DBMS, system design, DSA, scenario, and HR rounds.</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {ROLES.map((r) => (
-              <Link key={r.id} href={roleHref} className="ui-card ui-card-hover group p-5 flex items-start gap-3">
-                <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${ACCENT[r.accent] || ACCENT.blue} flex-shrink-0`} />
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-[15px] text-white">{r.name}</h3>
-                  <p className="mt-1 text-[13px] text-zinc-400 leading-relaxed">{r.tagline}</p>
-                  <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-medium text-violet-400 group-hover:gap-2 transition-all">Start prep <span aria-hidden="true">→</span></span>
-                </div>
-              </Link>
-            ))}
+            {ROLES.map((r) => {
+              const ic = ROLE_ICON[r.id] || DEFAULT_ICON;
+              return (
+                <Link key={r.id} href={roleHref} className="ui-card ui-card-hover group p-5 flex items-start gap-3">
+                  <span className={`w-10 h-10 rounded-xl grid place-items-center flex-shrink-0 ${ic.bg}`}><ic.Icon size={20} className={ic.color} /></span>
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-[15px] text-white">{r.name}</h3>
+                    <p className="mt-1 text-[13px] text-zinc-400 leading-relaxed">{r.tagline}</p>
+                    <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-medium text-violet-400 group-hover:gap-2 transition-all">Start prep <span aria-hidden="true">→</span></span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
