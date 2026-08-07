@@ -7,9 +7,9 @@ import ActivityTracker from "@/components/ActivityTracker";
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 
 export const metadata = {
-  title: "Crack Any Job — Tech Interview Prep",
+  title: "CrackDev — Software Engineering Interview Prep",
   description: "Roadmaps, 1,600+ interview Q&A, system-design diagrams, DSA & role-specific question banks to crack your next software engineering job.",
-  applicationName: "Crack Any Job",
+  applicationName: "CrackDev",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [
@@ -21,7 +21,7 @@ export const metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "Crack Any Job",
+    title: "CrackDev",
     statusBarStyle: "black",
   },
 };

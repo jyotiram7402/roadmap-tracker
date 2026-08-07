@@ -45,7 +45,7 @@ export default function ConfirmPage() {
       <div className="relative z-10 w-full max-w-md">
         <Link href="/" className="flex items-center justify-center gap-2 mb-6">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-lg font-black text-white shadow-lg shadow-blue-500/30">C</div>
-          <span className="font-extrabold text-lg text-slate-900">Crack <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Any Job</span></span>
+          <span className="font-extrabold text-lg text-slate-900">Crack<span className="bg-gradient-to-r from-[#7a1f5c] to-[#f0654f] bg-clip-text text-transparent">Dev</span></span>
         </Link>
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200 text-center">
           {status === "loading" && (

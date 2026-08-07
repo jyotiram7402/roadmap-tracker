@@ -14,6 +14,7 @@ import ExportMenu from "@/components/ExportMenu";
 import TrackSwitcher from "@/components/TrackSwitcher";
 import LiveClock from "@/components/LiveClock";
 import ProgressView from "@/components/ProgressView";
+import Logo from "@/components/Logo";
 import {
   LayoutDashboard, BarChart3, Code2, Database, Coffee, Leaf, Bookmark, Layers,
   Zap, Briefcase, MessageSquare, Wrench, ChevronRight, ChevronDown, Flame, Menu,
@@ -332,9 +333,8 @@ export default function Dashboard() {
         <aside className={`fixed z-40 inset-y-0 left-0 w-64 backdrop-blur-xl border-r flex flex-col transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 no-print ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
           style={{ background: "var(--sidebar)", borderColor: "var(--border)" }}>
           <div className="px-4 h-14 flex items-center border-b" style={{ borderColor: "var(--border)" }}>
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center font-black text-sm text-white shadow-lg shadow-blue-500/25">C</div>
-              <span className="font-semibold tracking-tight text-[15px] text-white">Crack Any Job</span>
+            <Link href="/" className="flex items-center">
+              <Logo size={32} textClass="text-[15px] text-white" />
             </Link>
           </div>
 
@@ -384,7 +384,7 @@ export default function Dashboard() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
               <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 -ml-1 rounded-lg text-zinc-300 hover:bg-white/5 transition" aria-label="Open menu"><Menu size={18} /></button>
               <div className="min-w-0 flex-1 flex items-center gap-2">
-                <span className="hidden sm:inline text-[13px] text-zinc-500">Crack Any Job</span>
+                <span className="hidden sm:inline text-[13px] text-zinc-500">CrackDev</span>
                 <ChevronRight size={13} className="hidden sm:inline text-zinc-600 flex-shrink-0" />
                 <h1 className="text-[14px] sm:text-[15px] font-semibold text-white truncate">
                   {view === "hub" ? "Dashboard" : view === "progress" ? "Progress" : trackMeta.name}
@@ -576,7 +576,7 @@ export default function Dashboard() {
               <span>✉️</span> Connect with me
             </a>
           </div>
-          <p className="mt-4 text-xs text-zinc-500">Your progress saves automatically · {TRACKS.length} career tracks · Crack Any Job</p>
+          <p className="mt-4 text-xs text-zinc-500">Your progress saves automatically · {TRACKS.length} career tracks · CrackDev</p>
         </div>
       </footer>
         </div>

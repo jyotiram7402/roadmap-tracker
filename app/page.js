@@ -4,6 +4,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import { TRACKS } from "@/data/tracks";
 import { ROLES } from "@/data/roles";
+import Logo from "@/components/Logo";
 import {
   SiReact, SiNextdotjs, SiTypescript, SiJavascript, SiNodedotjs, SiPython,
   SiSpring, SiPostgresql, SiMongodb, SiRedis, SiDocker, SiKubernetes,
@@ -94,10 +95,7 @@ export default function Landing() {
       {/* NAVBAR */}
       <nav className="sticky top-0 z-30 backdrop-blur-xl border-b" style={{ background: "rgba(9,9,11,.72)", borderColor: "var(--border)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 grid place-items-center font-black text-sm text-white shadow-lg shadow-blue-500/25">C</div>
-            <span className="font-semibold tracking-tight text-[15px]">Crack Any Job</span>
-          </div>
+          <Logo size={32} textClass="text-[15px] text-white" />
           <div className="flex items-center gap-1 sm:gap-2">
             <a href="#tracks" className="hidden sm:inline text-[13px] text-zinc-400 hover:text-white px-3 py-2 rounded-lg transition">Tracks</a>
             <a href="#roles" className="hidden sm:inline text-[13px] text-zinc-400 hover:text-white px-3 py-2 rounded-lg transition">Roles</a>
@@ -242,10 +240,7 @@ export default function Landing() {
       {/* FOOTER */}
       <footer className="relative z-10 border-t" style={{ borderColor: "var(--border)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[13px] text-zinc-500">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 grid place-items-center font-black text-[11px] text-white">C</div>
-            <span className="font-semibold text-zinc-300">Crack Any Job</span>
-          </div>
+          <Logo size={24} textClass="text-[13px] text-zinc-300" />
           <p className="text-center">Roadmaps · Interview Q&amp;A · DSA · SQL · Role prep · Free forever</p>
           <div className="flex items-center gap-4">
             <a href="https://github.com/jyotiram7402" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-200 transition">GitHub</a>

@@ -90,7 +90,7 @@ export default function QaStudio({ title, categories, load, storagePrefix }) {
       </main>
 
       <footer className="border-t border-white/[0.08] py-6 text-center text-xs text-zinc-500">
-        <div className="font-extrabold text-zinc-300 mb-1">Crack <span className="gradient-text">Any Job</span></div>
+        <div className="font-extrabold text-zinc-300 mb-1">Crack<span className="gradient-text">Dev</span></div>
         Interview Q&amp;A · written for interviews, with examples &amp; code
       </footer>
     </div>

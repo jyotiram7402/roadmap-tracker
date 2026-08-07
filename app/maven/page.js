@@ -35,7 +35,7 @@ export default function MavenPage() {
       </main>
 
       <footer className="border-t border-white/[0.08] py-6 text-center text-xs text-zinc-500">
-        <div className="font-extrabold text-zinc-300 mb-1">Crack <span className="gradient-text">Any Job</span></div>
+        <div className="font-extrabold text-zinc-300 mb-1">Crack<span className="gradient-text">Dev</span></div>
         Spring Boot &amp; Spring Framework · Maven
       </footer>
     </div>

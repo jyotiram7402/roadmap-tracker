@@ -64,7 +64,7 @@ export default function PwaInstaller() {
       style={{ background: "rgba(24,24,27,.94)", borderColor: "rgba(255,255,255,.1)", backdropFilter: "blur(12px)" }}>
       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 grid place-items-center text-lg font-black text-white flex-shrink-0">C</div>
       <div className="min-w-0 flex-1 text-zinc-100">
-        <div className="text-sm font-semibold">Install Crack Any Job</div>
+        <div className="text-sm font-semibold">Install CrackDev</div>
         {mode === "ios" ? (
           <div className="text-[11px] text-zinc-400">Tap <span className="text-zinc-200">Share</span> ↑ then <span className="text-zinc-200">&ldquo;Add to Home Screen&rdquo;</span></div>
         ) : mode === "manual" ? (
