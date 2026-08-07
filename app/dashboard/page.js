@@ -17,7 +17,7 @@ import ProgressView from "@/components/ProgressView";
 import {
   LayoutDashboard, BarChart3, Code2, Database, Coffee, Leaf, Bookmark, Layers,
   Zap, Briefcase, MessageSquare, Wrench, ChevronRight, ChevronDown, Flame, Menu,
-  LogOut, ArrowRight, CheckCircle2, Target, Sparkles, Map as MapIcon,
+  LogOut, ArrowRight, CheckCircle2, Target, Sparkles, Map as MapIcon, Building2,
 } from "@/components/icons";
 import * as Activity from "@/lib/activity";
 import { todayLocalDate } from "@/lib/study-helpers";
@@ -351,7 +351,8 @@ export default function Dashboard() {
                 <SideLink href="/springboot-qa" Icon={MessageSquare} label="Interview Q&A" nested onNav={() => setSidebarOpen(false)} />
                 <SideLink href="/maven" Icon={Wrench} label="Maven" nested onNav={() => setSidebarOpen(false)} />
               </SideGroup>
-              <SideLink href="/roles" Icon={Briefcase} label="Prepare by Role" onNav={() => setSidebarOpen(false)} />
+              <SideLink href="/company-qa" Icon={Building2} label="Company-wise Q&A" onNav={() => setSidebarOpen(false)} />
+            <SideLink href="/roles" Icon={Briefcase} label="Prepare by Role" onNav={() => setSidebarOpen(false)} />
               <SideLink href="/quick" Icon={Zap} label="Quick Practice" onNav={() => setSidebarOpen(false)} />
               <SideLink href="/flashcards" Icon={Layers} label="Flashcards" onNav={() => setSidebarOpen(false)} />
               <SideLink href="/bookmarks" Icon={Bookmark} label="Bookmarks" badge={bookmarkCount} onNav={() => setSidebarOpen(false)} />
