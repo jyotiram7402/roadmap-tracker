@@ -4,6 +4,7 @@ import { buildReport, formatDuration, categoryLabel } from "@/lib/activity";
 
 const CAT_COLORS = {
   dsa: "from-blue-500 to-cyan-500",
+  logic: "from-indigo-500 to-blue-500",
   java: "from-rose-500 to-red-500",
   springboot: "from-green-500 to-emerald-500",
   maven: "from-violet-500 to-fuchsia-500",

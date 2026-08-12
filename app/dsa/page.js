@@ -4,10 +4,11 @@ import Link from "next/link";
 import DsaStudio from "@/components/DsaStudio";
 import SheetBrowser from "@/components/SheetBrowser";
 import CrackifyStudio from "@/components/CrackifyStudio";
+import LogicStudio from "@/components/LogicStudio";
 import { DSA_PROBLEMS } from "@/data/dsa-problems";
 
 export default function DsaPage() {
-  const [tab, setTab] = useState("problems"); // "problems" | "sheets" | "crackify"
+  const [tab, setTab] = useState("problems"); // "problems" | "sheets" | "crackify" | "logic"
 
   return (
     <div className="min-h-screen bg-[#09090b] text-zinc-100">
@@ -21,7 +22,7 @@ export default function DsaPage() {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
         {/* tab switch */}
         <div className="inline-flex flex-wrap p-1 bg-[#1c1c20]/70 border border-white/[0.06] rounded-xl mb-4">
-          {[["problems", "🧩 Problems"], ["sheets", "📚 Sheets"], ["crackify", "⚡ Crackify"]].map(([v, label]) => (
+          {[["problems", "🧩 Problems"], ["sheets", "📚 Sheets"], ["crackify", "⚡ Crackify"], ["logic", "🧠 Logic Building"]].map(([v, label]) => (
             <button key={v} onClick={() => setTab(v)}
               className={`text-sm px-4 py-1.5 rounded-lg font-medium transition ${tab === v ? "bg-blue-600 text-white shadow" : "text-zinc-300 hover:text-white"}`}>
               {label}
@@ -39,6 +40,7 @@ export default function DsaPage() {
         )}
         {tab === "sheets" && <SheetBrowser />}
         {tab === "crackify" && <CrackifyStudio />}
+        {tab === "logic" && <LogicStudio />}
       </main>
     </div>
   );
