@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase";
 import { TRACKS } from "@/data/tracks";
 import { ROLES } from "@/data/roles";
 import Logo from "@/components/Logo";
+import BrandFooter from "@/components/BrandFooter";
 import {
   SiReact, SiNextdotjs, SiTypescript, SiJavascript, SiNodedotjs, SiPython,
   SiSpring, SiPostgresql, SiMongodb, SiRedis, SiDocker, SiKubernetes,
@@ -238,16 +239,7 @@ export default function Landing() {
       </section>
 
       {/* FOOTER */}
-      <footer className="relative z-10 border-t" style={{ borderColor: "var(--border)" }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[13px] text-zinc-500">
-          <Logo size={24} textClass="text-[13px] text-zinc-300" />
-          <p className="text-center">Roadmaps · Interview Q&amp;A · DSA · SQL · Role prep · Free forever</p>
-          <div className="flex items-center gap-4">
-            <a href="https://github.com/jyotiram7402" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-200 transition">GitHub</a>
-            <a href="mailto:jyotiramkamble7402@gmail.com" className="hover:text-zinc-200 transition">Contact</a>
-          </div>
-        </div>
-      </footer>
+      <BrandFooter className="z-10" />
     </div>
   );
 }

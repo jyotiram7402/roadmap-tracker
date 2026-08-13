@@ -15,6 +15,7 @@ import TrackSwitcher from "@/components/TrackSwitcher";
 import LiveClock from "@/components/LiveClock";
 import ProgressView from "@/components/ProgressView";
 import Logo from "@/components/Logo";
+import BrandFooter from "@/components/BrandFooter";
 import {
   LayoutDashboard, BarChart3, Code2, Database, Coffee, Leaf, Bookmark, Layers,
   Zap, Briefcase, MessageSquare, Wrench, ChevronRight, ChevronDown, Flame, Menu,
@@ -563,22 +564,7 @@ export default function Dashboard() {
 
       {view === "roadmap" && roadmap && <StageTOC stages={roadmap} stageStats={stageStats} onJump={jumpToStage} />}
 
-      <footer className="border-t border-white/[0.08] mt-6 py-8 no-print">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <p className="text-sm text-zinc-300 max-w-2xl mx-auto">
-            📌 Curated from real candidates' interview experiences and the most-repeated questions asked across the internet.
-          </p>
-          <div className="mt-4 flex items-center justify-center gap-3 text-xs">
-            <a href="https://github.com/jyotiram7402" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1c1c20] border border-white/[0.06] text-zinc-300 hover:border-white/[0.14] hover:text-white transition">
-              <span>🐙</span> GitHub
-            </a>
-            <a href="mailto:jyotiramkamble7402@gmail.com" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1c1c20] border border-white/[0.06] text-zinc-300 hover:border-white/[0.14] hover:text-white transition">
-              <span>✉️</span> Connect with me
-            </a>
-          </div>
-          <p className="mt-4 text-xs text-zinc-500">Your progress saves automatically · {TRACKS.length} career tracks · CrackDev</p>
-        </div>
-      </footer>
+      <BrandFooter className="mt-6 no-print" />
         </div>
       </div>
     </div>
