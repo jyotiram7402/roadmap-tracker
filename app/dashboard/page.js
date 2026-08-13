@@ -15,11 +15,13 @@ import TrackSwitcher from "@/components/TrackSwitcher";
 import LiveClock from "@/components/LiveClock";
 import ProgressView from "@/components/ProgressView";
 import Logo from "@/components/Logo";
-import BrandFooter from "@/components/BrandFooter";
+import ThemeToggle from "@/components/ThemeToggle";
+import TrackChooser from "@/components/TrackChooser";
 import {
   LayoutDashboard, BarChart3, Code2, Database, Coffee, Leaf, Bookmark, Layers,
   Zap, Briefcase, MessageSquare, Wrench, ChevronRight, ChevronDown, Flame, Menu,
   LogOut, ArrowRight, CheckCircle2, Target, Sparkles, Map as MapIcon, Building2,
+  PanelLeft, PanelLeftClose,
 } from "@/components/icons";
 import * as Activity from "@/lib/activity";
 import { todayLocalDate } from "@/lib/study-helpers";
@@ -27,14 +29,16 @@ import { loadQuizStats, totalCorrect, totalAttempted, accuracy } from "@/lib/qui
 import { DSA_PROBLEMS } from "@/data/dsa-problems";
 
 const TRACK_LS_KEY = "roadmap.activeTrack";
+const COLLAPSE_LS_KEY = "crackdev.sidebarCollapsed";
 
 export default function Dashboard() {
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState(null);
 
-  // active track + its lazily-loaded data
-  const [activeTrack, setActiveTrack] = useState(DEFAULT_TRACK);
+  // active track + its lazily-loaded data.
+  // null = the user hasn't chosen a track yet (new users start here).
+  const [activeTrack, setActiveTrack] = useState(null);
   const [roadmap, setRoadmap] = useState(null);
   const [study, setStudy] = useState(null);
   const [dataLoading, setDataLoading] = useState(true);
@@ -59,6 +63,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false); // desktop sidebar collapsed to icons
   const [quizStats, setQuizStats] = useState({});
   const [localStreak, setLocalStreak] = useState(0);
   const stageRefs = useRef({});
@@ -75,13 +80,23 @@ export default function Dashboard() {
     return () => { window.removeEventListener("activity-change", upd); clearInterval(t); };
   }, []);
 
-  // restore track choice on mount
+  // restore track choice + sidebar state on mount.
+  // No saved track => activeTrack stays null and the track chooser is shown.
   useEffect(() => {
     try {
       const saved = localStorage.getItem(TRACK_LS_KEY);
       if (saved && TRACKS.some((t) => t.id === saved)) setActiveTrack(saved);
+      setCollapsed(localStorage.getItem(COLLAPSE_LS_KEY) === "1");
     } catch {}
   }, []);
+
+  function toggleCollapsed() {
+    setCollapsed((c) => {
+      const next = !c;
+      try { localStorage.setItem(COLLAPSE_LS_KEY, next ? "1" : "0"); } catch {}
+      return next;
+    });
+  }
 
   // auth + load all user rows once
   useEffect(() => {
@@ -127,6 +142,7 @@ export default function Dashboard() {
 
   // load active track data whenever it changes
   useEffect(() => {
+    if (!activeTrack) { setRoadmap(null); setStudy(null); setDataLoading(false); return; }
     let mounted = true;
     setDataLoading(true);
     setOpenStage(null); setOpenSection(null);
@@ -324,6 +340,11 @@ export default function Dashboard() {
     );
   }
 
+  // New user (or nobody has picked a track): show the track chooser first.
+  if (!activeTrack) {
+    return <TrackChooser user={user} onSelect={selectTrack} onSignOut={signOut} />;
+  }
+
   return (
     <div className="min-h-screen text-zinc-100" style={{ background: "var(--bg)" }}>
       <div className="lg:flex">
@@ -331,44 +352,48 @@ export default function Dashboard() {
         {sidebarOpen && <div onClick={() => setSidebarOpen(false)} className="fixed inset-0 bg-black/60 z-30 lg:hidden no-print" />}
 
         {/* SIDEBAR */}
-        <aside className={`fixed z-40 inset-y-0 left-0 w-64 backdrop-blur-xl border-r flex flex-col transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 no-print ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+        <aside className={`fixed z-40 inset-y-0 left-0 w-64 ${collapsed ? "lg:w-[76px]" : "lg:w-64"} backdrop-blur-xl border-r flex flex-col transition-[transform,width] duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 no-print ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
           style={{ background: "var(--sidebar)", borderColor: "var(--border)" }}>
-          <div className="px-4 h-14 flex items-center border-b" style={{ borderColor: "var(--border)" }}>
-            <Link href="/" className="flex items-center">
-              <Logo size={32} textClass="text-[15px] text-white" />
+          <div className="px-3 h-14 flex items-center gap-1 border-b" style={{ borderColor: "var(--border)" }}>
+            <Link href="/" className={`flex items-center ${collapsed ? "lg:hidden" : ""}`}>
+              <Logo size={30} showText={!collapsed} textClass="text-[15px] text-white" />
             </Link>
+            <button onClick={toggleCollapsed} title={collapsed ? "Expand sidebar" : "Collapse sidebar"} aria-label="Toggle sidebar"
+              className={`hidden lg:inline-grid place-items-center w-9 h-9 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition ${collapsed ? "mx-auto" : "ml-auto"}`}>
+              {collapsed ? <PanelLeft size={18} /> : <PanelLeftClose size={18} />}
+            </button>
           </div>
 
           <div className="flex-1 overflow-y-auto px-3 py-4">
-            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-zinc-500 mb-2 px-2">Menu</div>
+            <div className={`text-[10.5px] font-semibold uppercase tracking-wider text-zinc-500 mb-2 px-2 ${collapsed ? "lg:hidden" : ""}`}>Menu</div>
             <nav className="space-y-0.5">
-              <SideLink Icon={LayoutDashboard} label="Dashboard" active={view === "hub"} onClick={() => { setView("hub"); setSidebarOpen(false); }} />
-              <SideLink Icon={BarChart3} label="Progress" active={view === "progress"} onClick={() => { setView("progress"); setSidebarOpen(false); }} />
-              <SideLink Icon={MapIcon} label="Roadmap" active={view === "roadmap"} onClick={() => { setView("roadmap"); setSidebarOpen(false); }} />
-              <SideLink href="/dsa" Icon={Code2} label="Prepare DSA" onNav={() => setSidebarOpen(false)} />
-              <SideLink href="/sql" Icon={Database} label="Prepare SQL" onNav={() => setSidebarOpen(false)} />
-              <SideLink href="/java-qa" Icon={Coffee} label="Java Interview Q&A" onNav={() => setSidebarOpen(false)} />
-              <SideGroup Icon={Leaf} label="Spring Boot & Spring">
-                <SideLink href="/springboot-qa" Icon={MessageSquare} label="Interview Q&A" nested onNav={() => setSidebarOpen(false)} />
-                <SideLink href="/maven" Icon={Wrench} label="Maven" nested onNav={() => setSidebarOpen(false)} />
+              <SideLink collapsed={collapsed} Icon={LayoutDashboard} label="Dashboard" active={view === "hub"} onClick={() => { setView("hub"); setSidebarOpen(false); }} />
+              <SideLink collapsed={collapsed} Icon={BarChart3} label="Progress" active={view === "progress"} onClick={() => { setView("progress"); setSidebarOpen(false); }} />
+              <SideLink collapsed={collapsed} Icon={MapIcon} label="Roadmap" active={view === "roadmap"} onClick={() => { setView("roadmap"); setSidebarOpen(false); }} />
+              <SideLink collapsed={collapsed} href="/dsa" Icon={Code2} label="Prepare DSA" onNav={() => setSidebarOpen(false)} />
+              <SideLink collapsed={collapsed} href="/sql" Icon={Database} label="Prepare SQL" onNav={() => setSidebarOpen(false)} />
+              <SideLink collapsed={collapsed} href="/java-qa" Icon={Coffee} label="Java Interview Q&A" onNav={() => setSidebarOpen(false)} />
+              <SideGroup collapsed={collapsed} Icon={Leaf} label="Spring Boot & Spring">
+                <SideLink collapsed={collapsed} href="/springboot-qa" Icon={MessageSquare} label="Interview Q&A" nested onNav={() => setSidebarOpen(false)} />
+                <SideLink collapsed={collapsed} href="/maven" Icon={Wrench} label="Maven" nested onNav={() => setSidebarOpen(false)} />
               </SideGroup>
-              <SideLink href="/company-qa" Icon={Building2} label="Company-wise Q&A" onNav={() => setSidebarOpen(false)} />
-            <SideLink href="/roles" Icon={Briefcase} label="Prepare by Role" onNav={() => setSidebarOpen(false)} />
-              <SideLink href="/quick" Icon={Zap} label="Quick Practice" onNav={() => setSidebarOpen(false)} />
-              <SideLink href="/flashcards" Icon={Layers} label="Flashcards" onNav={() => setSidebarOpen(false)} />
-              <SideLink href="/bookmarks" Icon={Bookmark} label="Bookmarks" badge={bookmarkCount} onNav={() => setSidebarOpen(false)} />
+              <SideLink collapsed={collapsed} href="/company-qa" Icon={Building2} label="Company-wise Q&A" onNav={() => setSidebarOpen(false)} />
+              <SideLink collapsed={collapsed} href="/roles" Icon={Briefcase} label="Prepare by Role" onNav={() => setSidebarOpen(false)} />
+              <SideLink collapsed={collapsed} href="/quick" Icon={Zap} label="Quick Practice" onNav={() => setSidebarOpen(false)} />
+              <SideLink collapsed={collapsed} href="/flashcards" Icon={Layers} label="Flashcards" onNav={() => setSidebarOpen(false)} />
+              <SideLink collapsed={collapsed} href="/bookmarks" Icon={Bookmark} label="Bookmarks" badge={bookmarkCount} onNav={() => setSidebarOpen(false)} />
             </nav>
 
-            <div className="text-[10.5px] font-semibold uppercase tracking-wider text-zinc-500 mt-6 mb-2 px-2">Career track</div>
-            <TrackSwitcher activeTrack={activeTrack} onSelect={(id) => { selectTrack(id); setSidebarOpen(false); }} />
+            <div className={`text-[10.5px] font-semibold uppercase tracking-wider text-zinc-500 mt-6 mb-2 px-2 ${collapsed ? "lg:hidden" : ""}`}>Career track</div>
+            <TrackSwitcher compact={collapsed} activeTrack={activeTrack} onSelect={(id) => { selectTrack(id); setSidebarOpen(false); }} />
           </div>
 
           <div className="p-3 border-t" style={{ borderColor: "var(--border)" }}>
-            <div className="flex items-center gap-2.5 px-2 py-1.5">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-zinc-600 to-zinc-800 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+            <div className={`flex items-center gap-2.5 px-2 py-1.5 ${collapsed ? "lg:flex-col lg:gap-2 lg:px-0" : ""}`}>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-zinc-600 to-zinc-800 flex items-center justify-center text-xs font-bold text-white flex-shrink-0" title={user?.email}>
                 {(user?.email || "?").charAt(0).toUpperCase()}
               </div>
-              <div className="min-w-0 flex-1">
+              <div className={`min-w-0 flex-1 ${collapsed ? "lg:hidden" : ""}`}>
                 <p className="text-[12.5px] font-medium text-zinc-200 truncate">{(user?.email || "").split("@")[0]}</p>
                 <p className="text-[11px] text-zinc-500 truncate">{user?.email}</p>
               </div>
@@ -381,7 +406,7 @@ export default function Dashboard() {
 
         {/* MAIN COLUMN */}
         <div className="flex-1 min-w-0">
-          <header className="sticky top-0 z-20 backdrop-blur-xl border-b no-print" style={{ background: "rgba(9,9,11,.8)", borderColor: "var(--border)" }}>
+          <header className="sticky top-0 z-20 backdrop-blur-xl border-b no-print" style={{ background: "var(--header-bg)", borderColor: "var(--border)" }}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
               <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 -ml-1 rounded-lg text-zinc-300 hover:bg-white/5 transition" aria-label="Open menu"><Menu size={18} /></button>
               <div className="min-w-0 flex-1 flex items-center gap-2">
@@ -397,6 +422,7 @@ export default function Dashboard() {
                 <span className="text-zinc-100">{localStreak}</span>
                 <span className="text-zinc-500 font-normal">day{localStreak === 1 ? "" : "s"}</span>
               </div>
+              <ThemeToggle />
             </div>
 
             {view === "roadmap" && (
@@ -564,46 +590,48 @@ export default function Dashboard() {
 
       {view === "roadmap" && roadmap && <StageTOC stages={roadmap} stageStats={stageStats} onJump={jumpToStage} />}
 
-      <BrandFooter className="mt-6 no-print" />
+      <div className="h-8" aria-hidden="true" />
         </div>
       </div>
     </div>
   );
 }
 
-function SideGroup({ Icon, label, children, defaultOpen = true }) {
+function SideGroup({ Icon, label, children, defaultOpen = true, collapsed }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div>
-      <button onClick={() => setOpen((o) => !o)} className="nav-link w-full" aria-expanded={open}>
+      <button onClick={() => setOpen((o) => !o)} className={`nav-link w-full ${collapsed ? "lg:justify-center lg:px-2" : ""}`} aria-expanded={open} title={collapsed ? label : undefined}>
         {Icon && <Icon size={17} className="flex-shrink-0" />}
-        <span className="flex-1 text-left truncate">{label}</span>
-        <ChevronDown size={14} className={`text-zinc-500 transition-transform duration-200 ${open ? "" : "-rotate-90"}`} />
+        <span className={`flex-1 text-left truncate ${collapsed ? "lg:hidden" : ""}`}>{label}</span>
+        <ChevronDown size={14} className={`text-zinc-500 transition-transform duration-200 ${open ? "" : "-rotate-90"} ${collapsed ? "lg:hidden" : ""}`} />
       </button>
-      {open && (
-        <div className="mt-0.5 ml-4 pl-2 space-y-0.5 border-l anim-fade-in" style={{ borderColor: "var(--border)" }}>
+      {/* Open normally on mobile; when collapsed on desktop, children stay visible (icon-only). */}
+      <div className={`${open ? "" : "hidden"} ${collapsed ? "lg:block" : ""}`}>
+        <div className={`mt-0.5 ml-4 pl-2 space-y-0.5 border-l anim-fade-in ${collapsed ? "lg:ml-0 lg:pl-0 lg:border-l-0" : ""}`} style={{ borderColor: "var(--border)" }}>
           {children}
         </div>
-      )}
+      </div>
     </div>
   );
 }
 
-function SideLink({ href, Icon, label, active, onNav, onClick, badge, nested }) {
+function SideLink({ href, Icon, label, active, onNav, onClick, badge, nested, collapsed }) {
   const inner = (
     <>
       {Icon && <Icon size={nested ? 15 : 17} className="flex-shrink-0" />}
-      <span className="flex-1 truncate">{label}</span>
+      <span className={`flex-1 truncate ${collapsed ? "lg:hidden" : ""}`}>{label}</span>
       {badge != null && (
-        <span className="text-[10.5px] font-semibold px-1.5 py-0.5 rounded-md text-zinc-400" style={{ background: "rgba(255,255,255,.05)" }}>{badge}</span>
+        <span className={`text-[10.5px] font-semibold px-1.5 py-0.5 rounded-md text-zinc-400 ${collapsed ? "lg:hidden" : ""}`} style={{ background: "rgba(255,255,255,.05)" }}>{badge}</span>
       )}
     </>
   );
-  const cls = `nav-link ${nested ? "!text-[13px]" : ""}`;
+  const cls = `nav-link ${nested ? "!text-[13px]" : ""} ${collapsed ? "lg:justify-center lg:px-2" : ""}`;
+  const title = collapsed ? label : undefined;
   if (href) {
-    return <Link href={href} onClick={onNav} className={cls} data-active={active ? "true" : undefined}>{inner}</Link>;
+    return <Link href={href} onClick={onNav} className={cls} data-active={active ? "true" : undefined} title={title}>{inner}</Link>;
   }
-  return <button onClick={onClick} className={`${cls} w-full`} data-active={active ? "true" : undefined}>{inner}</button>;
+  return <button onClick={onClick} className={`${cls} w-full`} data-active={active ? "true" : undefined} title={title}>{inner}</button>;
 }
 
 function Hub({ trackMeta, stats, qaStats, streak, bookmarkCount, quizStats, user, onOpenRoadmap, onOpenProgress }) {

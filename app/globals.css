@@ -21,6 +21,7 @@
   --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
   --shadow: 0 4px 24px -8px rgba(0,0,0,.6);
   --shadow-glow: 0 0 0 1px rgba(59,130,246,.25), 0 8px 30px -8px rgba(59,130,246,.25);
+  --header-bg: rgba(9,9,11,0.8);
   --radius: 14px;
 }
 
@@ -195,3 +196,115 @@ button, input, textarea, details, a { transition: all 0.16s cubic-bezier(0.4, 0,
   background-size: 200% auto; -webkit-background-clip: text; background-clip: text;
   color: transparent; animation: shimmer 6s linear infinite;
 }
+
+/* Giant fading footer wordmark (BrandFooter) — theme-aware fade. */
+.brand-giant { color: transparent; -webkit-background-clip: text; background-clip: text; }
+.brand-giant-a { background-image: linear-gradient(to bottom, rgba(255,255,255,0.16), rgba(255,255,255,0.015)); }
+.brand-giant-b { background-image: linear-gradient(to bottom, rgba(240,101,79,0.42), rgba(240,101,79,0.03)); }
+
+/* ============================================================= */
+/* ===================== LIGHT THEME =========================== */
+/* Opt-in: <html class="light">. Default (no class) stays dark.  */
+/* Retrofit layer — remaps the app's fixed dark palette to light */
+/* without editing every component. Code blocks (#0c0d12) stay   */
+/* dark on purpose so syntax highlighting remains readable.      */
+/* ============================================================= */
+html.light {
+  --bg: #ffffff;
+  --bg-elevated: #ffffff;
+  --sidebar: #f7f8fa;
+  --card: #ffffff;
+  --card-2: #f4f4f6;
+  --border: rgba(9,9,11,0.10);
+  --border-strong: rgba(9,9,11,0.16);
+  --text: #18181b;
+  --text-2: #52525b;
+  --muted: #71717a;
+  --header-bg: rgba(255,255,255,0.85);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.06);
+  --shadow: 0 6px 24px -10px rgba(0,0,0,.14);
+  --shadow-glow: 0 0 0 1px rgba(59,130,246,.25), 0 10px 30px -10px rgba(59,130,246,.20);
+}
+
+/* sidebar links + glass */
+html.light .nav-link:hover { color: var(--text); background: rgba(9,9,11,.05); }
+html.light .nav-link[data-active="true"] { color: #1d4ed8; background: rgba(59,130,246,.12); }
+html.light .ui-glass { background: rgba(255,255,255,.72); }
+html.light .ui-card { background: linear-gradient(180deg, rgba(9,9,11,.015), rgba(9,9,11,0)), var(--card); }
+
+/* --- surface backgrounds: fixed dark hex -> light --- */
+html.light .bg-\[\#09090b\] { background-color: #ffffff !important; }
+html.light .bg-\[\#0e0e11\] { background-color: #ffffff !important; }
+html.light .bg-\[\#141417\] { background-color: #f4f4f6 !important; }
+html.light .bg-\[\#18181b\] { background-color: #ffffff !important; }
+html.light .bg-\[\#1c1c20\] { background-color: #f6f6f8 !important; }
+html.light .bg-\[\#1f1f23\] { background-color: #ececef !important; }
+
+/* --- translucent variants of the same surfaces --- */
+html.light .bg-\[\#0e0e11\]\/80 { background-color: rgba(255,255,255,0.85) !important; }
+html.light .bg-\[\#1c1c20\]\/40 { background-color: rgba(244,244,246,0.6) !important; }
+html.light .bg-\[\#1c1c20\]\/50 { background-color: rgba(244,244,246,0.65) !important; }
+html.light .bg-\[\#1c1c20\]\/60 { background-color: rgba(244,244,246,0.7) !important; }
+html.light .bg-\[\#1c1c20\]\/70 { background-color: rgba(244,244,246,0.8) !important; }
+html.light .bg-\[\#1c1c20\]\/80 { background-color: rgba(244,244,246,0.9) !important; }
+html.light .bg-\[\#141417\]\/40 { background-color: rgba(240,240,243,0.6) !important; }
+html.light .bg-\[\#141417\]\/50 { background-color: rgba(240,240,243,0.7) !important; }
+html.light .bg-\[\#141417\]\/60 { background-color: rgba(240,240,243,0.75) !important; }
+html.light .bg-\[\#141417\]\/70 { background-color: rgba(240,240,243,0.8) !important; }
+html.light .bg-\[\#141417\]\/80 { background-color: rgba(240,240,243,0.9) !important; }
+html.light .bg-\[\#141417\]\/90 { background-color: rgba(240,240,243,0.95) !important; }
+
+/* --- white overlays -> subtle dark overlays --- */
+html.light .bg-white\/\[0\.04\] { background-color: rgba(9,9,11,0.03) !important; }
+html.light .bg-white\/\[0\.05\] { background-color: rgba(9,9,11,0.04) !important; }
+html.light .bg-white\/\[0\.06\] { background-color: rgba(9,9,11,0.05) !important; }
+html.light .bg-white\/\[0\.08\] { background-color: rgba(9,9,11,0.06) !important; }
+html.light .bg-white\/\[0\.10\] { background-color: rgba(9,9,11,0.08) !important; }
+html.light .bg-white\/\[0\.14\] { background-color: rgba(9,9,11,0.10) !important; }
+
+/* --- borders --- */
+html.light .border-white\/\[0\.06\] { border-color: rgba(9,9,11,0.09) !important; }
+html.light .border-white\/\[0\.08\] { border-color: rgba(9,9,11,0.11) !important; }
+html.light .border-white\/\[0\.1\]  { border-color: rgba(9,9,11,0.12) !important; }
+html.light .border-white\/\[0\.14\] { border-color: rgba(9,9,11,0.16) !important; }
+
+/* --- text greys (dark scale -> readable-on-light) --- */
+html.light .text-zinc-100 { color: #18181b !important; }
+html.light .text-zinc-200 { color: #27272a !important; }
+html.light .text-zinc-300 { color: #3f3f46 !important; }
+html.light .text-zinc-400 { color: #52525b !important; }
+html.light .text-zinc-500 { color: #6b7280 !important; }
+html.light .text-zinc-600 { color: #9ca3af !important; }
+html.light .text-white { color: #18181b !important; }
+
+/* keep white text on coloured buttons / badges / gradients */
+html.light [class*="bg-blue-"].text-white,
+html.light [class*="bg-indigo-"].text-white,
+html.light [class*="bg-violet-"].text-white,
+html.light [class*="bg-purple-"].text-white,
+html.light [class*="bg-emerald-"].text-white,
+html.light [class*="bg-green-"].text-white,
+html.light [class*="bg-cyan-"].text-white,
+html.light [class*="bg-teal-"].text-white,
+html.light [class*="bg-rose-"].text-white,
+html.light [class*="bg-amber-"].text-white,
+html.light [class*="bg-orange-"].text-white,
+html.light [class*="bg-gradient-to-"].text-white,
+html.light .ui-btn-primary { color: #ffffff !important; }
+
+/* the sign-in/CTA avatar tiles use a zinc gradient — keep glyph light */
+html.light [class*="from-zinc-6"].text-white,
+html.light [class*="from-zinc-7"].text-white { color: #ffffff !important; }
+
+/* landing tech chips read fine but soften on light */
+html.light .tech-chip { color: #1e293b; background: rgba(226,232,240,0.7); border-color: rgba(100,116,139,0.28); }
+
+/* white pill buttons (e.g. landing "Sign up") need an edge on a light bg */
+html.light a.bg-white, html.light button.bg-white { border: 1px solid rgba(9,9,11,0.12); }
+
+/* giant footer wordmark: fade from dark ink on light backgrounds */
+html.light .brand-giant-a { background-image: linear-gradient(to bottom, rgba(9,9,11,0.13), rgba(9,9,11,0.02)); }
+html.light .brand-giant-b { background-image: linear-gradient(to bottom, rgba(240,101,79,0.55), rgba(240,101,79,0.06)); }
+
+/* code blocks stay dark in light mode — keep their inner border subtle */
+html.light .bg-\[\#0c0d12\] { border-color: rgba(255,255,255,0.06); }

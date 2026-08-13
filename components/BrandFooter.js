@@ -60,8 +60,8 @@ export default function BrandFooter({ className = "" }) {
       <div aria-hidden="true" className="select-none pointer-events-none px-1">
         <div className="text-center font-black tracking-tighter leading-[0.76] whitespace-nowrap"
           style={{ fontSize: "clamp(4.5rem, 21vw, 19rem)" }}>
-          <span style={{ color: "transparent", WebkitBackgroundClip: "text", backgroundClip: "text", backgroundImage: "linear-gradient(to bottom, rgba(255,255,255,0.16), rgba(255,255,255,0.015))" }}>Crack</span>
-          <span style={{ color: "transparent", WebkitBackgroundClip: "text", backgroundClip: "text", backgroundImage: "linear-gradient(to bottom, rgba(240,101,79,0.42), rgba(240,101,79,0.03))" }}>Dev</span>
+          <span className="brand-giant brand-giant-a">Crack</span>
+          <span className="brand-giant brand-giant-b">Dev</span>
         </div>
       </div>
     </footer>

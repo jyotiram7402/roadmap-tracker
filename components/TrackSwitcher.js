@@ -12,7 +12,7 @@ const ACCENT = {
   teal: "from-teal-500 to-cyan-500",
 };
 
-export default function TrackSwitcher({ activeTrack, onSelect }) {
+export default function TrackSwitcher({ activeTrack, onSelect, compact }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const active = TRACKS.find((t) => t.id === activeTrack) || TRACKS[0];
@@ -75,11 +75,11 @@ export default function TrackSwitcher({ activeTrack, onSelect }) {
       <button
         onClick={() => setOpen(true)}
         title="Switch career track"
-        className="w-full flex items-center gap-2 text-sm px-3 py-2 bg-[#1c1c20] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg"
+        className={`w-full flex items-center gap-2 text-sm px-3 py-2 bg-[#1c1c20] hover:bg-white/[0.08] border border-white/[0.06] rounded-lg ${compact ? "lg:justify-center lg:px-2" : ""}`}
       >
         <span className="text-base leading-none">{active.icon}</span>
-        <span className="font-medium truncate flex-1 text-left">{active.short}</span>
-        <span className="text-zinc-500">▾</span>
+        <span className={`font-medium truncate flex-1 text-left ${compact ? "lg:hidden" : ""}`}>{active.short}</span>
+        <span className={`text-zinc-500 ${compact ? "lg:hidden" : ""}`}>▾</span>
       </button>
 
       {open && mounted && createPortal(modal, document.body)}

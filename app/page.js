@@ -6,6 +6,7 @@ import { TRACKS } from "@/data/tracks";
 import { ROLES } from "@/data/roles";
 import Logo from "@/components/Logo";
 import BrandFooter from "@/components/BrandFooter";
+import ThemeToggle from "@/components/ThemeToggle";
 import {
   SiReact, SiNextdotjs, SiTypescript, SiJavascript, SiNodedotjs, SiPython,
   SiSpring, SiPostgresql, SiMongodb, SiRedis, SiDocker, SiKubernetes,
@@ -94,12 +95,13 @@ export default function Landing() {
       </div>
 
       {/* NAVBAR */}
-      <nav className="sticky top-0 z-30 backdrop-blur-xl border-b" style={{ background: "rgba(9,9,11,.72)", borderColor: "var(--border)" }}>
+      <nav className="sticky top-0 z-30 backdrop-blur-xl border-b" style={{ background: "var(--header-bg)", borderColor: "var(--border)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Logo size={32} textClass="text-[15px] text-white" />
           <div className="flex items-center gap-1 sm:gap-2">
             <a href="#tracks" className="hidden sm:inline text-[13px] text-zinc-400 hover:text-white px-3 py-2 rounded-lg transition">Tracks</a>
             <a href="#roles" className="hidden sm:inline text-[13px] text-zinc-400 hover:text-white px-3 py-2 rounded-lg transition">Roles</a>
+            <ThemeToggle />
             {authed ? (
               <Link href="/dashboard" className="text-[13px] font-semibold px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition">Dashboard</Link>
             ) : (
