@@ -21,6 +21,15 @@ export default function PwaInstaller() {
     try { if (sessionStorage.getItem("pwa-install-dismissed")) return; } catch {}
 
     const ua = window.navigator.userAgent || "";
+
+    // Only surface the install prompt on mobile — the app installs as a phone
+    // app, not on desktop. Desktop browsers never see the banner.
+    const isMobile =
+      window.matchMedia("(max-width: 820px)").matches ||
+      /android|iphone|ipad|ipod|mobile|silk|kindle/i.test(ua) ||
+      (navigator.maxTouchPoints > 1 && /macintosh/i.test(ua)); // iPadOS reports as Mac
+    if (!isMobile) return;
+
     const isIOS = /iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && "ontouchend" in document);
     const isSafari = /safari/i.test(ua) && !/crios|fxios|edgios|android/i.test(ua);
     if (isIOS && isSafari) { setMode("ios"); return; }

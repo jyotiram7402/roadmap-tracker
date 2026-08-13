@@ -7,6 +7,7 @@ import { ROLES } from "@/data/roles";
 import Logo from "@/components/Logo";
 import BrandFooter from "@/components/BrandFooter";
 import ThemeToggle from "@/components/ThemeToggle";
+import RotatingRoles from "@/components/RotatingRoles";
 import {
   SiReact, SiNextdotjs, SiTypescript, SiJavascript, SiNodedotjs, SiPython,
   SiSpring, SiPostgresql, SiMongodb, SiRedis, SiDocker, SiKubernetes,
@@ -121,7 +122,7 @@ export default function Landing() {
         </span>
         <h1 className="mt-6 text-4xl sm:text-6xl font-bold tracking-tight leading-[1.05] text-white anim-fade-up" style={{ animationDelay: ".04s" }}>
           Crack your next <br className="hidden sm:block" />
-          <span className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">software engineering</span> job
+          <RotatingRoles /> job
         </h1>
         <p className="mt-5 text-[15px] sm:text-lg text-zinc-400 max-w-2xl mx-auto leading-relaxed anim-fade-up" style={{ animationDelay: ".08s" }}>
           Roadmaps, 1,600+ real interview Q&amp;A, DSA with brute → optimal solutions, SQL, and role-specific
