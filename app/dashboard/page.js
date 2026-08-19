@@ -370,6 +370,7 @@ export default function Dashboard() {
               <SideLink collapsed={collapsed} Icon={LayoutDashboard} label="Dashboard" active={view === "hub"} onClick={() => { setView("hub"); setSidebarOpen(false); }} />
               <SideLink collapsed={collapsed} Icon={BarChart3} label="Progress" active={view === "progress"} onClick={() => { setView("progress"); setSidebarOpen(false); }} />
               <SideLink collapsed={collapsed} Icon={MapIcon} label="Roadmap" active={view === "roadmap"} onClick={() => { setView("roadmap"); setSidebarOpen(false); }} />
+              <SideLink collapsed={collapsed} href="/switch" Icon={Sparkles} label="Career Switch Plan" badge="AI" onNav={() => setSidebarOpen(false)} />
               <SideLink collapsed={collapsed} href="/dsa" Icon={Code2} label="Prepare DSA" onNav={() => setSidebarOpen(false)} />
               <SideLink collapsed={collapsed} href="/sql" Icon={Database} label="Prepare SQL" onNav={() => setSidebarOpen(false)} />
               <SideLink collapsed={collapsed} href="/java-qa" Icon={Coffee} label="Java Interview Q&A" onNav={() => setSidebarOpen(false)} />
