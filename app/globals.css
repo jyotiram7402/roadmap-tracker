@@ -277,6 +277,22 @@ html.light .text-zinc-500 { color: #6b7280 !important; }
 html.light .text-zinc-600 { color: #9ca3af !important; }
 html.light .text-white { color: #18181b !important; }
 
+/* accent text: darken the 300/400 shades so they read on light surfaces */
+html.light .text-blue-300, html.light .text-blue-400 { color: #2563eb !important; }
+html.light .text-sky-300, html.light .text-sky-400 { color: #0284c7 !important; }
+html.light .text-indigo-300, html.light .text-indigo-400 { color: #4f46e5 !important; }
+html.light .text-emerald-300, html.light .text-emerald-400 { color: #059669 !important; }
+html.light .text-green-300, html.light .text-green-400 { color: #16a34a !important; }
+html.light .text-teal-300, html.light .text-teal-400 { color: #0d9488 !important; }
+html.light .text-cyan-300, html.light .text-cyan-400 { color: #0891b2 !important; }
+html.light .text-amber-300, html.light .text-amber-400 { color: #b45309 !important; }
+html.light .text-orange-300, html.light .text-orange-400 { color: #ea580c !important; }
+html.light .text-rose-300, html.light .text-rose-400 { color: #e11d48 !important; }
+html.light .text-pink-300, html.light .text-pink-400 { color: #db2777 !important; }
+html.light .text-violet-300, html.light .text-violet-400 { color: #7c3aed !important; }
+html.light .text-purple-300, html.light .text-purple-400 { color: #7c3aed !important; }
+html.light .text-fuchsia-200, html.light .text-fuchsia-300, html.light .text-fuchsia-400 { color: #c026d3 !important; }
+
 /* keep white text on coloured buttons / badges / gradients */
 html.light [class*="bg-blue-"].text-white,
 html.light [class*="bg-indigo-"].text-white,
