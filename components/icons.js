@@ -45,3 +45,5 @@ export const Rocket = (p) => <Ic {...p}><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.7
 export const Sun = (p) => <Ic {...p}><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></Ic>;
 export const Moon = (p) => <Ic {...p}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></Ic>;
 export const PanelLeftClose = (p) => <Ic {...p}><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M9 3v18" /><path d="m16 15-3-3 3-3" /></Ic>;
+export const FileText = (p) => <Ic {...p}><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></Ic>;
+export const Check = (p) => <Ic {...p}><path d="M20 6 9 17l-5-5" /></Ic>;

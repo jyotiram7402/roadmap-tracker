@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { DSA_PROBLEMS, PHASES, ALL_COMPANIES, loadPhaseDetails } from "@/data/dsa-problems";
 import CodeBlock from "@/components/CodeBlock";
 import MySolution from "@/components/MySolution";
+import QuestionTable from "@/components/QuestionTable";
 
 const DIFF = {
   easy: { label: "Easy", cls: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-700/40" },
@@ -74,25 +75,13 @@ export default function DsaStudio() {
       </div>
 
       {/* list */}
-      <div className="mt-4 space-y-1.5">
-        {filtered.length === 0 && <p className="text-center text-zinc-500 py-8 text-sm">No problems match these filters.</p>}
-        {filtered.map((p) => {
-          const d = DIFF[p.difficulty];
-          return (
-            <button key={p.key} onClick={() => setSelected(p)}
-              className="w-full text-left bg-[#18181b] hover:bg-[#1f1f23] border border-white/[0.06] hover:border-white/[0.14] rounded-lg px-3 py-2.5 flex items-center gap-3 transition">
-              <span className={`text-[11px] font-semibold w-14 flex-shrink-0 ${d.cls}`}>{d.label}</span>
-              <span className="flex-1 min-w-0">
-                <span className="text-sm text-zinc-100 flex items-center gap-1.5">
-                  {p.hot && <span title="Frequently asked" className="text-amber-400">★</span>}
-                  <span className="truncate">{p.title}</span>
-                </span>
-                <span className="text-[11px] text-zinc-500">{p.phase}{p.companies.length ? ` · ${p.companies.slice(0, 2).join(", ")}${p.companies.length > 2 ? ` +${p.companies.length - 2}` : ""}` : ""}</span>
-              </span>
-              <span className="text-zinc-500 text-sm flex-shrink-0">›</span>
-            </button>
-          );
-        })}
+      <div className="mt-4">
+        <QuestionTable
+          items={filtered}
+          category="dsa"
+          onOpen={setSelected}
+          getMeta={(p) => `${p.phase}${p.companies.length ? ` · ${p.companies.slice(0, 2).join(", ")}${p.companies.length > 2 ? ` +${p.companies.length - 2}` : ""}` : ""}`}
+        />
       </div>
     </div>
   );

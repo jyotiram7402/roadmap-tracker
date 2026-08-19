@@ -2,6 +2,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { SQL_PROBLEMS, LEVELS, loadLevelDetails } from "@/data/sql-problems";
 import CodeBlock from "@/components/CodeBlock";
+import MySolution from "@/components/MySolution";
+import QuestionTable from "@/components/QuestionTable";
 
 const DIFF = {
   easy: { label: "Easy", cls: "text-emerald-400" },
@@ -54,24 +56,13 @@ export default function SqlStudio() {
         </div>
       </div>
 
-      <div className="mt-4 space-y-1.5">
-        {filtered.length === 0 && <p className="text-center text-zinc-500 py-8 text-sm">No questions match these filters.</p>}
-        {filtered.map((p) => {
-          const d = DIFF[p.difficulty];
-          return (
-            <button key={p.key} onClick={() => setSelected(p)} className="w-full text-left bg-[#18181b] hover:bg-[#1f1f23] border border-white/[0.06] hover:border-white/[0.14] rounded-lg px-3 py-2.5 flex items-center gap-3 transition">
-              <span className={`text-[11px] font-semibold w-14 flex-shrink-0 ${d.cls}`}>{d.label}</span>
-              <span className="flex-1 min-w-0">
-                <span className="text-sm text-zinc-100 flex items-center gap-1.5">
-                  {p.hot && <span title="Mostly asked" className="text-amber-400">★</span>}
-                  <span className="break-words">{p.title}</span>
-                </span>
-                <span className="text-[11px] text-zinc-500">{p.level} · {TYPE_LABEL[p.type]}</span>
-              </span>
-              <span className="text-zinc-500 text-sm flex-shrink-0">›</span>
-            </button>
-          );
-        })}
+      <div className="mt-4">
+        <QuestionTable
+          items={filtered}
+          category="sql"
+          onOpen={setSelected}
+          getMeta={(p) => `${p.level} · ${TYPE_LABEL[p.type]}`}
+        />
       </div>
     </div>
   );
@@ -124,6 +115,10 @@ function QuestionView({ problem, onBack }) {
             <a href={`https://www.google.com/search?q=${encodeURIComponent(problem.title + " SQL")}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 mt-1 text-xs px-2.5 py-1 rounded-full bg-[#1c1c20] border border-white/[0.06] text-zinc-300 hover:border-blue-500 hover:text-blue-300 transition">🔍 Learn more</a>
           )}
         </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto">
+        <MySolution slug={problem.id} category="sql" title={problem.title} />
       </div>
     </div>
   );
