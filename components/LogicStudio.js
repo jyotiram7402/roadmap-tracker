@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import CodeBlock from "@/components/CodeBlock";
 import MySolution from "@/components/MySolution";
+import StudyNotes from "@/components/StudyNotes";
 import { isDone } from "@/lib/activity";
 
 const DIFF = {
@@ -179,6 +180,7 @@ function LogicProblemView({ phase, problem, onBack }) {
       </div>
 
       <MySolution slug={`logic:${phase.id}:${problem.slug}`} category="logic" title={problem.title} />
+      <StudyNotes slug={`logic:${phase.id}:${problem.slug}`} />
     </div>
   );
 }

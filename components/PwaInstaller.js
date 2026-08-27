@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Logo from "@/components/Logo";
 
 // Registers the minimal service worker and surfaces an "Install" affordance.
 // - Android/Chrome: uses the beforeinstallprompt event (captured pre-hydration
@@ -71,21 +72,21 @@ export default function PwaInstaller() {
   return (
     <div className="fixed bottom-3 inset-x-3 z-[120] mx-auto max-w-md rounded-2xl border shadow-2xl p-3 flex items-center gap-3 anim-fade-up"
       style={{ background: "rgba(24,24,27,.94)", borderColor: "rgba(255,255,255,.1)", backdropFilter: "blur(12px)" }}>
-      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 grid place-items-center text-lg font-black text-white flex-shrink-0">C</div>
-      <div className="min-w-0 flex-1 text-zinc-100">
+      <Logo size={40} showText={false} className="flex-shrink-0" />
+      <div className="min-w-0 flex-1" style={{ color: "#fafafa" }}>
         <div className="text-sm font-semibold">Install CrackDev</div>
         {mode === "ios" ? (
-          <div className="text-[11px] text-zinc-400">Tap <span className="text-zinc-200">Share</span> ↑ then <span className="text-zinc-200">&ldquo;Add to Home Screen&rdquo;</span></div>
+          <div className="text-[11px]" style={{ color: "#a1a1aa" }}>Tap <span style={{ color: "#e4e4e7" }}>Share</span> ↑ then <span style={{ color: "#e4e4e7" }}>&ldquo;Add to Home Screen&rdquo;</span></div>
         ) : mode === "manual" ? (
-          <div className="text-[11px] text-zinc-400">Open the browser menu (⋮) → <span className="text-zinc-200">Install app</span></div>
+          <div className="text-[11px]" style={{ color: "#a1a1aa" }}>Open the browser menu (⋮) → <span style={{ color: "#e4e4e7" }}>Install app</span></div>
         ) : (
-          <div className="text-[11px] text-zinc-400">Add the app to your home screen</div>
+          <div className="text-[11px]" style={{ color: "#a1a1aa" }}>Add the app to your home screen</div>
         )}
       </div>
       {mode === "install" && (
         <button onClick={install} className="text-xs font-semibold px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0">Install</button>
       )}
-      <button onClick={dismiss} aria-label="Dismiss" className="text-zinc-400 hover:text-white px-1 flex-shrink-0 text-lg leading-none">✕</button>
+      <button onClick={dismiss} aria-label="Dismiss" className="hover:opacity-100 opacity-70 px-1 flex-shrink-0 text-lg leading-none" style={{ color: "#d4d4d8" }}>✕</button>
     </div>
   );
 }

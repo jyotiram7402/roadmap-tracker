@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { difficultyForSlug, hasSolution, loadSolutionBySlug } from "@/data/dsa-problems";
 import CodeBlock from "@/components/CodeBlock";
 import MySolution from "@/components/MySolution";
+import StudyNotes from "@/components/StudyNotes";
 
 const DIFF = {
   easy: { label: "Easy", cls: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-700/40" },
@@ -300,6 +301,7 @@ export function SheetProblemView({ problem, sheetName, onBack }) {
       </div>
 
       <MySolution slug={problem.slug} category="dsa" title={problem.name} />
+      <StudyNotes slug={problem.slug} />
     </div>
   );
 }

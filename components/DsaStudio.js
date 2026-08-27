@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { DSA_PROBLEMS, PHASES, ALL_COMPANIES, loadPhaseDetails } from "@/data/dsa-problems";
 import CodeBlock from "@/components/CodeBlock";
 import MySolution from "@/components/MySolution";
+import StudyNotes from "@/components/StudyNotes";
 import QuestionTable from "@/components/QuestionTable";
 
 const DIFF = {
@@ -220,6 +221,7 @@ function ProblemView({ problem, onBack }) {
       </div>
 
       <MySolution slug={problem.id} category="dsa" title={problem.title} />
+      <StudyNotes slug={problem.id} />
     </div>
   );
 }

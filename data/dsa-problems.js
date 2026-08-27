@@ -8,7 +8,7 @@
 const RAW = {
   Arrays: {
     easy: ["Two Sum", "Contains Duplicate", "Remove Duplicates from Sorted Array", "Remove Element", "Move Zeroes", "Merge Sorted Array", "Best Time to Buy and Sell Stock", "Majority Element", "Missing Number", "Single Number", "Find All Numbers Disappeared in an Array", "Squares of a Sorted Array", "Intersection of Two Arrays II", "Binary Search", "Search Insert Position", "Height Checker", "Find Pivot Index", "Running Sum of 1D Array", "Richest Customer Wealth", "Kids With Greatest Number of Candies", "Find the Highest Altitude", "Shuffle the Array", "Concatenation of Array", "Build Array from Permutation", "Replace Elements with Greatest Element on Right Side", "Remove Duplicates from Sorted Array II", "How Many Numbers Are Smaller Than the Current Number", "Minimum Time Visiting All Points", "Minimum Absolute Difference"],
-    medium: ["3Sum", "3Sum Closest", "4Sum", "Product of Array Except Self", "Maximum Product Subarray", "Maximum Subarray", "Container With Most Water", "Sort Colors", "Rotate Array", "Merge Intervals", "Insert Interval", "Spiral Matrix", "Set Matrix Zeroes", "Next Permutation", "Find the Duplicate Number", "Kth Largest Element in an Array", "Top K Frequent Elements", "Find Peak Element", "Search in Rotated Sorted Array", "Find Minimum in Rotated Sorted Array", "Gas Station", "Jump Game", "Jump Game II", "Candy", "Subarray Sum Equals K", "Continuous Subarray Sum", "Maximum Sum Circular Subarray", "Minimum Size Subarray Sum"],
+    medium: ["3Sum", "3Sum Closest", "4Sum", "Product of Array Except Self", "Maximum Product Subarray", "Maximum Subarray", "Best Time to Buy and Sell Stock II", "Container With Most Water", "Sort Colors", "Rotate Array", "Merge Intervals", "Insert Interval", "Spiral Matrix", "Set Matrix Zeroes", "Next Permutation", "Find the Duplicate Number", "Kth Largest Element in an Array", "Top K Frequent Elements", "Find Peak Element", "Search in Rotated Sorted Array", "Find Minimum in Rotated Sorted Array", "Gas Station", "Jump Game", "Jump Game II", "Candy", "Subarray Sum Equals K", "Continuous Subarray Sum", "Maximum Sum Circular Subarray", "Minimum Size Subarray Sum"],
     hard: ["Trapping Rain Water", "First Missing Positive", "Median of Two Sorted Arrays", "Sliding Window Maximum", "Count of Smaller Numbers After Self", "Reverse Pairs"]
   },
   Strings: {
@@ -73,6 +73,7 @@ const COMPANIES = {
   "Two Sum": ["Amazon", "Google", "Microsoft", "Apple", "Adobe"],
   "Contains Duplicate": ["Amazon", "Microsoft", "Adobe"],
   "Best Time to Buy and Sell Stock": ["Amazon", "Google", "Facebook", "Microsoft"],
+  "Best Time to Buy and Sell Stock II": ["Amazon", "Facebook", "Microsoft", "Bloomberg"],
   "Maximum Subarray": ["Amazon", "Microsoft", "LinkedIn", "Bloomberg"],
   "Move Zeroes": ["Facebook", "Amazon", "Bloomberg"],
   "3Sum": ["Amazon", "Facebook", "Adobe", "Microsoft"],
@@ -107,7 +108,7 @@ const COMPANIES = {
 
 // Most-asked (⭐) — shown by the "Most asked" filter and a star badge.
 const HOT = new Set([
-  "Two Sum", "Contains Duplicate", "Best Time to Buy and Sell Stock", "Maximum Subarray", "3Sum",
+  "Two Sum", "Contains Duplicate", "Best Time to Buy and Sell Stock", "Best Time to Buy and Sell Stock II", "Maximum Subarray", "3Sum",
   "Product of Array Except Self", "Merge Intervals", "Container With Most Water", "Rotate Array",
   "Longest Substring Without Repeating Characters", "Group Anagrams", "Valid Parentheses",
   "Trapping Rain Water", "Median of Two Sorted Arrays", "Reverse Linked List", "LRU Cache",

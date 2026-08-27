@@ -123,6 +123,20 @@ export const DETAILS = {
     oneLiner: "Track the minimum price so far in one pass; at each day the candidate profit is price − minSoFar, and we keep the maximum. O(n) time, O(1) space.",
     similar: [["121", "Best Time to Buy/Sell Stock", "One pass"], ["122", "Best Time II", "Greedy"], ["53", "Maximum Subarray", "Kadane"]]
   },
+  "best-time-to-buy-and-sell-stock-ii": {
+    statement: "Given prices where prices[i] is the stock price on day i, you may buy and sell as many times as you like, holding at most one share at a time (you can even buy and sell on the same day). Return the maximum total profit.",
+    examples: [
+      { input: "prices = [7,1,5,3,6,4]", output: "7", explanation: "Buy at 1 (day 2) sell at 5 (day 3) → 4; buy at 3 (day 4) sell at 6 (day 5) → 3. Total 7." },
+      { input: "prices = [1,2,3,4,5]", output: "4", explanation: "Buy at 1, sell at 5 (equivalently capture every daily rise). Total 4." },
+      { input: "prices = [7,6,4,3,1]", output: "0", explanation: "Prices only fall — never buy." }
+    ],
+    approaches: [
+      { name: "Brute Force", pattern: "Recursion (buy / sell / skip)", theory: "At each day you either act (buy if you hold nothing, sell if you hold a share) or skip to the next day. Explore both branches and take the best — this tries every valid sequence of transactions.", code: ["public int maxProfit(int[] p) {", "    return calc(p, 0, 0); // 0 = not holding", "}", "private int calc(int[] p, int i, int holding) {", "    if (i == p.length) return 0;", "    int skip = calc(p, i + 1, holding);", "    int act = holding == 1", "        ? p[i] + calc(p, i + 1, 0)   // sell today", "        : -p[i] + calc(p, i + 1, 1); // buy today", "    return Math.max(skip, act);", "}"], time: "O(2^n)", space: "O(n) recursion" },
+      { name: "Optimal", pattern: "Greedy (sum positive diffs)", theory: "Any profitable multi-day hold equals the sum of its daily rises, and daily falls are worth skipping. So just add up every positive consecutive difference prices[i] − prices[i-1]. It's like buying at the start of each uphill run and selling at its peak.", code: ["public int maxProfit(int[] p) {", "    int profit = 0;", "    for (int i = 1; i < p.length; i++) {", "        if (p[i] > p[i - 1])", "            profit += p[i] - p[i - 1];", "    }", "    return profit;", "}"], time: "O(n)", space: "O(1)", dryRun: { title: "prices = [7,1,5,3,6,4]", headers: ["i", "p[i-1]", "p[i]", "diff", "profit"], rows: [["1", "7", "1", "-6 (skip)", "0"], ["2", "1", "5", "+4", "4"], ["3", "5", "3", "-2 (skip)", "4"], ["4", "3", "6", "+3", "7"], ["5", "6", "4", "-2 (skip)", "7"]] } }
+    ],
+    oneLiner: "Since a rising run's profit is the sum of its daily gains, just add every positive prices[i] − prices[i-1]. One pass, O(n) time and O(1) space.",
+    similar: [["121", "Best Time to Buy/Sell Stock", "One pass min"], ["714", "With Transaction Fee", "DP / Greedy"], ["309", "With Cooldown", "DP"]]
+  },
 
   "majority-element": {
     statement: "Given an array nums, return the element that appears more than n/2 times (guaranteed to exist).",
