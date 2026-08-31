@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { ChevronDown, Sparkles, Check } from "@/components/icons";
+import MarkdownNote from "@/components/MarkdownNote";
 
 // The 8 study angles a user fills in themselves for a DSA problem.
 const FIELDS = [
@@ -100,8 +101,11 @@ export default function StudyNotes({ slug }) {
                         value={draft[f.id] ?? val ?? ""}
                         onChange={(e) => setDraft((d) => ({ ...d, [f.id]: e.target.value }))}
                         rows={5} placeholder={f.ph}
-                        className="w-full px-3 py-2 bg-[#141417] border border-white/[0.1] rounded-lg text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-blue-500/60 resize-y leading-relaxed"
+                        className="w-full px-3 py-2 bg-[#141417] border border-white/[0.1] rounded-lg text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-blue-500/60 resize-y leading-relaxed font-mono"
                       />
+                      <div className="mt-1.5 text-[11px] text-zinc-500">
+                        Paste as-is. Wrap code in <code className="px-1 rounded bg-[#1c1c20] text-zinc-300 font-mono">```</code> fences so it stays colourful · <code className="px-1 rounded bg-[#1c1c20] text-zinc-300 font-mono">##</code> heading · <code className="px-1 rounded bg-[#1c1c20] text-zinc-300 font-mono">**bold**</code>
+                      </div>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         <button onClick={() => save(f.id)} className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition">
                           <Check size={14} /> Save
@@ -114,7 +118,7 @@ export default function StudyNotes({ slug }) {
                     </>
                   ) : (
                     <>
-                      <div className="rounded-lg bg-[#141417] border border-white/[0.06] p-3 text-sm text-zinc-200 whitespace-pre-wrap leading-relaxed">{val}</div>
+                      <div className="rounded-lg bg-[#141417] border border-white/[0.06] p-3"><MarkdownNote text={val} /></div>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         <button onClick={() => startEdit(f.id)} className={btnGhost}>✏️ Edit</button>
                         <button onClick={() => del(f.id)} className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-[#1c1c20] border border-white/[0.08] text-rose-300 hover:text-rose-200 hover:border-rose-700/50 transition">🗑 Delete</button>
