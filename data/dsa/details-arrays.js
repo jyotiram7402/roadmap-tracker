@@ -123,6 +123,20 @@ export const DETAILS = {
     oneLiner: "Track the minimum price so far in one pass; at each day the candidate profit is price − minSoFar, and we keep the maximum. O(n) time, O(1) space.",
     similar: [["121", "Best Time to Buy/Sell Stock", "One pass"], ["122", "Best Time II", "Greedy"], ["53", "Maximum Subarray", "Kadane"]]
   },
+  "intersection-of-two-arrays": {
+    statement: "Given two integer arrays nums1 and nums2, return an array of their intersection — each element in the result must be unique (appear once), and you may return the result in any order.",
+    examples: [
+      { input: "nums1 = [1,2,2,1], nums2 = [2,2]", output: "[2]", explanation: "2 is the only value present in both; duplicates are dropped." },
+      { input: "nums1 = [4,9,5], nums2 = [9,4,9,8,4]", output: "[9,4]", explanation: "Both 9 and 4 appear in each array. Order doesn't matter." }
+    ],
+    approaches: [
+      { name: "Brute Force", pattern: "Nested loop + set", theory: "For every value in nums1, scan nums2 for a match; collect matches in a set so each appears once. Simple but quadratic.", code: ["public int[] intersection(int[] nums1, int[] nums2) {", "    Set<Integer> res = new HashSet<>();", "    for (int a : nums1)", "        for (int b : nums2)", "            if (a == b) { res.add(a); break; }", "    int[] out = new int[res.size()]; int i = 0;", "    for (int v : res) out[i++] = v;", "    return out;", "}"], time: "O(n·m)", space: "O(min(n,m))" },
+      { name: "Optimal", pattern: "HashSet lookup", theory: "Put all of nums1 into a HashSet for O(1) membership tests. Walk nums2 and, whenever a value is in that set, add it to a result set (which also removes duplicates). Two linear passes.", code: ["public int[] intersection(int[] nums1, int[] nums2) {", "    Set<Integer> set = new HashSet<>();", "    for (int a : nums1) set.add(a);", "    Set<Integer> res = new HashSet<>();", "    for (int b : nums2)", "        if (set.contains(b)) res.add(b);", "    int[] out = new int[res.size()]; int i = 0;", "    for (int v : res) out[i++] = v;", "    return out;", "}"], time: "O(n + m)", space: "O(n)", dryRun: { title: "nums1 = [1,2,2,1], nums2 = [2,2]", headers: ["b (nums2)", "in set {1,2}?", "res"], rows: [["2", "yes", "{2}"], ["2", "yes (dup)", "{2}"]] } },
+      { name: "Sort + Two Pointers", pattern: "Two pointers", theory: "Sort both arrays, then advance two pointers: move the pointer at the smaller value; on a match record it (skipping over duplicates) and advance both. Great when you can't spare hash memory.", code: ["public int[] intersection(int[] nums1, int[] nums2) {", "    Arrays.sort(nums1); Arrays.sort(nums2);", "    Set<Integer> res = new HashSet<>();", "    int i = 0, j = 0;", "    while (i < nums1.length && j < nums2.length) {", "        if (nums1[i] < nums2[j]) i++;", "        else if (nums1[i] > nums2[j]) j++;", "        else { res.add(nums1[i]); i++; j++; }", "    }", "    int[] out = new int[res.size()]; int k = 0;", "    for (int v : res) out[k++] = v;", "    return out;", "}"], time: "O(n log n + m log m)", space: "O(1) extra" }
+    ],
+    oneLiner: "Dump nums1 into a HashSet, then collect the distinct nums2 values that appear in it — O(n+m) time, O(n) space. A sort + two-pointer scan trades time for O(1) extra space.",
+    similar: [["350", "Intersection of Two Arrays II", "Count map"], ["217", "Contains Duplicate", "HashSet"], ["1", "Two Sum", "Hashing"]]
+  },
   "best-time-to-buy-and-sell-stock-ii": {
     statement: "Given prices where prices[i] is the stock price on day i, you may buy and sell as many times as you like, holding at most one share at a time (you can even buy and sell on the same day). Return the maximum total profit.",
     examples: [
