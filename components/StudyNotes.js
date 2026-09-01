@@ -104,7 +104,7 @@ export default function StudyNotes({ slug }) {
                         className="w-full px-3 py-2 bg-[#141417] border border-white/[0.1] rounded-lg text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-blue-500/60 resize-y leading-relaxed font-mono"
                       />
                       <div className="mt-1.5 text-[11px] text-zinc-500">
-                        Paste as-is. Wrap code in <code className="px-1 rounded bg-[#1c1c20] text-zinc-300 font-mono">```</code> fences so it stays colourful · <code className="px-1 rounded bg-[#1c1c20] text-zinc-300 font-mono">##</code> heading · <code className="px-1 rounded bg-[#1c1c20] text-zinc-300 font-mono">**bold**</code>
+                        Just paste — code is detected and highlighted automatically. Optional: <code className="px-1 rounded bg-[#1c1c20] text-zinc-300 font-mono">```</code> to force a code block · <code className="px-1 rounded bg-[#1c1c20] text-zinc-300 font-mono">##</code> heading · <code className="px-1 rounded bg-[#1c1c20] text-zinc-300 font-mono">**bold**</code>
                       </div>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         <button onClick={() => save(f.id)} className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition">
