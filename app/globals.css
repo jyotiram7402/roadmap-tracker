@@ -322,5 +322,7 @@ html.light a.bg-white, html.light button.bg-white { border: 1px solid rgba(9,9,1
 html.light .brand-giant-a { background-image: linear-gradient(to bottom, rgba(9,9,11,0.13), rgba(9,9,11,0.02)); }
 html.light .brand-giant-b { background-image: linear-gradient(to bottom, rgba(240,101,79,0.55), rgba(240,101,79,0.06)); }
 
-/* code blocks stay dark in light mode — keep their inner border subtle */
-html.light .bg-\[\#0c0d12\] { border-color: rgba(255,255,255,0.06); }
+/* Code blocks stay dark in light mode; give them an explicit light base
+   text colour so plain (un-tokenized) code doesn't inherit the page's dark
+   text and vanish. Prism .token spans set their own colours and are unaffected. */
+html.light .bg-\[\#0c0d12\] { color: #e2e8f0; border-color: rgba(255,255,255,0.06); }
