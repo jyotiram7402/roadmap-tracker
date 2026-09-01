@@ -24,16 +24,19 @@ function renderInline(text, keyBase) {
 function parse(md) {
   const lines = (md || "").replace(/\r\n/g, "\n").split("\n");
   const blocks = [];
-  let i = 0;
+  let i = 0, guard = 0;
   while (i < lines.length) {
+    if (++guard > 200000) break; // hard stop — never freeze the page
+    const start = i;
     const line = lines[i];
-    const fence = line.match(/^\s*```(\w+)?\s*$/);
-    if (fence) {
-      const code = [];
+    // Any line that starts with ``` opens a fenced code block (lenient).
+    if (/^\s*```/.test(line)) {
+      const lang = (line.match(/^\s*```\s*([A-Za-z0-9+#.\-]*)/) || [])[1] || "";
       i++;
+      const code = [];
       while (i < lines.length && !/^\s*```\s*$/.test(lines[i])) { code.push(lines[i]); i++; }
-      i++; // skip closing fence
-      if (code.length) blocks.push({ type: "code", lines: code });
+      if (i < lines.length) i++; // skip closing fence if present
+      blocks.push({ type: "code", lang, lines: code });
       continue;
     }
     const h = line.match(/^(#{1,6})\s+(.*)$/);
@@ -53,7 +56,8 @@ function parse(md) {
     while (i < lines.length && lines[i].trim() !== "" && !/^\s*```/.test(lines[i]) && !/^#{1,6}\s/.test(lines[i]) && !/^\s*[-*]\s+/.test(lines[i]) && !/^\s*\d+\.\s+/.test(lines[i])) {
       para.push(lines[i]); i++;
     }
-    blocks.push({ type: "para", text: para.join("\n") });
+    if (para.length) blocks.push({ type: "para", text: para.join("\n") });
+    if (i === start) i++; // guarantee forward progress — belt & suspenders
   }
   return blocks;
 }
