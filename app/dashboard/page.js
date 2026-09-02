@@ -17,6 +17,7 @@ import ProgressView from "@/components/ProgressView";
 import Logo from "@/components/Logo";
 import ThemeToggle from "@/components/ThemeToggle";
 import TrackChooser from "@/components/TrackChooser";
+import DsaActivityCard from "@/components/DsaActivityCard";
 import {
   LayoutDashboard, BarChart3, Code2, Database, Coffee, Leaf, Bookmark, Layers,
   Zap, Briefcase, MessageSquare, Wrench, ChevronRight, ChevronDown, Flame, Menu,
@@ -694,6 +695,9 @@ function Hub({ trackMeta, stats, qaStats, streak, bookmarkCount, quizStats, user
         <HubStat Icon={Target} label="Quiz solved" value={quizCorrect} sub={`${quizAcc}% accuracy`} color="amber" />
         <HubStat Icon={Bookmark} label="Bookmarks" value={bookmarkCount} sub="saved" color="pink" />
       </div>
+
+      {/* live daily DSA activity */}
+      <DsaActivityCard />
 
       {/* section cards */}
       <div>
