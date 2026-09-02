@@ -123,6 +123,20 @@ export const DETAILS = {
     oneLiner: "Track the minimum price so far in one pass; at each day the candidate profit is price − minSoFar, and we keep the maximum. O(n) time, O(1) space.",
     similar: [["121", "Best Time to Buy/Sell Stock", "One pass"], ["122", "Best Time II", "Greedy"], ["53", "Maximum Subarray", "Kadane"]]
   },
+  "plus-one": {
+    statement: "A non-negative integer is stored as an array of its digits, most-significant first, with no leading zeros. Add one to the number and return the resulting digit array.",
+    examples: [
+      { input: "digits = [1,2,3]", output: "[1,2,4]", explanation: "123 + 1 = 124." },
+      { input: "digits = [4,3,2,1]", output: "[4,3,2,2]", explanation: "4321 + 1 = 4322." },
+      { input: "digits = [9]", output: "[1,0]", explanation: "9 + 1 = 10 — the array grows by one." }
+    ],
+    approaches: [
+      { name: "Naive (BigInteger)", pattern: "Build number", theory: "Join the digits into a string, parse it as a BigInteger (the number can be 100 digits, far past long), add one, then split back into digits. Correct but allocates and is overkill.", code: ["public int[] plusOne(int[] digits) {", "    StringBuilder sb = new StringBuilder();", "    for (int d : digits) sb.append(d);", "    String s = new BigInteger(sb.toString())", "        .add(BigInteger.ONE).toString();", "    int[] res = new int[s.length()];", "    for (int i = 0; i < s.length(); i++)", "        res[i] = s.charAt(i) - '0';", "    return res;", "}"], time: "O(n)", space: "O(n)" },
+      { name: "Optimal", pattern: "Carry from the right", theory: "Scan from the last digit. The first digit that is less than 9 just becomes +1 and we're done. Every trailing 9 turns into 0 and carries left. If we fall off the front, the number was all 9s (e.g. 999) — the answer is 1 followed by all zeros, one slot longer.", code: ["public int[] plusOne(int[] digits) {", "    for (int i = digits.length - 1; i >= 0; i--) {", "        if (digits[i] < 9) {", "            digits[i]++;", "            return digits;", "        }", "        digits[i] = 0; // 9 -> 0, carry left", "    }", "    int[] res = new int[digits.length + 1];", "    res[0] = 1; // all nines: 1000...0", "    return res;", "}"], time: "O(n)", space: "O(1)", dryRun: { title: "digits = [1,9,9]", headers: ["i", "digits[i]", "action", "digits"], rows: [["2", "9", "set 0, carry", "[1,9,0]"], ["1", "9", "set 0, carry", "[1,0,0]"], ["0", "1", "+1 → return", "[2,0,0]"]] } }
+    ],
+    oneLiner: "Walk from the last digit: the first digit below 9 gets +1 and you return; every trailing 9 becomes 0 and carries. All nines → a fresh array of 1 followed by zeros. O(n) time, O(1) space.",
+    similar: [["369", "Plus One Linked List", "Carry"], ["415", "Add Strings", "Carry"], ["43", "Multiply Strings", "Digit math"]]
+  },
   "intersection-of-two-arrays": {
     statement: "Given two integer arrays nums1 and nums2, return an array of their intersection — each element in the result must be unique (appear once), and you may return the result in any order.",
     examples: [
