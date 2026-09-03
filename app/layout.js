@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import Script from "next/script";
 import PwaInstaller from "@/components/PwaInstaller";
 import ActivityTracker from "@/components/ActivityTracker";
+import SyncManager from "@/components/SyncManager";
 
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 
@@ -61,6 +62,7 @@ export default function RootLayout({ children }) {
         {children}
         <PwaInstaller />
         <ActivityTracker />
+        <SyncManager />
       </body>
     </html>
   );

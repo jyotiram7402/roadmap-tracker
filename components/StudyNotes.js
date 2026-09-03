@@ -33,6 +33,7 @@ export default function StudyNotes({ slug }) {
   function persist(next) {
     setData(next);
     try { localStorage.setItem(storeKey, JSON.stringify(next)); } catch {}
+    try { window.dispatchEvent(new Event("activity-change")); } catch {} // triggers cloud sync
   }
   function toggle(id) { setOpen((o) => ({ ...o, [id]: !o[id] })); }
   function startEdit(id) {
