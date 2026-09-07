@@ -326,3 +326,29 @@ html.light .brand-giant-b { background-image: linear-gradient(to bottom, rgba(24
    text colour so plain (un-tokenized) code doesn't inherit the page's dark
    text and vanish. Prism .token spans set their own colours and are unaffected. */
 html.light .bg-\[\#0c0d12\] { color: #e2e8f0; border-color: rgba(255,255,255,0.06); }
+
+/* ================= Roadmap mind-map ================= */
+.mm-wrap { overflow: auto; -webkit-overflow-scrolling: touch; }
+.mm-canvas { transform-origin: top left; width: max-content; padding: 10px 28px 28px; }
+.mm-node { display: flex; align-items: center; }
+.mm-label {
+  display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+  padding: 7px 12px; border-radius: 11px; font-size: 13.5px; font-weight: 600;
+  color: var(--text); background: var(--card); border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm); cursor: default; transition: border-color .15s, background .15s;
+}
+button.mm-label { cursor: pointer; }
+button.mm-label:hover { border-color: var(--border-strong); background: var(--card-2); }
+.mm-root {
+  font-size: 15px; font-weight: 800; max-width: 260px; white-space: normal; line-height: 1.3;
+  background: linear-gradient(135deg, rgba(96,165,250,.14), rgba(232,121,249,.12));
+  border-color: var(--border-strong);
+}
+.mm-kids { display: flex; flex-direction: column; justify-content: center; position: relative; padding-left: 40px; }
+.mm-kids::before { content: ""; position: absolute; left: 0; top: 50%; width: 20px; height: 2px; background: var(--mmline, var(--border-strong)); }
+.mm-kid { position: relative; padding: 6px 0; display: flex; align-items: center; }
+.mm-kid::before { content: ""; position: absolute; left: 20px; top: 50%; width: 20px; height: 2px; background: var(--mmline, var(--border-strong)); border-radius: 2px; }
+.mm-kid::after  { content: ""; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: var(--mmline, var(--border-strong)); }
+.mm-kid:first-child::after { top: 50%; }
+.mm-kid:last-child::after  { bottom: 50%; }
+.mm-kid:only-child::after  { display: none; }
