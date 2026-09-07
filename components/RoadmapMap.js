@@ -5,7 +5,6 @@ import { PREP_ROADMAP, PREP_NOTES } from "@/data/prep-roadmap";
 
 const googleLink = (q) => `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 
-// collect node paths down to a given depth (for the default expanded view)
 function pathsToDepth(node, path, depth, max, out) {
   if (depth > max) return;
   if (node.children && node.children.length) {

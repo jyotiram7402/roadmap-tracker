@@ -1,4 +1,4 @@
-// data/dsa/details-graphs.js — worked solutions for the Graphs phase.
+
 // Original explanations + Java implementations of standard algorithms.
 
 export const DETAILS = {

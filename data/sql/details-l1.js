@@ -1,6 +1,5 @@
-// data/sql/details-l1.js — worked answers for Level 1 (Junior) SQL questions.
+
 // Original explanations, queries, and demo/result tables.
-// answer block kinds: {kind:"text",text} | {kind:"sql",lines:[...]} | {kind:"table",title,headers,rows}
 
 export const DETAILS = {
   "l1-t-1": {

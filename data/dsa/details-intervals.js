@@ -1,4 +1,4 @@
-// data/dsa/details-intervals.js — worked solutions for the Intervals phase.
+
 // Original explanations + Java implementations of standard algorithms.
 
 export const DETAILS = {

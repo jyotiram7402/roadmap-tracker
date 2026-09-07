@@ -37,7 +37,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
-        {/* Apply saved theme before first paint to avoid a flash. */}
         <script
           dangerouslySetInnerHTML={{
             __html: "(function(){try{if(localStorage.getItem('crackdev-theme')==='light'){document.documentElement.classList.add('light');}}catch(e){}})();",

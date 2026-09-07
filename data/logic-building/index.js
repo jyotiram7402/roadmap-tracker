@@ -1,5 +1,5 @@
-// Logic Building sheet (SamitKnows) — loops, iteration & dry-run thinking.
-// One file per phase; each exports `PHASE = { id, num, title, goal, problems: [] }`.
+
+
 import { PHASE as P1 } from "./phase1";
 import { PHASE as P2 } from "./phase2";
 import { PHASE as P3 } from "./phase3";

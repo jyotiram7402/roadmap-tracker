@@ -38,8 +38,6 @@ export default function ProgressView() {
         <h2 className="text-xl sm:text-2xl font-black text-white">📊 Your Progress</h2>
         <p className="text-sm text-zinc-400 mt-1">Streak, time spent, and what you&apos;ve solved — tracked on this device.</p>
       </div>
-
-      {/* headline stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Stat icon="🔥" label="Current streak" value={`${report.streak} day${report.streak === 1 ? "" : "s"}`} accent="text-orange-400" />
         <Stat icon="🏆" label="Longest streak" value={`${report.longest} day${report.longest === 1 ? "" : "s"}`} accent="text-amber-400" />

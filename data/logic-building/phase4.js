@@ -1,4 +1,4 @@
-// Phase 4 — Nested Loops (8 problems)
+
 export const PHASE = {
   id: "nested-loops",
   num: 4,

@@ -14,7 +14,7 @@ export default function SwitchPage() {
 
   const [done, setDone] = useState({});
   const [ready, setReady] = useState(false);
-  const [open, setOpen] = useState({}); // accordion open-state, all collapsed by default
+  const [open, setOpen] = useState({});
 
   useEffect(() => {
     try { setDone(JSON.parse(localStorage.getItem(storeKey) || "{}")); } catch {}
@@ -58,8 +58,6 @@ export default function SwitchPage() {
 
       <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 py-6 flex-1 space-y-8">
         <AiPlanPitch />
-
-        {/* Ready-made plan */}
         <section>
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <div>

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { ChevronDown, Sparkles, Check } from "@/components/icons";
 import MarkdownNote from "@/components/MarkdownNote";
 
-// The 8 study angles a user fills in themselves for a DSA problem.
 const FIELDS = [
   { id: "explain", label: "Easy explanation of the problem", ph: "Explain the problem in your own simple words — like you'd tell a friend…" },
   { id: "algorithm", label: "Algorithm", ph: "The step-by-step algorithm (numbered steps)…" },
@@ -33,7 +32,7 @@ export default function StudyNotes({ slug }) {
   function persist(next) {
     setData(next);
     try { localStorage.setItem(storeKey, JSON.stringify(next)); } catch {}
-    try { window.dispatchEvent(new Event("activity-change")); } catch {} // triggers cloud sync
+    try { window.dispatchEvent(new Event("activity-change")); } catch {}
   }
   function toggle(id) { setOpen((o) => ({ ...o, [id]: !o[id] })); }
   function startEdit(id) {

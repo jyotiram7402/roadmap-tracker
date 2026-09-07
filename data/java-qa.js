@@ -1,8 +1,4 @@
-// data/java-qa.js — "Java Interview Q&A" registry.
-// Each category's questions live in its own file under data/java-qa/ and are
-// lazy-loaded so the page stays light. Every question:
-//   { q, slug, answer: [ {kind:"text"|"example"|"note", text} | {kind:"code", lines:[]} ], learn }
-// `learn` is a Google search query for the "Learn more" link.
+
 
 export const JAVA_QA_CATEGORIES = [
   { id: "oops", name: "OOP Concepts", short: "OOP", icon: "🧱", accent: "from-orange-500 to-amber-500", desc: "Encapsulation, inheritance, polymorphism, abstraction & the tricky follow-ups." },

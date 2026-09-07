@@ -2,8 +2,6 @@
 import { useEffect, useState } from "react";
 import { Sun, Moon } from "@/components/icons";
 
-// Toggles the `light` class on <html> and persists the choice.
-// Default is dark (no class). The no-flash init runs from app/layout.js.
 export default function ThemeToggle({ className = "" }) {
   const [light, setLight] = useState(false);
 

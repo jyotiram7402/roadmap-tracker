@@ -1,4 +1,4 @@
-// data/dsa/details-backtracking.js — worked solutions for the Backtracking phase.
+
 // Original explanations + Java implementations of standard algorithms.
 
 export const DETAILS = {

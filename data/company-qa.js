@@ -1,7 +1,5 @@
-// data/company-qa.js — Company-wise interview questions.
-// Structure: COMPANIES -> sets (role + experience) -> questions.
-// Question shape matches the rest of the app:
-//   { q, slug, answer: [ {kind:"text"|"example"|"note", text} | {kind:"code", lines:[]} ], learn }
+
+
 // Answers are original write-ups of standard concepts (not copied from any post).
 
 export const COMPANIES = [

@@ -48,7 +48,7 @@ export default function MySolution({ slug, category, title, className = "" }) {
 
   const [mode, setMode] = useState(null);
   const [uid, setUid] = useState(null);
-  const [images, setImages] = useState([]); // { url, cat, path?, local? }
+  const [images, setImages] = useState([]);
   const [zoom, setZoom] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [uploadCat, setUploadCat] = useState("optimal");
@@ -58,7 +58,6 @@ export default function MySolution({ slug, category, title, className = "" }) {
   const [mounted, setMounted] = useState(false);
   const inputRef = useRef(null);
 
-  // code snippets + activity
   const [snippets, setSnippets] = useState([]);
   const [snipOpen, setSnipOpen] = useState(false);
   const [snipCat, setSnipCat] = useState("optimal");
@@ -67,13 +66,11 @@ export default function MySolution({ slug, category, title, className = "" }) {
 
   useEffect(() => { setMounted(true); }, []);
 
-  // activity: log a visit + load done/visit state
   useEffect(() => {
     if (category && slug) logVisit(category, slug, title);
     setItem(category && slug ? getItem(category, slug) : null);
   }, [category, slug, title]);
 
-  // code snippets from localStorage
   useEffect(() => {
     try { setSnippets(JSON.parse(localStorage.getItem(codeKey)) || []); } catch { setSnippets([]); }
   }, [codeKey]);
@@ -82,7 +79,6 @@ export default function MySolution({ slug, category, title, className = "" }) {
     try { localStorage.setItem(codeKey, JSON.stringify(next)); } catch { setErr("Storage full — remove a snippet."); }
   }
 
-  // decide cloud vs local for images
   useEffect(() => {
     let ok = true;
     (async () => {
@@ -180,7 +176,6 @@ export default function MySolution({ slug, category, title, className = "" }) {
     setItem(getItem(category, slug));
   }
 
-  // lightbox keyboard + scroll lock
   useEffect(() => {
     if (zoom === null) return;
     const onKey = (e) => {
@@ -202,7 +197,6 @@ export default function MySolution({ slug, category, title, className = "" }) {
 
   return (
     <div className={`mt-4 bg-[#18181b] border border-white/[0.06] rounded-xl p-4 ${className}`}>
-      {/* activity row */}
       {category && (
         <div className="flex items-center justify-between gap-2 flex-wrap pb-3 mb-3 border-b border-white/[0.06]">
           <span className="text-xs text-zinc-400">👁 Viewed <span className="text-zinc-200 font-semibold">{visits}</span> time{visits === 1 ? "" : "s"}{item?.lastVisit ? ` · last ${item.lastVisit}` : ""}</span>
@@ -284,7 +278,7 @@ export default function MySolution({ slug, category, title, className = "" }) {
               </select>
               <span className="text-[11px] text-zinc-500">Paste your code below</span>
             </div>
-            <textarea value={snipCode} onChange={(e) => setSnipCode(e.target.value)} rows={8} placeholder="// paste your solution code…" spellCheck={false}
+            <textarea value={snipCode} onChange={(e) => setSnipCode(e.target.value)} rows={8} placeholder="
               className="w-full px-3 py-2 bg-[#0c0d12] border border-white/[0.06] rounded-lg text-xs font-mono text-zinc-100 focus:outline-none focus:border-blue-500" />
             <div className="mt-2 flex gap-2">
               <button onClick={saveSnippet} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition">Save snippet</button>
@@ -307,8 +301,6 @@ export default function MySolution({ slug, category, title, className = "" }) {
           </div>
         )}
       </div>
-
-      {/* lightbox with zoom */}
       {mounted && zoom !== null && images[zoom] && createPortal(
         <div className="fixed inset-0 z-[100] flex flex-col bg-black/80 backdrop-blur-md" onClick={() => setZoom(null)}>
           <div className="flex items-center justify-between gap-2 p-3 text-white" onClick={(e) => e.stopPropagation()}>

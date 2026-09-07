@@ -1,6 +1,5 @@
-// data/dsa/details-dp.js — worked solutions for the Dynamic Programming phase.
+
 // Original explanations and implementations of standard algorithms.
-// Shape: { [problemId]: { statement, examples?, approaches[], oneLiner?, similar? } }
 
 export const DETAILS = {
   "counting-bits": {

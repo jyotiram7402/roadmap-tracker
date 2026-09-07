@@ -1,4 +1,4 @@
-// Interview Preparation track. Track: interview-prep
+
 export const ROADMAP = [
   {
     id: "ip-1",

@@ -1,4 +1,4 @@
-// data/java-qa/oops.js — OOP concepts, interview Q&A.
+
 // Original explanations written from an interview point of view.
 export const QUESTIONS = [
   {

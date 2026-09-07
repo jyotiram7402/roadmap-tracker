@@ -1,4 +1,4 @@
-// Phase 3 — for Loop (21 problems)
+
 export const PHASE = {
   id: "for-loop",
   num: 3,

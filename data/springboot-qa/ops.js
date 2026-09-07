@@ -1,4 +1,4 @@
-// data/springboot-qa/ops.js — Spring Boot actuator/ops/advanced Q&A.
+
 // Original explanations written from an interview point of view (Spring Boot 3).
 export const QUESTIONS = [
   {

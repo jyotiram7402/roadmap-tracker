@@ -1,4 +1,4 @@
-// data/dsa/details-greedy.js — worked solutions for the Greedy phase.
+
 // Original explanations + Java implementations of standard algorithms.
 
 export const DETAILS = {

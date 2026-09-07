@@ -13,11 +13,11 @@ function shuffle(n) {
 }
 
 export default function QuickPage() {
-  const [subject, setSubject] = useState(null); // null = picker
+  const [subject, setSubject] = useState(null);
   const [pool, setPool] = useState([]);
   const [order, setOrder] = useState([]);
   const [pos, setPos] = useState(0);
-  const [answered, setAnswered] = useState(null); // chosen option index
+  const [answered, setAnswered] = useState(null);
   const [stats, setStats] = useState({});
   const [session, setSession] = useState({ attempted: 0, correct: 0 });
 
@@ -59,7 +59,6 @@ export default function QuickPage() {
 
   return (
     <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col">
-      {/* header */}
       <header className="sticky top-0 z-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
           <Link href="/dashboard" className="text-sm text-blue-400 hover:underline whitespace-nowrap">← Dashboard</Link>

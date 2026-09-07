@@ -1,4 +1,4 @@
-// data/springboot-qa/core.js — Spring Boot Core & Essentials, interview Q&A.
+
 // Original explanations written from an interview point of view.
 export const QUESTIONS = [
   {

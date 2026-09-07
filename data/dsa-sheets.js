@@ -1,7 +1,4 @@
-// data/dsa-sheets.js — famous DSA sheets (problem catalogs) from the All-DSA-Sheets repo.
-// Only factual problem references are stored (name / topic / difficulty-where-known /
-// company tags / practice link). Full worked solutions are resolved from the app's own
-// worked-solution set (data/dsa/*) by slug at view time.
+
 
 export const SHEETS = [
  {

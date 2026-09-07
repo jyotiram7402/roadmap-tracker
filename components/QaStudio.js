@@ -9,12 +9,9 @@ function googleLink(q) {
   return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 }
 
-// Reusable interview-Q&A browser used by /java-qa and /springboot-qa.
-// props: title, categories [{id,name,short,icon,desc}], load(catId)->questions,
-//        storagePrefix (namespaces the per-question screenshot uploads).
 export default function QaStudio({ title, categories, load, storagePrefix }) {
   const [cat, setCat] = useState(categories[0]?.id);
-  const [questions, setQuestions] = useState(undefined); // undefined = loading
+  const [questions, setQuestions] = useState(undefined);
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState(null);
 

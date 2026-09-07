@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 
-// Rotates the highlighted hero phrase through roles: "Crack your next ___ job".
 const ROLES = [
   "software engineering",
   "Java backend",
@@ -23,10 +22,10 @@ export default function RotatingRoles() {
 
   useEffect(() => {
     const id = setInterval(() => {
-      setOn(false); // fade current word out
+      setOn(false);
       setTimeout(() => {
         setI((p) => (p + 1) % ROLES.length);
-        setOn(true); // fade next word in
+        setOn(true);
       }, 260);
     }, 2200);
     return () => clearInterval(id);

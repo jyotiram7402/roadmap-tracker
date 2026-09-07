@@ -15,7 +15,6 @@ import {
 } from "react-icons/si";
 import { Coffee, Code2, Sparkles, Database, Zap, MessageSquare } from "@/components/icons";
 
-// Recognizable icon + tinted tile per track / role.
 const DEFAULT_ICON = { Icon: Code2, color: "text-zinc-300", bg: "bg-white/5" };
 const ROLE_ICON = {
   "java-backend": { Icon: Coffee, color: "text-amber-400", bg: "bg-amber-500/10" },
@@ -89,7 +88,6 @@ export default function Landing() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[#09090b] text-zinc-100">
-      {/* ambient background */}
       <div className="pointer-events-none fixed inset-0" aria-hidden="true">
         <div className="absolute inset-0" style={{ background: "radial-gradient(60% 42% at 50% -5%, rgba(59,130,246,.12), transparent 70%)" }} />
         <div className="absolute inset-0 opacity-[0.035]" style={{ backgroundImage: "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)", backgroundSize: "56px 56px", maskImage: "radial-gradient(ellipse at 50% 0%, black, transparent 70%)", WebkitMaskImage: "radial-gradient(ellipse at 50% 0%, black, transparent 70%)" }} />
@@ -114,8 +112,6 @@ export default function Landing() {
           </div>
         </div>
       </nav>
-
-      {/* HERO */}
       <header className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 text-center">
         <span className="inline-flex items-center gap-2 text-[12px] font-medium px-3 py-1.5 rounded-full text-zinc-300 anim-fade-up" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Your all-in-one tech interview prep
@@ -138,8 +134,6 @@ export default function Landing() {
         </div>
         <p className="mt-4 text-[12px] text-zinc-500">Free forever · No credit card · Progress syncs everywhere</p>
       </header>
-
-      {/* LOGO CLOUD */}
       <section className="relative z-10 py-7 border-y" style={{ borderColor: "var(--border)", background: "rgba(255,255,255,.012)" }}>
         <p className="text-center text-[11px] uppercase tracking-wider text-zinc-500 mb-5">Practice the stack real companies hire for</p>
         <div className="marquee">
@@ -165,8 +159,6 @@ export default function Landing() {
           ))}
         </div>
       </section>
-
-      {/* TRACKS */}
       <section id="tracks" className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-14 scroll-mt-16">
         <div className="mb-8">
           <span className="text-[12px] font-semibold uppercase tracking-wider text-blue-400">Learning tracks</span>
@@ -189,8 +181,6 @@ export default function Landing() {
           })}
         </div>
       </section>
-
-      {/* ROLES */}
       <section id="roles" className="relative z-10 border-y scroll-mt-16" style={{ borderColor: "var(--border)", background: "rgba(255,255,255,.01)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14">
           <div className="mb-8">
@@ -229,8 +219,6 @@ export default function Landing() {
           ))}
         </div>
       </section>
-
-      {/* CTA */}
       <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pb-16">
         <div className="relative overflow-hidden rounded-2xl border p-8 sm:p-12 text-center" style={{ borderColor: "var(--border)", background: "linear-gradient(180deg, rgba(59,130,246,.12), rgba(139,92,246,.06))" }}>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">Ready to crack your dream job?</h2>
@@ -240,8 +228,6 @@ export default function Landing() {
           </Link>
         </div>
       </section>
-
-      {/* FOOTER */}
       <BrandFooter className="z-10" />
     </div>
   );

@@ -8,8 +8,6 @@ import { loadRoleData, isRoleStage, roleIdFromStage, getRoleMeta } from "@/data/
 import MermaidDiagram from "@/components/MermaidDiagram";
 import CodeBlock from "@/components/CodeBlock";
 
-// A bookmark's stage id is either a track stage (learning tracks) or a
-// `role-<id>` pseudo-stage (job-role banks). This returns a stable group key.
 function groupKeyFor(stageId) {
   return isRoleStage(stageId) ? `role:${roleIdFromStage(stageId)}` : `track:${trackIdForStage(stageId)}`;
 }
@@ -27,8 +25,8 @@ export default function BookmarksPage() {
   const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState(null);
   const [bookmarks, setBookmarks] = useState([]);
-  const [studyByTrack, setStudyByTrack] = useState({});   // trackId -> study object
-  const [roleById, setRoleById] = useState({});           // roleId  -> sections array
+  const [studyByTrack, setStudyByTrack] = useState({});
+  const [roleById, setRoleById] = useState({});
   const [loading, setLoading] = useState(true);
   const [openKey, setOpenKey] = useState(null);
 
@@ -44,7 +42,6 @@ export default function BookmarksPage() {
         .order("created_at", { ascending: false });
       const rows = data || [];
 
-      // lazy-load data for every track AND role present in the bookmarks
       const trackIds = [...new Set(rows.filter((b) => !isRoleStage(b.stage_id)).map((b) => trackIdForStage(b.stage_id)))];
       const roleIds = [...new Set(rows.filter((b) => isRoleStage(b.stage_id)).map((b) => roleIdFromStage(b.stage_id)))];
       const loadedTracks = {}, loadedRoles = {};

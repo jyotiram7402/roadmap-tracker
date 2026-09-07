@@ -1,6 +1,4 @@
-// data/prep-roadmap.js — the "Crack PBCs 2026" preparation roadmap, rendered as
-// a graphical mind-map. Node: { label, color?, link?:{label,q}, children?:[] }.
-// `q` on a link becomes a Google search so we don't ship broken/guessed URLs.
+
 
 export const PREP_ROADMAP = {
   label: "What to prepare to crack PBCs in 2026 (My Actual Roadmap)",
@@ -8,7 +6,7 @@ export const PREP_ROADMAP = {
   children: [
     {
       label: "Agentic AI",
-      color: "#34d399", // emerald
+      color: "#34d399",
       children: [
         { label: "Python Crash Course on Youtube (any would work)", link: { label: "Course", q: "Python crash course youtube" } },
         { label: "Krish Naik – Complete Agentic AI Bootcamp with LangGraph and Langchain", link: { label: "Course Link", q: "Krish Naik Agentic AI Bootcamp LangGraph Langchain" } },
@@ -18,7 +16,7 @@ export const PREP_ROADMAP = {
     },
     {
       label: "DSA",
-      color: "#e879f9", // fuchsia
+      color: "#e879f9",
       children: [
         { label: "Strivers A2Z Sheet", link: { label: "Link to Sheet", q: "Strivers A2Z DSA Sheet takeuforward" } },
         { label: "Leetcode Daily Practice Problems (Pattern Wise)", link: { label: "LeetCode", q: "leetcode patterns daily practice" } },
@@ -29,7 +27,7 @@ export const PREP_ROADMAP = {
     },
     {
       label: "System Design",
-      color: "#60a5fa", // blue
+      color: "#60a5fa",
       children: [
         {
           label: "HLD",

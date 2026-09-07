@@ -1,4 +1,4 @@
-// Phase 8 — Star & Number Patterns (25 problems)
+
 export const PHASE = {
   id: "patterns",
   num: 8,

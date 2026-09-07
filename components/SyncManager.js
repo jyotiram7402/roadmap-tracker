@@ -3,8 +3,6 @@ import { useEffect } from "react";
 import { createClient } from "@/lib/supabase";
 import { initSync } from "@/lib/cloud-sync";
 
-// Mounted once in the root layout. When a user is signed in, mirrors local
-// activity/notes to Supabase (user_kv) so progress follows them across devices.
 export default function SyncManager() {
   useEffect(() => {
     const supabase = createClient();

@@ -1,6 +1,5 @@
-// data/dsa/details-stack-queue.js — worked solutions for the Stack & Queue phase.
+
 // Original explanations and implementations of standard algorithms.
-// Shape: { [problemId]: { statement, examples?, approaches[], oneLiner?, similar? } }
 
 export const DETAILS = {
   "time-needed-to-buy-tickets": {

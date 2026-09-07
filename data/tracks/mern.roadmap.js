@@ -1,4 +1,4 @@
-// MERN Stack interview-prep track. Track: mern
+
 export const ROADMAP = [
   {
     id: "mern-1",

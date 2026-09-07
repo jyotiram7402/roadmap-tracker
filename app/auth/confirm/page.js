@@ -5,7 +5,7 @@ import Logo from "@/components/Logo";
 import { createClient } from "@/lib/supabase";
 
 export default function ConfirmPage() {
-  const [status, setStatus] = useState("loading"); // loading | signedin | verified | error
+  const [status, setStatus] = useState("loading");
   const [msg, setMsg] = useState("");
 
   useEffect(() => {

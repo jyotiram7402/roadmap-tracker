@@ -1,5 +1,5 @@
-// data/quiz.js — Quick Practice MCQ bank.
-// Each question: { q, code?: string[], options: [4 strings], answer: index, explain, tag? }
+
+
 // Content is original. Coding questions carry a `code` block to render.
 
 export const QUIZ_SUBJECTS = [
@@ -76,7 +76,6 @@ export const QUIZ = {
   ],
 };
 
-// Build a flat, shuffled pool for a subject ("all" = every subject mixed).
 export function buildQuizPool(subjectId) {
   let items = [];
   if (subjectId === "all") {

@@ -18,7 +18,6 @@ const SHEET_STYLE = {
   "siddharth-450": { emoji: "🔥", grad: "from-amber-500/20 to-orange-600/10", ring: "border-amber-700/50" },
 };
 
-// effective difficulty for a sheet problem: sheet's own, else our worked catalog
 function effDiff(p) {
   return p.difficulty || difficultyForSlug(p.slug) || (p.lcSlug ? difficultyForSlug(p.lcSlug) : null) || null;
 }
@@ -28,7 +27,7 @@ function practiceLink(p) {
 }
 
 export default function SheetBrowser() {
-  const [sheets, setSheets] = useState(undefined); // undefined = loading
+  const [sheets, setSheets] = useState(undefined);
   const [sheetId, setSheetId] = useState(null);
   const [topic, setTopic] = useState("All");
   const [diff, setDiff] = useState("all");
@@ -43,7 +42,6 @@ export default function SheetBrowser() {
 
   const sheet = useMemo(() => (sheets || []).find((s) => s.id === sheetId) || null, [sheets, sheetId]);
 
-  // flat, difficulty-enriched problem list for the active sheet
   const allProblems = useMemo(() => {
     if (!sheet) return [];
     const out = [];
@@ -69,7 +67,6 @@ export default function SheetBrowser() {
     });
   }, [allProblems, topic, diff, q]);
 
-  // group filtered by topic (preserve sheet order)
   const grouped = useMemo(() => {
     const map = new Map();
     for (const p of filtered) { if (!map.has(p.topic)) map.set(p.topic, []); map.get(p.topic).push(p); }
@@ -83,7 +80,6 @@ export default function SheetBrowser() {
   // ---- loading ----
   if (sheets === undefined) return <div className="text-sm text-zinc-500 animate-pulse py-8 text-center">Loading DSA sheets…</div>;
 
-  // ---- sheet picker ----
   if (!sheet) {
     return (
       <div>

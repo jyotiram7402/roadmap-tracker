@@ -1,6 +1,5 @@
-// data/dsa/details-strings.js — worked solutions for the Strings phase.
+
 // Original explanations and implementations of standard algorithms.
-// Shape: { [problemId]: { statement, examples?, approaches[], oneLiner?, similar? } }
 
 export const DETAILS = {
   "reverse-string": {

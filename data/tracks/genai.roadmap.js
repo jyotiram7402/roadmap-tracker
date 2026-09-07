@@ -1,4 +1,4 @@
-// Generative AI Engineer — interview-prep track. Track: genai
+
 export const ROADMAP = [
   {
     id: "genai-1",

@@ -1,4 +1,4 @@
-// Phase 2 — do-while Loop (15 problems)
+
 export const PHASE = {
   id: "do-while-loop",
   num: 2,

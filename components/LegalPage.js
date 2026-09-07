@@ -2,8 +2,6 @@ import Link from "next/link";
 import Logo from "@/components/Logo";
 import BrandFooter from "@/components/BrandFooter";
 
-// Simple dark-theme shell for the Terms / Privacy / Refund pages.
-// `sections` = [{ heading, body: [paragraph, ...] }]
 export default function LegalPage({ title, updated, intro, sections = [] }) {
   return (
     <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col">

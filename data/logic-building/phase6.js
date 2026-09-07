@@ -1,4 +1,4 @@
-// Phase 6 — Mathematical Series (15 problems)
+
 export const PHASE = {
   id: "series",
   num: 6,

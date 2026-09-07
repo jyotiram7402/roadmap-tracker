@@ -2,13 +2,8 @@
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 
-// Registers the minimal service worker and surfaces an "Install" affordance.
-// - Android/Chrome: uses the beforeinstallprompt event (captured pre-hydration
-//   by the head script into window.__bipEvent), so it isn't missed on load.
-// - iOS Safari: shows the manual "Add to Home Screen" hint (no prompt API).
-// - Anything else / event missed: shows a manual "use the browser menu" hint.
 export default function PwaInstaller() {
-  const [mode, setMode] = useState(null); // null | "install" | "ios" | "manual"
+  const [mode, setMode] = useState(null);
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -18,17 +13,15 @@ export default function PwaInstaller() {
     const standalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       window.navigator.standalone === true;
-    if (standalone) return; // already installed
+    if (standalone) return;
     try { if (sessionStorage.getItem("pwa-install-dismissed")) return; } catch {}
 
     const ua = window.navigator.userAgent || "";
 
-    // Only surface the install prompt on mobile — the app installs as a phone
-    // app, not on desktop. Desktop browsers never see the banner.
     const isMobile =
       window.matchMedia("(max-width: 820px)").matches ||
       /android|iphone|ipad|ipod|mobile|silk|kindle/i.test(ua) ||
-      (navigator.maxTouchPoints > 1 && /macintosh/i.test(ua)); // iPadOS reports as Mac
+      (navigator.maxTouchPoints > 1 && /macintosh/i.test(ua));
     if (!isMobile) return;
 
     const isIOS = /iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && "ontouchend" in document);
@@ -42,8 +35,6 @@ export default function PwaInstaller() {
     const onInstalled = () => setMode(null);
     window.addEventListener("bip-installed", onInstalled);
 
-    // Fallback: if no installable prompt appeared shortly (event missed, or the
-    // browser only offers manual install), still show a discoverable hint.
     const t = setTimeout(() => setMode((m) => (m ? m : "manual")), 3500);
 
     return () => {

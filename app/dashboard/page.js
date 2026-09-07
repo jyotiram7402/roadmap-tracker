@@ -37,14 +37,11 @@ export default function Dashboard() {
   const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState(null);
 
-  // active track + its lazily-loaded data.
-  // null = the user hasn't chosen a track yet (new users start here).
   const [activeTrack, setActiveTrack] = useState(null);
   const [roadmap, setRoadmap] = useState(null);
   const [study, setStudy] = useState(null);
   const [dataLoading, setDataLoading] = useState(true);
 
-  // per-user state (spans all tracks; keyed by globally-unique stage ids)
   const [progress, setProgress] = useState({});
   const [notes, setNotes] = useState({});
   const [stageNotes, setStageNotes] = useState({});
@@ -54,8 +51,7 @@ export default function Dashboard() {
   const [bookmarkCount, setBookmarkCount] = useState(0);
   const [activityDates, setActivityDates] = useState([]);
 
-  // ui state
-  const [view, setView] = useState("hub"); // "hub" | "roadmap"
+  const [view, setView] = useState("hub");
   const [openStage, setOpenStage] = useState(null);
   const [openSection, setOpenSection] = useState(null);
   const [openNote, setOpenNote] = useState(null);
@@ -64,15 +60,13 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false); // desktop sidebar collapsed to icons
+  const [collapsed, setCollapsed] = useState(false);
   const [quizStats, setQuizStats] = useState({});
   const [localStreak, setLocalStreak] = useState(0);
   const stageRefs = useRef({});
 
-  // load Quick Practice stats (per-device) for the hub
   useEffect(() => { setQuizStats(loadQuizStats()); }, [view]);
 
-  // local activity streak (works without Supabase) — keeps the header badge live
   useEffect(() => {
     const upd = () => setLocalStreak(Activity.computeStreak());
     upd();
@@ -81,8 +75,6 @@ export default function Dashboard() {
     return () => { window.removeEventListener("activity-change", upd); clearInterval(t); };
   }, []);
 
-  // restore track choice + sidebar state on mount.
-  // No saved track => activeTrack stays null and the track chooser is shown.
   useEffect(() => {
     try {
       const saved = localStorage.getItem(TRACK_LS_KEY);
@@ -99,7 +91,6 @@ export default function Dashboard() {
     });
   }
 
-  // auth + load all user rows once
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -141,7 +132,6 @@ export default function Dashboard() {
     return () => { mounted = false; };
   }, [supabase, router]);
 
-  // load active track data whenever it changes
   useEffect(() => {
     if (!activeTrack) { setRoadmap(null); setStudy(null); setDataLoading(false); return; }
     let mounted = true;
@@ -161,7 +151,7 @@ export default function Dashboard() {
     setActiveTrack(id);
     setSearch("");
     setFilters({ unchecked: false, bookmarked: false, withCode: false });
-    setView("roadmap"); // choosing a track shows that track's topics
+    setView("roadmap");
     try { localStorage.setItem(TRACK_LS_KEY, id); } catch {}
   }
 
@@ -349,7 +339,6 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen text-zinc-100" style={{ background: "var(--bg)" }}>
       <div className="lg:flex">
-        {/* mobile backdrop */}
         {sidebarOpen && <div onClick={() => setSidebarOpen(false)} className="fixed inset-0 bg-black/60 z-30 lg:hidden no-print" />}
 
         {/* SIDEBAR */}

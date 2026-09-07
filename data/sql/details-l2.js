@@ -1,6 +1,5 @@
-// data/sql/details-l2.js — worked answers for Level 2 (Mid, 3 yrs) SQL questions.
+
 // Original explanations, queries, and demo/result tables.
-// answer block kinds: {kind:"text",text} | {kind:"sql",lines:[...]} | {kind:"table",title,headers,rows}
 
 export const DETAILS = {
   "l2-t-1": {

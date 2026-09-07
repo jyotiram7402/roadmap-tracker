@@ -1,8 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 
-// Live date + time badge for headers. Renders nothing until mounted to
-// avoid hydration mismatch (server has no clock).
 export default function LiveClock({ className = "" }) {
   const [now, setNow] = useState(null);
   useEffect(() => {

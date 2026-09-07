@@ -1,4 +1,4 @@
-// Data Engineer interview-prep track. Track: data-engineer
+
 export const ROADMAP = [
   {
     id: "de-1",

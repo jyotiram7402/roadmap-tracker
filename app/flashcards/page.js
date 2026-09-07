@@ -41,7 +41,6 @@ export default function FlashcardsPage() {
     return () => { mounted = false; };
   }, [router, supabase]);
 
-  // load study material for chosen track
   useEffect(() => {
     let mounted = true;
     setDataLoading(true);
@@ -54,7 +53,6 @@ export default function FlashcardsPage() {
     return () => { mounted = false; };
   }, [trackId]);
 
-  // rebuild the shuffled pool whenever the chosen subject's questions load
   useEffect(() => {
     if (!study) return;
     const raw = getAllQuestions(study);

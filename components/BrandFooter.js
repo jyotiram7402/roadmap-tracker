@@ -9,7 +9,6 @@ const LINKS = [
   { label: "Refund & Cancellation", href: "/refund" },
 ];
 
-// TODO: replace the "#" placeholders with your real profile URLs.
 const SOCIALS = [
   { label: "YouTube", Icon: FaYoutube, href: "#" },
   { label: "X (Twitter)", Icon: FaXTwitter, href: "#" },
@@ -22,7 +21,6 @@ export default function BrandFooter({ className = "" }) {
   const year = new Date().getFullYear();
   return (
     <footer className={`relative overflow-hidden border-t border-white/[0.08] bg-[#09090b] ${className}`}>
-      {/* top: brand · links · socials */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-6">
         <div className="grid gap-8 md:grid-cols-3 items-start">
           <div>

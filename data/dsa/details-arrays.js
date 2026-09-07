@@ -1,6 +1,5 @@
-// data/dsa/details-arrays.js — worked solutions for the Arrays phase.
+
 // Original explanations and implementations of standard algorithms.
-// Shape: { [problemId]: { statement, examples?, approaches[], oneLiner?, similar? } }
 
 export const DETAILS = {
   "how-many-numbers-are-smaller-than-the-current-number": {

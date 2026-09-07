@@ -7,8 +7,6 @@ import { DSA_PROBLEMS } from "@/data/dsa-problems";
 
 const DSA_TOTAL = DSA_PROBLEMS.length;
 
-// Live "today's DSA practice" card for the dashboard hub. Reads the local
-// activity store, so it reflects what you actually solved/opened today.
 export default function DsaActivityCard() {
   const [state, setState] = useState(null);
 
@@ -32,7 +30,7 @@ export default function DsaActivityCard() {
     return () => window.removeEventListener("activity-change", compute);
   }, []);
 
-  if (!state) return null; // render after mount (no SSR flash / mismatch)
+  if (!state) return null;
 
   const { dsaDone, logicDone, viewedToday, solvedToday } = state;
   const pct = DSA_TOTAL ? Math.round((dsaDone / DSA_TOTAL) * 100) : 0;

@@ -1,5 +1,4 @@
-// Career-switch plans. SWITCH_PLANS holds ready-made, checkbox-tracked plans.
-// AI_PLAN is the paid, personalised-plan pitch shown at the top of /switch.
+
 
 export const AI_PLAN = {
   headline: "AI-personalised career-switch plan",
@@ -16,7 +15,6 @@ export const AI_PLAN = {
   devEmail: "jyotiramkamble7402@gmail.com",
 };
 
-// Each plan: sections of checkable items + reference calendar / interview / tools.
 export const SWITCH_PLANS = [
   {
     id: "java-genai",

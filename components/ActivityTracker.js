@@ -2,8 +2,6 @@
 import { useEffect } from "react";
 import { markAppOpen, addActiveTime } from "@/lib/activity";
 
-// Mounted once (in the root layout). Marks today active on load and accrues
-// active (foreground) time into today's bucket for the Progress dashboard.
 export default function ActivityTracker() {
   useEffect(() => {
     markAppOpen();
@@ -11,7 +9,7 @@ export default function ActivityTracker() {
 
     const flush = () => {
       const now = Date.now();
-      if (!document.hidden) addActiveTime(Math.min(now - last, 60000)); // cap 60s/tick
+      if (!document.hidden) addActiveTime(Math.min(now - last, 60000));
       last = now;
     };
 

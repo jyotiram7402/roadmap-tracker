@@ -1,8 +1,5 @@
-// data/maven/notes.js — Maven study notes (topic-wise).
-// Based on the "Maven Deep Dive" lecture, rewritten as structured notes with
-// added explanations, code, and diagrams.
-// block kinds: {kind:"text"} bullet | {kind:"subhead"} | {kind:"note"} callout
-//              | {kind:"code",lines:[]} | {kind:"mermaid",code:"..."}
+
+
 export const TOPICS = [
   {
     title: "1. The Journey of Java Code",

@@ -19,7 +19,7 @@ function effDiff(slug, lcSlug, fallback) {
 }
 
 export default function DsaStudio() {
-  const [all, setAll] = useState(null); // unified list; null = loading
+  const [all, setAll] = useState(null);
   const [diff, setDiff] = useState("all");
   const [source, setSource] = useState("All");
   const [hotOnly, setHotOnly] = useState(false);
@@ -27,7 +27,6 @@ export default function DsaStudio() {
   const [selected, setSelected] = useState(null);
   const [shown, setShown] = useState(200);
 
-  // Merge the core catalog + Crackify + every Sheet into one deduped list.
   useEffect(() => {
     let ok = true;
     (async () => {

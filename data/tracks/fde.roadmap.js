@@ -1,6 +1,5 @@
-// Forward Deployed Engineer (FDE) interview-prep track.
-// FDE = customer-facing engineer who deploys, integrates, and customizes
-// software at customer sites, bridging product/eng and the customer.
+
+
 export const ROADMAP = [
   {
     id: "fde-1",

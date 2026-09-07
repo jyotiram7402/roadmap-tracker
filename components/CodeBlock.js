@@ -6,7 +6,7 @@ async function getPrism() {
   if (!prismPromise) {
     prismPromise = (async () => {
       const Prism = (await import("prismjs")).default;
-      // Load language grammars sequentially - some depend on others
+
       await import("prismjs/components/prism-clike");
       await import("prismjs/components/prism-java");
       await import("prismjs/components/prism-javascript");

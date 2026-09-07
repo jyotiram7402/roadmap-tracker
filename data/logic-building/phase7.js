@@ -1,4 +1,4 @@
-// Phase 7 — Mixed Logical Problems (10 problems)
+
 export const PHASE = {
   id: "mixed-logic",
   num: 7,

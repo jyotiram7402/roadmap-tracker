@@ -1,7 +1,5 @@
 import { Rocket } from "@/components/icons";
 
-// CrackDev brand lockup. Rocket mark in the brand maroon→coral gradient + wordmark.
-// To swap in a raster/illustrated logo later, replace the <span> mark with an <img>.
 export default function Logo({ size = 32, showText = true, className = "", textClass = "text-white" }) {
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`}>

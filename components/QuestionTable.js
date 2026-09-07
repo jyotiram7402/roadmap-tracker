@@ -9,12 +9,9 @@ const DIFF = {
   hard: { label: "Hard", cls: "text-rose-400", dot: "bg-rose-500/15 text-rose-300 border-rose-600/40" },
 };
 
-// Shared sheet-style list used by DSA & SQL.
-// Columns: Status · Problem · Notes · Attempts · Bookmark · Difficulty.
-// props: items[], category ("dsa"|"sql"), onOpen(item), getMeta(item) -> string, getId(item)
 export default function QuestionTable({ items, category, onOpen, getMeta, getId = (x) => x.id }) {
-  // Start empty so SSR and first client render match; fill after mount.
-  const [store, setStore] = useState({}); // { "cat:id": { visits, done, bookmarked, ... } }
+
+  const [store, setStore] = useState({});
   useEffect(() => {
     const refresh = () => setStore(getItems());
     refresh();
@@ -26,7 +23,6 @@ export default function QuestionTable({ items, category, onOpen, getMeta, getId 
 
   return (
     <div className="rounded-xl border border-white/[0.06] overflow-hidden bg-[#18181b]">
-      {/* header (desktop) */}
       <div className={`hidden sm:grid ${COLS} gap-3 px-3 py-2 bg-[#141417] border-b border-white/[0.06] text-[10.5px] font-semibold uppercase tracking-wider text-zinc-500`}>
         <div className="text-center">Status</div>
         <div>Problem</div>
@@ -49,7 +45,6 @@ export default function QuestionTable({ items, category, onOpen, getMeta, getId 
         return (
           <div key={item.key || id}
             className={`grid ${COLS} gap-2 sm:gap-3 items-center px-3 py-2.5 border-b border-white/[0.06] last:border-b-0 transition ${done ? "bg-emerald-500/[0.04]" : "hover:bg-[#1f1f23]"}`}>
-            {/* Status */}
             <div className="flex justify-center">
               <button onClick={() => toggleDone(category, id, item.title)} title={done ? "Mark as not done" : "Mark as done"}
                 aria-pressed={done}
@@ -69,8 +64,6 @@ export default function QuestionTable({ items, category, onOpen, getMeta, getId 
                 <span className={`sm:hidden text-[10px] font-semibold px-1.5 rounded border ${d.dot}`}>{d.label}</span>
               </span>
             </button>
-
-            {/* Notes → opens full problem */}
             <div className="flex justify-center">
               <button onClick={() => onOpen(item)} title="Open full problem & notes"
                 className="w-8 h-8 grid place-items-center rounded-lg text-zinc-400 hover:text-blue-300 hover:bg-blue-500/10 transition">

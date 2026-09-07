@@ -8,7 +8,7 @@ import LogicStudio from "@/components/LogicStudio";
 import { DSA_PROBLEMS } from "@/data/dsa-problems";
 
 export default function DsaPage() {
-  const [tab, setTab] = useState("problems"); // "problems" | "sheets" | "crackify" | "logic"
+  const [tab, setTab] = useState("problems");
 
   return (
     <div className="min-h-screen bg-[#09090b] text-zinc-100">

@@ -1,4 +1,4 @@
-// data/dsa/details-heap.js — worked solutions for the Heap / Priority Queue phase.
+
 // Original explanations + Java implementations of standard algorithms.
 
 export const DETAILS = {

@@ -1,6 +1,5 @@
-// data/sql/details-fav.js — worked answers for the "Must-Know (Most Asked)" SQL questions.
+
 // Original explanations, queries, and demo/result tables.
-// answer block kinds: {kind:"text",text} | {kind:"sql",lines:[...]} | {kind:"table",title,headers,rows}
 
 export const DETAILS = {
   "fav-t-1": {

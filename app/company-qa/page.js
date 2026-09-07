@@ -9,7 +9,7 @@ import { COMPANIES, companyStats, totalCompanyQuestions, googleLink } from "@/da
 
 export default function CompanyQaPage() {
   const [companyId, setCompanyId] = useState(null);
-  const [selected, setSelected] = useState(null); // { company, set, q }
+  const [selected, setSelected] = useState(null);
   const [q, setQ] = useState("");
 
   const company = useMemo(() => COMPANIES.find((c) => c.id === companyId) || null, [companyId]);

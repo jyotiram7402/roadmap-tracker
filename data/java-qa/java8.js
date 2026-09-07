@@ -1,4 +1,4 @@
-// data/java-qa/java8.js — Java 8 & Streams, interview Q&A.
+
 // Original explanations written from an interview point of view.
 export const QUESTIONS = [
   {

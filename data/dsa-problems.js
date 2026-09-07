@@ -1,9 +1,4 @@
-// data/dsa-problems.js — DSA problem catalog for the "Prepare DSA" studio.
-//
-// The full list is built compactly from RAW (phase -> difficulty -> titles).
-// Worked solutions (statement + brute/better/optimal + dry runs) live in
-// per-phase files under data/dsa/ and are LAZY-LOADED via loadPhaseDetails()
-// only when the user opens a problem — keeps the initial /dsa page light.
+
 
 const RAW = {
   Arrays: {
@@ -68,7 +63,6 @@ const RAW = {
   }
 };
 
-// Commonly-reported interviewing companies for well-known problems (indicative).
 const COMPANIES = {
   "Two Sum": ["Amazon", "Google", "Microsoft", "Apple", "Adobe"],
   "Contains Duplicate": ["Amazon", "Microsoft", "Adobe"],
@@ -108,7 +102,6 @@ const COMPANIES = {
   "Minimum Window Substring": ["Amazon", "Facebook", "LinkedIn"]
 };
 
-// Most-asked (⭐) — shown by the "Most asked" filter and a star badge.
 const HOT = new Set([
   "Two Sum", "Contains Duplicate", "Best Time to Buy and Sell Stock", "Best Time to Buy and Sell Stock II", "Maximum Subarray", "3Sum",
   "Product of Array Except Self", "Merge Intervals", "Container With Most Water", "Rotate Array",
@@ -148,11 +141,8 @@ for (const phase of PHASES) {
   }
 }
 
-// unique company list for the filter dropdown
 export const ALL_COMPANIES = [...new Set(Object.values(COMPANIES).flat())].sort();
 
-// ---- lazy per-phase solution details ------------------------------------
-// Each file exports DETAILS: { [problemId]: { statement, examples?, approaches, oneLiner?, similar? } }
 const PHASE_LOADERS = {
   "Arrays": () => import("./dsa/details-arrays.js"),
   "Strings": () => import("./dsa/details-strings.js"),
@@ -178,10 +168,6 @@ export async function loadPhaseDetails(phase) {
   }
 }
 
-// ---- cross-reference index (used by the DSA "Sheets" browser) -------------
-// Maps a problem slug -> which worked solution / difficulty it corresponds to,
-// so a sheet's problem list can surface full brute/better/optimal solutions
-// (and real difficulty tags) for the problems we've already worked out.
 export const SOLUTION_INDEX = {};
 for (const p of DSA_PROBLEMS) {
   if (!SOLUTION_INDEX[p.id]) {
@@ -189,18 +175,14 @@ for (const p of DSA_PROBLEMS) {
   }
 }
 
-// True if we have a full worked solution for this slug.
 export function hasSolution(slug) {
   return !!SOLUTION_INDEX[slug];
 }
 
-// Best-known difficulty for a slug (from our worked catalog), or null.
 export function difficultyForSlug(slug) {
   return SOLUTION_INDEX[slug] ? SOLUTION_INDEX[slug].difficulty : null;
 }
 
-// Load the full worked solution for a slug regardless of phase. Tries the
-// primary slug first, then any provided fallbacks (e.g. a LeetCode slug).
 export async function loadSolutionBySlug(...slugs) {
   for (const s of slugs) {
     if (!s) continue;

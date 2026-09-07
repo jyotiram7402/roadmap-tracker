@@ -1,4 +1,4 @@
-// Python Backend Developer interview-prep track. Track: python-backend
+
 export const ROADMAP = [
   {
     id: "pyb-1",

@@ -1,6 +1,5 @@
-// data/sql/details-l3.js — worked answers for Level 3 (Senior, 4+ yrs) SQL questions.
+
 // Original explanations, queries, and demo/result tables.
-// answer block kinds: {kind:"text",text} | {kind:"sql",lines:[...]} | {kind:"table",title,headers,rows}
 
 export const DETAILS = {
   "l3-t-1": {

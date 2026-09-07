@@ -1,5 +1,4 @@
-// components/icons.js — inline Lucide icons (MIT). Zero-dependency, tree-shakeable.
-// All 24x24, stroke-based, inherit currentColor. Usage: <Code2 size={18} className="..." />
+
 
 function Ic({ size = 18, strokeWidth = 2, className = "", children, ...rest }) {
   return (

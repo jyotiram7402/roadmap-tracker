@@ -1,4 +1,4 @@
-// data/springboot-qa/web.js — Spring Boot web/data/security Q&A.
+
 // Original explanations written from an interview point of view (Spring Boot 3, jakarta.*).
 export const QUESTIONS = [
   {

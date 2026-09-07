@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===================== Design tokens ===================== */
 :root {
   --bg: #09090b;
   --bg-elevated: #0e0e11;
@@ -36,19 +35,15 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 
 * { box-sizing: border-box; }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.16); background-clip: padding-box; }
 
-/* Smooth transitions */
 button, input, textarea, details, a { transition: all 0.16s cubic-bezier(0.4, 0, 0.2, 1); }
 
-/* focus-visible ring (a11y) */
 :focus-visible { outline: none; box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px rgba(59,130,246,.6); border-radius: 8px; }
 
-/* ===================== UI primitives ===================== */
 .ui-card {
   background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)) , var(--card);
   border: 1px solid var(--border);
@@ -64,7 +59,6 @@ button, input, textarea, details, a { transition: all 0.16s cubic-bezier(0.4, 0,
 .ui-glow:hover { box-shadow: var(--shadow-glow); border-color: rgba(59,130,246,.35); }
 .ui-glass { background: rgba(24,24,27,.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 
-/* sidebar links */
 .nav-link {
   position: relative; display: flex; align-items: center; gap: 10px;
   padding: 8px 10px; border-radius: 10px; font-size: 13.5px; font-weight: 500;
@@ -77,14 +71,12 @@ button, input, textarea, details, a { transition: all 0.16s cubic-bezier(0.4, 0,
   width: 3px; height: 16px; border-radius: 3px; background: var(--blue);
 }
 
-/* buttons */
 .ui-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; font-weight: 600; font-size: 13.5px; padding: 8px 14px; border: 1px solid var(--border); color: var(--text-2); background: var(--card-2); }
 .ui-btn:hover { color: var(--text); border-color: var(--border-strong); }
 .ui-btn:disabled { opacity: .5; cursor: not-allowed; }
 .ui-btn-primary { background: var(--blue); border-color: transparent; color: #fff; box-shadow: 0 4px 14px -6px rgba(59,130,246,.6); }
 .ui-btn-primary:hover { background: #2f6fe0; color: #fff; }
 
-/* animations (all <= 250ms feel) */
 @keyframes uiFadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes uiFadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes uiScaleIn { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: scale(1); } }
@@ -96,12 +88,10 @@ button, input, textarea, details, a { transition: all 0.16s cubic-bezier(0.4, 0,
   .ui-card-hover:hover { transform: none; }
 }
 
-/* Custom checkbox bigger touch target on mobile */
 @media (max-width: 640px) {
   input[type="checkbox"] { width: 18px; height: 18px; }
 }
 
-/* ---------- Prism syntax tokens (custom dark theme) ---------- */
 .token.comment, .token.prolog, .token.doctype, .token.cdata {
   color: #64748b; font-style: italic;
 }
@@ -127,16 +117,14 @@ button, input, textarea, details, a { transition: all 0.16s cubic-bezier(0.4, 0,
 }
 .token.important, .token.bold { font-weight: bold; }
 .token.italic { font-style: italic; }
-.token.annotation { color: #f0abfc; }   /* Spring @annotations */
+.token.annotation { color: #f0abfc; }
 
-/* ---------- Mermaid svg overrides ---------- */
 .mermaid-wrap svg { max-width: 100%; height: auto; }
 .mermaid-wrap .nodeLabel,
 .mermaid-wrap .edgeLabel { color: #e2e8f0 !important; }
 .mermaid-wrap .edgeLabel { background-color: #0f172a !important; padding: 1px 4px; }
 .mermaid-wrap .marker { fill: #64748b !important; stroke: #64748b !important; }
 
-/* ---------- Print styles ---------- */
 @media print {
   body { background: white !important; color: black !important; }
   .no-print { display: none !important; }
@@ -149,14 +137,12 @@ button, input, textarea, details, a { transition: all 0.16s cubic-bezier(0.4, 0,
 }
 .print-only { display: none; }
 
-/* ---------- Flashcard flip ---------- */
 .card-flip { perspective: 1200px; }
 .card-flip-inner { transition: transform 0.5s; transform-style: preserve-3d; position: relative; }
 .card-flip.flipped .card-flip-inner { transform: rotateY(180deg); }
 .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .card-back { transform: rotateY(180deg); position: absolute; inset: 0; }
 
-/* ================= Landing / auth animated tech background ================= */
 @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-18px); } }
 @keyframes drift  { 0% { transform: translate(0,0); } 50% { transform: translate(14px,-10px); } 100% { transform: translate(0,0); } }
 @keyframes blob   { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-20px) scale(1.1); } 66% { transform: translate(-20px,20px) scale(0.95); } }
@@ -197,18 +183,10 @@ button, input, textarea, details, a { transition: all 0.16s cubic-bezier(0.4, 0,
   color: transparent; animation: shimmer 6s linear infinite;
 }
 
-/* Giant fading footer wordmark (BrandFooter) — theme-aware fade. */
 .brand-giant { color: transparent; -webkit-background-clip: text; background-clip: text; }
 .brand-giant-a { background-image: linear-gradient(to bottom, rgba(255,255,255,0.16), rgba(255,255,255,0.015)); }
 .brand-giant-b { background-image: linear-gradient(to bottom, rgba(240,101,79,0.42), rgba(240,101,79,0.03)); }
 
-/* ============================================================= */
-/* ===================== LIGHT THEME =========================== */
-/* Opt-in: <html class="light">. Default (no class) stays dark.  */
-/* Retrofit layer — remaps the app's fixed dark palette to light */
-/* without editing every component. Code blocks (#0c0d12) stay   */
-/* dark on purpose so syntax highlighting remains readable.      */
-/* ============================================================= */
 html.light {
   --bg: #ffffff;
   --bg-elevated: #ffffff;
@@ -226,13 +204,11 @@ html.light {
   --shadow-glow: 0 0 0 1px rgba(59,130,246,.25), 0 10px 30px -10px rgba(59,130,246,.20);
 }
 
-/* sidebar links + glass */
 html.light .nav-link:hover { color: var(--text); background: rgba(9,9,11,.05); }
 html.light .nav-link[data-active="true"] { color: #1d4ed8; background: rgba(59,130,246,.12); }
 html.light .ui-glass { background: rgba(255,255,255,.72); }
 html.light .ui-card { background: linear-gradient(180deg, rgba(9,9,11,.015), rgba(9,9,11,0)), var(--card); }
 
-/* --- surface backgrounds: fixed dark hex -> light --- */
 html.light .bg-\[\#09090b\] { background-color: #ffffff !important; }
 html.light .bg-\[\#0e0e11\] { background-color: #ffffff !important; }
 html.light .bg-\[\#141417\] { background-color: #f4f4f6 !important; }
@@ -240,7 +216,6 @@ html.light .bg-\[\#18181b\] { background-color: #ffffff !important; }
 html.light .bg-\[\#1c1c20\] { background-color: #f6f6f8 !important; }
 html.light .bg-\[\#1f1f23\] { background-color: #ececef !important; }
 
-/* --- translucent variants of the same surfaces --- */
 html.light .bg-\[\#0e0e11\]\/80 { background-color: rgba(255,255,255,0.85) !important; }
 html.light .bg-\[\#1c1c20\]\/40 { background-color: rgba(244,244,246,0.6) !important; }
 html.light .bg-\[\#1c1c20\]\/50 { background-color: rgba(244,244,246,0.65) !important; }
@@ -254,7 +229,6 @@ html.light .bg-\[\#141417\]\/70 { background-color: rgba(240,240,243,0.8) !impor
 html.light .bg-\[\#141417\]\/80 { background-color: rgba(240,240,243,0.9) !important; }
 html.light .bg-\[\#141417\]\/90 { background-color: rgba(240,240,243,0.95) !important; }
 
-/* --- white overlays -> subtle dark overlays --- */
 html.light .bg-white\/\[0\.04\] { background-color: rgba(9,9,11,0.03) !important; }
 html.light .bg-white\/\[0\.05\] { background-color: rgba(9,9,11,0.04) !important; }
 html.light .bg-white\/\[0\.06\] { background-color: rgba(9,9,11,0.05) !important; }
@@ -262,13 +236,11 @@ html.light .bg-white\/\[0\.08\] { background-color: rgba(9,9,11,0.06) !important
 html.light .bg-white\/\[0\.10\] { background-color: rgba(9,9,11,0.08) !important; }
 html.light .bg-white\/\[0\.14\] { background-color: rgba(9,9,11,0.10) !important; }
 
-/* --- borders --- */
 html.light .border-white\/\[0\.06\] { border-color: rgba(9,9,11,0.09) !important; }
 html.light .border-white\/\[0\.08\] { border-color: rgba(9,9,11,0.11) !important; }
 html.light .border-white\/\[0\.1\]  { border-color: rgba(9,9,11,0.12) !important; }
 html.light .border-white\/\[0\.14\] { border-color: rgba(9,9,11,0.16) !important; }
 
-/* --- text greys (dark scale -> readable-on-light) --- */
 html.light .text-zinc-100 { color: #18181b !important; }
 html.light .text-zinc-200 { color: #27272a !important; }
 html.light .text-zinc-300 { color: #3f3f46 !important; }
@@ -277,7 +249,6 @@ html.light .text-zinc-500 { color: #6b7280 !important; }
 html.light .text-zinc-600 { color: #9ca3af !important; }
 html.light .text-white { color: #18181b !important; }
 
-/* accent text: darken the 300/400 shades so they read on light surfaces */
 html.light .text-blue-300, html.light .text-blue-400 { color: #2563eb !important; }
 html.light .text-sky-300, html.light .text-sky-400 { color: #0284c7 !important; }
 html.light .text-indigo-300, html.light .text-indigo-400 { color: #4f46e5 !important; }
@@ -293,7 +264,6 @@ html.light .text-violet-300, html.light .text-violet-400 { color: #7c3aed !impor
 html.light .text-purple-300, html.light .text-purple-400 { color: #7c3aed !important; }
 html.light .text-fuchsia-200, html.light .text-fuchsia-300, html.light .text-fuchsia-400 { color: #c026d3 !important; }
 
-/* keep white text on coloured buttons / badges / gradients */
 html.light [class*="bg-blue-"].text-white,
 html.light [class*="bg-indigo-"].text-white,
 html.light [class*="bg-violet-"].text-white,
@@ -308,26 +278,18 @@ html.light [class*="bg-orange-"].text-white,
 html.light [class*="bg-gradient-to-"].text-white,
 html.light .ui-btn-primary { color: #ffffff !important; }
 
-/* the sign-in/CTA avatar tiles use a zinc gradient — keep glyph light */
 html.light [class*="from-zinc-6"].text-white,
 html.light [class*="from-zinc-7"].text-white { color: #ffffff !important; }
 
-/* landing tech chips read fine but soften on light */
 html.light .tech-chip { color: #1e293b; background: rgba(226,232,240,0.7); border-color: rgba(100,116,139,0.28); }
 
-/* white pill buttons (e.g. landing "Sign up") need an edge on a light bg */
 html.light a.bg-white, html.light button.bg-white { border: 1px solid rgba(9,9,11,0.12); }
 
-/* giant footer wordmark: fade from dark ink on light backgrounds */
 html.light .brand-giant-a { background-image: linear-gradient(to bottom, rgba(9,9,11,0.13), rgba(9,9,11,0.02)); }
 html.light .brand-giant-b { background-image: linear-gradient(to bottom, rgba(240,101,79,0.55), rgba(240,101,79,0.06)); }
 
-/* Code blocks stay dark in light mode; give them an explicit light base
-   text colour so plain (un-tokenized) code doesn't inherit the page's dark
-   text and vanish. Prism .token spans set their own colours and are unaffected. */
 html.light .bg-\[\#0c0d12\] { color: #e2e8f0; border-color: rgba(255,255,255,0.06); }
 
-/* ================= Roadmap mind-map ================= */
 .mm-wrap { overflow: auto; -webkit-overflow-scrolling: touch; }
 .mm-canvas { transform-origin: top left; width: max-content; padding: 10px 28px 28px; }
 .mm-node { display: flex; align-items: center; }

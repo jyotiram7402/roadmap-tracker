@@ -1,4 +1,4 @@
-// data/dsa/details-trees.js — worked solutions for the Trees phase.
+
 // Original explanations + Java implementations. class TreeNode { int val; TreeNode left, right; }
 
 export const DETAILS = {

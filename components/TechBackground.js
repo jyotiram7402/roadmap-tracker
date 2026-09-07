@@ -1,9 +1,5 @@
 "use client";
 
-// Fixed, decorative animated background: gradient blobs + panning grid +
-// floating tech-stack chips. Pure CSS animations (see globals.css), no images,
-// so it's fast and self-contained. Respects prefers-reduced-motion.
-
 const CHIPS = [
   { t: "☕ Java", c: "#f89820", x: "6%", y: "16%", d: "0s" },
   { t: "⚛️ React", c: "#61dafb", x: "82%", y: "12%", d: "1.2s" },

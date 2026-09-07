@@ -1,5 +1,4 @@
-// data/roadmap.js - the full 12-stage roadmap as structured data
-// Each stage has sub-sections; each sub-section has checklist items
+
 
 export const ROADMAP = [
   {
@@ -1051,7 +1050,6 @@ export const ROADMAP = [
   },
 ];
 
-// Flatten helper - total item count for progress %
 export function totalItems() {
   let count = 0;
   for (const stage of ROADMAP) {
@@ -1062,7 +1060,6 @@ export function totalItems() {
   return count;
 }
 
-// Get a unique key for each item
 export function itemKey(stageId, sectionId, idx) {
   return `${stageId}::${sectionId}::${idx}`;
 }

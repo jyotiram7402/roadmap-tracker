@@ -12,10 +12,10 @@ const DIFF = {
 };
 
 export default function LogicStudio() {
-  const [phases, setPhases] = useState(undefined); // undefined = loading
+  const [phases, setPhases] = useState(undefined);
   const [phaseId, setPhaseId] = useState("all");
   const [q, setQ] = useState("");
-  const [selected, setSelected] = useState(null); // { phase, problem }
+  const [selected, setSelected] = useState(null);
   const [doneVersion, setDoneVersion] = useState(0);
 
   useEffect(() => {
@@ -24,7 +24,6 @@ export default function LogicStudio() {
     return () => { ok = false; };
   }, []);
 
-  // re-render the "done" ticks when a problem is marked done in the detail view
   useEffect(() => {
     const upd = () => setDoneVersion((v) => v + 1);
     window.addEventListener("activity-change", upd);

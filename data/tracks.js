@@ -1,13 +1,6 @@
-// data/tracks.js — registry of all career tracks + lazy data loader.
-//
-// Performance: only the ACTIVE track's heavy data (roadmap stages + Q&A JSON)
+
+
 // is fetched, as its own webpack chunk via dynamic import(). The metadata below
-// is tiny and statically imported everywhere.
-//
-// IMPORTANT: every track uses GLOBALLY-UNIQUE stage IDs (java = "stage-N",
-// others are prefixed). Supabase progress/notes/qa_progress/bookmarks all key on
-// these strings, so unique IDs mean zero migration and existing Java progress is
-// preserved.
 
 export const TRACKS = [
   {
@@ -81,8 +74,6 @@ export function getTrackMeta(id) {
   return TRACKS.find((t) => t.id === id) || TRACKS[0];
 }
 
-// Map a stage id back to its owning track id (used by the bookmarks page,
-// which can hold bookmarks from multiple tracks).
 export function trackIdForStage(stageId) {
   if (!stageId) return DEFAULT_TRACK;
   if (stageId.startsWith("mern-")) return "mern";
@@ -91,11 +82,9 @@ export function trackIdForStage(stageId) {
   if (stageId.startsWith("de-")) return "data-engineer";
   if (stageId.startsWith("pyb-")) return "python-backend";
   if (stageId.startsWith("ip-")) return "interview-prep";
-  return "java-fullstack"; // "stage-N"
+  return "java-fullstack";
 }
 
-// Lazy-load a track's heavy data. Returns { roadmap, study }.
-// Each case is a distinct dynamic import → distinct chunk.
 export async function loadTrackData(id) {
   switch (id) {
     case "mern":
@@ -136,8 +125,6 @@ export async function loadTrackData(id) {
       };
   }
 }
-
-// ---- pure helpers shared across pages (operate on passed-in data) ----
 
 export function itemKey(stageId, sectionId, idx) {
   return `${stageId}::${sectionId}::${idx}`;

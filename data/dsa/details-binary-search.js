@@ -1,4 +1,4 @@
-// data/dsa/details-binary-search.js — worked solutions for the Binary Search phase.
+
 // Original explanations + Java implementations of standard algorithms.
 
 export const DETAILS = {

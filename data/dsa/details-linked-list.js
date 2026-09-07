@@ -1,7 +1,5 @@
-// data/dsa/details-linked-list.js — worked solutions for the Linked List phase.
+
 // Original explanations and implementations of standard algorithms.
-// Node convention: class ListNode { int val; ListNode next; }
-// Shape: { [problemId]: { statement, examples?, approaches[], oneLiner?, similar? } }
 
 export const DETAILS = {
   "reverse-linked-list-ii": {

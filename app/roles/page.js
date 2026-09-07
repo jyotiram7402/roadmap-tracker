@@ -28,7 +28,7 @@ export default function RolesPage() {
   const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState(null);
   const [activeRole, setActiveRole] = useState(DEFAULT_ROLE);
-  const [picking, setPicking] = useState(true);      // showing the role picker grid
+  const [picking, setPicking] = useState(true);
   const [sections, setSections] = useState(null);
   const [dataLoading, setDataLoading] = useState(false);
 
@@ -111,7 +111,6 @@ export default function RolesPage() {
     logActivity();
   }
 
-  // Apply the experience-level filter before handing sections to StudyMaterial.
   const levelSections = useMemo(() => {
     if (!sections) return null;
     if (level === "all") return sections;

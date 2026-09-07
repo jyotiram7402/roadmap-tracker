@@ -1,7 +1,4 @@
-// data/springboot-qa.js — "Spring Boot Interview Q&A" registry.
-// Each category's questions live in its own file under data/springboot-qa/
-// and are lazy-loaded. Question shape matches the Java Q&A set:
-//   { q, slug, answer: [ {kind:"text"|"example"|"note", text} | {kind:"code", lines:[]} ], learn }
+
 
 export const SPRINGBOOT_QA_CATEGORIES = [
   { id: "core", name: "Core & Essentials", short: "Core", icon: "🍃", accent: "from-green-500 to-emerald-500", desc: "IoC, DI, auto-configuration, starters, profiles, configuration & the core web annotations." },

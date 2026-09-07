@@ -1,7 +1,4 @@
-// data/sql-problems.js — SQL / Database question catalog for the "Prepare SQL" studio.
-// Questions grouped by experience LEVEL and TYPE (theory / coding). Worked answers
-// (explanation + SQL + demo/result tables) live in per-level files under data/sql/
-// and are LAZY-LOADED when a question is opened.
+
 
 const RAW = {
   "⭐ Must-Know (Most Asked)": {

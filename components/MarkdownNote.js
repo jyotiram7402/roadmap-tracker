@@ -1,11 +1,6 @@
 "use client";
 import CodeBlock from "@/components/CodeBlock";
 
-// Lightweight markdown renderer for user study-notes.
-// Supports: fenced ``` code blocks (rendered with syntax highlighting + copy),
-// #/##/### headings, **bold**, `inline code`, and -/*/1. lists.
-// The raw text is stored verbatim; this only affects display.
-
 function renderInline(text, keyBase) {
   const parts = [];
   const re = /(\*\*[^*]+\*\*|`[^`]+`)/g;
@@ -21,21 +16,19 @@ function renderInline(text, keyBase) {
   return parts;
 }
 
-// Heuristic: does this line look like source code? Tuned for DSA/Java notes.
-// Conservative on purpose — plain English sentences should NOT match.
 function isCodey(line) {
   const t = line.trim();
   if (t.length < 2) return false;
-  if (/[;{}]$/.test(t)) return true;                                           // ends with ; { }
+  if (/[;{}]$/.test(t)) return true;
   if (/^(public|private|protected|static|final|abstract|class|interface|enum|void|import|package|new|else|do|try|finally|break|continue|synchronized)\b/.test(t)) return true;
-  if (/^(if|for|while|switch|catch)\s*\(/.test(t)) return true;               // control with (
-  if (/^(return|throw)\b/.test(t)) return true;                               // statements
-  if (/^@[A-Za-z]/.test(t)) return true;                                      // annotations
-  if (/^(\/\/|\/\*|\*\s)/.test(t)) return true;                               // comments
-  if (/^[A-Za-z_$][\w$]*(\s*<[^>]*>)?(\[\])?\s+[A-Za-z_$][\w$]*\s*=/.test(t)) return true; // Type name =
-  if (/^[A-Za-z_$][\w$.]*\s*=\s*(\[|\{|new\s|-?\d|["'])/.test(t)) return true;             // x = [ / new / number / string
-  if (/^[A-Za-z_$][\w$.]*\([^)]*\)\s*;?\s*$/.test(t)) return true;            // method call line
-  if (/^(\t| {4,})\S/.test(line)) return true;                               // deep indentation
+  if (/^(if|for|while|switch|catch)\s*\(/.test(t)) return true;
+  if (/^(return|throw)\b/.test(t)) return true;
+  if (/^@[A-Za-z]/.test(t)) return true;
+  if (/^(\/\/|\/\*|\*\s)/.test(t)) return true;
+  if (/^[A-Za-z_$][\w$]*(\s*<[^>]*>)?(\[\])?\s+[A-Za-z_$][\w$]*\s*=/.test(t)) return true;
+  if (/^[A-Za-z_$][\w$.]*\s*=\s*(\[|\{|new\s|-?\d|["'])/.test(t)) return true;
+  if (/^[A-Za-z_$][\w$.]*\([^)]*\)\s*;?\s*$/.test(t)) return true;
+  if (/^(\t| {4,})\S/.test(line)) return true;
   return false;
 }
 
@@ -44,16 +37,16 @@ function parse(md) {
   const blocks = [];
   let i = 0, guard = 0;
   while (i < lines.length) {
-    if (++guard > 200000) break; // hard stop — never freeze the page
+    if (++guard > 200000) break;
     const start = i;
     const line = lines[i];
-    // 1) Explicit fenced code block (```), lenient — takes priority.
+
     if (/^\s*```/.test(line)) {
       const lang = (line.match(/^\s*```\s*([A-Za-z0-9+#.\-]*)/) || [])[1] || "";
       i++;
       const code = [];
       while (i < lines.length && !/^\s*```\s*$/.test(lines[i])) { code.push(lines[i]); i++; }
-      if (i < lines.length) i++; // skip closing fence if present
+      if (i < lines.length) i++;
       blocks.push({ type: "code", lang, lines: code });
       continue;
     }
@@ -70,24 +63,24 @@ function parse(md) {
       blocks.push({ type: "list", items });
       continue;
     }
-    // 2) Auto-detected code: a run of code-looking lines (no ``` needed).
+
     if (isCodey(line)) {
       const code = [];
       while (i < lines.length) {
         if (isCodey(lines[i])) { code.push(lines[i]); i++; }
-        else if (lines[i].trim() === "" && i + 1 < lines.length && isCodey(lines[i + 1])) { code.push(lines[i]); i++; } // interior blank
+        else if (lines[i].trim() === "" && i + 1 < lines.length && isCodey(lines[i + 1])) { code.push(lines[i]); i++; }
         else break;
       }
       blocks.push({ type: "code", lines: code });
       continue;
     }
-    // 3) Prose paragraph — stops at blanks, headings, lists, fences, or code lines.
+
     const para = [];
     while (i < lines.length && lines[i].trim() !== "" && !/^\s*```/.test(lines[i]) && !/^#{1,6}\s/.test(lines[i]) && !/^\s*[-*]\s+/.test(lines[i]) && !/^\s*\d+\.\s+/.test(lines[i]) && !isCodey(lines[i])) {
       para.push(lines[i]); i++;
     }
     if (para.length) blocks.push({ type: "para", text: para.join("\n") });
-    if (i === start) i++; // guarantee forward progress
+    if (i === start) i++;
   }
   return blocks;
 }

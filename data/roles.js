@@ -1,11 +1,4 @@
-// data/roles.js — "Prepare for a Specific Job Role" registry + lazy loader.
-//
-// A role is a categorized interview question bank (no roadmap/checklist).
-// Each role's data is lazy-loaded as its own chunk. Each question may carry a
-// `level` ("beginner" | "intermediate" | "advanced") for the experience filter.
-//
-// Progress/bookmarks reuse the existing Supabase tables. A role's pseudo stage
-// id is `role-<id>` so qaKey/bookmark keys never collide with learning tracks.
+
 
 export const ROLE_LEVELS = [
   { id: "all", label: "All levels" },

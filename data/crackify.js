@@ -1,7 +1,4 @@
-// data/crackify.js — "Crackify" curated LeetCode starter set.
-// A hand-picked list of must-do problems tagged by Type / Difficulty /
-// Pattern Category. Full brute → better → optimal solutions are resolved
-// from the app's worked-solution set (data/dsa/*) by slug at view time.
+
 
 function slug(t) {
   return (t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -18,7 +15,6 @@ function normDiff(d) {
   return "medium";
 }
 
-// Raw list exactly as curated (name, LeetCode link, type, difficulty, pattern).
 const RAW = [
   ["Reverse String", "https://leetcode.com/problems/reverse-string/", "Strings", "Leetcode Easy", "Two Pointers"],
   ["Two Sum", "https://leetcode.com/problems/two-sum/", "Arrays", "Leetcode Easy", "Hashmaps"],
