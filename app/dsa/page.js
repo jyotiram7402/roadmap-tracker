@@ -33,7 +33,7 @@ export default function DsaPage() {
         {tab === "problems" && (
           <>
             <p className="text-sm text-zinc-400 mb-4">
-              Pattern-first practice: pick a problem to see Brute → Better → Optimal in Java with dry-run tables, complexity, and the companies that ask it. Filter by topic, difficulty, company, or ★ most-asked.
+              Every DSA problem in one place — the core catalog plus every Sheet and Crackify, each tagged by source. Filter by difficulty, source, or ★ most-asked, and open any to solve it (with a Brute → Better → Optimal walkthrough where we&apos;ve worked it out).
             </p>
             <DsaStudio />
           </>

@@ -1,227 +1,138 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { DSA_PROBLEMS, PHASES, ALL_COMPANIES, loadPhaseDetails } from "@/data/dsa-problems";
-import CodeBlock from "@/components/CodeBlock";
-import MySolution from "@/components/MySolution";
-import StudyNotes from "@/components/StudyNotes";
+import { DSA_PROBLEMS, difficultyForSlug } from "@/data/dsa-problems";
 import QuestionTable from "@/components/QuestionTable";
+import { SheetProblemView } from "@/components/SheetBrowser";
 
-const DIFF = {
-  easy: { label: "Easy", cls: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-700/40" },
-  medium: { label: "Medium", cls: "text-amber-400", bg: "bg-amber-500/10 border-amber-700/40" },
-  hard: { label: "Hard", cls: "text-rose-400", bg: "bg-rose-500/10 border-rose-700/40" },
+const SOURCE_LABEL = {
+  core: "Core DSA",
+  crackify: "Crackify",
+  "apna-375": "Apna 375",
+  "arsh-280": "Arsh 280",
+  "babbar-450": "Babbar 450",
+  "siddharth-450": "Siddharth 450",
 };
+const SOURCE_ORDER = ["crackify", "apna-375", "arsh-280", "babbar-450", "siddharth-450", "core"];
+
+function effDiff(slug, lcSlug, fallback) {
+  return difficultyForSlug(slug) || (lcSlug ? difficultyForSlug(lcSlug) : null) || fallback || null;
+}
 
 export default function DsaStudio() {
-  const [phase, setPhase] = useState("All");
+  const [all, setAll] = useState(null); // unified list; null = loading
   const [diff, setDiff] = useState("all");
-  const [company, setCompany] = useState("All");
+  const [source, setSource] = useState("All");
   const [hotOnly, setHotOnly] = useState(false);
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState(null);
+  const [shown, setShown] = useState(200);
 
-  const filtered = useMemo(() => {
-    const query = q.trim().toLowerCase();
-    return DSA_PROBLEMS.filter((p) => {
-      if (phase !== "All" && p.phase !== phase) return false;
-      if (diff !== "all" && p.difficulty !== diff) return false;
-      if (hotOnly && !p.hot) return false;
-      if (company !== "All" && !p.companies.includes(company)) return false;
-      if (query && !p.title.toLowerCase().includes(query)) return false;
-      return true;
-    });
-  }, [phase, diff, company, hotOnly, q]);
+  // Merge the core catalog + Crackify + every Sheet into one deduped list.
+  useEffect(() => {
+    let ok = true;
+    (async () => {
+      const map = new Map();
+      const add = (slug, data, src) => {
+        if (!slug) return;
+        let it = map.get(slug);
+        if (!it) { it = { slug, id: slug, sources: [], companies: [] }; map.set(slug, it); }
+        if (!it.sources.includes(src)) it.sources.push(src);
+        it.title = it.title || data.title;
+        it.difficulty = it.difficulty || data.difficulty || null;
+        it.topic = it.topic || data.topic || null;
+        it.lcSlug = it.lcSlug || data.lcSlug || null;
+        it.link = it.link || data.link || null;
+        it.hot = it.hot || !!data.hot;
+        if (data.companies) for (const c of data.companies) if (c && !it.companies.includes(c)) it.companies.push(c);
+      };
 
-  const counts = useMemo(() => {
-    const c = { easy: 0, medium: 0, hard: 0 };
-    for (const p of DSA_PROBLEMS) c[p.difficulty]++;
-    return c;
+      for (const p of DSA_PROBLEMS) add(p.id, { title: p.title, difficulty: p.difficulty, topic: p.phase, companies: p.companies, hot: p.hot }, "core");
+
+      const [cr, sh] = await Promise.all([import("@/data/crackify"), import("@/data/dsa-sheets")]);
+      for (const p of cr.CRACKIFY) add(p.slug, { title: p.name, difficulty: p.difficulty, topic: p.type, lcSlug: p.lcSlug, link: p.link }, "crackify");
+      for (const s of sh.SHEETS) for (const t of s.topics) for (const p of t.problems) {
+        const companies = Array.isArray(p.companies) ? p.companies : (p.companies ? [p.companies] : []);
+        add(p.slug, { title: p.name, difficulty: p.difficulty, topic: p.topic, companies, lcSlug: p.lcSlug, link: p.link }, s.id);
+      }
+
+      const list = [...map.values()].map((it) => {
+        const d = effDiff(it.slug, it.lcSlug, it.difficulty);
+        it.sources.sort((a, b) => SOURCE_ORDER.indexOf(a) - SOURCE_ORDER.indexOf(b));
+        return { ...it, name: it.title, difficulty: d, _diff: d, key: it.slug };
+      });
+      list.sort((a, b) => (b.hot ? 1 : 0) - (a.hot ? 1 : 0) || (a.title || "").localeCompare(b.title || ""));
+      if (ok) setAll(list);
+    })();
+    return () => { ok = false; };
   }, []);
 
-  if (selected) return <ProblemView problem={selected} onBack={() => setSelected(null)} />;
+  const sources = useMemo(() => {
+    const present = new Set((all || []).flatMap((x) => x.sources));
+    return SOURCE_ORDER.filter((s) => present.has(s));
+  }, [all]);
+
+  const filtered = useMemo(() => {
+    if (!all) return [];
+    const query = q.trim().toLowerCase();
+    return all.filter((p) => {
+      if (diff !== "all" && p._diff !== diff) return false;
+      if (source !== "All" && !p.sources.includes(source)) return false;
+      if (hotOnly && !p.hot) return false;
+      if (query && !(p.title || "").toLowerCase().includes(query)) return false;
+      return true;
+    });
+  }, [all, diff, source, hotOnly, q]);
+
+  useEffect(() => { setShown(200); }, [diff, source, hotOnly, q]);
+
+  if (selected) return <SheetProblemView problem={selected} sheetName="All DSA problems" onBack={() => setSelected(null)} />;
+  if (all === null) return <div className="text-center py-16 text-zinc-500 animate-pulse">Loading every problem — catalog, sheets &amp; Crackify…</div>;
+
+  const visible = filtered.slice(0, shown);
+  const meta = (p) => {
+    const srcs = p.sources.filter((s) => s !== "core");
+    const labels = (srcs.length ? srcs : ["core"]).map((s) => SOURCE_LABEL[s] || s);
+    const tail = labels.slice(0, 3).join(", ") + (labels.length > 3 ? ` +${labels.length - 3}` : "");
+    return `${p.topic ? p.topic + " · " : ""}${tail}`;
+  };
 
   return (
     <div>
-      {/* filters */}
       <div className="space-y-3">
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search problems… (e.g. Two Sum, subarray, tree)"
-          className="w-full px-3 py-2 bg-[#141417] border border-white/[0.08] rounded-lg text-sm text-white focus:outline-none focus:border-blue-500/60"
-        />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search all problems… (Two Sum, subarray, tree)"
+          className="w-full px-3 py-2 bg-[#141417] border border-white/[0.08] rounded-lg text-sm text-white focus:outline-none focus:border-blue-500/60" />
         <div className="flex flex-wrap gap-2">
-          {[["all", `All`], ["easy", `Easy · ${counts.easy}`], ["medium", `Medium · ${counts.medium}`], ["hard", `Hard · ${counts.hard}`]].map(([v, label]) => (
+          {[["all", "All"], ["easy", "Easy"], ["medium", "Medium"], ["hard", "Hard"]].map(([v, l]) => (
             <button key={v} onClick={() => setDiff(v)}
-              className={`text-xs px-3 py-1.5 rounded-full border transition ${diff === v ? "bg-blue-600 border-blue-500 text-white" : "bg-[#18181b] border-white/[0.06] text-zinc-400 hover:border-white/[0.14] hover:text-zinc-200"}`}>
-              {label}
-            </button>
+              className={`text-xs px-3 py-1.5 rounded-full border transition ${diff === v ? "bg-blue-600 border-blue-500 text-white" : "bg-[#18181b] border-white/[0.06] text-zinc-400 hover:border-white/[0.14] hover:text-zinc-200"}`}>{l}</button>
           ))}
           <button onClick={() => setHotOnly((v) => !v)}
-            className={`text-xs px-3 py-1.5 rounded-full border transition ${hotOnly ? "bg-amber-500/20 border-amber-500 text-amber-300" : "bg-[#18181b] border-white/[0.06] text-zinc-400 hover:border-white/[0.14] hover:text-zinc-200"}`}>
-            ★ Most asked
+            className={`text-xs px-3 py-1.5 rounded-full border transition ${hotOnly ? "bg-amber-500/20 border-amber-500 text-amber-300" : "bg-[#18181b] border-white/[0.06] text-zinc-400 hover:border-white/[0.14] hover:text-zinc-200"}`}>★ Most asked</button>
+        </div>
+        <div className="flex flex-wrap gap-2 items-center">
+          <select value={source} onChange={(e) => setSource(e.target.value)}
+            className="text-xs px-3 py-2 bg-[#141417] border border-white/[0.08] rounded-lg text-zinc-200 focus:outline-none focus:border-blue-500/60">
+            <option value="All">All sources</option>
+            {sources.map((s) => <option key={s} value={s}>{SOURCE_LABEL[s]}</option>)}
+          </select>
+          <span className="text-xs text-zinc-400 ml-auto">{filtered.length} of {all.length} problems</span>
+        </div>
+      </div>
+
+      <p className="mt-3 mb-3 text-[11px] text-zinc-500">
+        One home for every DSA problem — the core catalog plus every Sheet and Crackify, each tagged with its source. Open any to solve it, with a full solution where we&apos;ve worked it out.
+      </p>
+
+      <QuestionTable items={visible} category="dsa" onOpen={setSelected} getMeta={meta} />
+
+      {filtered.length > shown && (
+        <div className="text-center mt-4">
+          <button onClick={() => setShown((s) => s + 300)}
+            className="text-sm font-medium px-5 py-2 rounded-lg bg-[#18181b] border border-white/[0.08] text-zinc-300 hover:text-white hover:border-white/[0.18] transition">
+            Show more ({filtered.length - shown} left)
           </button>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <select value={phase} onChange={(e) => setPhase(e.target.value)} className="text-xs px-3 py-2 bg-[#141417] border border-white/[0.08] rounded-lg text-zinc-200 focus:outline-none focus:border-blue-500/60">
-            <option value="All">All topics</option>
-            {PHASES.map((p) => <option key={p} value={p}>{p}</option>)}
-          </select>
-          <select value={company} onChange={(e) => setCompany(e.target.value)} className="text-xs px-3 py-2 bg-[#141417] border border-white/[0.08] rounded-lg text-zinc-200 focus:outline-none focus:border-blue-500/60">
-            <option value="All">All companies</option>
-            {ALL_COMPANIES.map((c) => <option key={c} value={c}>{c}</option>)}
-          </select>
-          <span className="text-xs text-zinc-400 self-center ml-auto">{filtered.length} problems</span>
-        </div>
-      </div>
-
-      {/* list */}
-      <div className="mt-4">
-        <QuestionTable
-          items={filtered}
-          category="dsa"
-          onOpen={setSelected}
-          getMeta={(p) => `${p.phase}${p.companies.length ? ` · ${p.companies.slice(0, 2).join(", ")}${p.companies.length > 2 ? ` +${p.companies.length - 2}` : ""}` : ""}`}
-        />
-      </div>
-    </div>
-  );
-}
-
-function ProblemView({ problem, onBack }) {
-  const d = DIFF[problem.difficulty];
-  const [details, setDetails] = useState(undefined); // undefined = loading, null = none yet
-  const [ai, setAi] = useState(0);
-
-  useEffect(() => {
-    let mounted = true;
-    setDetails(undefined);
-    setAi(0);
-    loadPhaseDetails(problem.phase).then((map) => {
-      if (mounted) setDetails(map[problem.id] || null);
-    });
-    return () => { mounted = false; };
-  }, [problem]);
-
-  const approaches = details?.approaches || [];
-  const ap = approaches[Math.min(ai, Math.max(0, approaches.length - 1))];
-
-  return (
-    <div>
-      <button onClick={onBack} className="text-sm text-blue-400 hover:underline mb-3">← All problems</button>
-
-      <div className="grid lg:grid-cols-2 gap-4">
-        {/* LEFT: statement */}
-        <div className="bg-[#18181b] border border-white/[0.06] rounded-xl p-4 lg:max-h-[75vh] lg:overflow-y-auto">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h2 className="text-lg font-bold text-white">{problem.title}</h2>
-            {problem.hot && <span className="text-amber-400" title="Frequently asked">★</span>}
-            <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${d.bg} ${d.cls}`}>{d.label}</span>
-          </div>
-          <div className="mt-1 text-xs text-zinc-400">{problem.phase}</div>
-
-          {problem.companies.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {problem.companies.map((c) => (
-                <span key={c} className="text-[11px] px-2 py-0.5 rounded-full bg-[#141417] border border-white/[0.06] text-zinc-300">🏢 {c}</span>
-              ))}
-            </div>
-          )}
-
-          {details === undefined ? (
-            <div className="mt-4 text-sm text-zinc-500 animate-pulse">Loading problem…</div>
-          ) : details ? (
-            <>
-              <p className="mt-4 text-sm text-zinc-200 leading-relaxed">{details.statement}</p>
-              {details.examples?.map((ex, i) => (
-                <div key={i} className="mt-3 bg-[#141417] border border-white/[0.06] rounded-lg p-3 text-sm">
-                  <div className="text-xs font-semibold text-zinc-400 mb-1">Example {i + 1}</div>
-                  <div><span className="text-zinc-400">Input: </span><span className="font-mono text-zinc-200">{ex.input}</span></div>
-                  <div><span className="text-zinc-400">Output: </span><span className="font-mono text-emerald-300">{ex.output}</span></div>
-                  {ex.explanation && <div className="text-zinc-400 mt-1">{ex.explanation}</div>}
-                </div>
-              ))}
-              {details.similar && (
-                <div className="mt-4">
-                  <div className="text-xs font-semibold text-zinc-400 mb-1">Similar problems</div>
-                  <ul className="text-xs text-zinc-400 space-y-0.5">
-                    {details.similar.map((s, i) => <li key={i}>· {s[0]} — {s[1]} <span className="text-zinc-600">({s[2]})</span></li>)}
-                  </ul>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="mt-4 text-sm text-zinc-400">
-              <p>Read the full problem statement and examples on LeetCode. A detailed brute → better → optimal breakdown with dry-run tables is being added for this problem.</p>
-            </div>
-          )}
-
-          <a href={problem.leetcode} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-4 text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-700/50 text-amber-300 hover:bg-amber-500/20 transition">
-            🟠 Open on LeetCode
-          </a>
-        </div>
-
-        {/* RIGHT: approaches */}
-        <div className="bg-[#18181b] border border-white/[0.06] rounded-xl p-4 lg:max-h-[75vh] lg:overflow-y-auto">
-          {approaches.length > 0 ? (
-            <>
-              <div className="flex gap-2 flex-wrap sticky top-0 bg-[#1c1c20]/40 pb-2 -mt-1">
-                {approaches.map((a, i) => (
-                  <button key={i} onClick={() => setAi(i)}
-                    className={`text-xs px-3 py-1.5 rounded-full border transition ${ai === i ? "bg-blue-600 border-blue-500 text-white" : "bg-[#141417] border-white/[0.06] text-zinc-400 hover:border-white/[0.14] hover:text-zinc-200"}`}>
-                    {a.name}
-                  </button>
-                ))}
-              </div>
-
-              <div className="mt-3">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/15 border border-purple-700/40 text-purple-300">Pattern: {ap.pattern}</span>
-                  <span className="text-xs text-zinc-400">⏱ {ap.time}</span>
-                  <span className="text-xs text-zinc-400">🗄 {ap.space}</span>
-                </div>
-                <p className="mt-3 text-sm text-zinc-300 leading-relaxed">{ap.theory}</p>
-                <div className="mt-3"><CodeBlock lines={ap.code} /></div>
-
-                {ap.dryRun && (
-                  <div className="mt-4">
-                    <div className="text-xs font-semibold text-cyan-400 mb-1">Dry run{ap.dryRun.title ? ` — ${ap.dryRun.title}` : ""}</div>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-xs border-collapse">
-                        <thead>
-                          <tr>{ap.dryRun.headers.map((h, i) => <th key={i} className="text-left font-semibold text-zinc-300 border border-white/[0.06] px-2 py-1 bg-[#141417]/60">{h}</th>)}</tr>
-                        </thead>
-                        <tbody>
-                          {ap.dryRun.rows.map((row, ri) => (
-                            <tr key={ri}>{row.map((cell, ci) => <td key={ci} className="border border-white/[0.06] px-2 py-1 text-zinc-300 font-mono">{cell}</td>)}</tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {details.oneLiner && (
-                <div className="mt-4 bg-[#141417] border border-white/[0.06] rounded-lg p-3">
-                  <div className="text-xs font-semibold text-zinc-400 mb-1">🎤 Interview one-liner</div>
-                  <p className="text-sm text-zinc-300 italic">{details.oneLiner}</p>
-                </div>
-              )}
-            </>
-          ) : details === undefined ? (
-            <div className="text-sm text-zinc-500 animate-pulse">Loading approaches…</div>
-          ) : (
-            <div className="text-sm text-zinc-400">
-              <p className="font-semibold text-zinc-300 mb-2">Approaches coming soon</p>
-              <p>The Brute → Better → Optimal solutions with Java code and dry-run tables are being filled in phase by phase. For now, practice this one directly on LeetCode using the button on the left.</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <MySolution slug={problem.id} category="dsa" title={problem.title} />
-      <StudyNotes slug={problem.id} />
+      )}
     </div>
   );
 }
