@@ -16,6 +16,7 @@ const SHEET_STYLE = {
   "arsh-280": { emoji: "⚡", grad: "from-violet-500/20 to-purple-600/10", ring: "border-violet-700/50" },
   "babbar-450": { emoji: "💗", grad: "from-rose-500/20 to-pink-600/10", ring: "border-rose-700/50" },
   "siddharth-450": { emoji: "🔥", grad: "from-amber-500/20 to-orange-600/10", ring: "border-amber-700/50" },
+  "chocolate-candy": { emoji: "🍫", grad: "from-amber-700/20 to-yellow-800/10", ring: "border-amber-800/50" },
 };
 
 function effDiff(p) {
@@ -150,13 +151,22 @@ export default function SheetBrowser() {
 
       <div className="mt-4 space-y-5">
         {grouped.length === 0 && <p className="text-center text-zinc-500 py-8 text-sm">No problems match these filters.</p>}
-        {grouped.map(([tname, probs]) => (
+        {grouped.map(([tname, probs]) => {
+          const patterns = (sheet.topics.find((t) => t.topic === tname) || {}).patterns || [];
+          return (
           <div key={tname}>
             <div className="flex items-center gap-2 mb-1.5">
               <h3 className="text-sm font-semibold text-zinc-200">{tname}</h3>
               <span className="text-[11px] text-zinc-500">{probs.length}</span>
               <div className="flex-1 h-px bg-[#1c1c20]" />
             </div>
+            {patterns.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {patterns.map((pt) => (
+                  <span key={pt} className="text-[10.5px] px-2 py-0.5 rounded-full bg-[#141417] border border-white/[0.06] text-zinc-400">{pt}</span>
+                ))}
+              </div>
+            )}
             <div className="space-y-1.5">
               {probs.map((p, i) => {
                 const d = p._diff ? DIFF[p._diff] : null;
@@ -178,7 +188,8 @@ export default function SheetBrowser() {
               })}
             </div>
           </div>
-        ))}
+        );
+        })}
       </div>
     </div>
   );

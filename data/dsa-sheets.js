@@ -11339,5 +11339,748 @@ export const SHEETS = [
     ]
    }
   ]
+ },
+ {
+  "id": "chocolate-candy",
+  "name": "Chocolate Candy",
+  "author": "Pattern-wise · 79 must-do",
+  "count": 79,
+  "topics": [
+   {
+    "topic": "Arrays",
+    "patterns": [
+     "Array traversal",
+     "Two pointers",
+     "Sliding window",
+     "Prefix sums",
+     "Kadane's Algorithm",
+     "In-place modification",
+     "Matrix traversal",
+     "Intervals"
+    ],
+    "problems": [
+     {
+      "name": "Two Sum",
+      "topic": "Arrays",
+      "slug": "two-sum",
+      "link": "https://leetcode.com/problems/two-sum/",
+      "lcSlug": "two-sum"
+     },
+     {
+      "name": "Best Time to Buy and Sell Stock",
+      "topic": "Arrays",
+      "slug": "best-time-to-buy-and-sell-stock",
+      "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+      "lcSlug": "best-time-to-buy-and-sell-stock"
+     },
+     {
+      "name": "Product of Array Except Self",
+      "topic": "Arrays",
+      "slug": "product-of-array-except-self",
+      "link": "https://leetcode.com/problems/product-of-array-except-self/",
+      "lcSlug": "product-of-array-except-self"
+     },
+     {
+      "name": "Maximum Subarray",
+      "topic": "Arrays",
+      "slug": "maximum-subarray",
+      "link": "https://leetcode.com/problems/maximum-subarray/",
+      "lcSlug": "maximum-subarray"
+     },
+     {
+      "name": "3Sum",
+      "topic": "Arrays",
+      "slug": "3sum",
+      "link": "https://leetcode.com/problems/3sum/",
+      "lcSlug": "3sum"
+     },
+     {
+      "name": "Container With Most Water",
+      "topic": "Arrays",
+      "slug": "container-with-most-water",
+      "link": "https://leetcode.com/problems/container-with-most-water/",
+      "lcSlug": "container-with-most-water"
+     },
+     {
+      "name": "Subarray Sum Equals K",
+      "topic": "Arrays",
+      "slug": "subarray-sum-equals-k",
+      "link": "https://leetcode.com/problems/subarray-sum-equals-k/",
+      "lcSlug": "subarray-sum-equals-k"
+     }
+    ]
+   },
+   {
+    "topic": "Strings",
+    "patterns": [
+     "Character frequency counting",
+     "Two pointers",
+     "Sliding window",
+     "String parsing",
+     "Palindromes",
+     "Anagrams",
+     "Substrings"
+    ],
+    "problems": [
+     {
+      "name": "Valid Anagram",
+      "topic": "Strings",
+      "slug": "valid-anagram",
+      "link": "https://leetcode.com/problems/valid-anagram/",
+      "lcSlug": "valid-anagram"
+     },
+     {
+      "name": "Valid Palindrome",
+      "topic": "Strings",
+      "slug": "valid-palindrome",
+      "link": "https://leetcode.com/problems/valid-palindrome/",
+      "lcSlug": "valid-palindrome"
+     },
+     {
+      "name": "Longest Substring Without Repeating Characters",
+      "topic": "Strings",
+      "slug": "longest-substring-without-repeating-characters",
+      "link": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+      "lcSlug": "longest-substring-without-repeating-characters"
+     },
+     {
+      "name": "Longest Repeating Character Replacement",
+      "topic": "Strings",
+      "slug": "longest-repeating-character-replacement",
+      "link": "https://leetcode.com/problems/longest-repeating-character-replacement/",
+      "lcSlug": "longest-repeating-character-replacement"
+     },
+     {
+      "name": "Group Anagrams",
+      "topic": "Strings",
+      "slug": "group-anagrams",
+      "link": "https://leetcode.com/problems/group-anagrams/",
+      "lcSlug": "group-anagrams"
+     },
+     {
+      "name": "Longest Palindromic Substring",
+      "topic": "Strings",
+      "slug": "longest-palindromic-substring",
+      "link": "https://leetcode.com/problems/longest-palindromic-substring/",
+      "lcSlug": "longest-palindromic-substring"
+     }
+    ]
+   },
+   {
+    "topic": "Linked List",
+    "patterns": [
+     "Traversal",
+     "Slow and fast pointers",
+     "Cycle detection",
+     "Reversing a linked list",
+     "Merging linked lists",
+     "Finding the middle",
+     "Dummy node technique",
+     "Pointer manipulation"
+    ],
+    "problems": [
+     {
+      "name": "Reverse Linked List",
+      "topic": "Linked List",
+      "slug": "reverse-linked-list",
+      "link": "https://leetcode.com/problems/reverse-linked-list/",
+      "lcSlug": "reverse-linked-list"
+     },
+     {
+      "name": "Linked List Cycle",
+      "topic": "Linked List",
+      "slug": "linked-list-cycle",
+      "link": "https://leetcode.com/problems/linked-list-cycle/",
+      "lcSlug": "linked-list-cycle"
+     },
+     {
+      "name": "Middle of the Linked List",
+      "topic": "Linked List",
+      "slug": "middle-of-the-linked-list",
+      "link": "https://leetcode.com/problems/middle-of-the-linked-list/",
+      "lcSlug": "middle-of-the-linked-list"
+     },
+     {
+      "name": "Merge Two Sorted Lists",
+      "topic": "Linked List",
+      "slug": "merge-two-sorted-lists",
+      "link": "https://leetcode.com/problems/merge-two-sorted-lists/",
+      "lcSlug": "merge-two-sorted-lists"
+     },
+     {
+      "name": "Remove Nth Node From End of List",
+      "topic": "Linked List",
+      "slug": "remove-nth-node-from-end-of-list",
+      "link": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+      "lcSlug": "remove-nth-node-from-end-of-list"
+     },
+     {
+      "name": "Reorder List",
+      "topic": "Linked List",
+      "slug": "reorder-list",
+      "link": "https://leetcode.com/problems/reorder-list/",
+      "lcSlug": "reorder-list"
+     }
+    ]
+   },
+   {
+    "topic": "Trees & Tries",
+    "patterns": [
+     "DFS",
+     "BFS / level-order",
+     "Preorder / Inorder / Postorder",
+     "Binary Search Trees",
+     "Tree height & depth",
+     "Lowest Common Ancestor",
+     "Tree construction",
+     "Trie insertion",
+     "Prefix search",
+     "Word search"
+    ],
+    "problems": [
+     {
+      "name": "Maximum Depth of Binary Tree",
+      "topic": "Trees & Tries",
+      "slug": "maximum-depth-of-binary-tree",
+      "link": "https://leetcode.com/problems/maximum-depth-of-binary-tree/",
+      "lcSlug": "maximum-depth-of-binary-tree"
+     },
+     {
+      "name": "Invert Binary Tree",
+      "topic": "Trees & Tries",
+      "slug": "invert-binary-tree",
+      "link": "https://leetcode.com/problems/invert-binary-tree/",
+      "lcSlug": "invert-binary-tree"
+     },
+     {
+      "name": "Binary Tree Level Order Traversal",
+      "topic": "Trees & Tries",
+      "slug": "binary-tree-level-order-traversal",
+      "link": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+      "lcSlug": "binary-tree-level-order-traversal"
+     },
+     {
+      "name": "Validate Binary Search Tree",
+      "topic": "Trees & Tries",
+      "slug": "validate-binary-search-tree",
+      "link": "https://leetcode.com/problems/validate-binary-search-tree/",
+      "lcSlug": "validate-binary-search-tree"
+     },
+     {
+      "name": "Lowest Common Ancestor of a Binary Search Tree",
+      "topic": "Trees & Tries",
+      "slug": "lowest-common-ancestor-of-a-binary-search-tree",
+      "link": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/",
+      "lcSlug": "lowest-common-ancestor-of-a-binary-search-tree"
+     },
+     {
+      "name": "Diameter of Binary Tree",
+      "topic": "Trees & Tries",
+      "slug": "diameter-of-binary-tree",
+      "link": "https://leetcode.com/problems/diameter-of-binary-tree/",
+      "lcSlug": "diameter-of-binary-tree"
+     },
+     {
+      "name": "Implement Trie",
+      "topic": "Trees & Tries",
+      "slug": "implement-trie",
+      "link": "https://leetcode.com/problems/implement-trie-prefix-tree/",
+      "lcSlug": "implement-trie-prefix-tree"
+     },
+     {
+      "name": "Word Search II",
+      "topic": "Trees & Tries",
+      "slug": "word-search-ii",
+      "link": "https://leetcode.com/problems/word-search-ii/",
+      "lcSlug": "word-search-ii"
+     }
+    ]
+   },
+   {
+    "topic": "Stack & Queue",
+    "patterns": [
+     "Stack operations",
+     "Queue operations",
+     "Monotonic stack",
+     "Parentheses matching",
+     "Expression evaluation",
+     "BFS queues",
+     "Min/max tracking"
+    ],
+    "problems": [
+     {
+      "name": "Valid Parentheses",
+      "topic": "Stack & Queue",
+      "slug": "valid-parentheses",
+      "link": "https://leetcode.com/problems/valid-parentheses/",
+      "lcSlug": "valid-parentheses"
+     },
+     {
+      "name": "Min Stack",
+      "topic": "Stack & Queue",
+      "slug": "min-stack",
+      "link": "https://leetcode.com/problems/min-stack/",
+      "lcSlug": "min-stack"
+     },
+     {
+      "name": "Evaluate Reverse Polish Notation",
+      "topic": "Stack & Queue",
+      "slug": "evaluate-reverse-polish-notation",
+      "link": "https://leetcode.com/problems/evaluate-reverse-polish-notation/",
+      "lcSlug": "evaluate-reverse-polish-notation"
+     },
+     {
+      "name": "Daily Temperatures",
+      "topic": "Stack & Queue",
+      "slug": "daily-temperatures",
+      "link": "https://leetcode.com/problems/daily-temperatures/",
+      "lcSlug": "daily-temperatures"
+     },
+     {
+      "name": "Largest Rectangle in Histogram",
+      "topic": "Stack & Queue",
+      "slug": "largest-rectangle-in-histogram",
+      "link": "https://leetcode.com/problems/largest-rectangle-in-histogram/",
+      "lcSlug": "largest-rectangle-in-histogram"
+     },
+     {
+      "name": "Implement Queue Using Stacks",
+      "topic": "Stack & Queue",
+      "slug": "implement-queue-using-stacks",
+      "link": "https://leetcode.com/problems/implement-queue-using-stacks/",
+      "lcSlug": "implement-queue-using-stacks"
+     }
+    ]
+   },
+   {
+    "topic": "Graphs",
+    "patterns": [
+     "Graph representation",
+     "Adjacency lists",
+     "BFS",
+     "DFS",
+     "Connected components",
+     "Cycle detection",
+     "Topological sort",
+     "Shortest path",
+     "Multi-source BFS",
+     "Union Find",
+     "Dijkstra's Algorithm"
+    ],
+    "problems": [
+     {
+      "name": "Number of Islands",
+      "topic": "Graphs",
+      "slug": "number-of-islands",
+      "link": "https://leetcode.com/problems/number-of-islands/",
+      "lcSlug": "number-of-islands"
+     },
+     {
+      "name": "Clone Graph",
+      "topic": "Graphs",
+      "slug": "clone-graph",
+      "link": "https://leetcode.com/problems/clone-graph/",
+      "lcSlug": "clone-graph"
+     },
+     {
+      "name": "Course Schedule",
+      "topic": "Graphs",
+      "slug": "course-schedule",
+      "link": "https://leetcode.com/problems/course-schedule/",
+      "lcSlug": "course-schedule"
+     },
+     {
+      "name": "Rotting Oranges",
+      "topic": "Graphs",
+      "slug": "rotting-oranges",
+      "link": "https://leetcode.com/problems/rotting-oranges/",
+      "lcSlug": "rotting-oranges"
+     },
+     {
+      "name": "Pacific Atlantic Water Flow",
+      "topic": "Graphs",
+      "slug": "pacific-atlantic-water-flow",
+      "link": "https://leetcode.com/problems/pacific-atlantic-water-flow/",
+      "lcSlug": "pacific-atlantic-water-flow"
+     },
+     {
+      "name": "Network Delay Time",
+      "topic": "Graphs",
+      "slug": "network-delay-time",
+      "link": "https://leetcode.com/problems/network-delay-time/",
+      "lcSlug": "network-delay-time"
+     },
+     {
+      "name": "Redundant Connection",
+      "topic": "Graphs",
+      "slug": "redundant-connection",
+      "link": "https://leetcode.com/problems/redundant-connection/",
+      "lcSlug": "redundant-connection"
+     },
+     {
+      "name": "Word Ladder",
+      "topic": "Graphs",
+      "slug": "word-ladder",
+      "link": "https://leetcode.com/problems/word-ladder/",
+      "lcSlug": "word-ladder"
+     }
+    ]
+   },
+   {
+    "topic": "DP & Recursion",
+    "patterns": [
+     "Base cases",
+     "Recursive calls",
+     "Backtracking",
+     "Subsets",
+     "Permutations",
+     "Combinations",
+     "Memoization",
+     "Tabulation",
+     "1D DP",
+     "2D DP",
+     "Knapsack",
+     "Subsequences",
+     "State transitions"
+    ],
+    "problems": [
+     {
+      "name": "Climbing Stairs",
+      "topic": "DP & Recursion",
+      "slug": "climbing-stairs",
+      "link": "https://leetcode.com/problems/climbing-stairs/",
+      "lcSlug": "climbing-stairs"
+     },
+     {
+      "name": "House Robber",
+      "topic": "DP & Recursion",
+      "slug": "house-robber",
+      "link": "https://leetcode.com/problems/house-robber/",
+      "lcSlug": "house-robber"
+     },
+     {
+      "name": "Coin Change",
+      "topic": "DP & Recursion",
+      "slug": "coin-change",
+      "link": "https://leetcode.com/problems/coin-change/",
+      "lcSlug": "coin-change"
+     },
+     {
+      "name": "Longest Increasing Subsequence",
+      "topic": "DP & Recursion",
+      "slug": "longest-increasing-subsequence",
+      "link": "https://leetcode.com/problems/longest-increasing-subsequence/",
+      "lcSlug": "longest-increasing-subsequence"
+     },
+     {
+      "name": "Longest Common Subsequence",
+      "topic": "DP & Recursion",
+      "slug": "longest-common-subsequence",
+      "link": "https://leetcode.com/problems/longest-common-subsequence/",
+      "lcSlug": "longest-common-subsequence"
+     },
+     {
+      "name": "Unique Paths",
+      "topic": "DP & Recursion",
+      "slug": "unique-paths",
+      "link": "https://leetcode.com/problems/unique-paths/",
+      "lcSlug": "unique-paths"
+     },
+     {
+      "name": "Subsets",
+      "topic": "DP & Recursion",
+      "slug": "subsets",
+      "link": "https://leetcode.com/problems/subsets/",
+      "lcSlug": "subsets"
+     },
+     {
+      "name": "Permutations",
+      "topic": "DP & Recursion",
+      "slug": "permutations",
+      "link": "https://leetcode.com/problems/permutations/",
+      "lcSlug": "permutations"
+     },
+     {
+      "name": "Combination Sum",
+      "topic": "DP & Recursion",
+      "slug": "combination-sum",
+      "link": "https://leetcode.com/problems/combination-sum/",
+      "lcSlug": "combination-sum"
+     }
+    ]
+   },
+   {
+    "topic": "Heap / Priority Queue",
+    "patterns": [
+     "Min heap",
+     "Max heap",
+     "Top K elements",
+     "Kth largest / smallest",
+     "Running median",
+     "Merging sorted data",
+     "Two-heap pattern"
+    ],
+    "problems": [
+     {
+      "name": "Kth Largest Element in an Array",
+      "topic": "Heap / Priority Queue",
+      "slug": "kth-largest-element-in-an-array",
+      "link": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+      "lcSlug": "kth-largest-element-in-an-array"
+     },
+     {
+      "name": "Top K Frequent Elements",
+      "topic": "Heap / Priority Queue",
+      "slug": "top-k-frequent-elements",
+      "link": "https://leetcode.com/problems/top-k-frequent-elements/",
+      "lcSlug": "top-k-frequent-elements"
+     },
+     {
+      "name": "K Closest Points to Origin",
+      "topic": "Heap / Priority Queue",
+      "slug": "k-closest-points-to-origin",
+      "link": "https://leetcode.com/problems/k-closest-points-to-origin/",
+      "lcSlug": "k-closest-points-to-origin"
+     },
+     {
+      "name": "Merge K Sorted Lists",
+      "topic": "Heap / Priority Queue",
+      "slug": "merge-k-sorted-lists",
+      "link": "https://leetcode.com/problems/merge-k-sorted-lists/",
+      "lcSlug": "merge-k-sorted-lists"
+     },
+     {
+      "name": "Find Median from Data Stream",
+      "topic": "Heap / Priority Queue",
+      "slug": "find-median-from-data-stream",
+      "link": "https://leetcode.com/problems/find-median-from-data-stream/",
+      "lcSlug": "find-median-from-data-stream"
+     },
+     {
+      "name": "Task Scheduler",
+      "topic": "Heap / Priority Queue",
+      "slug": "task-scheduler",
+      "link": "https://leetcode.com/problems/task-scheduler/",
+      "lcSlug": "task-scheduler"
+     }
+    ]
+   },
+   {
+    "topic": "Hashing",
+    "patterns": [
+     "HashMaps",
+     "HashSets",
+     "Frequency counting",
+     "Duplicate detection",
+     "Value-to-index mapping",
+     "Grouping",
+     "Prefix sum + hashmap",
+     "Caching seen values"
+    ],
+    "problems": [
+     {
+      "name": "Two Sum",
+      "topic": "Hashing",
+      "slug": "two-sum",
+      "link": "https://leetcode.com/problems/two-sum/",
+      "lcSlug": "two-sum"
+     },
+     {
+      "name": "Contains Duplicate",
+      "topic": "Hashing",
+      "slug": "contains-duplicate",
+      "link": "https://leetcode.com/problems/contains-duplicate/",
+      "lcSlug": "contains-duplicate"
+     },
+     {
+      "name": "Valid Anagram",
+      "topic": "Hashing",
+      "slug": "valid-anagram",
+      "link": "https://leetcode.com/problems/valid-anagram/",
+      "lcSlug": "valid-anagram"
+     },
+     {
+      "name": "Group Anagrams",
+      "topic": "Hashing",
+      "slug": "group-anagrams",
+      "link": "https://leetcode.com/problems/group-anagrams/",
+      "lcSlug": "group-anagrams"
+     },
+     {
+      "name": "Longest Consecutive Sequence",
+      "topic": "Hashing",
+      "slug": "longest-consecutive-sequence",
+      "link": "https://leetcode.com/problems/longest-consecutive-sequence/",
+      "lcSlug": "longest-consecutive-sequence"
+     },
+     {
+      "name": "Subarray Sum Equals K",
+      "topic": "Hashing",
+      "slug": "subarray-sum-equals-k",
+      "link": "https://leetcode.com/problems/subarray-sum-equals-k/",
+      "lcSlug": "subarray-sum-equals-k"
+     }
+    ]
+   },
+   {
+    "topic": "Bit Manipulation",
+    "patterns": [
+     "AND / OR / XOR / NOT",
+     "Left / right shift",
+     "Checking bits",
+     "Setting / clearing bits",
+     "XOR cancellation",
+     "Counting set bits"
+    ],
+    "problems": [
+     {
+      "name": "Single Number",
+      "topic": "Bit Manipulation",
+      "slug": "single-number",
+      "link": "https://leetcode.com/problems/single-number/",
+      "lcSlug": "single-number"
+     },
+     {
+      "name": "Number of 1 Bits",
+      "topic": "Bit Manipulation",
+      "slug": "number-of-1-bits",
+      "link": "https://leetcode.com/problems/number-of-1-bits/",
+      "lcSlug": "number-of-1-bits"
+     },
+     {
+      "name": "Counting Bits",
+      "topic": "Bit Manipulation",
+      "slug": "counting-bits",
+      "link": "https://leetcode.com/problems/counting-bits/",
+      "lcSlug": "counting-bits"
+     },
+     {
+      "name": "Reverse Bits",
+      "topic": "Bit Manipulation",
+      "slug": "reverse-bits",
+      "link": "https://leetcode.com/problems/reverse-bits/",
+      "lcSlug": "reverse-bits"
+     },
+     {
+      "name": "Missing Number",
+      "topic": "Bit Manipulation",
+      "slug": "missing-number",
+      "link": "https://leetcode.com/problems/missing-number/",
+      "lcSlug": "missing-number"
+     },
+     {
+      "name": "Sum of Two Integers",
+      "topic": "Bit Manipulation",
+      "slug": "sum-of-two-integers",
+      "link": "https://leetcode.com/problems/sum-of-two-integers/",
+      "lcSlug": "sum-of-two-integers"
+     }
+    ]
+   },
+   {
+    "topic": "Sorting",
+    "patterns": [
+     "Bubble / Selection / Insertion",
+     "Merge Sort",
+     "Quick Sort",
+     "Counting Sort",
+     "Bucket Sort",
+     "Custom comparators",
+     "Interval sorting"
+    ],
+    "problems": [
+     {
+      "name": "Sort an Array",
+      "topic": "Sorting",
+      "slug": "sort-an-array",
+      "link": "https://leetcode.com/problems/sort-an-array/",
+      "lcSlug": "sort-an-array"
+     },
+     {
+      "name": "Merge Intervals",
+      "topic": "Sorting",
+      "slug": "merge-intervals",
+      "link": "https://leetcode.com/problems/merge-intervals/",
+      "lcSlug": "merge-intervals"
+     },
+     {
+      "name": "Insert Interval",
+      "topic": "Sorting",
+      "slug": "insert-interval",
+      "link": "https://leetcode.com/problems/insert-interval/",
+      "lcSlug": "insert-interval"
+     },
+     {
+      "name": "Meeting Rooms II",
+      "topic": "Sorting",
+      "slug": "meeting-rooms-ii",
+      "link": "https://leetcode.com/problems/meeting-rooms-ii/",
+      "lcSlug": "meeting-rooms-ii"
+     },
+     {
+      "name": "Largest Number",
+      "topic": "Sorting",
+      "slug": "largest-number",
+      "link": "https://leetcode.com/problems/largest-number/",
+      "lcSlug": "largest-number"
+     }
+    ]
+   },
+   {
+    "topic": "Searching",
+    "patterns": [
+     "Linear search",
+     "Binary search",
+     "Binary search on answer",
+     "Rotated arrays",
+     "Lower / upper bound",
+     "Matrix search"
+    ],
+    "problems": [
+     {
+      "name": "Binary Search",
+      "topic": "Searching",
+      "slug": "binary-search",
+      "link": "https://leetcode.com/problems/binary-search/",
+      "lcSlug": "binary-search"
+     },
+     {
+      "name": "Search in Rotated Sorted Array",
+      "topic": "Searching",
+      "slug": "search-in-rotated-sorted-array",
+      "link": "https://leetcode.com/problems/search-in-rotated-sorted-array/",
+      "lcSlug": "search-in-rotated-sorted-array"
+     },
+     {
+      "name": "Find Minimum in Rotated Sorted Array",
+      "topic": "Searching",
+      "slug": "find-minimum-in-rotated-sorted-array",
+      "link": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/",
+      "lcSlug": "find-minimum-in-rotated-sorted-array"
+     },
+     {
+      "name": "Search a 2D Matrix",
+      "topic": "Searching",
+      "slug": "search-a-2d-matrix",
+      "link": "https://leetcode.com/problems/search-a-2d-matrix/",
+      "lcSlug": "search-a-2d-matrix"
+     },
+     {
+      "name": "Koko Eating Bananas",
+      "topic": "Searching",
+      "slug": "koko-eating-bananas",
+      "link": "https://leetcode.com/problems/koko-eating-bananas/",
+      "lcSlug": "koko-eating-bananas"
+     },
+     {
+      "name": "Find First and Last Position of Element in Sorted Array",
+      "topic": "Searching",
+      "slug": "find-first-and-last-position-of-element-in-sorted-array",
+      "link": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/",
+      "lcSlug": "find-first-and-last-position-of-element-in-sorted-array"
+     }
+    ]
+   }
+  ]
  }
 ];

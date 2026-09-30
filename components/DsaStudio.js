@@ -7,12 +7,13 @@ import { SheetProblemView } from "@/components/SheetBrowser";
 const SOURCE_LABEL = {
   core: "Core DSA",
   crackify: "Crackify",
+  "chocolate-candy": "Chocolate Candy",
   "apna-375": "Apna 375",
   "arsh-280": "Arsh 280",
   "babbar-450": "Babbar 450",
   "siddharth-450": "Siddharth 450",
 };
-const SOURCE_ORDER = ["crackify", "apna-375", "arsh-280", "babbar-450", "siddharth-450", "core"];
+const SOURCE_ORDER = ["crackify", "chocolate-candy", "apna-375", "arsh-280", "babbar-450", "siddharth-450", "core"];
 
 function effDiff(slug, lcSlug, fallback) {
   return difficultyForSlug(slug) || (lcSlug ? difficultyForSlug(lcSlug) : null) || fallback || null;
