@@ -278,7 +278,7 @@ export default function MySolution({ slug, category, title, className = "" }) {
               </select>
               <span className="text-[11px] text-zinc-500">Paste your code below</span>
             </div>
-            <textarea value={snipCode} onChange={(e) => setSnipCode(e.target.value)} rows={8} placeholder="
+            <textarea value={snipCode} onChange={(e) => setSnipCode(e.target.value)} rows={8} placeholder="Paste your solution code here…"
               className="w-full px-3 py-2 bg-[#0c0d12] border border-white/[0.06] rounded-lg text-xs font-mono text-zinc-100 focus:outline-none focus:border-blue-500" />
             <div className="mt-2 flex gap-2">
               <button onClick={saveSnippet} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition">Save snippet</button>
