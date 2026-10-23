@@ -1,66 +1,51 @@
-// middleware.js
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
-export async function middleware(request) {
-  let response = NextResponse.next({ request });
+const PUBLIC_PREFIXES = ["/login", "/signup", "/auth"];
+const isPublicPath = (p) => p === "/" || PUBLIC_PREFIXES.some((x) => p.startsWith(x));
 
+export async function middleware(request) {
+  const path = request.nextUrl.pathname;
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  // If Supabase isn't configured yet (env vars missing), don't crash the whole
-  // site with a 500. Let the request through — client-side auth guards in each
-  // page still redirect unauthenticated users to /login.
-  if (!supabaseUrl || !supabaseKey) {
-    return response;
+  // Public pages (and missing config) never need an auth lookup. Let them through
+  // immediately so a slow/paused Supabase can't 504 the whole site. Each page also
+  // has a client-side auth guard, and RLS protects all data, so this is safe.
+  if (!supabaseUrl || !supabaseKey || isPublicPath(path)) {
+    return NextResponse.next({ request });
   }
 
-  const supabase = createServerClient(
-    supabaseUrl,
-    supabaseKey,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-          response = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
-        },
+  let response = NextResponse.next({ request });
+  const supabase = createServerClient(supabaseUrl, supabaseKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
       },
-    }
-  );
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+        response = NextResponse.next({ request });
+        cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+      },
+    },
+  });
 
   try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    // Cap the auth call so it can never hang the request (prevents 504s when
+    // Supabase is slow/unreachable). On timeout, fail open — the page's own
+    // client-side guard still redirects truly-unauthenticated users to /login.
+    const timed = new Promise((resolve) => setTimeout(() => resolve({ __timedOut: true }), 2500));
+    const result = await Promise.race([supabase.auth.getUser(), timed]);
+    if (result && result.__timedOut) return response;
 
-    const path = request.nextUrl.pathname;
-    const publicPrefixes = ["/login", "/signup", "/auth"];
-    // "/" (landing) is public; everything else (dashboard, roles, flashcards,
-    // bookmarks) requires auth.
-    const isPublic = path === "/" || publicPrefixes.some((p) => path.startsWith(p));
-
-    if (!user && !isPublic) {
+    const user = result?.data?.user;
+    if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = "/login";
       return NextResponse.redirect(url);
     }
-
-    if (user && (path === "/login" || path === "/signup")) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
-    }
   } catch {
-    // On any auth error, fail open — let the request through rather than 500.
-    return response;
+    return response; // fail open on any auth error rather than 500/504
   }
 
   return response;
