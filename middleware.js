@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
-const PUBLIC_PREFIXES = ["/login", "/signup", "/auth"];
+const PUBLIC_PREFIXES = ["/login", "/signup", "/auth", "/forgot-password"];
 const isPublicPath = (p) => p === "/" || PUBLIC_PREFIXES.some((x) => p.startsWith(x));
 
 export async function middleware(request) {
