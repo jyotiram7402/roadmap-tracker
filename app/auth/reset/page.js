@@ -24,12 +24,14 @@ export default function ResetPasswordPage() {
 
         const code = url.searchParams.get("code");
         const token_hash = url.searchParams.get("token_hash");
-        const type = url.searchParams.get("type");
-        if (code) {
-          const { error } = await supabase.auth.exchangeCodeForSession(code);
-          if (error) throw error;
-        } else if (token_hash && type) {
+        const type = url.searchParams.get("type") || "recovery";
+        // Prefer the device-independent OTP flow (token_hash) over PKCE (code),
+        // so opening the link in a different browser still works.
+        if (token_hash) {
           const { error } = await supabase.auth.verifyOtp({ type, token_hash });
+          if (error) throw error;
+        } else if (code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
           if (error) throw error;
         }
 
