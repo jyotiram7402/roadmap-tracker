@@ -22,6 +22,22 @@
   --shadow-glow: 0 0 0 1px rgba(59,130,246,.25), 0 8px 30px -8px rgba(59,130,246,.25);
   --header-bg: rgba(9,9,11,0.8);
   --radius: 14px;
+
+  /* Semantic tokens (dark). Mapped into Tailwind as bg-surface, text-fg, text-muted,
+     border-border, bg-primary, text-brand, text-success/warning/danger/info, text-diff-*. */
+  --surface: #18181b;
+  --surface-2: #1c1c20;
+  --fg: #fafafa;
+  --muted-fg: #a1a1aa;
+  --primary: #3b82f6;
+  --brand: #f0654f;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #f43f5e;
+  --info: #06b6d4;
+  --diff-easy: #34d399;
+  --diff-medium: #fbbf24;
+  --diff-hard: #fb7185;
 }
 
 html, body {
@@ -199,6 +215,21 @@ html.light {
   --text-2: #52525b;
   --muted: #71717a;
   --header-bg: rgba(255,255,255,0.85);
+
+  /* Semantic tokens (light) */
+  --surface: #f7f7f8;
+  --surface-2: #efeff2;
+  --fg: #18181b;
+  --muted-fg: #52525b;
+  --primary: #2563eb;
+  --brand: #d94e39;
+  --success: #059669;
+  --warning: #b45309;
+  --danger: #e11d48;
+  --info: #0891b2;
+  --diff-easy: #059669;
+  --diff-medium: #b45309;
+  --diff-hard: #e11d48;
   --shadow-sm: 0 1px 2px rgba(0,0,0,.06);
   --shadow: 0 6px 24px -10px rgba(0,0,0,.14);
   --shadow-glow: 0 0 0 1px rgba(59,130,246,.25), 0 10px 30px -10px rgba(59,130,246,.20);
@@ -314,3 +345,30 @@ button.mm-label:hover { border-color: var(--border-strong); background: var(--ca
 .mm-kid:first-child::after { top: 50%; }
 .mm-kid:last-child::after  { bottom: 50%; }
 .mm-kid:only-child::after  { display: none; }
+
+/* ================= Mobile base ================= */
+/* 16px inputs on phones so iOS Safari doesn't zoom on focus. !important is needed
+   to beat Tailwind's text-sm/text-xs utility classes on existing inputs. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]), textarea, select { font-size: 16px !important; }
+}
+button, [role="button"], a, summary { touch-action: manipulation; }
+/* Safe areas for notches / home indicators (viewport-fit=cover is set in layout). */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.pb-safe { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+/* Anchored content never hides under sticky headers */
+[id] { scroll-margin-top: 72px; }
+/* Code block toolbar sits on the always-dark code surface in both themes */
+.code-tools { color: #e2e8f0; }
+.code-tools .code-lang { color: #a1a1aa; background: rgba(28,28,32,.85); }
+.code-tools .code-copy { background: rgba(255,255,255,.08); color: #e2e8f0; }
+.code-tools .code-copy:hover { background: rgba(255,255,255,.14); }
+/* Horizontal chip rows: scroll without a visible bar */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.anim-fade-in { animation: cd-fade-in .18s ease-out both; }
+@keyframes cd-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade-in, .anim-fade-up { animation: none !important; }
+}

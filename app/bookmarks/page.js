@@ -86,10 +86,10 @@ export default function BookmarksPage() {
     return section?.questions.find((q) => q.qNum === b.q_num) || null;
   }
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-zinc-400">Loading bookmarks…</div>;
+  if (loading) return <div className="min-h-dvh flex items-center justify-center text-zinc-400">Loading bookmarks…</div>;
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-zinc-100">
+    <div className="min-h-dvh bg-[#09090b] text-zinc-100">
       <header className="sticky top-0 z-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
           <Link href="/dashboard" className="text-sm text-blue-400 hover:underline">← Back</Link>

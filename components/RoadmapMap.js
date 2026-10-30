@@ -94,7 +94,7 @@ export default function RoadmapMap() {
 
       {/* pannable canvas */}
       <div ref={wrapRef} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerLeave={onUp}
-        className="mm-wrap rounded-2xl border border-white/[0.06] bg-[#0e0e11]" style={{ height: "min(72vh, 720px)", cursor: "grab" }}>
+        className="mm-wrap rounded-2xl border border-white/[0.06] bg-[#0e0e11]" style={{ height: "min(72dvh, 720px)", cursor: "grab" }}>
         <div className="mm-canvas" style={{ transform: `scale(${zoom})` }}>
           <MMNode node={PREP_ROADMAP} path="r" openSet={openSet} toggle={toggle} />
         </div>

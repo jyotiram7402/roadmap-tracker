@@ -65,18 +65,20 @@ export default function CodeBlock({ lines }) {
 
   return (
     <div className="relative group">
-      <div className="absolute top-2 right-2 flex items-center gap-2 z-10">
-        <span className="text-[10px] text-zinc-400 uppercase tracking-wide px-1.5 py-0.5 bg-[#1c1c20]/80 rounded font-mono">
+      <div className="code-tools absolute top-2 right-2 flex items-center gap-2 z-10">
+        <span className="code-lang text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded font-mono">
           {lang}
         </span>
         <button
+          type="button"
           onClick={copy}
-          className="text-xs px-2 py-0.5 bg-white/[0.08] hover:bg-white/[0.14] rounded opacity-0 group-hover:opacity-100 transition"
+          aria-label={copied ? "Code copied" : "Copy code"}
+          className="code-copy inline-flex items-center justify-center min-w-[44px] h-8 px-2.5 text-xs font-medium rounded-chip transition"
         >
-          {copied ? "✓ Copied" : "Copy"}
+          <span aria-live="polite">{copied ? "Copied" : "Copy"}</span>
         </button>
       </div>
-      <pre className={`bg-[#0c0d12] border border-white/[0.06] rounded p-3 pt-7 overflow-x-auto text-xs leading-relaxed language-${lang}`}>
+      <pre className={`bg-[#0c0d12] border border-white/[0.06] rounded-control p-3 pt-11 overflow-x-auto text-xs leading-relaxed language-${lang}`}>
         {highlighted ? (
           <code className={`language-${lang} font-mono`} dangerouslySetInnerHTML={{ __html: highlighted }} />
         ) : (

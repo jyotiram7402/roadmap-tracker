@@ -11,17 +11,25 @@
 - [x] `AUDIT.md`
 - [x] `PLAN.md`
 - [x] `PROGRESS.md`
-- [ ] **CHECKPOINT** — awaiting owner
+- [x] **CHECKPOINT** — owner said "start each phase one by one" → defaults adopted (see Decisions)
 
-## Phase 1 — Foundations
-- [ ] Semantic tokens (light + dark) in `globals.css` → `tailwind.config.mjs` `theme.extend`
-- [ ] JetBrains Mono via `next/font/google` for code only
-- [ ] Theme: System / Light / Dark, no flash
-- [ ] Global mobile base: `viewport-fit=cover`, `dvh`, safe-area utilities, 16px inputs, `future.hoverOnlyWhenSupported`
-- [ ] Primitives in `components/ui/` (Button, IconButton, Input, Textarea, Select, FormField, Chips/ScrollableTabs, ResponsiveDialog, Menu, Toast, Skeleton, EmptyState, ErrorState, Badge, DifficultyChip, Progress, PageHeader, Container, LoadMore)
-- [ ] `/design-system` dev-only preview
-- [ ] Quick wins: always-visible Copy, theme toggle on every header, Sheets show-more
-- [ ] Verify + commit → CHECKPOINT
+## Phase 1 — Foundations (2026-10-30)
+- [x] Semantic tokens (light + dark) in `globals.css` (`--surface/-2, --fg, --muted-fg, --primary, --brand, --success/warning/danger/info, --diff-*`) → `tailwind.config.mjs` `theme.extend.colors` (`bg-surface`, `text-fg`, `text-muted`, `border-border`, `bg-primary`, `text-primary-fg`, `text-diff-easy`…), radii (`rounded-chip/control/surface/sheet`), z-index scale (`z-sticky/nav/overlay/modal/toast`)
+- [x] JetBrains Mono via `next/font/google` (`--font-mono`, `font-mono`) — code only
+- [x] Theme: System / Light / Dark cycle in `ThemeToggle`; no-flash script honours `system`; unset = dark; `theme-color` meta updated live; light/dark `themeColor` in viewport
+- [x] Global mobile base: `viewport-fit=cover`; all `h-screen`/`min-h-screen` → `dvh` (26 tokens / 20 files) and arbitrary `[..vh]` → `dvh` (8); `.safe-top/.safe-bottom/.pb-safe`; 16px inputs < 768px; `touch-action: manipulation`; `scroll-margin-top`; `future.hoverOnlyWhenSupported`; reduced-motion guard for fade animations
+- [x] Primitives in `components/ui/`: Button (+Spinner), IconButton, Input, Textarea, Select, FormField, Badge, DifficultyChip, Skeleton(+Text/Rows), EmptyState, ErrorState, Progress, Container, LoadMore, ScrollableTabs, PageHeader, ResponsiveDialog, `cx`, barrel `index.js`. Menu/Toast deferred until a screen needs them.
+- [x] `/design-system` dev-only preview (`notFound()` in production, `robots: noindex`)
+- [x] Quick wins: CodeBlock Copy always visible (44px, `aria-live`), language chip readable in light mode (`.code-tools`); Sheets paginate 60 + "Show more"; the three remaining hover-only controls (note 📝 / delete ✕ / screenshot ✕) are now visible at rest (needed because `hoverOnlyWhenSupported` would otherwise hide them on touch). Theme toggle on every header lands with `PageHeader` adoption in Phase 2.
+- [x] Verify: bracket-balance tripwire on all touched JSX ✓, `node --check` on pure JS ✓, CSS braces balanced ✓, icon exports unique ✓. **Not verified locally:** `next build` (no `node_modules`) — gate on the Vercel preview of the `ui-overhaul` branch.
+- [x] Commit → **CHECKPOINT**
+
+### Phase 1 CHECKPOINT — what to check on the preview
+1. Dark and light both render; toggle cycles Dark → Light → System (icon changes), no flash on reload.
+2. Phone: inputs no longer zoom on focus; pages fill the screen with the URL bar collapsing (`dvh`); install banner clears the home indicator.
+3. Code blocks: Copy button always visible and tappable; language chip readable in light mode.
+4. Sheets: a 450-problem sheet shows 60 rows + "Show 60 more".
+5. `/design-system` renders in `npm run dev` (404 in production).
 
 ## Phase 2 — App shell
 - [ ] Phone bottom tabs (Home · DSA · Progress · More) + More sheet
@@ -62,8 +70,11 @@
 - [ ] Verify + commit → CHECKPOINT
 
 ## Decisions
-- Evolve, not refresh (pending approval).
-- No new npm dependencies planned.
+- Owner approved proceeding phase by phase without answering the Phase 0 questions → defaults: **Full** mode, **Evolve**, **Inter + JetBrains Mono**, **keep light mode** (tokenised), **bottom tabs** in Phase 2, Lucide icons replace header emojis as screens are touched.
+- No new npm dependencies (JetBrains Mono comes through `next/font/google`, already a dependency).
+- Tinted badges/states use `color-mix()` on the token so one variable drives text, background and border in both themes.
+- The old `html.light` remap layer stays as a fallback until Phase 8; new primitives use tokens only and avoid `text-white` (the remap darkens it) via `text-primary-fg`.
+- `hoverOnlyWhenSupported` is on; any control that was hover-revealed must be visible at rest.
 
 ## Open questions (for the owner)
 1. Can you run the app locally (`.env.local` + `npm install`)? If yes, I'll gate each phase on `npm run build`/lint locally; if not, each phase is gated on a Vercel preview you review on your phone.

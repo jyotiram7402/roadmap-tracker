@@ -27,7 +27,7 @@ export default function StageTOC({ stages, stageStats, onJump }) {
           onClick={() => setOpen(false)}
         >
           <div
-            className="bg-[#141417] border border-white/[0.06] rounded-xl w-full max-w-md max-h-[80vh] overflow-y-auto"
+            className="bg-[#141417] border border-white/[0.06] rounded-xl w-full max-w-md max-h-[80dvh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="sticky top-0 bg-[#141417] border-b border-white/[0.06] px-4 py-3 flex justify-between items-center">

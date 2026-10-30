@@ -1,11 +1,13 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import PwaInstaller from "@/components/PwaInstaller";
 import ActivityTracker from "@/components/ActivityTracker";
 import SyncManager from "@/components/SyncManager";
 
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
+// Self-hosted by next/font; used only for real code (CodeBlock, snippets, IDs).
+const mono = JetBrains_Mono({ subsets: ["latin"], display: "swap", variable: "--font-mono" });
 
 export const metadata = {
   title: "CrackDev — Software Engineering Interview Prep",
@@ -30,16 +32,22 @@ export const metadata = {
 export const viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#09090b",
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+  ],
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${mono.variable}`} suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
         <script
           dangerouslySetInnerHTML={{
-            __html: "(function(){try{if(localStorage.getItem('crackdev-theme')==='light'){document.documentElement.classList.add('light');}}catch(e){}})();",
+            // Theme before first paint. 'light' → light; 'system' → follow the OS;
+            // anything else (incl. unset) → dark, the brand default.
+            __html: "(function(){try{var t=localStorage.getItem('crackdev-theme');var l=t==='light'||(t==='system'&&window.matchMedia('(prefers-color-scheme: light)').matches);if(l){document.documentElement.classList.add('light');}}catch(e){}})();",
           }}
         />
         {/* Capture the install prompt as early as possible — Chrome fires

@@ -252,7 +252,7 @@ export default function MySolution({ slug, category, title, className = "" }) {
                         <img src={img.url} alt={`${g.label} ${i + 1}`} className="w-full h-full object-cover" />
                       </button>
                       <button onClick={() => removeImg(img)} disabled={busy} title="Remove"
-                        className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/70 text-white text-xs opacity-0 group-hover:opacity-100 transition hover:bg-rose-600 disabled:opacity-40">✕</button>
+                        className="absolute top-1 right-1 w-7 h-7 rounded-full bg-black/70 text-white text-xs opacity-80 group-hover:opacity-100 transition hover:bg-rose-600 disabled:opacity-40">✕</button>
                     </div>
                   );
                 })}
@@ -317,7 +317,7 @@ export default function MySolution({ slug, category, title, className = "" }) {
             onWheel={(e) => setZoomLevel((z) => Math.min(5, Math.max(1, z + (e.deltaY < 0 ? 0.25 : -0.25))))}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={images[zoom].url} alt="solution" style={{ transform: `scale(${zoomLevel})`, transformOrigin: "center" }}
-              className="max-h-[80vh] max-w-[92vw] rounded-lg shadow-2xl object-contain transition-transform" />
+              className="max-h-[80dvh] max-w-[92vw] rounded-lg shadow-2xl object-contain transition-transform" />
           </div>
           {images.length > 1 && (
             <div className="flex items-center justify-center gap-6 p-3 text-white" onClick={(e) => e.stopPropagation()}>

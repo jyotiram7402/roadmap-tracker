@@ -13,7 +13,7 @@ function googleLink(q) {
 export default function MavenPage() {
   const [tab, setTab] = useState("notes");
   return (
-    <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col">
+    <div className="min-h-dvh bg-[#09090b] text-zinc-100 flex flex-col">
       <header className="sticky top-0 z-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
           <Link href="/dashboard" className="text-sm text-blue-400 hover:underline whitespace-nowrap">← Dashboard</Link>

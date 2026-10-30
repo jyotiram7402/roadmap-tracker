@@ -33,7 +33,7 @@ export default function TrackSwitcher({ activeTrack, onSelect, compact }) {
       onClick={() => setOpen(false)}
     >
       <div
-        className="bg-[#141417] border border-white/[0.06] rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl"
+        className="bg-[#141417] border border-white/[0.06] rounded-2xl w-full max-w-md max-h-[85dvh] flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex-shrink-0 bg-[#141417] border-b border-white/[0.06] px-4 py-3 flex justify-between items-center rounded-t-2xl">

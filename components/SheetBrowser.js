@@ -4,6 +4,7 @@ import { difficultyForSlug, hasSolution, loadSolutionBySlug } from "@/data/dsa-p
 import CodeBlock from "@/components/CodeBlock";
 import MySolution from "@/components/MySolution";
 import StudyNotes from "@/components/StudyNotes";
+import LoadMore from "@/components/ui/LoadMore";
 
 const DIFF = {
   easy: { label: "Easy", cls: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-700/40" },
@@ -68,11 +69,17 @@ export default function SheetBrowser() {
     });
   }, [allProblems, topic, diff, q]);
 
+  // Render in pages so a 450-problem sheet doesn't mount 450 rows at once on a phone.
+  const PAGE = 60;
+  const [limit, setLimit] = useState(PAGE);
+  useEffect(() => { setLimit(PAGE); }, [sheetId, topic, diff, q]);
+  const visible = useMemo(() => filtered.slice(0, limit), [filtered, limit]);
+
   const grouped = useMemo(() => {
     const map = new Map();
-    for (const p of filtered) { if (!map.has(p.topic)) map.set(p.topic, []); map.get(p.topic).push(p); }
+    for (const p of visible) { if (!map.has(p.topic)) map.set(p.topic, []); map.get(p.topic).push(p); }
     return [...map.entries()];
-  }, [filtered]);
+  }, [visible]);
 
   function openSheet(id) { setSheetId(id); setTopic("All"); setDiff("all"); setQ(""); setSelected(null); }
 
@@ -190,6 +197,7 @@ export default function SheetBrowser() {
           </div>
         );
         })}
+        <LoadMore shown={visible.length} total={filtered.length} step={PAGE} onMore={() => setLimit((l) => l + PAGE)} />
       </div>
     </div>
   );
@@ -218,7 +226,7 @@ export function SheetProblemView({ problem, sheetName, onBack }) {
 
       <div className="grid lg:grid-cols-2 gap-4">
         {/* LEFT: statement */}
-        <div className="bg-[#18181b] border border-white/[0.06] rounded-xl p-4 lg:max-h-[75vh] lg:overflow-y-auto">
+        <div className="bg-[#18181b] border border-white/[0.06] rounded-xl p-4 lg:max-h-[75dvh] lg:overflow-y-auto">
           <div className="flex items-center gap-2 flex-wrap">
             <h2 className="text-lg font-bold text-white">{title}</h2>
             {d && <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${d.bg} ${d.cls}`}>{d.label}</span>}
@@ -260,7 +268,7 @@ export function SheetProblemView({ problem, sheetName, onBack }) {
         </div>
 
         {/* RIGHT: approaches */}
-        <div className="bg-[#18181b] border border-white/[0.06] rounded-xl p-4 lg:max-h-[75vh] lg:overflow-y-auto">
+        <div className="bg-[#18181b] border border-white/[0.06] rounded-xl p-4 lg:max-h-[75dvh] lg:overflow-y-auto">
           {approaches.length > 0 ? (
             <>
               <div className="flex gap-2 flex-wrap sticky top-0 bg-[#1c1c20]/40 pb-2 -mt-1">

@@ -87,7 +87,7 @@ export default function Landing() {
   const roleHref = authed ? "/roles" : "/signup";
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#09090b] text-zinc-100">
+    <div className="relative min-h-dvh overflow-x-hidden bg-[#09090b] text-zinc-100">
       <div className="pointer-events-none fixed inset-0" aria-hidden="true">
         <div className="absolute inset-0" style={{ background: "radial-gradient(60% 42% at 50% -5%, rgba(59,130,246,.12), transparent 70%)" }} />
         <div className="absolute inset-0 opacity-[0.035]" style={{ backgroundImage: "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)", backgroundSize: "56px 56px", maskImage: "radial-gradient(ellipse at 50% 0%, black, transparent 70%)", WebkitMaskImage: "radial-gradient(ellipse at 50% 0%, black, transparent 70%)" }} />

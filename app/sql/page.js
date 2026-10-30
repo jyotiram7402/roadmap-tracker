@@ -5,7 +5,7 @@ import { SQL_PROBLEMS } from "@/data/sql-problems";
 
 export default function SqlPage() {
   return (
-    <div className="min-h-screen bg-[#09090b] text-zinc-100">
+    <div className="min-h-dvh bg-[#09090b] text-zinc-100">
       <header className="sticky top-0 z-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
           <Link href="/dashboard" className="text-sm text-blue-400 hover:underline">← Dashboard</Link>

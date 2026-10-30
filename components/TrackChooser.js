@@ -16,7 +16,7 @@ const ACCENT = {
 export default function TrackChooser({ user, onSelect, onSignOut }) {
   const name = (user?.email || "there").split("@")[0];
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--bg)", color: "var(--text)" }}>
+    <div className="min-h-dvh flex flex-col" style={{ background: "var(--bg)", color: "var(--text)" }}>
       <header className="border-b" style={{ borderColor: "var(--border)" }}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
           <Logo size={30} textClass="text-[15px] text-white" />

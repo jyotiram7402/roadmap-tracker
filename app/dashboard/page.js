@@ -322,7 +322,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg)" }}>
+      <div className="min-h-dvh flex items-center justify-center" style={{ background: "var(--bg)" }}>
         <div className="flex items-center gap-2.5 text-zinc-400 text-sm">
           <span className="w-4 h-4 rounded-full border-2 border-zinc-600 border-t-blue-500 animate-spin" />
           Loading your workspace…
@@ -337,12 +337,12 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen text-zinc-100" style={{ background: "var(--bg)" }}>
+    <div className="min-h-dvh text-zinc-100" style={{ background: "var(--bg)" }}>
       <div className="lg:flex">
         {sidebarOpen && <div onClick={() => setSidebarOpen(false)} className="fixed inset-0 bg-black/60 z-30 lg:hidden no-print" />}
 
         {/* SIDEBAR */}
-        <aside className={`fixed z-40 inset-y-0 left-0 w-64 ${collapsed ? "lg:w-[76px]" : "lg:w-64"} backdrop-blur-xl border-r flex flex-col transition-[transform,width] duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 no-print ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+        <aside className={`fixed z-40 inset-y-0 left-0 w-64 ${collapsed ? "lg:w-[76px]" : "lg:w-64"} backdrop-blur-xl border-r flex flex-col transition-[transform,width] duration-200 lg:sticky lg:top-0 lg:h-dvh lg:translate-x-0 no-print ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
           style={{ background: "var(--sidebar)", borderColor: "var(--border)" }}>
           <div className="px-3 h-14 flex items-center gap-1 border-b" style={{ borderColor: "var(--border)" }}>
             <Link href="/" className={`flex items-center ${collapsed ? "lg:hidden" : ""}`}>
@@ -798,7 +798,7 @@ function Section({
                 <div className="flex items-start gap-2 group">
                   <input type="checkbox" checked={done} onChange={() => onToggleItem(stage.id, section.id, idx)} className="mt-1 w-4 h-4 cursor-pointer accent-blue-500 flex-shrink-0" />
                   <span className={`flex-1 ${done ? "line-through text-zinc-500" : "text-zinc-200"}`}>{item}</span>
-                  <button onClick={() => setOpenNote(isNoteOpen ? null : key)} title="Add/edit note" className={`flex-shrink-0 text-xs px-1.5 py-0.5 rounded transition ${hasNote ? "text-amber-400 bg-amber-400/10" : "text-zinc-500 hover:text-amber-400 opacity-0 group-hover:opacity-100"}`}>📝</button>
+                  <button onClick={() => setOpenNote(isNoteOpen ? null : key)} title="Add/edit note" className={`flex-shrink-0 text-xs px-1.5 py-0.5 rounded transition ${hasNote ? "text-amber-400 bg-amber-400/10" : "text-zinc-500 hover:text-amber-400 opacity-60 group-hover:opacity-100"}`}>📝</button>
                 </div>
                 {isNoteOpen && (
                   <textarea value={notes[key] || ""} onChange={(e) => onSaveNote(key, e.target.value, "item")} placeholder="Your note for this topic..." rows={2} autoFocus className="w-full mt-1 ml-6 px-2 py-1 bg-[#1c1c20] border border-white/[0.06] rounded text-xs text-white focus:outline-none focus:border-blue-500" style={{ width: "calc(100% - 24px)" }} />
@@ -814,7 +814,7 @@ function Section({
                 <div key={c.id} className="flex items-start gap-2 text-sm group">
                   <input type="checkbox" checked={c.done} onChange={() => onToggleCustom(stage.id, section.id, c.id, c.done)} className="mt-1 w-4 h-4 cursor-pointer accent-purple-500 flex-shrink-0" />
                   <span className={`flex-1 ${c.done ? "line-through text-zinc-500" : "text-zinc-200"}`}>{c.text}</span>
-                  <button onClick={() => onDeleteCustom(stage.id, section.id, c.id)} className="text-xs text-red-400 hover:text-red-300 opacity-0 group-hover:opacity-100 transition" title="Delete">✕</button>
+                  <button onClick={() => onDeleteCustom(stage.id, section.id, c.id)} className="text-xs text-red-400 hover:text-red-300 opacity-60 group-hover:opacity-100 transition" title="Delete">✕</button>
                 </div>
               ))}
             </div>

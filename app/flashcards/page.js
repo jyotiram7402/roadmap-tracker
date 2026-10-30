@@ -92,10 +92,10 @@ export default function FlashcardsPage() {
     return () => document.removeEventListener("keydown", onKey);
   });
 
-  if (!ready) return <div className="min-h-screen flex items-center justify-center text-zinc-400">Loading…</div>;
+  if (!ready) return <div className="min-h-dvh flex items-center justify-center text-zinc-400">Loading…</div>;
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-zinc-100">
+    <div className="min-h-dvh bg-[#09090b] text-zinc-100">
       <header className="sticky top-0 z-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
           <Link href="/dashboard" className="text-sm text-blue-400 hover:underline">← Back</Link>
@@ -125,14 +125,14 @@ export default function FlashcardsPage() {
               <span className="text-zinc-500 hidden sm:inline">Space = flip · ←/→ = nav · K/U = known/unknown</span>
             </div>
 
-            <div onClick={() => setFlipped((f) => !f)} className={`card-flip cursor-pointer ${flipped ? "flipped" : ""}`} style={{ minHeight: "60vh" }}>
+            <div onClick={() => setFlipped((f) => !f)} className={`card-flip cursor-pointer ${flipped ? "flipped" : ""}`} style={{ minHeight: "60dvh" }}>
               <div className="card-flip-inner h-full">
-                <div className="card-face bg-[#18181b] border border-white/[0.06] rounded-2xl p-6 sm:p-10 min-h-[60vh] flex flex-col items-center justify-center text-center">
+                <div className="card-face bg-[#18181b] border border-white/[0.06] rounded-2xl p-6 sm:p-10 min-h-[60dvh] flex flex-col items-center justify-center text-center">
                   <span className="text-xs text-zinc-500 mb-2">Q{current.qNum} · {current.sectionTitle}</span>
                   <h2 className="text-xl sm:text-2xl font-bold text-white leading-snug max-w-2xl">{current.qText}</h2>
                   <p className="text-xs text-zinc-500 mt-6">Tap or press Space to reveal answer</p>
                 </div>
-                <div className="card-face card-back bg-[#141417]/80 border border-pink-700/50 rounded-2xl p-4 sm:p-6 min-h-[60vh] overflow-y-auto">
+                <div className="card-face card-back bg-[#141417]/80 border border-pink-700/50 rounded-2xl p-4 sm:p-6 min-h-[60dvh] overflow-y-auto">
                   <div className="mb-3 text-xs text-pink-300">A. Q{current.qNum}</div>
                   <div className="space-y-3" onClick={(e) => e.stopPropagation()}>
                     {current.blocks.map((b, i) => {

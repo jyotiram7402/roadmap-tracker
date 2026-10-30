@@ -61,8 +61,8 @@ export default function PwaInstaller() {
   if (!mode) return null;
 
   return (
-    <div className="fixed bottom-3 inset-x-3 z-[120] mx-auto max-w-md rounded-2xl border shadow-2xl p-3 flex items-center gap-3 anim-fade-up"
-      style={{ background: "rgba(24,24,27,.94)", borderColor: "rgba(255,255,255,.1)", backdropFilter: "blur(12px)" }}>
+    <div role="dialog" aria-label="Install CrackDev" className="fixed inset-x-3 z-toast mx-auto max-w-md rounded-sheet border shadow-2xl p-3 flex items-center gap-3 anim-fade-up"
+      style={{ bottom: "calc(0.75rem + env(safe-area-inset-bottom))", background: "rgba(24,24,27,.94)", borderColor: "rgba(255,255,255,.1)", backdropFilter: "blur(12px)" }}>
       <Logo size={40} showText={false} className="flex-shrink-0" />
       <div className="min-w-0 flex-1" style={{ color: "#fafafa" }}>
         <div className="text-sm font-semibold">Install CrackDev</div>

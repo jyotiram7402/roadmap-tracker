@@ -130,14 +130,14 @@ export default function RolesPage() {
     return { total, done };
   }, [sections, qaProgress, activeRole]);
 
-  if (!ready) return <div className="min-h-screen flex items-center justify-center bg-[#141417] text-zinc-400">Loading…</div>;
+  if (!ready) return <div className="min-h-dvh flex items-center justify-center bg-[#141417] text-zinc-400">Loading…</div>;
 
   const meta = getRoleMeta(activeRole);
 
   // ---- Role picker grid ----
   if (picking) {
     return (
-      <div className="min-h-screen bg-[#09090b] text-zinc-100">
+      <div className="min-h-dvh bg-[#09090b] text-zinc-100">
         <header className="sticky top-0 z-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/[0.06]">
           <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
             <Link href="/dashboard" className="text-sm text-blue-400 hover:underline">← Roadmap</Link>
@@ -168,7 +168,7 @@ export default function RolesPage() {
 
   // ---- Role detail (question bank) ----
   return (
-    <div className="min-h-screen bg-[#09090b] text-zinc-100">
+    <div className="min-h-dvh bg-[#09090b] text-zinc-100">
       <header className="sticky top-0 z-20 bg-[#0e0e11]/80 backdrop-blur-xl border-b border-white/[0.06] no-print">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
           <button onClick={() => setPicking(true)} className="text-sm text-blue-400 hover:underline">← All roles</button>
