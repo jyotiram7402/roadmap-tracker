@@ -25,8 +25,9 @@ export default function ResetPasswordPage() {
         const code = url.searchParams.get("code");
         const token_hash = url.searchParams.get("token_hash");
         const type = url.searchParams.get("type") || "recovery";
-        // Prefer the device-independent OTP flow (token_hash) over PKCE (code),
-        // so opening the link in a different browser still works.
+        // Normal path: /auth/confirm already verified the link on the server and set
+        // the session cookies, so there are no params here and getSession() succeeds.
+        // Legacy links (token_hash / code landing here directly) are still handled.
         if (token_hash) {
           const { error } = await supabase.auth.verifyOtp({ type, token_hash });
           if (error) throw error;
@@ -44,7 +45,7 @@ export default function ResetPasswordPage() {
         setTimeout(async () => {
           const { data: { session: s2 } } = await supabase.auth.getSession();
           if (s2) setStage((p) => (p === "verifying" ? "ready" : p));
-          else setStage((p) => { if (p === "verifying") { setMsg("This reset link is invalid or has expired. Request a new one."); return "error"; } return p; });
+          else setStage((p) => { if (p === "verifying") { setMsg("This reset link has expired or was already used. Request a new one and open it from the email."); return "error"; } return p; });
         }, 1800);
       } catch (e) {
         setStage("error");

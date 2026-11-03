@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Logo from "@/components/Logo";
@@ -11,6 +11,16 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+
+  // /auth/confirm sends people here with ?error=… when an email link can't be used.
+  useEffect(() => {
+    try {
+      const err = new URL(window.location.href).searchParams.get("error");
+      if (err === "link_expired") setNotice("That link has expired or was already used. Sign in, or request a new one.");
+      else if (err === "invalid_link") setNotice("That link isn't valid. Sign in, or request a new one.");
+    } catch {}
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -38,6 +48,7 @@ export default function LoginPage() {
         <div className="rounded-2xl border border-white/[0.08] bg-[#18181b] shadow-2xl p-6 sm:p-8">
           <h1 className="text-2xl sm:text-3xl font-black text-white mb-1">Welcome back</h1>
           <p className="text-zinc-400 mb-8">Sign in to continue your prep</p>
+          {notice && <div role="status" className="mb-4 bg-amber-500/10 border border-amber-700/40 text-amber-200 px-4 py-2 rounded-lg text-sm">{notice}</div>}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-1">Email</label>

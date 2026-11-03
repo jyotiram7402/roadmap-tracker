@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import { createClient } from "@/lib/supabase";
@@ -9,6 +9,16 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
+  const [notice, setNotice] = useState("");
+
+  // /auth/confirm sends people here with ?error=link_expired when a reset link was used up.
+  useEffect(() => {
+    try {
+      const err = new URL(window.location.href).searchParams.get("error");
+      if (err === "link_expired") setNotice("That reset link has expired or was already used. Enter your email and we'll send a fresh one.");
+      else if (err === "invalid_link") setNotice("That link isn't valid. Enter your email to get a new one.");
+    } catch {}
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -40,7 +50,7 @@ export default function ForgotPasswordPage() {
               <div className="w-16 h-16 mx-auto rounded-full bg-emerald-500/15 border border-emerald-700/40 flex items-center justify-center text-3xl">✉️</div>
               <h1 className="mt-5 text-2xl font-black text-white">Check your email</h1>
               <p className="mt-2 text-zinc-400 text-sm">
-                If an account exists for <span className="text-zinc-200">{email}</span>, we&apos;ve sent a link to reset your password. Open it on this device and you&apos;ll be able to set a new password.
+                If an account exists for <span className="text-zinc-200">{email}</span>, we&apos;ve sent a link to reset your password. Open it on any device, tap <span className="text-zinc-200">Continue</span>, and choose a new password. Check spam if it doesn&apos;t arrive in a minute.
               </p>
               <Link href="/login" className="inline-block mt-6 text-sm text-blue-400 hover:underline">← Back to sign in</Link>
             </div>
@@ -48,6 +58,7 @@ export default function ForgotPasswordPage() {
             <>
               <h1 className="text-2xl sm:text-3xl font-black text-white mb-1">Forgot password?</h1>
               <p className="text-zinc-400 mb-8">Enter your email and we&apos;ll send you a reset link.</p>
+              {notice && <div role="status" className="mb-4 bg-amber-500/10 border border-amber-700/40 text-amber-200 px-4 py-2 rounded-lg text-sm">{notice}</div>}
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-zinc-300 mb-1">Email</label>
