@@ -6,3 +6,11 @@ node_modules
 *.log
 .DS_Store
 .vercel
+
+# every other env file, but keep the example
+.env*
+!.env.example
+
+# personal Claude Code files (shared .claude/ files get committed)
+CLAUDE.local.md
+.claude/settings.local.json
